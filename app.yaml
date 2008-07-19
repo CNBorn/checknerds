@@ -1,0 +1,29 @@
+application: helloworld
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /About
+  script: hello.py
+
+- url: /Blog
+  script: hello.py
+
+- url: /Statstics
+  script: hello.py
+
+- url: /Login
+  script: hello.py
+
+- url: /SignIn
+  script: hello.py
+
+- url: /SignOut
+  script: hello.py
+
+- url: /Add
+  script: hello.py
+
+- url: /.*
+  script: hello.py
