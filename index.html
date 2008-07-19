@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Nevada</title>
+<link href="img/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div id="container">
+	<div id="header">
+    	<div id="logo">
+        	<a href="/">
+                <span id="sitename">codename Nevada</span>
+            </a>      
+  
+        </div>
+  </div>
+	<div id="container-content">
+    	<div id="breadcrumbs">
+        	<div id="breadcrumbs-top"></div>
+            <div id="breadcrumbs-mid">
+                <table style="font-size:11px;">
+                	<tr>
+                    	<td>
+                            <a href="/">Home</a>&nbsp;
+                            <a href="/About">About</a>&nbsp;
+                            <a href="/Blog">Blog</a>
+						</td>
+
+                    	<td class="textalign-right">
+                            <em style="color:#86a05f">powered by Google App Engine</em>
+						</td>
+					</tr>
+                </table>
+            </div>
+            <div id="breadcrumbs-bot"></div>
+		</div>
+        <div id="content-holder">
+        	<div id="leftside">
+            	<div id="featuredcode">
+                	<div id="featuredcode-top"></div>
+                   	<div id="featuredcode-mid">
+                    	<table>
+                        	<tr>
+							   <td id="featuredcodedes">
+									<h2 class="posttitle" style="font-weight:normal;">您好，{{ UserNickName }}， 今天</h2>
+				    - <strong class="posttitle">{{ htmltag_today }}</strong>
+									<p>
+									{% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
+							        	<li>
+											<input type="checkbox" name="checkboxname" onchange="location.href=done";>
+											{{ tarsusaItem_DailyRoutine.name|escape }}
+										<span class="text_tag"><a href="#;" onclick="if (confirm(\'确认删除项目？' + record.name + '\')) { location.href = \'removeItem.py?itemId=' + str(record.__id__) + '\';}" class="x">&nbsp;x</a>
+								    	</li>
+									{% endfor %}
+									
+									</p>
+                              	</td>
+							</tr>
+						</table>                                                    
+                    </div>
+                   	<div id="featuredcode-bot"></div>
+                </div>
+                
+				
+				<div id="tagcloud">
+                    <div id="tagcloud-top"></div>
+                    <div id="tagcloud-mid">
+                    	<h2 class="posttitle">Find a Code</h2>
+                        <div id="thecloud">
+                        	
+                        </div>
+                    </div>
+                    <div id="tagcloud-bot"></div>
+                </div>
+				
+				<table id="latestcodes">
+                    <tr>
+                        <td class="latestcode">
+                            <div class="latestcode-top"></div>
+                            <div class="latestcode-mid">
+                            	<h2 class="posttitle"><a href="index.html">尚未完成</a></h2>
+							  <p>
+							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
+								<input type="checkbox" name="checkboxname" onchange="">
+									{{ tarsusaItem_UserToDoItems.comment|escape }}
+								{% endfor %}							  
+							  <a href="index.html">(Read More)</a></p>
+                            </div>
+                            <div class="latestcode-bot"></div>
+                        </td>
+                        <td class="latestcode">
+                            <div class="latestcode-top"></div>
+                            <div class="latestcode-mid">
+                            	<h2 class="posttitle"><a href="index.html">已经完成</a></h2>
+								{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
+							        	<li>
+											<input type="checkbox" name="checkboxname" onchange="location.href=done";>
+											{{ tarsusaItem_UserDoneItem.name|escape }}
+								    	</li>
+								{% endfor %}
+								<a href="index.html">(Read More)</a></p>
+                            </div>
+                            <div class="latestcode-bot"></div>
+                        </td>
+                    </tr>                            
+                    <tr>
+                        <td class="latestcode">
+                            <div class="latestcode-top"></div>
+                            <div class="latestcode-mid">
+                            	<h2 class="posttitle"><a href="index.html">Add Links to Navigation</a></h2>
+								<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Praesent in ligula suscipit massa mattis tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed commodo scelerisque nisi. Fusce ipsum. Suspendisse bibendum, enim non scelerisque interdum... <a href="index.html">(Read More)</a></p>
+                            </div>
+                            <div class="latestcode-bot"></div>
+                        </td>
+                        <td class="latestcode">
+                            <div class="latestcode-top"></div>
+                            <div class="latestcode-mid">
+                            	<h2 class="posttitle"><a href="index.html">统计信息</a></h2>
+								<p>
+								总事项：{{ UserTotalItems }} <br />
+								已完成事项：{{ UserDoneItems }} <br />
+								待完成事项：{{ UserToDoItems }} <br />
+								完成百分比：{{ UserDonePercentage }} % <br />
+								
+								</p>
+                            </div>
+                            <div class="latestcode-bot"></div>
+                        </td>
+                    </tr>
+                </table>         
+
+            </div>
+            
+            <div id="rightside">
+            	<div id="googlead">
+                	<div id="googlead-top"></div>
+                    <div id="googlead-mid">
+                    
+                    			<!--Remove the next few lines to place an ad-->
+                    			<br />
+								<div style="margin-top:70px;">
+                                	<li><a href="/Add">Add an Item</a></li>
+									<li>Done Log</li>
+									<li>Connection</li>
+									<li>Statstics</li>
+									
+                                </div>
+                    </div>
+                    <div id="googlead-bot"></div>
+                </div>
+                <div id="codelist">
+                	<div id="codelist-top"></div>
+                	<div id="codelist-mid">
+                    	<h2 class="posttitle">Pages</h2>
+                        <ul>
+                            <li><a href="index.html">Page 1</a></li>
+                            <li><a href="index.html">Page 2</a></li>
+                            <li><a href="index.html">Page 3</a></li>
+                        </ul>
+                    	<h2 class="posttitle">Latest Codes</h2>
+                        <ul>
+                            <li><a href="index.html">Latest Code 1</a></li>
+                            <li><a href="index.html">Latest Code 2</a></li>
+                            <li><a href="index.html">Latest Code 3</a></li>
+                        </ul>                        
+                    </div>
+                	<div id="codelist-bot"></div>
+                </div>
+            </div>
+        </div>
+        <div style="clear:both;"></div>
+        <div id="copy">
+            <div id="copy-top"></div>
+            <div id="copy-mid">
+                <small>&copy; Designed by <a href="http://dodesign.us">doDesign</a></small>            
+            </div>
+          <div id="copy-bot"></div>
+        </div>
+    </div>
+	<div id="container-bottom"></div>
+</div>
+</body>
+</html>

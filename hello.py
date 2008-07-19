@@ -30,20 +30,61 @@ class MainPage(webapp.RequestHandler):
 		if user != None:
 
 			# Show His Daily Routine.
-			tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC",
-                               users.get_current_user())
+			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
 
-			#for tarsusaItem in tarsusaItemCollection:
-			#		self.response.out.write('<b>%s</b> wrote:' % tarsusaItem.user.nickname())
-			#	self.response.out.write('<blockquote>%s</blockquote>' %
-            #       cgi.escape(tarsusaItem.comment))
 			
+			
+			
+			# Count User's Todos and Dones
+			tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
+
+			# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
+			# SO there is implemented a stupid way.
+			UserTotalItems = 0
+			UserToDoItems = 0
+			UserDoneItems = 0
+
+			UserDonePercentage = 0.00
+
+			for eachItem in tarsusaItemCollection_UserItems:
+				UserTotalItems += 1
+				if eachItem.done == True:
+					UserDoneItems += 1
+				else:
+					UserToDoItems += 1
+			
+			if UserTotalItems != 0:
+				UserDonePercentage = UserDoneItems / UserTotalItems
+			else:
+				UserDonePercentage = 0.00
+
+
+
+			## SPEED KILLER!
+			## MULTIPLE DB QUERIES!
+			## CAUTION! MODIFY THESE LATER!
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 5", users.get_current_user())
+
+
+
 			template_values = {
 				'UserNickName': user.nickname(),
-				'tarsusaItemCollection': tarsusaItemCollection,
+				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				}
 
+
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+
+
+				'UserTotalItems': UserTotalItems,
+				'UserToDoItems': UserToDoItems,
+				'UserDoneItems': UserDoneItems,
+			}
+
+
+			
 			# For LoggedIn User, Show his own items.
 			#self.response.out.write ('<html><body>now begin to process the first tarsusa item!<BR><BR>')
 
@@ -61,9 +102,6 @@ class MainPage(webapp.RequestHandler):
 			#	self.response.out.write('<blockquote>%s</blockquote>' %
             #       cgi.escape(tarsusaItem.comment))
 			
-			path = os.path.join(os.path.dirname(__file__), 'index.html')
-			self.response.out.write(template.render("./index.html", template_values))
-	
 
 			#self.response.out.write ('<a href="/Add">Add an Item Now!</a>')
 
@@ -83,7 +121,10 @@ class MainPage(webapp.RequestHandler):
 		
 		
 		#Manupilating Templates	
-		#path = os.path.join(os.path.dirname(__file__), 'index.html')
+		path = os.path.join(os.path.dirname(__file__), 'index.html')
+		self.response.out.write(template.render(path, template_values))
+	
+
 
 		#self.redirect(users.create_login_url(self.request.uri))
 
@@ -125,7 +166,9 @@ class AddItemProcess(webapp.RequestHandler):
 			first_tarsusa_item.public = True
 		else:
 			first_tarsusa_item.public = False
-										
+
+		first_tarsusa_item.done = False
+
 		first_tarsusa_item.put()
 		self.redirect('/')
 
@@ -146,9 +189,21 @@ class SignOutPage(webapp.RequestHandler):
 class UserMainPage(webapp.RequestHandler):
 	def get(self):
 		print "this is UserMainpage"
+
 class StatsticsPage(webapp.RequestHandler):
 	def get(self):
-		print "this is  Statsticspage"
+		tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem ORDER BY date DESC")
+
+		for tarsusaItem in tarsusaItemCollection:
+			self.response.out.write('An anonymous person wrote:')
+
+			self.response.out.write('<blockquote>%s</blockquote>' %
+                cgi.escape(tarsusaItem.name))
+
+			self.response.out.write('<blockquote>%s</blockquote>' %
+                cgi.escape(tarsusaItem.comment))
+	
+		
 class BlogPage(webapp.RequestHandler):
 	def get(self):
 		print "this is Blog page"
@@ -157,9 +212,14 @@ class BlogPage(webapp.RequestHandler):
 
 class AboutPage(webapp.RequestHandler):
 	def get(self):
-		print "This is about page"
+		
+		template_values = {
+				'UserNickName': "The About page of Nevada.",
+		}
 
-
+	
+		path = os.path.join(os.path.dirname(__file__), 'single.html')
+		self.response.out.write(template.render(path, template_values))
 
 
 def main():
