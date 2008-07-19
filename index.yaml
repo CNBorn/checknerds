@@ -10,8 +10,23 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+# Used 18 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: date
+    direction: desc
+
 # Used once in query history.
 - kind: tarsusaItem
   properties:
+  - name: public
+  - name: date
+    direction: desc
+
+# Used 33 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: routine
+  - name: user
   - name: date
     direction: desc

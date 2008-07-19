@@ -4,6 +4,13 @@ runtime: python
 api_version: 1
 
 handlers:
+- url: /img
+  static_dir: img
+
+- url: /(.*)\.css
+  static_files: /\1
+  upload: /
+
 - url: /About
   script: hello.py
 
