@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Nevada - {{ singlePageTitle }}</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="img/style.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -23,7 +23,7 @@
                 <table style="font-size:11px;">
                 	<tr>
                     	<td>
-                            <a href="index.html">Home</a> &raquo; <a href="index.html">Enter a Post Title Here</a>
+                            <a href="/">Home</a> &raquo; <a href="/">{{ singlePageTitle }}</a>
 						</td>
                     	<td class="textalign-right">
                             <em style="color:#86a05f">powered by Google App Engine</em>
@@ -54,8 +54,8 @@
                     </div>
 
                     <div id="singleleft">
-                        <h2 class="posttitle" style="font-weight:normal;">Enter a Post Title Here</h2>
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        <h2 class="posttitle" style="font-weight:normal;">{{ singlePageTitle }} </h2>
+                        <p>{{ singlePageContent }}</p>
 					</div>
                 </div>
                 <div id="bot"></div>

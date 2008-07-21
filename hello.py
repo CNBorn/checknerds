@@ -8,22 +8,11 @@ import datetime
 from google.appengine.ext.webapp import template
 
 
-
-class tarsusaItem(db.Model):
-    user = db.UserProperty()
-    name = db.StringProperty()
-    comment = db.StringProperty(multiline=True)
-    tag = db.StringProperty()
-    date = db.DateTimeProperty(auto_now_add=True)
-    expectdate = db.DateTimeProperty()
-    donedate = db.DateTimeProperty()
-    done = db.BooleanProperty()
-    routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
-    public = db.BooleanProperty()
+from modules import *
+from base import *
 
 
-
-class MainPage(webapp.RequestHandler):
+class MainPage(tarsusaRequestHandler):
 	def get(self):
 		user = users.get_current_user()	
 		
@@ -84,6 +73,9 @@ class MainPage(webapp.RequestHandler):
 			}
 
 
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'index.html')
+			self.response.out.write(template.render(path, template_values))
 			
 			# For LoggedIn User, Show his own items.
 			#self.response.out.write ('<html><body>now begin to process the first tarsusa item!<BR><BR>')
@@ -106,8 +98,13 @@ class MainPage(webapp.RequestHandler):
 			#self.response.out.write ('<a href="/Add">Add an Item Now!</a>')
 
 		else:
-    	
-			tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public=True ORDER BY date DESC LIMIT 10")
+    					
+			#self.redirect(users.create_login_url(self.request.uri))
+
+			self.redirect(self.get_login_url(True))
+
+
+			#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public=True ORDER BY date DESC LIMIT 10")
 
 			#for tarsusaItem in tarsusaItemCollection:
 				#self.response.out.write('An anonymous person wrote:')
@@ -120,15 +117,13 @@ class MainPage(webapp.RequestHandler):
 
 		
 		
-		#Manupilating Templates	
-		path = os.path.join(os.path.dirname(__file__), 'index.html')
-		self.response.out.write(template.render(path, template_values))
+		
+		
 	
 
 
-		#self.redirect(users.create_login_url(self.request.uri))
 
-class AddPage(webapp.RequestHandler):
+class AddPage(tarsusaRequestHandler):
 	def get(self):
 		# "this is add page"
 		user = users.get_current_user()	
@@ -173,18 +168,20 @@ class AddItemProcess(webapp.RequestHandler):
 		self.redirect('/')
 
 
-class LoginPage(webapp.RequestHandler):
+class LoginPage(tarsusaRequestHandler):
 	def get(self):
-		print "this is login page"
+		if self.chk_login == False:		
+			self.redirect(self.get_login_url(True))		
+		self.redirect("/")
 
 class SignInPage(webapp.RequestHandler):
 	def get(self):
 		print "this is signinpage"
 
-class SignOutPage(webapp.RequestHandler):
+class SignOutPage(tarsusaRequestHandler):
 	def get(self):
-		print ""
-		self.redirect(users.create_login_url(self.request.uri))
+		#self.redirect(users.create_login_url(self.request.uri))
+		self.redirect(self.get_logout_url(True))
 
 class UserMainPage(webapp.RequestHandler):
 	def get(self):
@@ -210,11 +207,13 @@ class BlogPage(webapp.RequestHandler):
 
 
 
-class AboutPage(webapp.RequestHandler):
+class AboutPage(tarsusaRequestHandler):
 	def get(self):
 		
 		template_values = {
 				'UserNickName': "The About page of Nevada.",
+				'singlePageTitle': "The About page of Nevada.",
+				'singlePageContent': "This is the About content.",
 		}
 
 	
