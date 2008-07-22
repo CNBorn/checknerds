@@ -44,7 +44,7 @@ class MainPage(tarsusaRequestHandler):
 					UserToDoItems += 1
 			
 			if UserTotalItems != 0:
-				UserDonePercentage = UserDoneItems / UserTotalItems
+				UserDonePercentage = UserDoneItems *100 / UserTotalItems 
 			else:
 				UserDonePercentage = 0.00
 
@@ -73,6 +73,7 @@ class MainPage(tarsusaRequestHandler):
 				'UserTotalItems': UserTotalItems,
 				'UserToDoItems': UserToDoItems,
 				'UserDoneItems': UserDoneItems,
+				'UserDonePercentage': UserDonePercentage,
 			}
 
 
@@ -168,11 +169,29 @@ class ViewItem(tarsusaRequestHandler):
 				'UserNickName': "The About page of Nevada.",
 				'singlePageTitle': tItem.name,
 				'singlePageContent': tItem.comment,
+
+
+				'tarsusaItem': tItem,
 		}
 
 	
 		path = os.path.join(os.path.dirname(__file__), './single.html')
 		self.response.out.write(template.render(path, template_values))
+
+
+class DoneItem(tarsusaRequestHandler):
+	def get(self):
+		ItemId = self.request.path[10:]
+		tItem = tarsusaItem.get_by_id(int(ItemId))
+
+		tItem.done = True
+
+		tItem.put()
+
+		self.redirect('/')
+
+
+
 
 
 class LoginPage(tarsusaRequestHandler):
@@ -237,6 +256,7 @@ def main():
 									   ('/Add', AddPage),
 								       ('/additem',AddItemProcess),
 									   ('/i/\\d+',ViewItem),
+									   ('/doneItem/\\d+',DoneItem),
 									   ('/Login',LoginPage),
 								       ('/SignIn',SignInPage),
 									   ('/SignOut',SignOutPage),
