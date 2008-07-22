@@ -26,8 +26,13 @@
                             <a href="/">Home</a>&nbsp;
                             <a href="/About">About</a>&nbsp;
                             <a href="/Blog">Blog</a>
+							{% if not UserLoggedIn %}
 							<a href="/Login">Login</a>
+							{% endif %}
+							{% if UserLoggedIn %}
+							<a> {{ UserNickName }}</a>
 							<a href="/SignOut">SignOut</a>
+							{% endif %}
 						</td>
 
                     	<td class="textalign-right">
@@ -85,8 +90,8 @@
                             	<h2 class="posttitle"><a href="index.html">尚未完成</a></h2>
 							  <p>
 							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
-								<input type="checkbox" name="checkboxname" onchange="">
-									{{ tarsusaItem_UserToDoItems.comment|escape }}
+									<input type="checkbox" name="checkboxname" onchange="">
+									<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
 								{% endfor %}							  
 							  <a href="index.html">(Read More)</a></p>
                             </div>
@@ -99,7 +104,7 @@
 								{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
 							        	<li>
 											<input type="checkbox" name="checkboxname" onchange="location.href=done";>
-											{{ tarsusaItem_UserDoneItem.name|escape }}
+											<a href="/i/{{ tarsusaItem_UserDoneItem.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
 								    	</li>
 								{% endfor %}
 								<a href="index.html">(Read More)</a></p>

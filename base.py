@@ -14,6 +14,8 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
 		self.login_user = users.get_current_user()
 		self.is_login = (self.login_user != None)
+		
+		##
 		if self.is_login:
 			self.user = User.all().filter('user = ', self.login_user).get() or User(user = self.login_user)
 		else:
@@ -52,12 +54,12 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 		return users.create_login_url(self.request.uri)
 
 	def get_logout_url(self, from_referer=False):
-		if from_referer:
-			dst = self.referer
-			if not dst : dst = '/blog/'
-			return users.create_logout_url(dst)
-		else:
-			return users.create_logout_url(self.request.uri)
+		#if from_referer:
+		#	dst = self.referer
+		#	if not dst : dst = '/blog/'
+		#	return users.create_logout_url(dst)
+		#else:
+		return users.create_logout_url(self.request.uri)
 
 
 
@@ -67,7 +69,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 		if self.is_login:
 			return True
 		else:
-			self.redirect(redirect_url)
+			#self.redirect(redirect_url)
 			return False
 
 	def chk_admin(self, redirect_url='/'):

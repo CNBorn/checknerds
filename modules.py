@@ -17,6 +17,7 @@ class tarsusaItem(db.Model):
 
 class User(db.Model):
 	user = db.UserProperty(required = True)
+	#mail
 	dispname = db.StringProperty()
 	website = db.LinkProperty()
 

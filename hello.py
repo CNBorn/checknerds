@@ -14,9 +14,10 @@ from base import *
 
 class MainPage(tarsusaRequestHandler):
 	def get(self):
-		user = users.get_current_user()	
 		
-		if user != None:
+		#user = users.get_current_user()	
+		
+		if self.chk_login() == True:
 
 			# Show His Daily Routine.
 			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
@@ -58,7 +59,9 @@ class MainPage(tarsusaRequestHandler):
 
 
 			template_values = {
-				'UserNickName': user.nickname(),
+				'UserLoggedIn': 'Logged In',
+				
+				'UserNickName': self.login_user.nickname(),
 				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 
@@ -94,32 +97,19 @@ class MainPage(tarsusaRequestHandler):
 			#	self.response.out.write('<blockquote>%s</blockquote>' %
             #       cgi.escape(tarsusaItem.comment))
 			
-
-			#self.response.out.write ('<a href="/Add">Add an Item Now!</a>')
-
 		else:
-    					
-			#self.redirect(users.create_login_url(self.request.uri))
+			template_values = {
+				
+				'UserNickName': "访客",
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 
-			self.redirect(self.get_login_url(True))
+
+			}
 
 
-			#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public=True ORDER BY date DESC LIMIT 10")
-
-			#for tarsusaItem in tarsusaItemCollection:
-				#self.response.out.write('An anonymous person wrote:')
-
-				#self.response.out.write('<blockquote>%s</blockquote>' %
-                #    cgi.escape(tarsusaItem.name))
-
-				#self.response.out.write('<blockquote>%s</blockquote>' %
-                #    cgi.escape(tarsusaItem.comment))
-
-		
-		
-		
-		
-	
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'index.html')
+			self.response.out.write(template.render(path, template_values))
 
 
 
@@ -146,9 +136,6 @@ class AddPage(tarsusaRequestHandler):
 									</select><br>''')
 			self.response.out.write ('<input type="checkbox" name="public" value="True">公开项目<BR>')
 
-			# first_tarsusa_item.name
-			#print first_tarsusa_item.comment
-			#print first_tarsusa_item.routine
 			self.response.out.write ('''<input type="submit" name="submit" value="添加一个任务"></form>''')
 
 
@@ -167,12 +154,33 @@ class AddItemProcess(webapp.RequestHandler):
 		first_tarsusa_item.put()
 		self.redirect('/')
 
+class ViewItem(tarsusaRequestHandler):
+	def get(self):
+		#self.current_page = "home"
+		postid = self.request.path[3:]
+		#self.write(postid)
+		tItem = tarsusaItem.get_by_id(int(postid))
+		#self.write(tItem.name)
+
+		template_values = {
+				'PrefixCSSdir': "../",
+				
+				'UserNickName': "The About page of Nevada.",
+				'singlePageTitle': tItem.name,
+				'singlePageContent': tItem.comment,
+		}
+
+	
+		path = os.path.join(os.path.dirname(__file__), './single.html')
+		self.response.out.write(template.render(path, template_values))
+
 
 class LoginPage(tarsusaRequestHandler):
 	def get(self):
-		if self.chk_login == False:		
-			self.redirect(self.get_login_url(True))		
-		self.redirect("/")
+		# if seems that self.chk_login can not determine the right status
+		
+		#if self.chk_login == False:		
+			self.redirect(users.create_login_url('/'))
 
 class SignInPage(webapp.RequestHandler):
 	def get(self):
@@ -180,12 +188,15 @@ class SignInPage(webapp.RequestHandler):
 
 class SignOutPage(tarsusaRequestHandler):
 	def get(self):
-		#self.redirect(users.create_login_url(self.request.uri))
-		self.redirect(self.get_logout_url(True))
+		self.redirect(users.create_logout_url('/'))
 
-class UserMainPage(webapp.RequestHandler):
+class UserMainPage(tarsusaRequestHandler):
 	def get(self):
 		print "this is UserMainpage"
+
+
+
+
 
 class StatsticsPage(webapp.RequestHandler):
 	def get(self):
@@ -225,6 +236,7 @@ def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 									   ('/Add', AddPage),
 								       ('/additem',AddItemProcess),
+									   ('/i/\\d+',ViewItem),
 									   ('/Login',LoginPage),
 								       ('/SignIn',SignInPage),
 									   ('/SignOut',SignOutPage),
