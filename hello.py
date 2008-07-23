@@ -172,6 +172,7 @@ class ViewItem(tarsusaRequestHandler):
 
 
 				'tarsusaItem': tItem,
+				'tarsusaItemDone': tItem.done
 		}
 
 	
@@ -190,6 +191,17 @@ class DoneItem(tarsusaRequestHandler):
 
 		self.redirect('/')
 
+
+class UnDoneItem(tarsusaRequestHandler):
+	def get(self):
+		ItemId = self.request.path[12:]
+		tItem = tarsusaItem.get_by_id(int(ItemId))
+
+		tItem.done = False
+
+		tItem.put()
+
+		self.redirect('/')
 
 
 
@@ -257,6 +269,7 @@ def main():
 								       ('/additem',AddItemProcess),
 									   ('/i/\\d+',ViewItem),
 									   ('/doneItem/\\d+',DoneItem),
+									   ('/undoneItem/\\d+',UnDoneItem),
 									   ('/Login',LoginPage),
 								       ('/SignIn',SignInPage),
 									   ('/SignOut',SignOutPage),

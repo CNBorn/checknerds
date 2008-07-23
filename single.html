@@ -57,9 +57,16 @@
                         <h2 class="posttitle" style="font-weight:normal;">{{ singlePageTitle }} </h2>
                         <p>{{ singlePageContent }}<br />
 						{% if tarsusaItem %}
+							{% if not tarsusaItemDone %}
 							<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem.key.id}}'";>
+							{% else %}
+							<img src="/img/accept16.png">
+							{% endif %}
 
 							<a href="/i/{{ tarsusaItem.key.id }}">{{ tarsusaItem.name|escape }}</a>
+							{% if tarsusaItemDone %}
+								<a href="/undoneItem/{{tarsusaItem.key.id}}" class="x">撤销</a>
+							{% endif %}
 						{% endif %}
 							
 						

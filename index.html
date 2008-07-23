@@ -90,10 +90,11 @@
                             	<h2 class="posttitle"><a href="index.html">尚未完成</a></h2>
 							  <p>
 							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
-									<input type="checkbox" name="checkboxname" onchange="">
+									<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem_UserToDoItem.key.id}}'">
 									<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
+									<a href="/undoneItem/{{tarsusaItem_UserToDoItem.key.id}}" class="x">x</a><br />
 								{% endfor %}							  
-							  <a href="index.html">(Read More)</a></p>
+							  <br /><a href="index.html">(Read More)</a></p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
@@ -101,13 +102,13 @@
                             <div class="latestcode-top"></div>
                             <div class="latestcode-mid">
                             	<h2 class="posttitle"><a href="index.html">已经完成</a></h2>
+								<p>
 								{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-							        	<li>
-											<input type="checkbox" name="checkboxname" onchange="location.href=done";>
-											<a href="/i/{{ tarsusaItem_UserDoneItem.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
-								    	</li>
+											<img src="/img/accept16.png">
+											<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
+											<a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="x">撤销</a><br />
 								{% endfor %}
-								<a href="index.html">(Read More)</a></p>
+								<br /><a href="index.html">(Read More)</a></p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
@@ -160,17 +161,17 @@
                 <div id="codelist">
                 	<div id="codelist-top"></div>
                 	<div id="codelist-mid">
-                    	<h2 class="posttitle">Pages</h2>
+                    	<h2 class="posttitle">{{UserNickName}}</h2>
                         <ul>
-                            <li><a href="index.html">Page 1</a></li>
-                            <li><a href="index.html">Page 2</a></li>
-                            <li><a href="index.html">Page 3</a></li>
+                            <li><a href="/Add">Add Item</a></li>
+                            <li><a href="index.html">Done Log</a></li>
+                            <li><a href="index.html">Statstics</a></li>
                         </ul>
-                    	<h2 class="posttitle">Latest Codes</h2>
+                    	<h2 class="posttitle">Connections</h2>
                         <ul>
-                            <li><a href="index.html">Latest Code 1</a></li>
-                            <li><a href="index.html">Latest Code 2</a></li>
-                            <li><a href="index.html">Latest Code 3</a></li>
+                            <li><a href="index.html">My Friends</a></li>
+                            <li><a href="index.html">Find a Friend</a></li>
+                            <li><a href="index.html">More.</a></li>
                         </ul>                        
                     </div>
                 	<div id="codelist-bot"></div>
