@@ -19,6 +19,15 @@ class MainPage(tarsusaRequestHandler):
 		
 		if self.chk_login() == True:
 
+			## Check usedtags as the evaluation for Tags Model
+			## TEMP CODE!
+			
+			UserUsedTagsItems = db.GqlQuery("SELECT * FROM User WHERE user = :1", users.get_current_user())
+			for User in UserUsedTagsItems:
+				self.write(User.name)
+				self.write(User.usedtags)
+
+
 			# Show His Daily Routine.
 			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
 
@@ -57,6 +66,26 @@ class MainPage(tarsusaRequestHandler):
 			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 5", users.get_current_user())
 
 
+			## Calculating Tags 
+			## There is another performance killer.
+			
+			#SystemTags = db.GqlQuery("SELECT * FROM Tag")
+			UserUsedTagsItems = db.GqlQuery("SELECT * FROM User WHERE user = :1 LIMIT 1", users.get_current_user())
+			
+			UserUsedTagsName = []
+
+			for UserUsedTags in UserUsedTagsItems:
+				UserUsedTagsName = split_tags(UserUsedTags.usedtags)
+			
+			UserTags = []
+
+			for UserUsedTag in UserUsedTagsName:
+				tmpSystemTagRead = Tag.all().filter("name=",UserUesdTag)
+				
+				if tmpSystemTagRead != None:
+					UserTags.append(tmpSystemTagRead.name)
+
+
 
 			template_values = {
 				'UserLoggedIn': 'Logged In',
@@ -65,6 +94,7 @@ class MainPage(tarsusaRequestHandler):
 				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 
+				'UserUsedTags': UserTags,
 
 				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
 				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
@@ -80,23 +110,6 @@ class MainPage(tarsusaRequestHandler):
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'index.html')
 			self.response.out.write(template.render(path, template_values))
-			
-			# For LoggedIn User, Show his own items.
-			#self.response.out.write ('<html><body>now begin to process the first tarsusa item!<BR><BR>')
-
-			#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem ORDER BY date DESC LIMIT 10")
-
-			#for tarsusaItem in tarsusaItemCollection:
-			#	if tarsusaItem.user: 
-			#		self.response.out.write('<b>%s</b> wrote:' % tarsusaItem.user.nickname())
-			#	else:
-			#		self.response.out.write('An anonymous person wrote:')
-
-			#	self.response.out.write('<blockquote>%s</blockquote>' %
-            #        cgi.escape(tarsusaItem.name))
-
-			#	self.response.out.write('<blockquote>%s</blockquote>' %
-            #       cgi.escape(tarsusaItem.comment))
 			
 		else:
 			template_values = {
@@ -125,7 +138,7 @@ class AddPage(tarsusaRequestHandler):
 			self.response.out.write ('''<form action="/additem" method="post">
 		标题  <input type="text" name="name" value="" size="18" class="sl"><br />
 		内容  <textarea name="comment" rows="4" cols="16" wrap="PHYSICAL" class="ml"></textarea><br />
-		类别  <input type="text" name="tag" size="18" class="sl"><br />
+		类别  <input type="text" name="tags" size="18" class="sl"><br />
 		预计完成于<br />''')
 			self.response.out.write ('''性质：<select name="routine">
 									<option value="none" selected="selected">非坚持性任务</option>
@@ -143,7 +156,7 @@ class AddPage(tarsusaRequestHandler):
 
 class AddItemProcess(webapp.RequestHandler):
 	def post(self):
-		first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')), tag=cgi.escape(self.request.get('tag')),
+		first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')), tags=cgi.escape(self.request.get('tags')),
 										routine=cgi.escape(self.request.get('routine')))
 		if self.request.get('public') == "True":
 			first_tarsusa_item.public = True
@@ -153,6 +166,32 @@ class AddItemProcess(webapp.RequestHandler):
 		first_tarsusa_item.done = False
 
 		first_tarsusa_item.put()
+		
+		#Derived from Plog, update the Tag module.
+		update_tag_count(old_tags = [], new_tags = cgi.escape(self.request.get('tags')))
+
+		# According to New Tags system, The User model must be used.
+
+		#User.get_by_user(users.get_current_user()).tags += self.request.get('tags')
+		#User = Comment.all().filter('post = ', post).order('date')
+		UserSettings = db.GqlQuery("SELECT * FROM User WHERE user = :1 LIMIT 1", users.get_current_user())
+		for User in UserSettings:
+			User.usedtags += self.request.get('tags')
+			User.put()
+		
+
+
+		
+		# Haven't know what will the below code do.
+		# Count the Tags?
+		
+		#all_post_tag = Tag.get_by_key_name('all_post_tag')
+		#all_post_tag.count += 1
+		#all_post_tag.put()
+
+
+
+
 		self.redirect('/')
 
 class ViewItem(tarsusaRequestHandler):
@@ -182,24 +221,35 @@ class ViewItem(tarsusaRequestHandler):
 
 class DoneItem(tarsusaRequestHandler):
 	def get(self):
+		
+		#Permission check is very important.
+				
 		ItemId = self.request.path[10:]
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 
-		tItem.done = True
+		if tItem.user == users.get_current_user():
 
-		tItem.put()
+			tItem.done = True
+
+			tItem.put()
+
 
 		self.redirect('/')
 
 
 class UnDoneItem(tarsusaRequestHandler):
 	def get(self):
+
+		# Permission check is very important.
+
 		ItemId = self.request.path[12:]
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 
-		tItem.done = False
+		if tItem.user == users.get_current_user():
 
-		tItem.put()
+			tItem.done = False
+
+			tItem.put()
 
 		self.redirect('/')
 

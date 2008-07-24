@@ -4,7 +4,7 @@ class tarsusaItem(db.Model):
     user = db.UserProperty()
     name = db.StringProperty()
     comment = db.StringProperty(multiline=True)
-    tag = db.StringProperty()
+    tags = db.StringProperty()
     date = db.DateTimeProperty(auto_now_add=True)
     expectdate = db.DateTimeProperty()
     donedate = db.DateTimeProperty()
@@ -20,6 +20,8 @@ class User(db.Model):
 	#mail
 	dispname = db.StringProperty()
 	website = db.LinkProperty()
+	usedtags = db.StringProperty()
+
 
 	def __unicode__(self):
 		if self.dispname:
@@ -30,6 +32,11 @@ class User(db.Model):
 	def __str__(self):
 		return self.__unicode__().encode('utf-8')
 
+
+
+class Tag(db.Model):
+	name = db.StringProperty()
+	count = db.IntegerProperty(required=True)
 
 
 
