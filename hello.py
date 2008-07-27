@@ -31,6 +31,51 @@ class MainPage(tarsusaRequestHandler):
 			# Show His Daily Routine.
 			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
 
+			tarsusaItemCollection_DoneDailyRoutine = tarsusaRoutineLogItem 
+
+
+			# GAE datastore has a gqlquery.count limitation. So right here solve this manully.
+			tarsusaItemCollection_DailyRoutine_count = 0
+			for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
+				tarsusaItemCollection_DailyRoutine_count +=1
+
+			for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
+				
+				#This query should effectively read out all dailyroutine done by today.
+				#for the result will be traversed below, therefore it should be as short as possible.
+				#MARK FOR FUTURE IMPROVMENT
+				
+				# GAE datastore has a gqlquery.count limitation. So right here solve this manully.
+				#tarsusaItemCollection_DailyRoutine_count
+				# Refer to code above.
+				
+				
+				#LIMIT and OFFSET don't currently support bound parameters.
+				# http://code.google.com/p/googleappengine/issues/detail?id=179
+				# if this is realized, the code below next line will be used.
+
+				tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC ", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id())
+				
+				#tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT :3", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id(), int(tarsusaItemCollection_DailyRoutine_count))
+
+				## traversed RoutineDaily
+				tarsusaItem_DailyRoutineDoneTable = []
+				for tarsusaItem_DoneDailyRoutine in tarsusaItemCollection_DoneDailyRoutine:
+					if datetime.datetime.date(tarsusaItem_DoneDailyRoutine.donedate) == datetime.datetime.date(datetime.datetime.now()):
+						# This routine have been done today.
+						
+						# Due to solve this part, I have to change tarsusaItemModel to db.Expando
+						# I hope there is not so much harm for performance.
+						each_tarsusaItemCollection_DailyRoutine.donetoday = 1
+						each_tarsusaItemCollection_DailyRoutine.put()
+
+					else:
+						pass
+
+
+
+
+
 			
 			
 			
@@ -91,7 +136,10 @@ class MainPage(tarsusaRequestHandler):
 				'UserLoggedIn': 'Logged In',
 				
 				'UserNickName': self.login_user.nickname(),
+				
 				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
+
+
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 
 				'UserUsedTags': UserTags,
@@ -152,7 +200,8 @@ class AddPage(tarsusaRequestHandler):
 
 			self.response.out.write ('''<input type="submit" name="submit" value="添加一个任务"></form>''')
 
-
+		else:
+			self.write ("Your are not logged in!")
 
 class AddItemProcess(webapp.RequestHandler):
 	def post(self):
@@ -165,6 +214,7 @@ class AddItemProcess(webapp.RequestHandler):
 
 		first_tarsusa_item.done = False
 
+		## the creation date will be added automatically by GAE datastore
 		first_tarsusa_item.put()
 		
 		#Derived from Plog, update the Tag module.
@@ -221,17 +271,28 @@ class ViewItem(tarsusaRequestHandler):
 
 class DoneItem(tarsusaRequestHandler):
 	def get(self):
-		
-		#Permission check is very important.
 				
 		ItemId = self.request.path[10:]
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 
 		if tItem.user == users.get_current_user():
+			## Check User Permission to done this Item
 
-			tItem.done = True
+			if tItem.routine == 'none':
+				## if this item is not a routine item.
 
-			tItem.put()
+				tItem.done = True
+				tItem.put()
+			
+			else:
+				## if this item is a routine item.
+				NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
+				NewlyDoneRoutineItem.user = users.get_current_user()
+				NewlyDoneRoutineItem.routineid = int(ItemId)
+				NewlyDoneRoutineItem.routine = tItem.routine
+				# The done date will be automatically added by GAE datastore.			
+				NewlyDoneRoutineItem.put()
+
 
 
 		self.redirect('/')
@@ -246,10 +307,27 @@ class UnDoneItem(tarsusaRequestHandler):
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 
 		if tItem.user == users.get_current_user():
+			## Check User Permission to done this Item
 
-			tItem.done = False
+			if tItem.routine == 'none':
+				## if this item is not a routine item.
+				tItem.done = False
 
-			tItem.put()
+				tItem.put()
+			else:
+				if tItem.routine == 'daily':
+					del tItem.donetoday
+					## This is a daily routine, and we are going to undone it.
+					## For DailyRoutine, now I just count the matter of deleting today's record.
+					## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
+					
+					# GAE can not make dateProperty as query now! There is a BUG for GAE!
+					# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
+					tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate = :2", ItemId, datetime.datetime.date(datetime.datetime.now()))
+					for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
+						result.delete()
+
+
 
 		self.redirect('/')
 
@@ -279,19 +357,27 @@ class UserMainPage(tarsusaRequestHandler):
 
 
 
-class StatsticsPage(webapp.RequestHandler):
+class StatsticsPage(tarsusaRequestHandler):
 	def get(self):
 		tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem ORDER BY date DESC")
 
 		for tarsusaItem in tarsusaItemCollection:
-			self.response.out.write('An anonymous person wrote:')
-
 			self.response.out.write('<blockquote>%s</blockquote>' %
                 cgi.escape(tarsusaItem.name))
 
 			self.response.out.write('<blockquote>%s</blockquote>' %
                 cgi.escape(tarsusaItem.comment))
-	
+
+		self.write('--------------')
+		
+		tarsusaRoutineItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem ORDER BY date DESC")
+
+		for tarsusaItem in tarsusaRoutineItemCollection:
+			self.response.out.write('<blockquote>%s</blockquote>' %
+                cgi.escape(tarsusaItem.routineid))
+
+			self.response.out.write('<blockquote>%s</blockquote>' %
+                cgi.escape(tarsusaItem.donedate))	
 		
 class BlogPage(webapp.RequestHandler):
 	def get(self):

@@ -1,6 +1,6 @@
 from google.appengine.ext import db
 
-class tarsusaItem(db.Model):
+class tarsusaItem(db.Expando):
     user = db.UserProperty()
     name = db.StringProperty()
     comment = db.StringProperty(multiline=True)
@@ -12,7 +12,12 @@ class tarsusaItem(db.Model):
     routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
     public = db.BooleanProperty()
 
-
+class tarsusaRoutineLogItem(db.Model):
+	
+	user = db.UserProperty()
+	routineid = db.IntegerProperty()
+	routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
+	donedate = db.DateTimeProperty(auto_now_add=True)
 
 
 class User(db.Model):

@@ -56,10 +56,17 @@
 									<p>
 									{% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
 							        	<li>
-											<input type="checkbox" name="checkboxname" onchange="location.href=done";>
-											{{ tarsusaItem_DailyRoutine.name|escape }}
-										<span class="text_tag"><a href="#;" onclick="if (confirm(\'确认删除项目？' + record.name + '\')) { location.href = \'removeItem.py?itemId=' + str(record.__id__) + '\';}" class="x">&nbsp;x</a>
-								    	</li>
+												{% if tarsusaItem_DailyRoutine.donetoday %}
+													<img src="/img/accept16.png">												
+													{{ tarsusaItem_DailyRoutine.name|escape }}
+													<span class="text_tag"<a href="/undoneItem/{{tarsusaItem_DailyRoutine.key.id}}" class="x">撤销</a><br />
+												{% else %}
+													<input type="checkbox" name="checkboxname" onchange="location.href='/doneItem/{{tarsusaItem_DailyRoutine.key.id}}'";>
+													{{ tarsusaItem_DailyRoutine.name|escape }}
+												{% endif %}
+
+											
+																		    	</li>
 									{% endfor %}
 									
 									</p>
@@ -167,7 +174,7 @@
                         <ul>
                             <li><a href="/Add">Add Item</a></li>
                             <li><a href="index.html">Done Log</a></li>
-                            <li><a href="index.html">Statstics</a></li>
+                            <li><a href="/Statstics">Statstics</a></li>
                         </ul>
                     	<h2 class="posttitle">Connections</h2>
                         <ul>
