@@ -59,7 +59,6 @@ class MainPage(tarsusaRequestHandler):
 				#tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT :3", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id(), int(tarsusaItemCollection_DailyRoutine_count))
 
 				## traversed RoutineDaily
-				tarsusaItem_DailyRoutineDoneTable = []
 				for tarsusaItem_DoneDailyRoutine in tarsusaItemCollection_DoneDailyRoutine:
 					if datetime.datetime.date(tarsusaItem_DoneDailyRoutine.donedate) == datetime.datetime.date(datetime.datetime.now()):
 						# This routine have been done today.
@@ -304,7 +303,9 @@ class UnDoneItem(tarsusaRequestHandler):
 		# Permission check is very important.
 
 		ItemId = self.request.path[12:]
+		## Please be awared that ItemId here is a string!
 		tItem = tarsusaItem.get_by_id(int(ItemId))
+
 
 		if tItem.user == users.get_current_user():
 			## Check User Permission to done this Item
@@ -317,13 +318,16 @@ class UnDoneItem(tarsusaRequestHandler):
 			else:
 				if tItem.routine == 'daily':
 					del tItem.donetoday
+					tItem.put()
+					## Please Do not forget to .put()!
+
 					## This is a daily routine, and we are going to undone it.
 					## For DailyRoutine, now I just count the matter of deleting today's record.
 					## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
 					
 					# GAE can not make dateProperty as query now! There is a BUG for GAE!
 					# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
-					tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate = :2", ItemId, datetime.datetime.date(datetime.datetime.now()))
+					tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now())
 					for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
 						result.delete()
 
@@ -372,12 +376,10 @@ class StatsticsPage(tarsusaRequestHandler):
 		
 		tarsusaRoutineItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem ORDER BY date DESC")
 
-		for tarsusaItem in tarsusaRoutineItemCollection:
-			self.response.out.write('<blockquote>%s</blockquote>' %
-                cgi.escape(tarsusaItem.routineid))
+		for result in tarsusaRoutineItemCollection:
+			self.response.out.write(result.routineid)
 
-			self.response.out.write('<blockquote>%s</blockquote>' %
-                cgi.escape(tarsusaItem.donedate))	
+			self.response.out.write(result.donedate)
 		
 class BlogPage(webapp.RequestHandler):
 	def get(self):
