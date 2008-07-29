@@ -255,8 +255,8 @@ class ViewItem(tarsusaRequestHandler):
 				'PrefixCSSdir': "../",
 				
 				'UserNickName': "The About page of Nevada.",
-				'singlePageTitle': tItem.name,
-				'singlePageContent': tItem.comment,
+				'singlePageTitle': "View Item",
+				'singlePageContent': "",
 
 
 				'tarsusaItem': tItem,
@@ -270,7 +270,6 @@ class ViewItem(tarsusaRequestHandler):
 
 class DoneItem(tarsusaRequestHandler):
 	def get(self):
-				
 		ItemId = self.request.path[10:]
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 
@@ -279,7 +278,7 @@ class DoneItem(tarsusaRequestHandler):
 
 			if tItem.routine == 'none':
 				## if this item is not a routine item.
-
+				tItem.donedate = datetime.datetime.now()
 				tItem.done = True
 				tItem.put()
 			
@@ -312,6 +311,7 @@ class UnDoneItem(tarsusaRequestHandler):
 
 			if tItem.routine == 'none':
 				## if this item is not a routine item.
+				tItem.donedate = ""
 				tItem.done = False
 
 				tItem.put()

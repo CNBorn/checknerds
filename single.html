@@ -10,7 +10,7 @@
 <div id="container">
 	<div id="header">
     	<div id="logo">
-        	<a href="index.html">
+        	<a href="/">
                 <span id="sitename">codename Nevada</span>
             </a>      
             
@@ -56,20 +56,33 @@
                     <div id="singleleft">
                         <h2 class="posttitle" style="font-weight:normal;">{{ singlePageTitle }} </h2>
                         <p>{{ singlePageContent }}<br />
+						
 						{% if tarsusaItem %}
-							{% if not tarsusaItemDone %}
-							<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem.key.id}}'";>
+							项目详细信息
+							<table cellpadding="2" cellspacing="2" border="1" align="left"><tr>
+
+							<th width="60%" class="first"><a href="/i/{{ tarsusaItem.key.id }}">{{ tarsusaItem.name|escape }}</a></th>
+							<th><span class="date">分类：<a href="#">{{tarsusaItem.tags|escape }}</a></span></th></tr>
+							<tr class="rowB"><td colspan="2">&nbsp; {{ tarsusaItem.comment }}</td>
+							<tr><td width="50%" colspan="2"><span class="date">创建时间： &nbsp; {{tarsusaItem.date }}
+							| 预期完成： &nbsp; {{tarsusaItem.expectdate}}</span></td></tr>
+
+							<tr class="rowA"><td colspan="2">当前状态：
+							{% if tarsusaItemDone %}
+								<img src="/img/accept16.png">
+								已经完成于{{ tarsusaItem.donedate }} &nbsp;
+								<a href="#;" onclick="if (confirm('确认撤销完成？{{tarsusaItem.name|escape}}')) {location.href = '/undoneItem/{{tarsusaItem.key.id}}';}" class="x">撤销完成</a>
 							{% else %}
-							<img src="/img/accept16.png">
+								<tr class="rowA"><td colspan="2">当前状态：未完成
 							{% endif %}
 
-							<a href="/i/{{ tarsusaItem.key.id }}">{{ tarsusaItem.name|escape }}</a>
-							{% if tarsusaItemDone %}
-								<a href="/undoneItem/{{tarsusaItem.key.id}}" class="x">撤销</a>
+							{% if not tarsusaItemDone %}
+							<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem.key.id}}'";>完成这个任务
 							{% endif %}
-							<br />
-							Tags:&nbsp; {{ tarsusaItem.tags }}
-							<br />
+							&nbsp; <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="x">x</a>
+
+							</td></tr>
+							</table>
 						{% endif %}
 						</p>
 
