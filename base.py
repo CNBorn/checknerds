@@ -131,3 +131,33 @@ def update_tag_count(old_tags = None, new_tags = None):
 				t.put()
 
 
+## Import this function from tarsusa R6
+
+def printExpireTimeGap(timeOne,timeTwo):
+	ReturnString = ''
+	
+	#My Original Design, Returning a list with ReturnString in [0] and the following is Days Hours Minutes Seconds...
+	#ReturnList = []
+	if str(timeTwo - timeOne).find(" days,") <> -1:
+		#Projects has more than two days.
+		WorkString = str(timeTwo - timeOne).split(" days,",1)
+		TimeString = WorkString[1].split(":")
+
+	elif str(timeTwo - timeOne).find(" day,") <> -1:
+		#Projects has more than one day.
+		WorkString = str(timeTwo - timeOne).split("day,",1)
+		TimeString = WorkString[1].split(":")
+
+	else:
+		#Projects has less than one day.
+		TimeString = str(timeTwo - timeOne).split(":")
+		if str(timeTwo - timeOne)[0] == "-":
+			WorkString = ['-0']
+		else:
+			WorkString = ['0']
+
+	if WorkString[0][0] == "-":
+		ReturnString = "Past" + WorkString[0][1:] + "Days" + TimeString[0] + "Hours" + TimeString[1] + "Mins"
+	else:		
+		ReturnString = "To GO " + WorkString[0] + "Days" + TimeString[0] + "Hours" + TimeString[1] + "Mins"
+	return ReturnString

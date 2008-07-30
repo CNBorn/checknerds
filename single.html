@@ -74,6 +74,11 @@
 								<a href="#;" onclick="if (confirm('确认撤销完成？{{tarsusaItem.name|escape}}')) {location.href = '/undoneItem/{{tarsusaItem.key.id}}';}" class="x">撤销完成</a>
 							{% else %}
 								<tr class="rowA"><td colspan="2">当前状态：未完成
+									{% if tarsusaItem.expired %}
+										<span style="color: #F00000">注意：此任务已过期！</span>
+										<a href=/cancelexpireitem.py?itemId= class="x">取消日期限制</a>
+									{% endif %}
+
 							{% endif %}
 
 							{% if not tarsusaItemDone %}

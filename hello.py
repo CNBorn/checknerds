@@ -247,9 +247,20 @@ class ViewItem(tarsusaRequestHandler):
 	def get(self):
 		#self.current_page = "home"
 		postid = self.request.path[3:]
-		#self.write(postid)
 		tItem = tarsusaItem.get_by_id(int(postid))
-		#self.write(tItem.name)
+
+		# Check if this item is expired.
+		if tItem.expectdate != None:
+			if datetime.datetime.now() > tItem.expectdate:
+				tItem.expired = 1
+				tItem.put()
+			else:
+				pass
+
+		elif tItem.expired:
+			del tItem.expired
+			tItem.put()
+
 
 		template_values = {
 				'PrefixCSSdir': "../",

@@ -1,6 +1,17 @@
 .PLAN
 
 	IN 08.07.30
-		Calculate Time Gap betwwen two times.
-		Show Items with ExpectedDate on Rootpage.
+		
+		
+		PLAN - Calculate Time Gap betwwen two times.
+		PLAN - Show Items with ExpectedDate on Rootpage.
+
+		ACTULLY DONE - ViewItem checkout expired.
+					 - Put Cal TimeGap code from tarsusa r6, but not used.
+
+	IN 08.07.30
+		
+		PLAN - Put Add ExpectDate forms in AddItem page
+		PLAN - If possible, make a proper AddItem page layout
+
 
