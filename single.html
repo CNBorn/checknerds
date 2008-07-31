@@ -56,7 +56,18 @@
                     <div id="singleleft">
                         <h2 class="posttitle" style="font-weight:normal;">{{ singlePageTitle }} </h2>
                         <p>{{ singlePageContent }}<br />
-						
+					
+						{% if DonelogItemCollection %}
+							{% for DonelogItem in DonelogItemCollection %}
+								{{ DonelogItem.donedate }}<br />
+								Name: {{ DonelogItem.name|escape }}<br />
+							{% endfor %}
+						{% endif %}
+
+
+
+
+
 						{% if tarsusaItem %}
 							项目详细信息
 							<table cellpadding="2" cellspacing="2" border="1" align="left"><tr>

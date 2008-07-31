@@ -14,4 +14,8 @@
 		PLAN - Put Add ExpectDate forms in AddItem page
 		PLAN - If possible, make a proper AddItem page layout
 
+	IN 08.07.31
+		
+		ACTULLY DONE - Django Form test code added, Added Very simple donelog page, fixed little expired issue. 
+			Very limited improves these days!
 

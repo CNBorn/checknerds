@@ -195,6 +195,18 @@ class AddPage(tarsusaRequestHandler):
 									<option value="seasonly">每季度</option>
 									<option value="yearly">每年</option>
 									</select><br>''')
+			from google.appengine.ext.db import djangoforms
+
+			class ItemForm(djangoforms.ModelForm):
+				class Meta:
+					model = tarsusaItem
+					exclude =['user','date','donedate','done']
+
+			self.response.out.write(ItemForm())
+
+
+
+
 			self.response.out.write ('<input type="checkbox" name="public" value="True">公开项目<BR>')
 
 			self.response.out.write ('''<input type="submit" name="submit" value="添加一个任务"></form>''')
@@ -257,9 +269,12 @@ class ViewItem(tarsusaRequestHandler):
 			else:
 				pass
 
-		elif tItem.expired:
-			del tItem.expired
-			tItem.put()
+		elif tItem.expectdate != tItem.expectdate:
+			if tItem.expired:
+				del tItem.expired
+				tItem.put()
+		else:
+			pass
 
 
 		template_values = {
@@ -370,6 +385,29 @@ class UserMainPage(tarsusaRequestHandler):
 
 
 
+class DoneLogPage(tarsusaRequestHandler):
+	def get(self):
+		#Donelog page shows User Done's Log.
+
+		tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE done = 1 ORDER BY date DESC")
+
+		template_values = {
+				'PrefixCSSdir': "../",
+				
+				'UserNickName': "The About page of Nevada.",
+				'singlePageTitle': "DoneLog Page",
+				'singlePageContent': "",
+				
+				'DonelogItemCollection': tarsusaItemCollection,
+
+		}
+
+	
+		path = os.path.join(os.path.dirname(__file__), './single.html')
+		self.response.out.write(template.render(path, template_values))
+
+
+
 
 
 class StatsticsPage(tarsusaRequestHandler):
@@ -423,6 +461,7 @@ def main():
 								       ('/SignIn',SignInPage),
 									   ('/SignOut',SignOutPage),
                                        ('/UserMainPage',UserMainPage),
+								       ('/donelog',DoneLogPage),
 								       ('/Statstics',StatsticsPage),
 								       ('/About',AboutPage),
 								       ('/Blog',BlogPage)],
