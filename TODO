@@ -19,3 +19,15 @@
 		ACTULLY DONE - Django Form test code added, Added Very simple donelog page, fixed little expired issue. 
 			Very limited improves these days!
 
+
+	IN 08.08.02
+
+		ACTULLY DONE - Add message display below DailyRoutine.
+
+
+	IN 08.08.04
+		ACTULLY DONE - Testy, Add ericsk's Many to Many tag system, it seems went well.
+					   Of course, disabled some of the previous code of tag system.
+					   This part is still under construction...
+
+

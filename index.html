@@ -55,7 +55,7 @@
 				    - <strong class="posttitle">{{ htmltag_today }}</strong>
 									<p>
 									{% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
-							        	<li>
+							        	<ul>
 												{% if tarsusaItem_DailyRoutine.donetoday %}
 													<img src="/img/accept16.png">												
 													{{ tarsusaItem_DailyRoutine.name|escape }}
@@ -66,9 +66,9 @@
 												{% endif %}
 
 											
-																		    	</li>
+																		    	</ul>
 									{% endfor %}
-									
+									<ul>{{ htmltag_DoneAllDailyRoutine }}</ul>
 									</p>
                               	</td>
 							</tr>

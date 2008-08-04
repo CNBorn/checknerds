@@ -4,7 +4,8 @@ class tarsusaItem(db.Expando):
     user = db.UserProperty()
     name = db.StringProperty()
     comment = db.StringProperty(multiline=True)
-    tags = db.StringProperty()
+    tags = db.ListProperty(db.Key)
+    #tags = db.StringListProperty()
     date = db.DateTimeProperty(auto_now_add=True)
     expectdate = db.DateTimeProperty()
     donedate = db.DateTimeProperty()
@@ -41,9 +42,32 @@ class User(db.Model):
 
 class Tag(db.Model):
 	name = db.StringProperty()
-	count = db.IntegerProperty(required=True)
+	#count = db.IntegerProperty(required=True)
+
+	#design inspried by ericsk
+
+	@property
+	def posts(self):
+		return Post.gql('WHERE tags = :1', self.key())
 
 
 
+## Many to Many model design styles.
+## http://blog.ericsk.org/archives/1009
+
+
+#class Post(db.Model):
+#    title = db.StringProperty(required=True)
+#    body = db.TextProperty(required=True)
+#    post_at = db.DateTimeProperty(auto_now_add=True)
+#    categories = db.ListProperty(db.Key)
+
+#class Category(db.Model):
+#    name = db.StringProperty(required=True)
+#    description = db.TextProperty()
+   
+#    @property
+#    def posts(self):
+#        return Post.gql('WHERE categories = :1', self.key())
 
 

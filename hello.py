@@ -5,6 +5,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext import db
 import os
 import datetime
+import string
 from google.appengine.ext.webapp import template
 
 
@@ -14,8 +15,6 @@ from base import *
 
 class MainPage(tarsusaRequestHandler):
 	def get(self):
-		
-		#user = users.get_current_user()	
 		
 		if self.chk_login() == True:
 
@@ -37,7 +36,9 @@ class MainPage(tarsusaRequestHandler):
 			# GAE datastore has a gqlquery.count limitation. So right here solve this manully.
 			tarsusaItemCollection_DailyRoutine_count = 0
 			for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
-				tarsusaItemCollection_DailyRoutine_count +=1
+				tarsusaItemCollection_DailyRoutine_count += 1
+
+			Today_DoneRoutine = 0
 
 			for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
 				
@@ -58,9 +59,13 @@ class MainPage(tarsusaRequestHandler):
 				
 				#tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT :3", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id(), int(tarsusaItemCollection_DailyRoutine_count))
 
+				
 				## traversed RoutineDaily
 				for tarsusaItem_DoneDailyRoutine in tarsusaItemCollection_DoneDailyRoutine:
 					if datetime.datetime.date(tarsusaItem_DoneDailyRoutine.donedate) == datetime.datetime.date(datetime.datetime.now()):
+						#Check if the user had done all his routine today.
+						Today_DoneRoutine += 1
+						
 						# This routine have been done today.
 						
 						# Due to solve this part, I have to change tarsusaItemModel to db.Expando
@@ -71,9 +76,16 @@ class MainPage(tarsusaRequestHandler):
 					else:
 						pass
 
-
-
-
+			
+			## Output the message for DailyRoutine
+			template_tag_donealldailyroutine = ''
+			
+			if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
+				template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
+			elif Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) - 1:
+				template_tag_donealldailyroutine = '只差一项，加油！'
+			elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
+				template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
 
 			
 			
@@ -137,7 +149,7 @@ class MainPage(tarsusaRequestHandler):
 				'UserNickName': self.login_user.nickname(),
 				
 				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-
+				'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
 
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 
@@ -216,8 +228,12 @@ class AddPage(tarsusaRequestHandler):
 
 class AddItemProcess(webapp.RequestHandler):
 	def post(self):
-		first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')), tags=cgi.escape(self.request.get('tags')),
-										routine=cgi.escape(self.request.get('routine')))
+		first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
+		
+		# for changed tags from String to List:
+		#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
+		tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+
 		if self.request.get('public') == "True":
 			first_tarsusa_item.public = True
 		else:
@@ -228,8 +244,27 @@ class AddItemProcess(webapp.RequestHandler):
 		## the creation date will be added automatically by GAE datastore
 		first_tarsusa_item.put()
 		
+		
+		# http://blog.ericsk.org/archives/1009
+		# This part of tag process inspired by ericsk.
+		# many to many
+
+		for each_tag_in_tarsusaitem in tarsusaItem_Tags:
+			each_cat = Tag(name=each_tag_in_tarsusaitem)
+			each_cat.put()
+			first_tarsusa_item.tags.append(each_cat.key())
+			first_tarsusa_item.put()
+		
+
+		#---
+		
+		
 		#Derived from Plog, update the Tag module.
-		update_tag_count(old_tags = [], new_tags = cgi.escape(self.request.get('tags')))
+		
+		# depricated when erisck tag system are implemented. 08.08.04
+		#update_tag_count(old_tags = [], new_tags = cgi.escape(self.request.get('tags')))
+
+
 
 		# According to New Tags system, The User model must be used.
 
@@ -277,6 +312,14 @@ class ViewItem(tarsusaRequestHandler):
 			pass
 
 
+		# for modified Tags (db.key)
+		ItemTags = ''
+		for each_tag in db.get(tItem.tags):
+			ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+		
+	
+
+
 		template_values = {
 				'PrefixCSSdir': "../",
 				
@@ -286,7 +329,8 @@ class ViewItem(tarsusaRequestHandler):
 
 
 				'tarsusaItem': tItem,
-				'tarsusaItemDone': tItem.done
+				'tarsusaItemDone': tItem.done,
+				'tarsusaItemTags': ItemTags,
 		}
 
 	
@@ -387,6 +431,8 @@ class UserMainPage(tarsusaRequestHandler):
 
 class DoneLogPage(tarsusaRequestHandler):
 	def get(self):
+		#Donelog should shows User's Done Routine Log
+		
 		#Donelog page shows User Done's Log.
 
 		tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE done = 1 ORDER BY date DESC")
