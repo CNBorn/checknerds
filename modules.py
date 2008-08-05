@@ -26,8 +26,7 @@ class User(db.Model):
 	#mail
 	dispname = db.StringProperty()
 	website = db.LinkProperty()
-	usedtags = db.StringProperty()
-
+	usedtags = db.ListProperty(db.Key)
 
 	def __unicode__(self):
 		if self.dispname:
@@ -42,13 +41,14 @@ class User(db.Model):
 
 class Tag(db.Model):
 	name = db.StringProperty()
-	#count = db.IntegerProperty(required=True)
+	count = db.IntegerProperty()
 
 	#design inspried by ericsk
 
 	@property
 	def posts(self):
-		return Post.gql('WHERE tags = :1', self.key())
+		self.count += 1
+		return tarsusaItem.gql('WHERE tags = :1', self.key())
 
 
 

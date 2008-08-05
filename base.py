@@ -66,6 +66,10 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
 	
 	def chk_login(self, redirect_url='/'):
+	
+		self.login_user = users.get_current_user()
+		self.is_login = (self.login_user != None)
+
 		if self.is_login:
 			return True
 		else:

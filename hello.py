@@ -20,12 +20,13 @@ class MainPage(tarsusaRequestHandler):
 
 			## Check usedtags as the evaluation for Tags Model
 			## TEMP CODE!
+			CurrentUser = User(user=users.get_current_user())
+			UserTags = ''
+			for each_cate in CurrentUser.usedtags:
+				each_tag =  db.get(each_cate)
+				UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+			self.write('usertags'+UserTags)
 			
-			UserUsedTagsItems = db.GqlQuery("SELECT * FROM User WHERE user = :1", users.get_current_user())
-			for User in UserUsedTagsItems:
-				self.write(User.name)
-				self.write(User.usedtags)
-
 
 			# Show His Daily Routine.
 			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
@@ -122,24 +123,7 @@ class MainPage(tarsusaRequestHandler):
 			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 5", users.get_current_user())
 
 
-			## Calculating Tags 
-			## There is another performance killer.
-			
-			#SystemTags = db.GqlQuery("SELECT * FROM Tag")
-			UserUsedTagsItems = db.GqlQuery("SELECT * FROM User WHERE user = :1 LIMIT 1", users.get_current_user())
-			
-			UserUsedTagsName = []
 
-			for UserUsedTags in UserUsedTagsItems:
-				UserUsedTagsName = split_tags(UserUsedTags.usedtags)
-			
-			UserTags = []
-
-			for UserUsedTag in UserUsedTagsName:
-				tmpSystemTagRead = Tag.all().filter("name=",UserUesdTag)
-				
-				if tmpSystemTagRead != None:
-					UserTags.append(tmpSystemTagRead.name)
 
 
 
@@ -153,7 +137,7 @@ class MainPage(tarsusaRequestHandler):
 
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 
-				'UserUsedTags': UserTags,
+				'UserTags': UserTags,
 
 				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
 				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
@@ -171,10 +155,26 @@ class MainPage(tarsusaRequestHandler):
 			self.response.out.write(template.render(path, template_values))
 			
 		else:
+			
+			## Homepage for Non-Registered Users.
+
+
+			tarsusaItemCollection_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = True and routine = 'none' ORDER BY date DESC")
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			template_values = {
 				
 				'UserNickName': "访客",
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_Items,
 
 
 			}
@@ -207,14 +207,15 @@ class AddPage(tarsusaRequestHandler):
 									<option value="seasonly">每季度</option>
 									<option value="yearly">每年</option>
 									</select><br>''')
-			from google.appengine.ext.db import djangoforms
+	
+		#from google.appengine.ext.db import djangoforms
 
-			class ItemForm(djangoforms.ModelForm):
-				class Meta:
-					model = tarsusaItem
-					exclude =['user','date','donedate','done']
+		#	class ItemForm(djangoforms.ModelForm):
+		#		class Meta:
+		#			model = tarsusaItem
+		#			exclude =['user','date','donedate','done']
 
-			self.response.out.write(ItemForm())
+		#	self.response.out.write(ItemForm())
 
 
 
@@ -226,7 +227,7 @@ class AddPage(tarsusaRequestHandler):
 		else:
 			self.write ("Your are not logged in!")
 
-class AddItemProcess(webapp.RequestHandler):
+class AddItemProcess(tarsusaRequestHandler):
 	def post(self):
 		first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
 		
@@ -249,44 +250,27 @@ class AddItemProcess(webapp.RequestHandler):
 		# This part of tag process inspired by ericsk.
 		# many to many
 
+		CurrentUser = User(user=users.get_current_user())
+		
 		for each_tag_in_tarsusaitem in tarsusaItem_Tags:
 			each_cat = Tag(name=each_tag_in_tarsusaitem)
 			each_cat.put()
 			first_tarsusa_item.tags.append(each_cat.key())
 			first_tarsusa_item.put()
-		
+			CurrentUser.usedtags.append(each_cat.key())		
+			CurrentUser.put()
 
-		#---
-		
-		
-		#Derived from Plog, update the Tag module.
-		
-		# depricated when erisck tag system are implemented. 08.08.04
-		#update_tag_count(old_tags = [], new_tags = cgi.escape(self.request.get('tags')))
+		UserTags = ''
+		for each_cate in CurrentUser.usedtags:
+			each_tag =  db.get(each_cate)
+			UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
 
+		self.write(UserTags)
 
-
-		# According to New Tags system, The User model must be used.
-
-		#User.get_by_user(users.get_current_user()).tags += self.request.get('tags')
-		#User = Comment.all().filter('post = ', post).order('date')
-		UserSettings = db.GqlQuery("SELECT * FROM User WHERE user = :1 LIMIT 1", users.get_current_user())
-		for User in UserSettings:
-			User.usedtags += self.request.get('tags')
-			User.put()
-		
-
-
-		
-		# Haven't know what will the below code do.
-		# Count the Tags?
-		
-		#all_post_tag = Tag.get_by_key_name('all_post_tag')
-		#all_post_tag.count += 1
-		#all_post_tag.put()
-
-
-
+		## BUG AND DONT KNOW HOW TO SOLVE
+		## THE TAG SYSTEM CHECKED HERE OK, BUT WHEN RETURN TO THE ROOT PAGE
+		## IT SEEMS ALL THE USER.USEDTAGS are gone!
+		## check line 23
 
 		self.redirect('/')
 
@@ -408,6 +392,13 @@ class UnDoneItem(tarsusaRequestHandler):
 
 
 
+class Showtag(tarsusaRequestHandler):
+	def get(self):
+		each_cat = Tag(name=self.request.path[10:])
+		self.write(each_cat.name)
+		self.write(each_cat.count)
+		
+
 class LoginPage(tarsusaRequestHandler):
 	def get(self):
 		# if seems that self.chk_login can not determine the right status
@@ -503,6 +494,7 @@ def main():
 									   ('/i/\\d+',ViewItem),
 									   ('/doneItem/\\d+',DoneItem),
 									   ('/undoneItem/\\d+',UnDoneItem),
+									   ('/tag/\\d+',Showtag),
 									   ('/Login',LoginPage),
 								       ('/SignIn',SignInPage),
 									   ('/SignOut',SignOutPage),

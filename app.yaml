@@ -32,5 +32,8 @@ handlers:
 - url: /Add
   script: hello.py
 
+- url: /tag
+  script: hello.py
+
 - url: /.*
   script: hello.py

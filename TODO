@@ -30,4 +30,10 @@
 					   Of course, disabled some of the previous code of tag system.
 					   This part is still under construction...
 
+	IN 08.08.05
+		GO WITH TAGs and USER.usedtags.
+				BUT BUGGY.
+					Tag url always shows 404. :-(
+					User.UsedTags are missing after the additem process. when return to root, it is gone!
+
 
