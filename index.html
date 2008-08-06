@@ -11,7 +11,7 @@
 	<div id="header">
     	<div id="logo">
         	<a href="/">
-                <span id="sitename">codename Nevada</span>
+                <span id="sitename">Nevada</span>
             </a>      
   
         </div>
@@ -20,23 +20,23 @@
     	<div id="breadcrumbs">
         	<div id="breadcrumbs-top"></div>
             <div id="breadcrumbs-mid">
-                <table style="font-size:11px;">
+                <table style="font-size:14px;">
                 	<tr>
                     	<td>
-                            <a href="/">Home</a>&nbsp;
-                            <a href="/About">About</a>&nbsp;
+                            <a href="/">首页</a>&nbsp;
+                            <a href="/About">关于</a>&nbsp;
                             <a href="/Blog">Blog</a>
-							{% if not UserLoggedIn %}
-							<a href="/Login">Login</a>
-							{% endif %}
-							{% if UserLoggedIn %}
-							<a> {{ UserNickName }}</a>
-							<a href="/SignOut">SignOut</a>
-							{% endif %}
-						</td>
+													</td>
 
                     	<td class="textalign-right">
-                            <em style="color:#86a05f">powered by Google App Engine</em>
+                            {% if not UserLoggedIn %}
+							<img src="/img/favb16.png">&nbsp;<a href="/Login">登录</a>&nbsp;或&nbsp;<a href="/SignIn">注册</a>
+							{% endif %}
+							{% if UserLoggedIn %}
+							{{ UserNickName }}
+							<a href="/SignOut">Logout</a>
+							{% endif %}							
+							<em style="color:#86a05f"></em>
 						</td>
 					</tr>
                 </table>
@@ -183,7 +183,7 @@
         <div id="copy">
             <div id="copy-top"></div>
             <div id="copy-mid">
-                <small>&copy; Designed by <a href="http://dodesign.us">doDesign</a></small>            
+                <small>&copy; Original Designed by <a href="http://dodesign.us">doDesign</a>&nbsp; CNBorn, 2008, Powered by Google App Engine</small>            
             </div>
           <div id="copy-bot"></div>
         </div>

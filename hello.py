@@ -459,7 +459,7 @@ class StatsticsPage(tarsusaRequestHandler):
                 cgi.escape(tarsusaItem.comment))
 
 		self.write('--------------')
-		
+
 		tarsusaRoutineItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem ORDER BY date DESC")
 
 		for result in tarsusaRoutineItemCollection:

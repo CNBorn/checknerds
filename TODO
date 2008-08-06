@@ -36,4 +36,9 @@
 					Tag url always shows 404. :-(
 					User.UsedTags are missing after the additem process. when return to root, it is gone!
 
+	IN 08.08.06
+		Due to my unavaliable network:
+				Modified CSS and Images
+				Layout Fixed A little.
 
+		TODO - Redirect to previous page when DoneItem or UndoneItem.
