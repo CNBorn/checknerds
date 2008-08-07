@@ -21,7 +21,7 @@ class tarsusaRoutineLogItem(db.Model):
 	donedate = db.DateTimeProperty(auto_now_add=True)
 
 
-class User(db.Model):
+class tarsusaUser(db.Model):
 	user = db.UserProperty(required = True)
 	#mail
 	dispname = db.StringProperty()
@@ -45,10 +45,12 @@ class Tag(db.Model):
 
 	#design inspried by ericsk
 
-	@property
-	def posts(self):
-		self.count += 1
-		return tarsusaItem.gql('WHERE tags = :1', self.key())
+	#@property
+	#def posts(self):
+	#	self.count += 1
+		#return tarsusaItem.gql('WHERE tags = :1', self.key())
+	#	return User.gql('WHERE usedtags = :1', self.key())
+
 
 
 

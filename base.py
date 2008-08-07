@@ -13,29 +13,29 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 		webapp.RequestHandler.initialize(self, request, response)
 
 		self.login_user = users.get_current_user()
-		self.is_login = (self.login_user != None)
+		#self.is_login = (self.login_user != None)
 		
 		##
-		if self.is_login:
-			self.user = User.all().filter('user = ', self.login_user).get() or User(user = self.login_user)
-		else:
-			self.user = None
+		#if self.is_login:
+		#	self.user = tarsusaUser.all().filter('user = ', self.login_user).get() or tarsusaUser(user = self.login_user)
+		#else:
+		#	self.user = None
 
-		self.is_admin = users.is_current_user_admin()
-		if self.is_admin:
-			self.auth = 'admin'
-		elif self.is_login:
-			self.auth = 'login'
-		else:
-			self.auth = 'guest'
+		#self.is_admin = users.is_current_user_admin()
+		#if self.is_admin:
+		#	self.auth = 'admin'
+		#elif self.is_login:
+		#	self.auth = 'login'
+		#else:
+		#	self.auth = 'guest'
 
 		#self.widget = Widget(self)
 		#self.theme = global_vars['theme']
 
-		try:
-			self.referer = self.request.headers['referer']
-		except:
-			self.referer = None
+		#try:
+		#	self.referer = self.request.headers['referer']
+		#except:
+		#	self.referer = None
 
 
 	def param(self, name, **kw):

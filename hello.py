@@ -16,16 +16,39 @@ from base import *
 class MainPage(tarsusaRequestHandler):
 	def get(self):
 		
-		if self.chk_login() == True:
+		#if self.chk_login() == True:
+		if users.get_current_user() != None:
+			
+			## IT SEEMS THE tarsusaUSER MODEL IS AN READONLY MODEL!
+			
+			## First create a user!
+			#CurrentUser = tarsusaUser(user=users.get_current_user())
+			#self.write(CurrentUser.user.nickname())
+			#CurrentUser.website = "http://blog.donews.com/CNBorn"
+			#CurrentUser.put()
+			#self.write(str(CurrentUser.website))
 
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+			
+			if not CurrentUser:
+				CurrentUser = tarsusaUser(user=users.get_current_user())
+				self.write(CurrentUser.user.nickname())
+				#CurrentUser.website = "http://blog.donews.com/CNBorn"
+				CurrentUser.put()
+
+			
 			## Check usedtags as the evaluation for Tags Model
 			## TEMP CODE!
-			CurrentUser = User(user=users.get_current_user())
 			UserTags = ''
-			for each_cate in CurrentUser.usedtags:
-				each_tag =  db.get(each_cate)
-				UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
-			self.write('usertags'+UserTags)
+			if CurrentUser.usedtags:
+				for each_cate in CurrentUser.usedtags:
+					each_tag =  db.get(each_cate)
+					#Below line will triggar the 0xe9 unicode problem!
+					UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+					#UserTags += 'abc' + unicode(cgi.escape(each_tag.name))
+				#self.write(UserTags)
 			
 
 			# Show His Daily Routine.
@@ -250,15 +273,36 @@ class AddItemProcess(tarsusaRequestHandler):
 		# This part of tag process inspired by ericsk.
 		# many to many
 
-		CurrentUser = User(user=users.get_current_user())
 		
+		## After Check , I saw there are alot of 'CNBorn' accounts!!!!
+		## Maybe I have to implement cookies or something to ensure I got the only one persistent user account.
+
+		
+		usr = tarsusaUser.all()
+		for eusr in usr:
+			self.write(eusr.user.nickname())
+
+
+
+
+		#users.get_current_user()  is not public?
+
+		#CurrentUser = tarsusaUser(user=first_tarsusa_item.user)
+		#self.write(str(CurrentUser.website))  # its output is None!
+
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+	
 		for each_tag_in_tarsusaitem in tarsusaItem_Tags:
 			each_cat = Tag(name=each_tag_in_tarsusaitem)
 			each_cat.put()
 			first_tarsusa_item.tags.append(each_cat.key())
-			first_tarsusa_item.put()
 			CurrentUser.usedtags.append(each_cat.key())		
-			CurrentUser.put()
+		first_tarsusa_item.put()
+		CurrentUser.put()
+
+
 
 		UserTags = ''
 		for each_cate in CurrentUser.usedtags:
