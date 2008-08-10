@@ -43,7 +43,7 @@ table{width:100%;}
 .latestcode{width:238px;}
 .latestcode-top{background-image:url(./div-left-code-top.png);height:7px;width:238px;}
 .latestcode-bot{background-image:url(./div-left-code-bottom.png);height:7px;width:238px;}
-#tagcloud{width:487px;margin-top:15px;}
+#tagcloud{width:487px;margin-top:5px;}
 #tagcloud-top{background-image:url(./div-left-top.png);height:7px;width:487px;}
 #tagcloud-bot{background-image:url(./div-left-bottom.png);height:6px;width:487px;}
 #rightside{margin-left:693px;width:241px;}

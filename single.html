@@ -74,7 +74,7 @@
 
 							<th width="60%" class="first"><a href="/i/{{ tarsusaItem.key.id }}">{{ tarsusaItem.name|escape }}</a></th>
 							<th><span class="date">分类：<a href="#">{{tarsusaItemTags}}</a></span></th></tr>
-							<tr class="rowB"><td colspan="2">&nbsp; {{ tarsusaItem.comment }}</td>
+							<tr class="rowB">创建者：{{tarsusaItem.user}}<td colspan="2">&nbsp; {{ tarsusaItem.comment }}</td>
 							<tr><td width="50%" colspan="2"><span class="date">创建时间： &nbsp; {{tarsusaItem.date }}
 							| 预期完成： &nbsp; {{tarsusaItem.expectdate}}</span></td></tr>
 
@@ -92,11 +92,12 @@
 
 							{% endif %}
 
-							{% if not tarsusaItemDone %}
-							<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem.key.id}}'";>完成这个任务
+							{% if not logictag_OtherpeopleViewThisItem %}
+								{% if not tarsusaItemDone %}
+								<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem.key.id}}'";>完成这个任务
+								{% endif %}
+								&nbsp; <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="x">x</a>
 							{% endif %}
-							&nbsp; <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="x">x</a>
-
 							</td></tr>
 							</table>
 						{% endif %}

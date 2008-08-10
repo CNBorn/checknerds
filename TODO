@@ -50,3 +50,15 @@
 
 	IN 08.08.08
 		01:35  Cheers! Done the tarsusaUser.usedtags ! ( a lot of test code are still there.)
+
+
+	IN 08.08.09
+		Add People's activities in Anonymously Page
+		More Anonymously check in ViewItem code and Template.
+
+		Module:add friends 
+
+
+	IN 08.08.10
+		app.yaml updated, now with UserMainPage, FindFriends Page
+

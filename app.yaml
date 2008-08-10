@@ -7,9 +7,15 @@ handlers:
 - url: /img
   static_dir: img
 
+- url: /pages
+  static_dir: pages
+
 - url: /(.*)\.css
   static_files: /\1
   upload: /
+
+- url: /
+  script: hello.py
 
 - url: /About
   script: hello.py
@@ -32,8 +38,27 @@ handlers:
 - url: /Add
   script: hello.py
 
+- url: /additem
+  script: hello.py
+
+- url: /i/.*
+  script: hello.py
+
 - url: /tag
   script: hello.py
 
-- url: /.*
+- url: /FindFriend
   script: hello.py
+
+- url: /donelog
+  script: hello.py
+
+- url: /user/.*
+  script: hello.py
+
+- url: /tag/.*
+  script: hello.py
+
+- url: /.*
+  static_files: pages/404.html
+  upload: pages/.*

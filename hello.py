@@ -18,24 +18,16 @@ class MainPage(tarsusaRequestHandler):
 		
 		#if self.chk_login() == True:
 		if users.get_current_user() != None:
-			
-			## IT SEEMS THE tarsusaUSER MODEL IS AN READONLY MODEL!
-			
-			## First create a user!
-			#CurrentUser = tarsusaUser(user=users.get_current_user())
-			#self.write(CurrentUser.user.nickname())
-			#CurrentUser.website = "http://blog.donews.com/CNBorn"
-			#CurrentUser.put()
-			#self.write(str(CurrentUser.website))
 
 			# code below are comming from GAE example
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 			CurrentUser = q.get()
 			
 			if not CurrentUser:
+				# Create a User
+				# Actully I thought this would be useless when I have an signin page.
 				CurrentUser = tarsusaUser(user=users.get_current_user())
-				self.write(CurrentUser.user.nickname())
-				#CurrentUser.website = "http://blog.donews.com/CNBorn"
+				#self.write(CurrentUser.user.nickname())
 				CurrentUser.put()
 
 			
@@ -48,7 +40,6 @@ class MainPage(tarsusaRequestHandler):
 					#Below line will triggar the 0xe9 unicode problem!
 					UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
 					#UserTags += 'abc' + unicode(cgi.escape(each_tag.name))
-				#self.write(UserTags)
 			
 
 			# Show His Daily Routine.
@@ -75,7 +66,7 @@ class MainPage(tarsusaRequestHandler):
 				# Refer to code above.
 				
 				
-				#LIMIT and OFFSET don't currently support bound parameters.
+				# LIMIT and OFFSET don't currently support bound parameters.
 				# http://code.google.com/p/googleappengine/issues/detail?id=179
 				# if this is realized, the code below next line will be used.
 
@@ -153,7 +144,7 @@ class MainPage(tarsusaRequestHandler):
 			template_values = {
 				'UserLoggedIn': 'Logged In',
 				
-				'UserNickName': self.login_user.nickname(),
+				'UserNickName': cgi.escape(self.login_user.nickname()),
 				
 				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 				'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
@@ -182,8 +173,9 @@ class MainPage(tarsusaRequestHandler):
 			## Homepage for Non-Registered Users.
 
 
-			tarsusaItemCollection_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = True and routine = 'none' ORDER BY date DESC")
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = True and routine = 'none' ORDER BY date DESC")
 
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = True and routine = 'none' and done = True ORDER BY date DESC")
 			
 			
 			
@@ -196,9 +188,10 @@ class MainPage(tarsusaRequestHandler):
 			template_values = {
 				
 				'UserNickName': "访客",
+				'AnonymousVisitor': "Yes",
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_Items,
-
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
 
 			}
 
@@ -218,10 +211,10 @@ class AddPage(tarsusaRequestHandler):
 		
 			self.response.out.write ('<html><body>add the first tarsusa item!')
 			self.response.out.write ('''<form action="/additem" method="post">
-		标题  <input type="text" name="name" value="" size="18" class="sl"><br />
-		内容  <textarea name="comment" rows="4" cols="16" wrap="PHYSICAL" class="ml"></textarea><br />
-		类别  <input type="text" name="tags" size="18" class="sl"><br />
-		预计完成于<br />''')
+									标题  <input type="text" name="name" value="" size="18" class="sl"><br />
+									内容  <textarea name="comment" rows="4" cols="16" wrap="PHYSICAL" class="ml"></textarea><br />
+									类别  <input type="text" name="tags" size="18" class="sl"><br />
+									预计完成于<br />''')
 			self.response.out.write ('''性质：<select name="routine">
 									<option value="none" selected="selected">非坚持性任务</option>
 									<option value="daily">每天</option>
@@ -231,17 +224,9 @@ class AddPage(tarsusaRequestHandler):
 									<option value="yearly">每年</option>
 									</select><br>''')
 	
-		#from google.appengine.ext.db import djangoforms
-
-		#	class ItemForm(djangoforms.ModelForm):
-		#		class Meta:
-		#			model = tarsusaItem
-		#			exclude =['user','date','donedate','done']
-
-		#	self.response.out.write(ItemForm())
-
-
-
+		## TODO 
+		## Added proper calendar date select form
+		## Tested django form, it doesnt contain that
 
 			self.response.out.write ('<input type="checkbox" name="public" value="True">公开项目<BR>')
 
@@ -257,6 +242,11 @@ class AddItemProcess(tarsusaRequestHandler):
 		# for changed tags from String to List:
 		#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
 		tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+		
+		## TODO
+		## If user defines tag is None, Add '为分类项目' in Database?
+		## Or Just display it with Database Logical?
+		
 
 		if self.request.get('public') == "True":
 			first_tarsusa_item.public = True
@@ -268,27 +258,9 @@ class AddItemProcess(tarsusaRequestHandler):
 		## the creation date will be added automatically by GAE datastore
 		first_tarsusa_item.put()
 		
-		
 		# http://blog.ericsk.org/archives/1009
 		# This part of tag process inspired by ericsk.
 		# many to many
-
-		
-		## After Check , I saw there are alot of 'CNBorn' accounts!!!!
-		## Maybe I have to implement cookies or something to ensure I got the only one persistent user account.
-
-		
-		usr = tarsusaUser.all()
-		for eusr in usr:
-			self.write(eusr.user.nickname())
-
-
-
-
-		#users.get_current_user()  is not public?
-
-		#CurrentUser = tarsusaUser(user=first_tarsusa_item.user)
-		#self.write(str(CurrentUser.website))  # its output is None!
 
 		# code below are comming from GAE example
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
@@ -296,6 +268,7 @@ class AddItemProcess(tarsusaRequestHandler):
 	
 		for each_tag_in_tarsusaitem in tarsusaItem_Tags:
 			each_cat = Tag(name=each_tag_in_tarsusaitem)
+			#each_cat.count += 1
 			each_cat.put()
 			first_tarsusa_item.tags.append(each_cat.key())
 			CurrentUser.usedtags.append(each_cat.key())		
@@ -311,11 +284,6 @@ class AddItemProcess(tarsusaRequestHandler):
 
 		self.write(UserTags)
 
-		## BUG AND DONT KNOW HOW TO SOLVE
-		## THE TAG SYSTEM CHECKED HERE OK, BUT WHEN RETURN TO THE ROOT PAGE
-		## IT SEEMS ALL THE USER.USEDTAGS are gone!
-		## check line 23
-
 		self.redirect('/')
 
 class ViewItem(tarsusaRequestHandler):
@@ -324,46 +292,60 @@ class ViewItem(tarsusaRequestHandler):
 		postid = self.request.path[3:]
 		tItem = tarsusaItem.get_by_id(int(postid))
 
-		# Check if this item is expired.
-		if tItem.expectdate != None:
-			if datetime.datetime.now() > tItem.expectdate:
-				tItem.expired = 1
-				tItem.put()
+		if tItem != None:  ## If this Item existed in Database.
+
+			# Check if this item is expired.
+			if tItem.expectdate != None:
+				if datetime.datetime.now() > tItem.expectdate:
+					tItem.expired = 1
+					tItem.put()
+				else:
+					pass
+
+			elif tItem.expectdate != tItem.expectdate:
+				if tItem.expired:
+					del tItem.expired
+					tItem.put()
 			else:
 				pass
 
-		elif tItem.expectdate != tItem.expectdate:
-			if tItem.expired:
-				del tItem.expired
-				tItem.put()
-		else:
-			pass
+
+			# for modified Tags (db.key)
+			ItemTags = ''
+			for each_tag in db.get(tItem.tags):
+				ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+			
+
+			logictag_OtherpeopleViewThisItem = None
+			if tItem.user != users.get_current_user():
+				if tItem.public == True:
+					logictag_OtherpeopleViewThisItem = True
+				else:
+					self.redirect('/')
+
+			template_values = {
+					'PrefixCSSdir': "../",
+					
+					'UserNickName': "The About page of Nevada.",
+					'singlePageTitle': "View Item",
+					'singlePageContent': "",
+
+					'logictag_OtherpeopleViewThisItem': logictag_OtherpeopleViewThisItem,
 
 
-		# for modified Tags (db.key)
-		ItemTags = ''
-		for each_tag in db.get(tItem.tags):
-			ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+					'tarsusaItem': tItem,
+					'tarsusaItemDone': tItem.done,
+					'tarsusaItemTags': ItemTags,
+			}
+
 		
-	
+			path = os.path.join(os.path.dirname(__file__), './single.html')
+			self.response.out.write(template.render(path, template_values))
 
 
-		template_values = {
-				'PrefixCSSdir': "../",
-				
-				'UserNickName': "The About page of Nevada.",
-				'singlePageTitle': "View Item",
-				'singlePageContent': "",
-
-
-				'tarsusaItem': tItem,
-				'tarsusaItemDone': tItem.done,
-				'tarsusaItemTags': ItemTags,
-		}
-
-	
-		path = os.path.join(os.path.dirname(__file__), './single.html')
-		self.response.out.write(template.render(path, template_values))
+		else:
+			## Can't find this Item by this id.
+			self.redirect('/')
 
 
 class DoneItem(tarsusaRequestHandler):
@@ -438,7 +420,7 @@ class UnDoneItem(tarsusaRequestHandler):
 
 class Showtag(tarsusaRequestHandler):
 	def get(self):
-		each_cat = Tag(name=self.request.path[10:])
+		each_cat = Tag(name=self.request.path[5:])
 		self.write(each_cat.name)
 		self.write(each_cat.count)
 		
@@ -457,6 +439,18 @@ class SignInPage(webapp.RequestHandler):
 class SignOutPage(tarsusaRequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
+
+
+class UserSettingPage(tarsusaRequestHandler):
+	def get(self):
+		self.write('This is user setting page.')
+		
+		username = cgi.escape(self.request.path[6:-8])  ## Get the username in the middle of /user/CNBorn/setting
+		self.write(username)
+
+
+
+
 
 class UserMainPage(tarsusaRequestHandler):
 	def get(self):
@@ -510,7 +504,42 @@ class StatsticsPage(tarsusaRequestHandler):
 			self.response.out.write(result.routineid)
 
 			self.response.out.write(result.donedate)
+
+class FindFriendPage(tarsusaRequestHandler):
+	def get(self):
 		
+		
+		tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser")
+
+		#for each_tarsusaUser in tarsusaPeopleCollection:
+		#	self.write(each_tarsusaUser)
+		#	self.write('---<BR>')
+
+		
+		template_values = {
+				'UserLoggedIn': 'Logged In',
+				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+
+				
+				'singlePageTitle': "The About page of Nevada.",
+				'singlePageContent': "This is the About content.",
+
+				'tarsusaPeopleCollection': tarsusaPeopleCollection,
+		}
+
+	
+		path = os.path.join(os.path.dirname(__file__), 'addfriend.html')
+		self.response.out.write(template.render(path, template_values))
+
+
+class AddFriendProcess(tarsusaRequestHandler):
+	def post(self):
+		print 'abc'
+
+
+
+
 class BlogPage(webapp.RequestHandler):
 	def get(self):
 		print "this is Blog page"
@@ -531,6 +560,13 @@ class AboutPage(tarsusaRequestHandler):
 		self.response.out.write(template.render(path, template_values))
 
 
+class NotFoundPage(tarsusaRequestHandler):
+	def get(self):
+		
+		self.redirect('/page/404.html')
+
+		
+
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 									   ('/Add', AddPage),
@@ -538,15 +574,18 @@ def main():
 									   ('/i/\\d+',ViewItem),
 									   ('/doneItem/\\d+',DoneItem),
 									   ('/undoneItem/\\d+',UnDoneItem),
-									   ('/tag/\\d+',Showtag),
+									   ('/tag/.+',Showtag),
+									   ('/user/.+/setting',UserSettingPage),
+									   ('/user/.+', UserMainPage),
+									   ('/FindFriend', FindFriendPage),
 									   ('/Login',LoginPage),
 								       ('/SignIn',SignInPage),
 									   ('/SignOut',SignOutPage),
-                                       ('/UserMainPage',UserMainPage),
 								       ('/donelog',DoneLogPage),
 								       ('/Statstics',StatsticsPage),
 								       ('/About',AboutPage),
-								       ('/Blog',BlogPage)],
+								       ('/Blog',BlogPage),
+									   ('.*',NotFoundPage)],
                                        debug=True)
 
 

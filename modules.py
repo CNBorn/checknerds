@@ -27,6 +27,10 @@ class tarsusaUser(db.Model):
 	dispname = db.StringProperty()
 	website = db.LinkProperty()
 	usedtags = db.ListProperty(db.Key)
+	friends = db.ListProperty(db.Key)
+
+	datejoinin = db.DateTimeProperty(auto_now_add=True)
+
 
 	def __unicode__(self):
 		if self.dispname:
