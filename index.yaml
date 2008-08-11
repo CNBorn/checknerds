@@ -10,20 +10,20 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used once in query history.
+# Unused in query history -- copied from input.
 - kind: tarsusaItem
   properties:
   - name: date
     direction: desc
 
-# Used once in query history.
+# Unused in query history -- copied from input.
 - kind: tarsusaItem
   properties:
   - name: done
   - name: date
     direction: desc
 
-# Used once in query history.
+# Used 6 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -32,7 +32,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 26 times in query history.
+# Used 48 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -48,7 +48,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used once in query history.
+# Used 6 times in query history.
 - kind: tarsusaItem
   properties:
   - name: public
@@ -56,7 +56,15 @@ indexes:
   - name: date
     direction: desc
 
-# Used 52 times in query history.
+# Unused in query history -- copied from input.
+- kind: tarsusaItem
+  properties:
+  - name: public
+  - name: user
+  - name: date
+    direction: desc
+
+# Used 96 times in query history.
 - kind: tarsusaItem
   properties:
   - name: routine
@@ -64,7 +72,14 @@ indexes:
   - name: date
     direction: desc
 
-# Used once in query history.
+# Used 25 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: user
+  - name: date
+    direction: desc
+
+# Unused in query history -- copied from input.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: date

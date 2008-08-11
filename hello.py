@@ -26,7 +26,7 @@ class MainPage(tarsusaRequestHandler):
 			if not CurrentUser:
 				# Create a User
 				# Actully I thought this would be useless when I have an signin page.
-				CurrentUser = tarsusaUser(user=users.get_current_user())
+				CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=users.get_current_user().nickname())
 				#self.write(CurrentUser.user.nickname())
 				CurrentUser.put()
 
@@ -137,9 +137,45 @@ class MainPage(tarsusaRequestHandler):
 			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 5", users.get_current_user())
 
 
+			## TODO
+			## SHOW YOUR FRIENDs Recent Activities
+
+			## Currently the IN function is not supported, it is an headache.
+
+			
+			## first get current user. 
+			## THIS LINES OF CODE ARE DUPLICATED.
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+
+			tarsusaUserFriendCollection = CurrentUser.friends
+			
+			tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", users.get_current_user)
 
 
+			UserFriendsActivities = ''
+			if tarsusaUserFriendCollection: 
+				for each_FriendKey in tarsusaUserFriendCollection:
+					UsersFriend =  db.get(each_FriendKey)
+					## THE BELOW LINE IS UN SUPPORTED!
+					#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
+					## THERE are too many limits in GAE now...
+					tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 2", UsersFriend.user)
 
+					for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
+						if tarsusaItem_UserFriendsRecentItems.done == True: ## And Public to friends!
+							
+							UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + tarsusaItem_UserFriendsRecentItems.key().id() + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
+	 
+						else:
+							UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
+
+
+			else:
+				UserFriendsActivities = '当前没有添加朋友'
+
+								
 
 			template_values = {
 				'UserLoggedIn': 'Logged In',
@@ -156,6 +192,8 @@ class MainPage(tarsusaRequestHandler):
 				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
 				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
 
+
+				'UserFriendsActivities': UserFriendsActivities,
 
 				'UserTotalItems': UserTotalItems,
 				'UserToDoItems': UserToDoItems,
@@ -373,6 +411,7 @@ class DoneItem(tarsusaRequestHandler):
 
 
 
+		#self.redirect(self.request.uri)
 		self.redirect('/')
 
 
@@ -454,8 +493,32 @@ class UserSettingPage(tarsusaRequestHandler):
 
 class UserMainPage(tarsusaRequestHandler):
 	def get(self):
-		print "this is UserMainpage"
 
+		username = cgi.escape(self.request.path[6:])  ## Get the username in the middle of /user/CNBorn/
+	
+		self.write('user ' + username + "'s page")
+
+		## Get this user.
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1 LIMIT 1", username)
+		
+		ViewUser = q.get()
+		self.write(ViewUser)
+
+		if ViewUser != None:
+			#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
+
+			#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser)
+			
+			tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
+			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
+				self.write(each_Item.name)
+
+		else:
+			self.write('not found any items')
+
+	
+
+		
 
 
 class DoneLogPage(tarsusaRequestHandler):
@@ -515,13 +578,28 @@ class FindFriendPage(tarsusaRequestHandler):
 		#	self.write(each_tarsusaUser)
 		#	self.write('---<BR>')
 
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+
+		tarsusaUserFriendCollection = CurrentUser.friends
+
+		UserFriends = ''
+		if tarsusaUserFriendCollection: 
+			for each_FriendKey in tarsusaUserFriendCollection:
+				UsersFriend =  db.get(each_FriendKey)
+				UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;<br />'
+		else:
+			UserFriends = '当前没有添加朋友'
+
 		
 		template_values = {
 				'UserLoggedIn': 'Logged In',
 				
 				'UserNickName': cgi.escape(self.login_user.nickname()),
 
-				
+				'UserFriends': UserFriends,	
 				'singlePageTitle': "The About page of Nevada.",
 				'singlePageContent': "This is the About content.",
 
@@ -534,9 +612,36 @@ class FindFriendPage(tarsusaRequestHandler):
 
 
 class AddFriendProcess(tarsusaRequestHandler):
-	def post(self):
-		print 'abc'
+	def get(self):
+		
+		# Permission check is very important.
 
+		ToBeAddedUserId = self.request.path[11:]
+			## Please be awared that ItemId here is a string!
+		ToBeAddedUser = tarsusaUser.get_by_id(int(ToBeAddedUserId))
+
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+
+		AlreadyAddedAsFriend = False
+		for eachFriend in CurrentUser.friends:
+			if eachFriend == ToBeAddedUser.key():
+				AlreadyAddedAsFriend = True	
+
+
+		if ToBeAddedUser.key() != CurrentUser.key() and AlreadyAddedAsFriend == False:
+			CurrentUser.friends.append(ToBeAddedUser.key())
+			CurrentUser.put()
+
+		else:
+			## You can't add your self! and You can add a person twice!
+			pass
+		
+		self.redirect('/FindFriend')
+
+	
 
 
 
@@ -571,6 +676,7 @@ def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 									   ('/Add', AddPage),
 								       ('/additem',AddItemProcess),
+									   ('/AddFriend/\\d+', AddFriendProcess),
 									   ('/i/\\d+',ViewItem),
 									   ('/doneItem/\\d+',DoneItem),
 									   ('/undoneItem/\\d+',UnDoneItem),

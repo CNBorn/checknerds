@@ -41,7 +41,16 @@ handlers:
 - url: /additem
   script: hello.py
 
+- url: /AddFriend/.*
+  script: hello.py
+
 - url: /i/.*
+  script: hello.py
+
+- url: /doneItem/.*
+  script: hello.py
+
+- url: /undoneItem/.*
   script: hello.py
 
 - url: /tag

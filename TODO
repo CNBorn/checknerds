@@ -62,3 +62,14 @@
 	IN 08.08.10
 		app.yaml updated, now with UserMainPage, FindFriends Page
 
+		--
+
+		Improved Friends -
+		  Now can add friends
+		  an improved friend page.
+		  UserMain Page test. But found buggy when I try to view Item by specific user! the query can't return any records!
+
+
+
+	IN 08.08.11
+		SOLVED Yesterday's bug, just tarsusaUser.user
