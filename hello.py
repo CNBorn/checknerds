@@ -164,12 +164,16 @@ class MainPage(tarsusaRequestHandler):
 					tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 2", UsersFriend.user)
 
 					for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
-						if tarsusaItem_UserFriendsRecentItems.done == True: ## And Public to friends!
-							
-							UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + tarsusaItem_UserFriendsRecentItems.key().id() + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
+						## Check whether should show this item.
+						if tarsusaItem_UserFriendsRecentItems.public != 'private':
+						
+							## Check whether this item had done.
+							if tarsusaItem_UserFriendsRecentItems.done == True:
+								
+								UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + tarsusaItem_UserFriendsRecentItems.key().id() + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
 	 
-						else:
-							UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
+							else:
+								UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
 
 
 			else:
@@ -210,10 +214,10 @@ class MainPage(tarsusaRequestHandler):
 			
 			## Homepage for Non-Registered Users.
 
+			## the not equal != is not supported!
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' ORDER BY date DESC")
 
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = True and routine = 'none' ORDER BY date DESC")
-
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = True and routine = 'none' and done = True ORDER BY date DESC")
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = True ORDER BY date DESC")
 			
 			
 			
@@ -266,7 +270,12 @@ class AddPage(tarsusaRequestHandler):
 		## Added proper calendar date select form
 		## Tested django form, it doesnt contain that
 
-			self.response.out.write ('<input type="checkbox" name="public" value="True">公开项目<BR>')
+			#self.response.out.write ('<input type="checkbox" name="public" value="True">公开项目<BR>')
+			self.response.out.write ('''公开项目：<select name="public"><option value="private" selected="selected">不公开</option>
+			<option value="public">公开</option>
+			<option value="publicOnlyforFriends">仅对朋友公开</option>
+			''')
+
 
 			self.response.out.write ('''<input type="submit" name="submit" value="添加一个任务"></form>''')
 
@@ -286,10 +295,7 @@ class AddItemProcess(tarsusaRequestHandler):
 		## Or Just display it with Database Logical?
 		
 
-		if self.request.get('public') == "True":
-			first_tarsusa_item.public = True
-		else:
-			first_tarsusa_item.public = False
+		first_tarsusa_item.public = self.request.get('public')
 
 		first_tarsusa_item.done = False
 
@@ -356,7 +362,7 @@ class ViewItem(tarsusaRequestHandler):
 
 			logictag_OtherpeopleViewThisItem = None
 			if tItem.user != users.get_current_user():
-				if tItem.public == True:
+				if tItem.public != 'private':
 					logictag_OtherpeopleViewThisItem = True
 				else:
 					self.redirect('/')
@@ -507,8 +513,6 @@ class UserMainPage(tarsusaRequestHandler):
 		if ViewUser != None:
 			#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
 
-			#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser)
-			
 			tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
 			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
 				self.write(each_Item.name)

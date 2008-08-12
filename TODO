@@ -73,3 +73,8 @@
 
 	IN 08.08.11
 		SOLVED Yesterday's bug, just tarsusaUser.user
+
+
+	IN 08.08.12
+		GAE is GFWed in China!
+		Change the tarsusaItem.public from Boolean into String, (private, public, publicOnlyforFriends)

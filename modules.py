@@ -11,7 +11,7 @@ class tarsusaItem(db.Expando):
     donedate = db.DateTimeProperty()
     done = db.BooleanProperty()
     routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
-    public = db.BooleanProperty()
+    public = db.StringProperty(choices=set(["private", "public", "publicOnlyforFriends"]))
 
 class tarsusaRoutineLogItem(db.Model):
 	
