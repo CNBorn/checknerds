@@ -23,7 +23,7 @@ class tarsusaRoutineLogItem(db.Model):
 
 class tarsusaUser(db.Model):
 	user = db.UserProperty()
-	#mail
+	#mail = db.EMailProperty()
 	urlname = db.StringProperty()
 	dispname = db.StringProperty()
 	website = db.LinkProperty()

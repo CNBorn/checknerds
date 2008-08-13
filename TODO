@@ -78,3 +78,11 @@
 	IN 08.08.12
 		GAE is GFWed in China!
 		Change the tarsusaItem.public from Boolean into String, (private, public, publicOnlyforFriends)
+
+
+	IN 08.08.13
+		Changed ViewItem with proper Permission with three status.
+		TODO: a usable User Setting Page
+
+
+

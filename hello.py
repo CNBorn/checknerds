@@ -137,11 +137,8 @@ class MainPage(tarsusaRequestHandler):
 			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 5", users.get_current_user())
 
 
-			## TODO
 			## SHOW YOUR FRIENDs Recent Activities
-
 			## Currently the IN function is not supported, it is an headache.
-
 			
 			## first get current user. 
 			## THIS LINES OF CODE ARE DUPLICATED.
@@ -362,7 +359,26 @@ class ViewItem(tarsusaRequestHandler):
 
 			logictag_OtherpeopleViewThisItem = None
 			if tItem.user != users.get_current_user():
-				if tItem.public != 'private':
+				
+				if tItem.public == 'publicOnlyforFriends':
+					## Check if the viewing user is a friend of the ItemAuthor.
+				
+					# code below are comming from GAE example
+					q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+					CurrentUser = q.get()
+					# code below are comming from GAE example
+					q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", tItem.user)
+					ItemAuthorUser = q.get()
+
+					CurrentUserIsOneofAuthorsFriends = False
+
+					for each_Friend_key in ItemAuthorUser.friends:
+						if each_Friend_key == CurrentUser.key():
+							CurrentUserIsOneofAuthorsFriends = True
+
+					logictag_OtherpeopleViewThisItem = True
+
+				elif tItem.public == 'public':
 					logictag_OtherpeopleViewThisItem = True
 				else:
 					self.redirect('/')
@@ -491,9 +507,15 @@ class UserSettingPage(tarsusaRequestHandler):
 		self.write('This is user setting page.')
 		
 		username = cgi.escape(self.request.path[6:-8])  ## Get the username in the middle of /user/CNBorn/setting
-		self.write(username)
+       
 
-
+		from google.appengine.ext.db import djangoforms 
+		class ItemForm(djangoforms.ModelForm):
+			class Meta:
+				model = tarsusaUser
+				exclude =['user','usedtags','friends','datejoinin']
+        
+		self.response.out.write(ItemForm()) 
 
 
 
