@@ -85,4 +85,12 @@
 		TODO: a usable User Setting Page
 
 
+	IN 08.08.14
+		Added Avatar function.(With BlobProperty)
+		Referrence Page:
+		http://code.google.com/appengine/docs/images/usingimages.html
+		http://d.hatena.ne.jp/technohippy/20080716/1216226634
+		http://www.antlite.com/blog/2008/06/15/display-datastore-image-on-gae/
+		http://blog.liangent.cn/2008/07/google-app-engine_28.html
+
 

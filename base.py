@@ -165,3 +165,11 @@ def printExpireTimeGap(timeOne,timeTwo):
 	else:		
 		ReturnString = "To GO " + WorkString[0] + "Days" + TimeString[0] + "Hours" + TimeString[1] + "Mins"
 	return ReturnString
+
+def nvdGetCurrentUser():
+	# code below are comming from GAE example
+	q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+	#CurrentUser = q.get()
+	#return CurrentUser
+	return q.get()
+

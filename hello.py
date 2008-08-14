@@ -7,6 +7,7 @@ import os
 import datetime
 import string
 from google.appengine.ext.webapp import template
+from google.appengine.api import images
 
 
 from modules import *
@@ -518,19 +519,120 @@ class UserSettingPage(tarsusaRequestHandler):
 		self.response.out.write(ItemForm()) 
 
 
+		## The Avatar part is inspired by 
+		## http://blog.liangent.cn/2008/07/google-app-engine_28.html
+
+		#         self.response.headers['Content-Type'] = 'text/html'  
+
+		#         self.response.out.write(""" 
+		#             <html> 
+		#             <head><title>Add Avatar</title></head> 
+		self.write('''
+		             <body> 
+		             <form method="post" enctype="multipart/form-data"> 
+		             URL/MIME: <input type="text" name="url_mime" value="image/"/> 
+		  
+		             <label><input type="checkbox" name="fetch" value="yes"> Fetch it</label> 
+		  
+		             Avatar: <input type="file" name="avatar"/> 
+		  
+		             <input type="submit" value="Add"/> 
+		  
+		             </form> 
+		             </body> ''')
+
+	def post(self):  
+		
+		#checkauth(self)  
+		
+		url_mime = self.request.get('url_mime')  
+		avatar = self.request.get('avatar')  
+		
+		if url_mime:  
+			if avatar:
+				
+				
+				# code below are comming from GAE example
+				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+				CurrentUser = q.get()
+
+				#UserAvatarToBeUpdated = tarsusaUser(user = CurrentUser.user)
+				avatar_image = images.resize(self.request.get('avatar'),128,128)
+
+				CurrentUser.avatar=db.Blob(avatar_image)
+				CurrentUser.put()  
+				#sendmsg(self, 'added')  
+				self.write('okok')
+			else:  
+				
+				if self.request.get('fetch') == 'yes':  
+					try:
+						fc = urlfetch.fetch(url_mime)  
+						if fc.status_code == 200:  
+							avatar = fc.content  
+				 			if 'Content-Type' in fc.headers:  
+								url_mime = fc.headers['Content-Type']  
+							
+								q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+								CurrentUser = q.get()
+					
+								
+								UserAvatarToBeUpdated = tarsusaUser(user = CurrentUser.user)
+								UserAvatarToBeUpdated.avatar=db.Blob(avatar)
+								UserAvatarToBeUpdated.put()
+
+								#sendmsg(self, 'added')  
+								self.write('ok')
+							else:
+								#sendmsg(self, 'no content-type sent from remote server')
+								self.write('ac')
+						else:  
+							#sendmsg(self, 'cannot fetch avatar: http status ' + str(fc.status_code))  
+							self.write('avcx')
+					except:  
+						#sendmsg(self, 'cannot fetch avatar')  
+						self.write('avcx')
+
+				else:  
+					avatar = Avatar(url_mime=url_mime)  
+					avatar.put()  
+					#sendmsg(self, 'added')  
+		else:
+			 #sendmsg(self, 'fill in the form!')  
+			 self.write('please write')
+
 
 class UserMainPage(tarsusaRequestHandler):
 	def get(self):
 
 		username = cgi.escape(self.request.path[6:])  ## Get the username in the middle of /user/CNBorn/
 	
-		self.write('user ' + username + "'s page")
+		#self.write('<html><body>user ' + username + "'s page")
+
+		#self.response.headers['Content-Type'] = 'text/html'  #str(avatar.url_mime) 
 
 		## Get this user.
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1 LIMIT 1", username)
 		
 		ViewUser = q.get()
 		self.write(ViewUser)
+
+		
+		#self.write(ViewUser.avatar)
+		#self.response.headers['Content-Type'] = 'image/'  #str(avatar.url_mime) 
+		if ViewUser.avatar:
+			self.response.out.write("<html><body><img src='/img?img_user=%s'></img>" % ViewUser.key())
+
+		else:
+			self.write('none image')
+		#self.response.out.write(' %s</div>' % cgi.escape(greeting.content))
+		
+		#self.write('<img src=')
+		#self.write(UserA.avatar)
+		#self.write('>')
+
+
+
 
 		if ViewUser != None:
 			#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
@@ -541,6 +643,20 @@ class UserMainPage(tarsusaRequestHandler):
 
 		else:
 			self.write('not found any items')
+
+
+class Image (webapp.RequestHandler):
+	def get(self):
+		greeting = db.get(self.request.get("img_user"))
+		if greeting.avatar:
+			self.response.headers['Content-Type'] = "image/"
+			self.response.out.write(greeting.avatar)
+			#img = images.Image(greeting.avatar)
+			#tumbimg = img.execute_transforms(output_encoding=images.PNG)
+			#self.response.headers['Content-Type'] = 'image/png'
+			#self.response.out.write(tumbimg)
+		else:
+			self.error(404)
 
 	
 
@@ -709,6 +825,7 @@ def main():
 									   ('/tag/.+',Showtag),
 									   ('/user/.+/setting',UserSettingPage),
 									   ('/user/.+', UserMainPage),
+									   ('/img', Image),
 									   ('/FindFriend', FindFriendPage),
 									   ('/Login',LoginPage),
 								       ('/SignIn',SignInPage),
