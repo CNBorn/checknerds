@@ -27,10 +27,16 @@
 									<p>
 									{% for tarsusaPeople in tarsusaPeopleCollection %}
 							        	<ul>
-													<img src='/img?img_user={{tarsusaPeople.key}}' width=64 height=64>
+													{% if tarsusaPeople.avatar %}
+														<img src='/img?img_user={{tarsusaPeople.key}}' width=64 height=64>
+													{% else %}
+														<img src='/img/default_avatar.jpg' width=64 height=64>
+													{% endif %}
+
+
 													<a href="/user/{{tarsusaPeople.user|escape}}">{{ tarsusaPeople.user|escape }}</a>
 													加入时间：{{ tarsusaPeople.datejoinin|escape }}
-										<span class="text_tag"<a href="/AddFriend/{{tarsusaPeople.key.id}}" class="x">加为朋友</a><br />
+													<a href="/AddFriend/{{tarsusaPeople.key.id}}" class="x">加为朋友</a><br />
 
 											
 									   	</ul>

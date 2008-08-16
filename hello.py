@@ -29,9 +29,24 @@ class MainPage(tarsusaRequestHandler):
 				# Actully I thought this would be useless when I have an signin page.
 				
 				#Give vreated user a default avatar image.
+				#avatar_image = images.resize('/img/default_avatar.jpg',64,64)
+				#do not support read from file 
+				#CurrentUser.avatar=db.Blob(avatar_image)
+				#CurrentUser.put()  	
+
 
 				CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=users.get_current_user().nickname())
 				#self.write(CurrentUser.user.nickname())
+
+
+				## Should automatically give the user a proper urlname
+				## otherwise a lot of user's name will be their email address.
+				## the email address's urlname will cause seriouse problems when 
+				## the people are entering their own Mainpage or UserSetting page.
+
+
+				
+
 
 				CurrentUser.put()
 
@@ -92,7 +107,11 @@ class MainPage(tarsusaRequestHandler):
 						each_tarsusaItemCollection_DailyRoutine.put()
 
 					else:
-						pass
+						## The Date from RoutineLogItem isn't the same of Today's date
+						## That means this tarsusaItem(as routine).donetoday should be removed.
+						
+						del each_tarsusaItemCollection_DailyRoutine.donetoday
+						each_tarsusaItemCollection_DailyRoutine.put()
 
 			
 			## Output the message for DailyRoutine
@@ -386,10 +405,17 @@ class ViewItem(tarsusaRequestHandler):
 				else:
 					self.redirect('/')
 
+			# process html_tag_tarsusaRoutineItem
+			if tItem.routine != 'none':
+				html_tag_tarsusaRoutineItem = 'True'
+			else:
+				html_tag_tarsusaRoutineItem = None
+
 			template_values = {
 					'PrefixCSSdir': "../",
-					
-					'UserNickName': "The About page of Nevada.",
+					'UserLoggedIn': 'Logged In',
+
+					'UserNickName': users.get_current_user().nickname(),	
 					'singlePageTitle': "View Item",
 					'singlePageContent': "",
 
@@ -399,10 +425,11 @@ class ViewItem(tarsusaRequestHandler):
 					'tarsusaItem': tItem,
 					'tarsusaItemDone': tItem.done,
 					'tarsusaItemTags': ItemTags,
+					'tarsusaRoutineItem': html_tag_tarsusaRoutineItem,
 			}
 
 		
-			path = os.path.join(os.path.dirname(__file__), './single.html')
+			path = os.path.join(os.path.dirname(__file__), 'pages/viewitem.html')
 			self.response.out.write(template.render(path, template_values))
 
 
@@ -507,52 +534,101 @@ class SignOutPage(tarsusaRequestHandler):
 
 class UserSettingPage(tarsusaRequestHandler):
 	def get(self):
-		self.write('This is user setting page.')
 		
 		username = cgi.escape(self.request.path[6:-8])  ## Get the username in the middle of /user/CNBorn/setting
-       
 
-		from google.appengine.ext.db import djangoforms 
-		class ItemForm(djangoforms.ModelForm):
-			class Meta:
-				model = tarsusaUser
-				exclude =['user','usedtags','friends','datejoinin']
-        
-		self.response.out.write(ItemForm()) 
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1", username)
+		CurrentUser = q.get()
+
+		if CurrentUser == None:
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1", users.get_current_user())
+			CurrentUser = q.get()
+
+		if CurrentUser != None:
+
+			from google.appengine.ext.db import djangoforms 
+			class ItemForm(djangoforms.ModelForm):
+				
+				## Custom djangoforms.ModelForm,
+				## http://groups.google.com/group/google-appengine/browse_thread/thread/d3673d0ec7ead0e2
+				
+				#custom form fields
+				#category = forms.CharField(widget=forms.HiddenInput())
+				#title =forms.CharField(widget=forms.TextInput(attrs={'size':'60','maxlength':'70'}))
+				#price =forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10'}))
+				#description =	forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
+				
+				#urlname =djangoforms.ModelForm.CharField(widget=forms.TextInput(attrs={'size':'60','maxlength':'70'}))
+				#dispname =djangoforms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10'}))
+				##website =djangoforms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10'}))
+
+				##Please reference more from the URL
+
+				class Meta:
+					model = tarsusaUser
+					exclude =['user','usedtags','friends','datejoinin']
+			
+			outputStringUserSettingForms = ItemForm()
+			
+
+			## The Avatar part is inspired by 
+			## http://blog.liangent.cn/2008/07/google-app-engine_28.html
+
+		
+
+			outputStringUserAvatarSetting = ""
+			
+			if CurrentUser.avatar:
+				outputStringUserAvatarSetting += "<img src=/img?img_user=" + str(CurrentUser.key()) + " width=64 height=64><br />" + cgi.escape(CurrentUser.user.nickname()) + '&nbsp;<br />'
+			else:
+				outputStringUserAvatarSetting += "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(CurrentUser.user.nickname()) + '&nbsp;<br />'
+
+			
+			outputStringUserAvatarSetting += '''
+						 <form method="post" enctype="multipart/form-data"> 
+						 choose file: <input type="file" name="avatar"/>
+						 <input type="submit" value="Update Avatar"/></form> '''
 
 
-		## The Avatar part is inspired by 
-		## http://blog.liangent.cn/2008/07/google-app-engine_28.html
 
-		#         self.response.headers['Content-Type'] = 'text/html'  
 
-		#         self.response.out.write(""" 
-		#             <html> 
-		#             <head><title>Add Avatar</title></head> 
-		self.write('''
-		             <body> 
-		             <form method="post" enctype="multipart/form-data"> 
-		             URL/MIME: <input type="text" name="url_mime" value="image/"/> 
-		  
-		             <label><input type="checkbox" name="fetch" value="yes"> Fetch it</label> 
-		  
-		             Avatar: <input type="file" name="avatar"/> 
-		  
-		             <input type="submit" value="Add"/> 
-		  
-		             </form> 
-		             </body> ''')
+
+			template_values = {
+					'PrefixCSSdir': "/",
+					
+					'UserLoggedIn': 'Logged In',
+
+					'UserNickName': CurrentUser.user.nickname(),
+
+
+					'UserSettingForms': outputStringUserSettingForms,
+
+					'UserAvatarSetting': outputStringUserAvatarSetting,
+
+
+					
+			}
+
+		
+			path = os.path.join(os.path.dirname(__file__), 'pages/usersettingpage.html')
+			self.response.out.write(template.render(path, template_values))
+
+		else:
+			## can not find this user.
+			self.redirect("/")
+
 
 	def post(self):  
 		
 		#checkauth(self)  
 		
-		url_mime = self.request.get('url_mime')  
+		url_mime = 'image/' 
 		avatar = self.request.get('avatar')  
 		
 		if url_mime:  
 			if avatar:
-				
 				
 				# code below are comming from GAE example
 				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
@@ -562,7 +638,10 @@ class UserSettingPage(tarsusaRequestHandler):
 
 				CurrentUser.avatar=db.Blob(avatar_image)
 				CurrentUser.put()  
-				self.write('okok')
+
+				self.redirect("/user/" + CurrentUser.user.nickname() + "/setting")
+
+
 			else:  
 				
 				if self.request.get('fetch') == 'yes':  
@@ -601,16 +680,10 @@ class UserMainPage(tarsusaRequestHandler):
 	def get(self):
 
 		username = cgi.escape(self.request.path[6:])  ## Get the username in the middle of /user/CNBorn/
-	
-		#self.write('<html><body>user ' + username + "'s page")
-
-		#self.response.headers['Content-Type'] = 'text/html'  #str(avatar.url_mime) 
 
 		## Get this user.
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1 LIMIT 1", username)
-		
 		ViewUser = q.get()
-		#self.write(ViewUser)
 
 
 		if ViewUser != None:
@@ -618,9 +691,9 @@ class UserMainPage(tarsusaRequestHandler):
 			#self.write(ViewUser.avatar)
 			#self.response.headers['Content-Type'] = 'image/'  #str(avatar.url_mime) 
 			if ViewUser.avatar:
-				self.response.out.write("<html><body><img src='/img?img_user=%s' width=64 height=64></img>" % ViewUser.key())
-				self.write(ViewUser.user)
-				self.write('here is his items')
+				outputStringUserMainPageTitle = ""
+				outputStringUserMainPageTitle = "<img src='/img?img_user=" + str(ViewUser.key()) + "' width=64 height=64>"
+				outputStringUserMainPageTitle += ViewUser.user.nickname() + "'s homepage"
 
 			else:
 				self.write('none image')
@@ -629,16 +702,39 @@ class UserMainPage(tarsusaRequestHandler):
 			#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
 
 			tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
+			outputStringRoutineLog = ""
 			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
-				self.write(each_Item.name)
+				outputStringRoutineLog += each_Item.name + "<br />"
 
 		else:
 			self.write('not found this user and any items')
 
 
+
+		template_values = {
+				'PrefixCSSdir': "../",
+				
+				'UserLoggedIn': 'Logged In',
+
+				'UserNickName': ViewUser.user.nickname(), 
+				
+				
+				'singlePageTitle': ViewUser.user.nickname(),
+				
+				'UserMainPageUserTitle': outputStringUserMainPageTitle,
+				
+				'StringRoutineLog': outputStringRoutineLog,
+		}
+
+	
+		path = os.path.join(os.path.dirname(__file__), 'pages/usermainpage.html')
+		self.response.out.write(template.render(path, template_values))
+
+
 class Image (webapp.RequestHandler):
 	def get(self):
 		greeting = db.get(self.request.get("img_user"))
+		
 		if greeting.avatar:
 			self.response.headers['Content-Type'] = "image/"
 			self.response.out.write(greeting.avatar)
@@ -699,8 +795,23 @@ class DoneLogPage(tarsusaRequestHandler):
 			## Get what the name of this tarsusaItem is.
 			ThisRoutineBelongingstarsusaItem = tarsusaItem.get_by_id(each_RoutineLogItem.routineid)
 			
-			outputStringRoutineLog += ThisRoutineBelongingstarsusaItem.name + "<br/>"
+			if each_RoutineLogItem.routine != 'none':
+				outputStringRoutineLog += 'Done ' + each_RoutineLogItem.routine + ' Routine - '
+				## TODO
+				## There will be updated when I need the Chinese Version.
+
+			
+				
+			outputStringRoutineLog += '<a href=/i/' + str(ThisRoutineBelongingstarsusaItem.key().id()) + '>' + ThisRoutineBelongingstarsusaItem.name + "</a><br/>"
+
 			Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
+
+		## AT THIS PAgE
+		## There should be also displaying ordinary items that done.
+		## but since there will be a performance killer when selecting almost all doneitems
+		## and a major con is that the date property in Datastore model can not be queried as a condition.
+		## Thus made this thing more difficult.
+
 
 
 
@@ -769,6 +880,11 @@ class FindFriendPage(tarsusaRequestHandler):
 				UsersFriend =  db.get(each_FriendKey)
 				if UsersFriend.avatar:
 					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;<br />'
+				else:
+					## Show Default Avatar
+					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src='/img/default_avatar.jpg' width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;<br />'
+
+
 		else:
 			UserFriends = '当前没有添加朋友'
 
