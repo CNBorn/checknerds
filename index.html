@@ -1,59 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Nevada</title>
-<link href="img/style.css" rel="stylesheet" type="text/css" />
-</head>
+{% extends "pages/base.html" %}
+{% block title %} Nevada {% endblock title %}
 
-<body>
-<div id="container">
-	<div id="header">
-    	<div id="logo">
-        	<a href="/">
-                <span id="sitename">Nevada</span>
-            </a>  
-		<div class="textalign-right">
-                	<a href="/About">关于</a>&nbsp;
-                	<a href="/Blog">Blog</a>
-		</div>
-  
-        </div>
-  </div>
-	<div id="container-content">
-    	<div id="breadcrumbs">
-        	<div id="breadcrumbs-top"></div>
-            <div id="breadcrumbs-mid">
-                <table style="font-size:14px;">
-                	<tr>
-                    	<td>
-                            <a href="/">首页</a>&nbsp;
-			    {% if UserLoggedIn %}
-				 <a href="/user/{{UserNickName|escape}}">我的首页</a>&nbsp;
-				 <a href="/">待完成项目</a>&nbsp;
-				 <a href="/">已完成项目</a>&nbsp;
-				 <a href="/FindFriend">我的朋友</a>
-		            {% endif %}
-
-			</td>
-
-                    	<td class="textalign-right">
-                            {% if not UserLoggedIn %}
-							<img src="/img/favb16.png">&nbsp;<a href="/Login">登录</a>&nbsp;或&nbsp;<a href="/SignIn">注册</a>
-							{% endif %}
-							{% if UserLoggedIn %}
-							{{ UserNickName }}
-							<a href="/user/{{UserNickName}}/setting">{{UserNickName}}的设置</a>
-							<a href="/SignOut">Logout</a>
-							{% endif %}							
-							<em style="color:#86a05f"></em>
-						</td>
-					</tr>
-                </table>
-            </div>
-            <div id="breadcrumbs-bot"></div>
-		</div>
-        <div id="content-holder">
+		{% block content-holder %}
         	<div id="leftside">
             	<div id="featuredcode">
                 	<div id="featuredcode-top"></div>
@@ -208,17 +156,5 @@
                 	<div id="codelist-bot"></div>
                 </div>
             </div>
-        </div>
-        <div style="clear:both;"></div>
-        <div id="copy">
-            <div id="copy-top"></div>
-            <div id="copy-mid">
-                <small>&copy; Original Designed by <a href="http://dodesign.us">doDesign</a>&nbsp; CNBorn, 2008, Powered by Google App Engine</small>            
-            </div>
-          <div id="copy-bot"></div>
-        </div>
-    </div>
-	<div id="container-bottom"></div>
-</div>
-</body>
-</html>
+        {% endblock content-holder %}
+

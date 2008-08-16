@@ -27,8 +27,12 @@ class MainPage(tarsusaRequestHandler):
 			if not CurrentUser:
 				# Create a User
 				# Actully I thought this would be useless when I have an signin page.
+				
+				#Give vreated user a default avatar image.
+
 				CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=users.get_current_user().nickname())
 				#self.write(CurrentUser.user.nickname())
+
 				CurrentUser.put()
 
 			
@@ -38,9 +42,7 @@ class MainPage(tarsusaRequestHandler):
 			if CurrentUser.usedtags:
 				for each_cate in CurrentUser.usedtags:
 					each_tag =  db.get(each_cate)
-					#Below line will triggar the 0xe9 unicode problem!
 					UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
-					#UserTags += 'abc' + unicode(cgi.escape(each_tag.name))
 			
 
 			# Show His Daily Routine.
@@ -428,11 +430,11 @@ class DoneItem(tarsusaRequestHandler):
 				NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
 				NewlyDoneRoutineItem.user = users.get_current_user()
 				NewlyDoneRoutineItem.routineid = int(ItemId)
-				NewlyDoneRoutineItem.routine = tItem.routine
+				#NewlyDoneRoutineItem.routine = tItem.routine
 				# The done date will be automatically added by GAE datastore.			
 				NewlyDoneRoutineItem.put()
 
-
+		
 
 		#self.redirect(self.request.uri)
 		self.redirect('/')
@@ -556,12 +558,10 @@ class UserSettingPage(tarsusaRequestHandler):
 				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 				CurrentUser = q.get()
 
-				#UserAvatarToBeUpdated = tarsusaUser(user = CurrentUser.user)
-				avatar_image = images.resize(self.request.get('avatar'),128,128)
+				avatar_image = images.resize(avatar,128,128)
 
 				CurrentUser.avatar=db.Blob(avatar_image)
 				CurrentUser.put()  
-				#sendmsg(self, 'added')  
 				self.write('okok')
 			else:  
 				
@@ -577,12 +577,7 @@ class UserSettingPage(tarsusaRequestHandler):
 								CurrentUser = q.get()
 					
 								
-								UserAvatarToBeUpdated = tarsusaUser(user = CurrentUser.user)
-								UserAvatarToBeUpdated.avatar=db.Blob(avatar)
-								UserAvatarToBeUpdated.put()
-
-								#sendmsg(self, 'added')  
-								self.write('ok')
+								self.write('noneok')
 							else:
 								#sendmsg(self, 'no content-type sent from remote server')
 								self.write('ac')
@@ -615,26 +610,22 @@ class UserMainPage(tarsusaRequestHandler):
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1 LIMIT 1", username)
 		
 		ViewUser = q.get()
-		self.write(ViewUser)
-
-		
-		#self.write(ViewUser.avatar)
-		#self.response.headers['Content-Type'] = 'image/'  #str(avatar.url_mime) 
-		if ViewUser.avatar:
-			self.response.out.write("<html><body><img src='/img?img_user=%s'></img>" % ViewUser.key())
-
-		else:
-			self.write('none image')
-		#self.response.out.write(' %s</div>' % cgi.escape(greeting.content))
-		
-		#self.write('<img src=')
-		#self.write(UserA.avatar)
-		#self.write('>')
-
-
+		#self.write(ViewUser)
 
 
 		if ViewUser != None:
+				
+			#self.write(ViewUser.avatar)
+			#self.response.headers['Content-Type'] = 'image/'  #str(avatar.url_mime) 
+			if ViewUser.avatar:
+				self.response.out.write("<html><body><img src='/img?img_user=%s' width=64 height=64></img>" % ViewUser.key())
+				self.write(ViewUser.user)
+				self.write('here is his items')
+
+			else:
+				self.write('none image')
+			#self.response.out.write(' %s</div>' % cgi.escape(greeting.content))
+		
 			#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
 
 			tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
@@ -642,7 +633,7 @@ class UserMainPage(tarsusaRequestHandler):
 				self.write(each_Item.name)
 
 		else:
-			self.write('not found any items')
+			self.write('not found this user and any items')
 
 
 class Image (webapp.RequestHandler):
@@ -669,21 +660,66 @@ class DoneLogPage(tarsusaRequestHandler):
 		
 		#Donelog page shows User Done's Log.
 
-		tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE done = 1 ORDER BY date DESC")
+		username = cgi.escape(self.request.path[9:])  ## Get the username in the middle of /donelog/CNBorn
+		
+		if username == "": ## if the url are not directed to specific user.
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+
+		else:
+			
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1", username)
+			CurrentUser = q.get()
+			if CurrentUser == None:
+				## Can not find this user.
+				self.redirect("/")
+
+
+		tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 ORDER BY donedate DESC", CurrentUser.user)
+		
+		outputStringRoutineLog = ""
+		Donedate_of_previousRoutineLogItem = None  ## To display the routine item log by Daily.
+
+		for each_RoutineLogItem in tarsusaRoutineLogItemCollection:
+			
+			DoneDateOfThisItem = datetime.datetime.date(each_RoutineLogItem.donedate)
+
+			if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
+				outputStringRoutineLog += str(DoneDateOfThisItem) + "Done<br />"
+			
+			## TODO
+			## NOTICE! SPEED KILLER!
+			#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND "
+			
+			#tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC ", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id())
+
+			## Get what the name of this tarsusaItem is.
+			ThisRoutineBelongingstarsusaItem = tarsusaItem.get_by_id(each_RoutineLogItem.routineid)
+			
+			outputStringRoutineLog += ThisRoutineBelongingstarsusaItem.name + "<br/>"
+			Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
+
+
+
+
+		#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE done = 1 ORDER BY date DESC")
 
 		template_values = {
 				'PrefixCSSdir': "../",
 				
-				'UserNickName': "The About page of Nevada.",
-				'singlePageTitle': "DoneLog Page",
-				'singlePageContent': "",
-				
-				'DonelogItemCollection': tarsusaItemCollection,
+				'UserLoggedIn': 'Logged In',
 
+				'UserNickName': CurrentUser.user.nickname(), 
+				'singlePageTitle': "DoneLog Page",
+				
+				'StringRoutineLog': outputStringRoutineLog,
 		}
 
 	
-		path = os.path.join(os.path.dirname(__file__), './single.html')
+		path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
 		self.response.out.write(template.render(path, template_values))
 
 
@@ -731,7 +767,8 @@ class FindFriendPage(tarsusaRequestHandler):
 		if tarsusaUserFriendCollection: 
 			for each_FriendKey in tarsusaUserFriendCollection:
 				UsersFriend =  db.get(each_FriendKey)
-				UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;<br />'
+				if UsersFriend.avatar:
+					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;<br />'
 		else:
 			UserFriends = '当前没有添加朋友'
 
@@ -784,6 +821,9 @@ class AddFriendProcess(tarsusaRequestHandler):
 		self.redirect('/FindFriend')
 
 	
+class DashboardPage(tarsusaRequestHandler):
+	def get(self):
+		print 'dashboard page'
 
 
 
@@ -803,7 +843,7 @@ class AboutPage(tarsusaRequestHandler):
 		}
 
 	
-		path = os.path.join(os.path.dirname(__file__), 'single.html')
+		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
 
 
@@ -830,10 +870,11 @@ def main():
 									   ('/Login',LoginPage),
 								       ('/SignIn',SignInPage),
 									   ('/SignOut',SignOutPage),
-								       ('/donelog',DoneLogPage),
+								       ('/donelog/.+',DoneLogPage),
 								       ('/Statstics',StatsticsPage),
 								       ('/About',AboutPage),
 								       ('/Blog',BlogPage),
+									   ('/dashboard', DashboardPage),
 									   ('.*',NotFoundPage)],
                                        debug=True)
 

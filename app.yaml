@@ -62,6 +62,9 @@ handlers:
 - url: /donelog
   script: hello.py
 
+- url: /donelog/.*
+  script: hello.py
+
 - url: /user/.*
   script: hello.py
 
@@ -69,6 +72,9 @@ handlers:
   script: hello.py
 
 - url: /img
+  script: hello.py
+
+- url: /dashboard
   script: hello.py
 
 - url: /.*
