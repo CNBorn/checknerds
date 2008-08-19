@@ -64,6 +64,15 @@
 
 							{% endif %}
 
+							{% if tarsusaRoutineItem %}
+								<tr class="rowB"><td colspan="2">最近完成<br />
+								{% for eachRoutineLogItem in tarsusaRoutineLogItem %}
+									{{ eachRoutineLogItem.donedate}} &nbsp; <br />
+								{% endfor %}
+								</td></tr>
+							{% endif %}						
+
+
 							{% if not logictag_OtherpeopleViewThisItem %}
 								{% if not tarsusaRoutineItem %}
 									{% if not tarsusaItemDone %}

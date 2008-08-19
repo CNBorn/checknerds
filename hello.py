@@ -109,9 +109,28 @@ class MainPage(tarsusaRequestHandler):
 					else:
 						## The Date from RoutineLogItem isn't the same of Today's date
 						## That means this tarsusaItem(as routine).donetoday should be removed.
-						
-						del each_tarsusaItemCollection_DailyRoutine.donetoday
-						each_tarsusaItemCollection_DailyRoutine.put()
+							
+						## There must be some logic issue.
+						## It is a traversal, all the items must be examined.
+						## therefore the following items are not done by today, and the same item's donetoday tag should not be removed!
+
+						## check it for another day.
+						pass
+
+							
+							
+							
+							#try:
+								## Something is wrong here. 
+								## Do not sure whether it is due to UTC time.
+								
+							#	del each_tarsusaItemCollection_DailyRoutine.donetoday
+							#	each_tarsusaItemCollection_DailyRoutine.put()
+							#	Today_DoneRoutine -= 1
+							#except:
+							#	pass
+
+
 
 			
 			## Output the message for DailyRoutine
@@ -265,41 +284,72 @@ class MainPage(tarsusaRequestHandler):
 
 class AddPage(tarsusaRequestHandler):
 	def get(self):
+		
 		# "this is add page"
 		user = users.get_current_user()	
+
+		## TODO
+		## An Brainstorming Idea - Made this additem as AJAX!
+
 		
 		if user:
-		
-			self.response.out.write ('<html><body>add the first tarsusa item!')
-			self.response.out.write ('''<form action="/additem" method="post">
+	
+			html_tag_AddItemForm_OrdinaryForms = '''<form action="/additem" method="post">
 									标题  <input type="text" name="name" value="" size="18" class="sl"><br />
 									内容  <textarea name="comment" rows="4" cols="16" wrap="PHYSICAL" class="ml"></textarea><br />
 									类别  <input type="text" name="tags" size="18" class="sl"><br />
-									预计完成于<br />''')
-			self.response.out.write ('''性质：<select name="routine">
+									预计完成于<br />'''
+
+			html_tag_AddItemForm_RoutineForms = '''性质：<select name="routine">
 									<option value="none" selected="selected">非坚持性任务</option>
 									<option value="daily">每天</option>
 									<option value="weekly">每周</option>
 									<option value="monthly">每月</option>
 									<option value="seasonly">每季度</option>
 									<option value="yearly">每年</option>
-									</select><br>''')
+									</select><br>'''
 	
-		## TODO 
-		## Added proper calendar date select form
-		## Tested django form, it doesnt contain that
+			## TODO 
+			## Added proper calendar date select form
+			## Tested django form, it doesnt contain that
 
-			#self.response.out.write ('<input type="checkbox" name="public" value="True">公开项目<BR>')
-			self.response.out.write ('''公开项目：<select name="public"><option value="private" selected="selected">不公开</option>
+			html_tag_AddItemForm_PublicForms = '''公开项目：<select name="public"><option value="private" selected="selected">不公开</option>
 			<option value="public">公开</option>
 			<option value="publicOnlyforFriends">仅对朋友公开</option>
-			''')
+			'''
 
 
-			self.response.out.write ('''<input type="submit" name="submit" value="添加一个任务"></form>''')
+			html_tag_AddItemForm_SubmitForm = '''<input type="submit" name="submit" value="添加一个任务"></form>'''
+
+
+			template_values = {
+				
+			'UserLoggedIn': 'Logged In',
+			'UserNickName': cgi.escape(self.login_user.nickname()),
+
+			'OrdinaryForms': html_tag_AddItemForm_OrdinaryForms,
+			'RoutineForms': html_tag_AddItemForm_RoutineForms,
+			'PublicForms': html_tag_AddItemForm_PublicForms,
+			'SubmitForm': html_tag_AddItemForm_SubmitForm,
+
+			}
+
+
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/additem.html')
+			self.response.out.write(template.render(path, template_values))
 
 		else:
-			self.write ("Your are not logged in!")
+			
+			## self.write ("Your are not logged in!")
+
+			## Prompt a message that ask the user to login.
+			## Or, the guest user will not be given with this url's direct visit?
+			
+			## redirect them to the rootpage.
+			self.redirect("/")
+
+
 
 class AddItemProcess(tarsusaRequestHandler):
 	def post(self):
@@ -408,8 +458,16 @@ class ViewItem(tarsusaRequestHandler):
 			# process html_tag_tarsusaRoutineItem
 			if tItem.routine != 'none':
 				html_tag_tarsusaRoutineItem = 'True'
+
+				## If this routine Item's public == public or showntoFriends,
+				## All these done routine log will be shown!
+	
+				tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routineid = :2 ORDER BY donedate DESC LIMIT 10", users.get_current_user(), tItem.key().id())
 			else:
+				tarsusaItemCollection_DoneDailyRoutine = None
 				html_tag_tarsusaRoutineItem = None
+
+
 
 			template_values = {
 					'PrefixCSSdir': "../",
@@ -426,6 +484,7 @@ class ViewItem(tarsusaRequestHandler):
 					'tarsusaItemDone': tItem.done,
 					'tarsusaItemTags': ItemTags,
 					'tarsusaRoutineItem': html_tag_tarsusaRoutineItem,
+					'tarsusaRoutineLogItem': tarsusaItemCollection_DoneDailyRoutine,
 			}
 
 		
@@ -506,6 +565,43 @@ class UnDoneItem(tarsusaRequestHandler):
 
 		self.redirect('/')
 
+class RemoveItem(tarsusaRequestHandler):
+	def get(self):
+		#self.write('this is remove page')
+
+		# Permission check is very important.
+
+		ItemId = self.request.path[12:]
+		## Please be awared that ItemId here is a string!
+		tItem = tarsusaItem.get_by_id(int(ItemId))
+
+
+		if tItem.user == users.get_current_user():
+			## Check User Permission to done this Item
+
+			if tItem.routine == 'none':
+				## if this item is not a routine item.
+				tItem.delete()
+
+			else:
+				## Del a RoutineLog item!
+				## All its doneRoutineLogWillBeDeleted!
+
+				## wether there will be another log for this? :-) for record nerd?
+
+				## This is a daily routine, and we are going to delete it.
+				## For DailyRoutine, now I just count the matter of deleting today's record.
+				## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
+				
+				# GAE can not make dateProperty as query now! There is a BUG for GAE!
+				# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
+				tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1", int(ItemId))
+				for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
+					result.delete()
+
+				tItem.delete()
+
+		self.redirect('/')
 
 
 
@@ -861,7 +957,7 @@ class FindFriendPage(tarsusaRequestHandler):
 	def get(self):
 		
 		
-		tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser")
+		tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser LIMIT 500")
 
 		#for each_tarsusaUser in tarsusaPeopleCollection:
 		#	self.write(each_tarsusaUser)
@@ -895,8 +991,8 @@ class FindFriendPage(tarsusaRequestHandler):
 				'UserNickName': cgi.escape(self.login_user.nickname()),
 
 				'UserFriends': UserFriends,	
-				'singlePageTitle': "The About page of Nevada.",
-				'singlePageContent': "This is the About content.",
+				'singlePageTitle': "查找朋友.",
+				'singlePageContent': "",
 
 				'tarsusaPeopleCollection': tarsusaPeopleCollection,
 		}
@@ -953,7 +1049,8 @@ class AboutPage(tarsusaRequestHandler):
 	def get(self):
 		
 		template_values = {
-				'UserNickName': "The About page of Nevada.",
+				'UserLoggedIn': 'Logged In',
+				'UserNickName': cgi.escape(self.login_user.nickname()),
 				'singlePageTitle': "The About page of Nevada.",
 				'singlePageContent': "This is the About content.",
 		}
@@ -978,6 +1075,7 @@ def main():
 									   ('/i/\\d+',ViewItem),
 									   ('/doneItem/\\d+',DoneItem),
 									   ('/undoneItem/\\d+',UnDoneItem),
+									   ('/removeItem/\\d+', RemoveItem),
 									   ('/tag/.+',Showtag),
 									   ('/user/.+/setting',UserSettingPage),
 									   ('/user/.+', UserMainPage),

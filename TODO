@@ -110,3 +110,16 @@
 		Improved ViewItem continuously.
 		Added Default-Avatar
 		Other little improvements - such as some ideas added.
+
+
+	IN 08.08.18
+		
+		Improved ViewItem, now can show DoneRoutineLog.
+		
+		TODO: Improved ViewItem - Just like tarsusa, can show related Item, Item created with the same day, etc.
+
+	IN 08.08.19
+		Added AddItem Page Layout.
+		Added RemoveItem function.
+
+

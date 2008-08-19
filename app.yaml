@@ -41,6 +41,9 @@ handlers:
 - url: /additem
   script: hello.py
 
+- url: /removeItem/.*
+  script: hello.py
+
 - url: /AddFriend/.*
   script: hello.py
 

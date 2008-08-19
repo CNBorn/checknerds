@@ -65,7 +65,8 @@
 							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
 									<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem_UserToDoItem.key.id}}'">
 									<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
-									<a href="/undoneItem/{{tarsusaItem_UserToDoItem.key.id}}" class="x">x</a><br />
+									<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_UserToDoItem.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_UserToDoItem.key.id}}';}" class="x">x</a><br />
+
 							    {% endfor %}							  
 							    {% endif %}
 							  <br /><a href="/">(Read More)</a></p>
@@ -143,15 +144,8 @@
                     	<h2 class="posttitle">{{UserNickName}}</h2>
                         <ul>
                             <li><a href="/Add">Add Item</a></li>
-                            <li><a href="/donelog">Done Log</a></li>
                             <li><a href="/Statstics">Statstics</a></li>
                         </ul>
-                    	<h2 class="posttitle">Connections</h2>
-                        <ul>
-                            <li><a href="index.html">My Friends</a></li>
-                            <li><a href="index.html">Find a Friend</a></li>
-                            <li><a href="index.html">More.</a></li>
-                        </ul>                        
                     </div>
                 	<div id="codelist-bot"></div>
                 </div>
