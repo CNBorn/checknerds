@@ -94,11 +94,16 @@ class MainPage(tarsusaRequestHandler):
 
 				
 				## traversed RoutineDaily
+				
+				## Check whether this single item is done.
+				DoneThisItemToday = False
+				
 				for tarsusaItem_DoneDailyRoutine in tarsusaItemCollection_DoneDailyRoutine:
 					if datetime.datetime.date(tarsusaItem_DoneDailyRoutine.donedate) == datetime.datetime.date(datetime.datetime.now()):
 						#Check if the user had done all his routine today.
 						Today_DoneRoutine += 1
-						
+						DoneThisItemToday = True
+
 						# This routine have been done today.
 						
 						# Due to solve this part, I have to change tarsusaItemModel to db.Expando
@@ -110,25 +115,15 @@ class MainPage(tarsusaRequestHandler):
 						## The Date from RoutineLogItem isn't the same of Today's date
 						## That means this tarsusaItem(as routine).donetoday should be removed.
 							
-						## There must be some logic issue.
-						## It is a traversal, all the items must be examined.
-						## therefore the following items are not done by today, and the same item's donetoday tag should not be removed!
-
-						## check it for another day.
 						pass
-
-							
-							
-							
-							#try:
-								## Something is wrong here. 
-								## Do not sure whether it is due to UTC time.
-								
-							#	del each_tarsusaItemCollection_DailyRoutine.donetoday
-							#	each_tarsusaItemCollection_DailyRoutine.put()
-							#	Today_DoneRoutine -= 1
-							#except:
-							#	pass
+				
+				if DoneThisItemToday == False:
+						## Problem solved by Added this tag. DoneThisItemToday
+						try:
+							del each_tarsusaItemCollection_DailyRoutine.donetoday
+							each_tarsusaItemCollection_DailyRoutine.put()
+						except:
+							pass
 
 
 
@@ -812,10 +807,7 @@ class UserMainPage(tarsusaRequestHandler):
 				
 				'UserLoggedIn': 'Logged In',
 
-				'UserNickName': ViewUser.user.nickname(), 
-				
-				
-				'singlePageTitle': ViewUser.user.nickname(),
+				'UserNickName': users.get_current_user().nickname(), 
 				
 				'UserMainPageUserTitle': outputStringUserMainPageTitle,
 				
@@ -975,10 +967,19 @@ class FindFriendPage(tarsusaRequestHandler):
 			for each_FriendKey in tarsusaUserFriendCollection:
 				UsersFriend =  db.get(each_FriendKey)
 				if UsersFriend.avatar:
-					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;<br />'
+					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;'
+					
+					UserFriends += '<a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a>'
+					
+					UserFriends += 	'<br />'
+
 				else:
 					## Show Default Avatar
-					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src='/img/default_avatar.jpg' width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;<br />'
+					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src='/img/default_avatar.jpg' width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;'
+					UserFriends += '<a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a>'
+					
+					UserFriends += 	'<br />'
+					
 
 
 		else:
@@ -1032,6 +1033,36 @@ class AddFriendProcess(tarsusaRequestHandler):
 		
 		self.redirect('/FindFriend')
 
+
+class RemoveFriendProcess(tarsusaRequestHandler):
+	def get(self):
+		
+		# Permission check is very important.
+
+		ToBeRemovedUserId = self.request.path[14:]
+			## Please be awared that ItemId here is a string!
+		ToBeRemovedUser = tarsusaUser.get_by_id(int(ToBeRemovedUserId))
+
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+
+		AlreadyAddedAsFriend = False
+		for eachFriend in CurrentUser.friends:
+			if eachFriend == ToBeRemovedUser.key():
+				AlreadyAddedAsFriend = True	
+
+
+		if ToBeRemovedUser.key() != CurrentUser.key() and AlreadyAddedAsFriend == True:
+			CurrentUser.friends.remove(ToBeRemovedUser.key())
+			CurrentUser.put()
+
+		else:
+			## You can't remove your self! and You can not remove a person that are not your friend!
+			pass
+		
+		self.redirect('/FindFriend')
 	
 class DashboardPage(tarsusaRequestHandler):
 	def get(self):
@@ -1072,6 +1103,7 @@ def main():
 									   ('/Add', AddPage),
 								       ('/additem',AddItemProcess),
 									   ('/AddFriend/\\d+', AddFriendProcess),
+									   ('/RemoveFriend/\\d+', RemoveFriendProcess),
 									   ('/i/\\d+',ViewItem),
 									   ('/doneItem/\\d+',DoneItem),
 									   ('/undoneItem/\\d+',UnDoneItem),

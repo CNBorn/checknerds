@@ -47,6 +47,9 @@ handlers:
 - url: /AddFriend/.*
   script: hello.py
 
+- url: /RemoveFriend/.*
+  script: hello.py
+
 - url: /i/.*
   script: hello.py
 
