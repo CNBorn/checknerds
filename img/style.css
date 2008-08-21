@@ -67,3 +67,10 @@ table{width:100%;}
 .latestcode-mid,#tagcloud-mid{border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#E1E1E1;border-left-color:#E1E1E1;padding:10px;}
 #googlead-top,#codelist-top{background-image:url(./div-right-ad-top.png);height:9px;width:242px;}
 #googlead-bot,#codelist-bot{background-image:url(./div-right-ad-bottom.png);height:7px;width:242px;}
+
+
+/*user list learnt from douban*/
+.obu { margin: 0 0 10px 0; width: 80px; float: left; }
+.obu dt{ margin: 0; height: 50px; overflow: hidden; text-align: center; }
+.obu dd{ margin: 0px; height: 55px; text-align: center; overflow: hidden; }
+

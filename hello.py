@@ -385,12 +385,12 @@ class AddItemProcess(tarsusaRequestHandler):
 
 
 
-		UserTags = ''
-		for each_cate in CurrentUser.usedtags:
-			each_tag =  db.get(each_cate)
-			UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+		#UserTags = ''
+		#for each_cate in CurrentUser.usedtags:
+		#	each_tag =  db.get(each_cate)
+		#	UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
 
-		self.write(UserTags)
+		#self.write(UserTags)
 
 		self.redirect('/')
 
@@ -602,10 +602,49 @@ class RemoveItem(tarsusaRequestHandler):
 
 class Showtag(tarsusaRequestHandler):
 	def get(self):
-		each_cat = Tag(name=self.request.path[5:])
-		self.write(each_cat.name)
-		self.write(each_cat.count)
+		#each_cat = Tag(name=cgi.escape(self.request.path[5:]))
+		catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", unicode(self.request.path[5:]))
+		try:
+			each_cat = catlist[0]
+
+			#self.write(each_cat.count)
+			
+			html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
+			## NOTICE that the /deleteTag should del the usertags in User model.
+
+			#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
+			browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
+
+			html_tag_ItemList = ""
+			for eachItem in browser_Items:
+				for eachTag in eachItem.tags:
+					if db.get(eachTag).name == self.request.path[5:]:
+						#self.write(eachItem.name)
+						#html_tag_ItemList += eachItem.name + "<br />"
+						html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+
+			template_values = {
+					'PrefixCSSdir': "/",
+					
+					'UserLoggedIn': 'Logged In',
+
+					'UserNickName': users.get_current_user().nickname(),
+					'DeleteThisTag': html_tag_DeleteThisTag,
+					'TagName': each_cat.name,
+					'ItemList': html_tag_ItemList,
+
+
+			}
+
 		
+			path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
+			self.response.out.write(template.render(path, template_values))
+
+		except:
+			## There is no this tag!
+			self.redirect("/")
+
+
 
 class LoginPage(tarsusaRequestHandler):
 	def get(self):

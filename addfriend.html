@@ -27,20 +27,21 @@
 									<h2 class="posttitle" style="font-weight:normal;">查找及添加与您志同道合的朋友！</h2>
 									<p>
 									{% for tarsusaPeople in tarsusaPeopleCollection %}
-							        	<ul>
+											<dt><a href="/people/sakinijino/">
 													{% if tarsusaPeople.avatar %}
-														<img src='/img?img_user={{tarsusaPeople.key}}' width=64 height=64>
+														<img src='/img?img_user={{tarsusaPeople.key}}' width=64 height=64 alt="{{tarsusaPeople.user|escape }}">
 													{% else %}
 														<img src='/img/default_avatar.jpg' width=64 height=64>
 													{% endif %}
+											</a></dt>
 
 
-													<a href="/user/{{tarsusaPeople.user|escape}}">{{ tarsusaPeople.user|escape }}</a>
+											<dd><a href="/user/{{tarsusaPeople.user|escape}}">{{ tarsusaPeople.user|escape }}</a>
 													加入时间：{{ tarsusaPeople.datejoinin|escape }}
 													<a href="/AddFriend/{{tarsusaPeople.key.id}}" class="x">加为朋友</a><br />
+											</dd></dl>
 
 											
-									   	</ul>
 									{% endfor %}
 									</p>
                               	</td>
