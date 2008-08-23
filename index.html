@@ -20,7 +20,7 @@
 													<span class="text_tag"<a href="/undoneItem/{{tarsusaItem_DailyRoutine.key.id}}" class="x">撤销</a><br />
 												{% else %}
 													<input type="checkbox" name="checkboxname" onchange="location.href='/doneItem/{{tarsusaItem_DailyRoutine.key.id}}'";>
-													{{ tarsusaItem_DailyRoutine.name|escape }}
+													<a href="/i/{{tarsusaItem_DailyRoutine.key.id}}">{{ tarsusaItem_DailyRoutine.name|escape }}</a>
 												{% endif %}
 
 											

@@ -27,7 +27,7 @@
 									<h2 class="posttitle" style="font-weight:normal;">查找及添加与您志同道合的朋友！</h2>
 									<p>
 									{% for tarsusaPeople in tarsusaPeopleCollection %}
-											<dt><a href="/people/sakinijino/">
+											<dt><a href="/user/{{tarsusaPeople.key.id}}">
 													{% if tarsusaPeople.avatar %}
 														<img src='/img?img_user={{tarsusaPeople.key}}' width=64 height=64 alt="{{tarsusaPeople.user|escape }}">
 													{% else %}

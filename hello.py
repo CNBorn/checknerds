@@ -43,12 +43,19 @@ class MainPage(tarsusaRequestHandler):
 				## otherwise a lot of user's name will be their email address.
 				## the email address's urlname will cause seriouse problems when 
 				## the people are entering their own Mainpage or UserSetting page.
-
-
-				
-
-
 				CurrentUser.put()
+
+				## Added userid property.
+				CurrentUser.userid = CurrentUser.key().id()
+				CurrentUser.dispname = CurrentUser.user.nickname()
+				CurrentUser.put()
+			
+			else:
+				## These code for registered user whose information are not fitted into the new model setting.
+				## Added them here.
+				if CurrentUser.userid == None:
+					CurrentUser.userid = CurrentUser.key().id()
+
 
 			
 			## Check usedtags as the evaluation for Tags Model
@@ -218,6 +225,7 @@ class MainPage(tarsusaRequestHandler):
 				'UserLoggedIn': 'Logged In',
 				
 				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),
 				
 				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 				'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
@@ -447,8 +455,19 @@ class ViewItem(tarsusaRequestHandler):
 
 				elif tItem.public == 'public':
 					logictag_OtherpeopleViewThisItem = True
+
+					## Unregistered Guest may ViewItem too,
+					## Check Their nickname here.
+					if users.get_current_user() == None:
+						UserNickName = "访客"
+						AnonymousVisitor = True 
+					else:
+						UserNickName = users.get_current_user().nickname()
 				else:
 					self.redirect('/')
+			else:
+				## Viewing User is the Owner of this Item.
+				UserNickName = users.get_current_user().nickname()
 
 			# process html_tag_tarsusaRoutineItem
 			if tItem.routine != 'none':
@@ -463,24 +482,43 @@ class ViewItem(tarsusaRequestHandler):
 				html_tag_tarsusaRoutineItem = None
 
 
+			if UserNickName != "访客":
+				UserNickName = users.get_current_user().nickname()
+				## or dispname?
 
-			template_values = {
-					'PrefixCSSdir': "../",
-					'UserLoggedIn': 'Logged In',
+				template_values = {
+						'PrefixCSSdir': "../",
+						'UserLoggedIn': 'Logged In',
 
-					'UserNickName': users.get_current_user().nickname(),	
-					'singlePageTitle': "View Item",
-					'singlePageContent': "",
+						'UserNickName': UserNickName, 
+						'singlePageTitle': "View Item",
+						'singlePageContent': "",
 
-					'logictag_OtherpeopleViewThisItem': logictag_OtherpeopleViewThisItem,
+						'logictag_OtherpeopleViewThisItem': logictag_OtherpeopleViewThisItem,
 
 
-					'tarsusaItem': tItem,
-					'tarsusaItemDone': tItem.done,
-					'tarsusaItemTags': ItemTags,
-					'tarsusaRoutineItem': html_tag_tarsusaRoutineItem,
-					'tarsusaRoutineLogItem': tarsusaItemCollection_DoneDailyRoutine,
-			}
+						'tarsusaItem': tItem,
+						'tarsusaItemDone': tItem.done,
+						'tarsusaItemTags': ItemTags,
+						'tarsusaRoutineItem': html_tag_tarsusaRoutineItem,
+						'tarsusaRoutineLogItem': tarsusaItemCollection_DoneDailyRoutine,
+				}
+
+			else:
+						template_values = {
+						'PrefixCSSdir': "../",
+						'singlePageTitle': "View Item",
+						'singlePageContent': "",
+
+						'logictag_OtherpeopleViewThisItem': logictag_OtherpeopleViewThisItem,
+
+						'tarsusaItem': tItem,
+						'tarsusaItemDone': tItem.done,
+						'tarsusaItemTags': ItemTags,
+						'tarsusaRoutineItem': html_tag_tarsusaRoutineItem,
+						'tarsusaRoutineLogItem': tarsusaItemCollection_DoneDailyRoutine,
+				}
+
 
 		
 			path = os.path.join(os.path.dirname(__file__), 'pages/viewitem.html')
@@ -672,35 +710,45 @@ class UserSettingPage(tarsusaRequestHandler):
 		CurrentUser = q.get()
 
 		if CurrentUser == None:
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1", users.get_current_user())
+			## try another way
+			## Get this user.
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
 			CurrentUser = q.get()
+		
+		if CurrentUser == None:
+			## try another way
+			## Get this user.
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE dispname = :1 LIMIT 1", username)
+			CurrentUser = q.get()
+
+
 
 		if CurrentUser != None:
 
-			from google.appengine.ext.db import djangoforms 
+			from google.appengine.ext.db import djangoforms
+			from django import newforms as forms 
+			
 			class ItemForm(djangoforms.ModelForm):
 				
 				## Custom djangoforms.ModelForm,
 				## http://groups.google.com/group/google-appengine/browse_thread/thread/d3673d0ec7ead0e2
 				
-				#custom form fields
 				#category = forms.CharField(widget=forms.HiddenInput())
-				#title =forms.CharField(widget=forms.TextInput(attrs={'size':'60','maxlength':'70'}))
-				#price =forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10'}))
 				#description =	forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
-				
-				#urlname =djangoforms.ModelForm.CharField(widget=forms.TextInput(attrs={'size':'60','maxlength':'70'}))
-				#dispname =djangoforms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10'}))
-				##website =djangoforms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10'}))
-
+				mail = 	forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10','value':CurrentUser.user.email()}))
+				urlname =forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10','value':CurrentUser.urlname}))
+				dispname = forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10','value':CurrentUser.dispname}))
+				website = forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10','value':CurrentUser.website}))	
 				##Please reference more from the URL
 
 				class Meta:
 					model = tarsusaUser
-					exclude =['user','usedtags','friends','datejoinin']
+					exclude =['user','userid','usedtags','friends','datejoinin']
+
+
 			
 			outputStringUserSettingForms = ItemForm()
+
 			
 
 			## The Avatar part is inspired by 
@@ -731,7 +779,8 @@ class UserSettingPage(tarsusaRequestHandler):
 					'UserLoggedIn': 'Logged In',
 
 					'UserNickName': CurrentUser.user.nickname(),
-
+					'UserID': CurrentUser.key().id(),
+					'UserJoinInDate': CurrentUser.datejoinin,
 
 					'UserSettingForms': outputStringUserSettingForms,
 
@@ -815,6 +864,18 @@ class UserMainPage(tarsusaRequestHandler):
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1 LIMIT 1", username)
 		ViewUser = q.get()
 
+		if ViewUser == None:
+			## try another way
+			## Get this user.
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
+			ViewUser = q.get()
+		
+		if ViewUser == None:
+			## try another way
+			## Get this user.
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE dispname = :1 LIMIT 1", username)
+			ViewUser = q.get()
+
 
 		if ViewUser != None:
 				
@@ -826,34 +887,83 @@ class UserMainPage(tarsusaRequestHandler):
 				outputStringUserMainPageTitle += ViewUser.user.nickname() + "'s homepage"
 
 			else:
-				self.write('none image')
-			#self.response.out.write(' %s</div>' % cgi.escape(greeting.content))
-		
-			#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
+				#self.write('none image')
+				#self.response.out.write(' %s</div>' % cgi.escape(greeting.content))
+				#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
+				outputStringUserMainPageTitle = ""
+				outputStringUserMainPageTitle = "<img src='/img/default_avatar.jpg' width=64 height=64>"
+				outputStringUserMainPageTitle += ViewUser.user.nickname() + "'s homepage"
+
+				
+				
 
 			tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
 			outputStringRoutineLog = ""
+			
+			if users.get_current_user() == None:
+				UserNickName = "访客"
+				logictag_OneoftheFriendsViewThisPage = False
+			else:
+				UserNickName = users.get_current_user().nickname()
+
+				## Check whether the currentuser is a friend of this User.
+				## Made preparation for the following public permission check.
+
+				# code below are comming from GAE example
+				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+				CurrentUser = q.get()
+
+				CurrentUserIsOneofViewUsersFriends = False
+
+				for each_Friend_key in ViewUser.friends:
+					if each_Friend_key == CurrentUser.key():
+						CurrentUserIsOneofViewUsersFriends = True
+
+				logictag_OtherpeopleViewThisPage = True
+				logictag_OneoftheFriendsViewThisPage = True
+
+			
 			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
-				outputStringRoutineLog += each_Item.name + "<br />"
+				## Added Item public permission check.
+		
+				if each_Item.public == 'publicOnlyforFriends' and logictag_OneoftheFriendsViewThisPage == True:
+					outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+				elif each_Item.public == 'public':
+					outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+				else:
+					pass
+
+
 
 		else:
-			self.write('not found this user and any items')
+			#self.write('not found this user and any items')
+			outputStringUserMainPageTitle = 'not found this user and any items'
+
+			outputStringRoutineLog = 'None'
+
+
+		if UserNickName != "访客":
+			template_values = {
+					'PrefixCSSdir': "../",
+					
+					'UserLoggedIn': 'Logged In',
+
+					'UserNickName': UserNickName, 
+					
+					'UserMainPageUserTitle': outputStringUserMainPageTitle,
+					
+					'StringRoutineLog': outputStringRoutineLog,
+			}
+
+		else:
+				template_values = {
+					'PrefixCSSdir': "../",
+					'UserMainPageUserTitle': outputStringUserMainPageTitle,
+					'StringRoutineLog': outputStringRoutineLog,
+			}
 
 
 
-		template_values = {
-				'PrefixCSSdir': "../",
-				
-				'UserLoggedIn': 'Logged In',
-
-				'UserNickName': users.get_current_user().nickname(), 
-				
-				'UserMainPageUserTitle': outputStringUserMainPageTitle,
-				
-				'StringRoutineLog': outputStringRoutineLog,
-		}
-
-	
 		path = os.path.join(os.path.dirname(__file__), 'pages/usermainpage.html')
 		self.response.out.write(template.render(path, template_values))
 
@@ -879,6 +989,9 @@ class Image (webapp.RequestHandler):
 
 class DoneLogPage(tarsusaRequestHandler):
 	def get(self):
+		
+		## TODO added permission check, anonymous user should not see any private donelog 
+		
 		#Donelog should shows User's Done Routine Log
 		
 		#Donelog page shows User Done's Log.
@@ -986,18 +1099,25 @@ class StatsticsPage(tarsusaRequestHandler):
 
 class FindFriendPage(tarsusaRequestHandler):
 	def get(self):
+	
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
 		
-		
+		if users.get_current_user() == None:
+			## Prompt them to register!
+			self.redirect('/')
+			##
+
+
 		tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser LIMIT 500")
 
 		#for each_tarsusaUser in tarsusaPeopleCollection:
 		#	self.write(each_tarsusaUser)
 		#	self.write('---<BR>')
 
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
+
 
 		tarsusaUserFriendCollection = CurrentUser.friends
 

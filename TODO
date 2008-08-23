@@ -135,4 +135,10 @@
 		Done a almost workable Tag page.	
 
 
-
+	IN 08.08.23
+		tarsusaUserModel added userid for fast locate a user.
+		Now URL with id, can find a user's page.
+		Polished Work for ViewItem, UserMainPage, to give anonymous user a better experience.
+		A little fixed code added for Existing User to fit in the updating tarsusaUserModel
+		Enlighted at the UserSetting Form (Django.Formodel)
+		
