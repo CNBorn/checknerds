@@ -77,6 +77,9 @@ handlers:
 - url: /tag/.*
   script: hello.py
 
+- url: /tag/
+  script: hello.py
+
 - url: /img
   script: hello.py
 

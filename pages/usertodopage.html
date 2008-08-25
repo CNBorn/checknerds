@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %} Nevada - {{ UserNickName }}待完成项目 {% endblock title %}
+        <div id="content-holder">
+		{% block content-holder %}
+			<div id="singlepostholder">
+            	<div id="top"></div>
+                <div id="mid">
+                    <div id="singleright">
+                        <div id="googlead">
+                            <div id="googlead-top"></div>
+                            <div id="googlead-mid">
+                            
+                    			<!--Remove the next few lines to place an ad-->
+                    			<br />
+								<div style="margin-top:70px;">
+                                	Ad Space
+                                </div>
+
+                            </div>
+                            <div id="googlead-bot"></div>
+                        </div>
+                    </div>
+
+                    <div id="singleleft">
+                        <h2 class="posttitle" style="font-weight:normal;"><a href="/user/{{UserNickName}}">{{UserNickName}}</a> &raquo; <a href="/user/{{UserNickName}}/todo">未完成的项目</a>
+						</h2>
+                        <p> 
+							    {% if AnonymousVisitor %}
+							    	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
+									<a href="/user/{{tarsusaItem_UserToDoItem.user|escape}}">{{ tarsusaItem_UserToDoItem.user }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><br />
+								{% endfor %}
+							    
+							    {% else %}
+							    
+							    
+							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
+									<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem_UserToDoItem.key.id}}'">
+									<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
+									<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_UserToDoItem.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_UserToDoItem.key.id}}';}" class="x">x</a><br />
+									{{tarsusaItem_UserToDoItem.comment|escape }}<br />
+
+							    {% endfor %}							  
+							    {% endif %}
+							  <br /><a href="/">查看更多</a></p>
+					</div>
+                </div>
+                <div id="bot"></div>
+            </div>			
+        {% endblock content-holder %}

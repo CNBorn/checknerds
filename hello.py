@@ -60,7 +60,7 @@ class MainPage(tarsusaRequestHandler):
 			
 			## Check usedtags as the evaluation for Tags Model
 			## TEMP CODE!
-			UserTags = ''
+			UserTags = '<a href=/tag/>Untagged Items</a>&nbsp;'
 			if CurrentUser.usedtags:
 				for each_cate in CurrentUser.usedtags:
 					each_tag =  db.get(each_cate)
@@ -636,6 +636,101 @@ class RemoveItem(tarsusaRequestHandler):
 
 		self.redirect('/')
 
+class UserToDoPage(tarsusaRequestHandler):
+	def get(self):
+		
+		if users.get_current_user() != None:
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()	
+
+			## SPEED KILLER!
+			## MULTIPLE DB QUERIES!
+			## CAUTION! MODIFY THESE LATER!
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 50", users.get_current_user())
+
+
+			template_values = {
+				'PrefixCSSdir': "/",
+
+				'UserLoggedIn': 'Logged In',
+				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),
+				
+				#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
+				#'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
+
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+
+				#'UserTags': UserTags,
+
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+
+
+
+				#'UserTotalItems': UserTotalItems,
+				#'UserToDoItems': UserToDoItems,
+				#'UserDoneItems': UserDoneItems,
+				#'UserDonePercentage': UserDonePercentage,
+			}
+
+
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/usertodopage.html')
+			self.response.out.write(template.render(path, template_values))
+
+
+
+
+class UserDonePage(tarsusaRequestHandler):
+	def get(self):
+		if users.get_current_user() != None:
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()	
+
+			## SPEED KILLER!
+			## MULTIPLE DB QUERIES!
+			## CAUTION! MODIFY THESE LATER!
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 50", users.get_current_user())
+
+
+			template_values = {
+				'PrefixCSSdir': "/",
+
+				'UserLoggedIn': 'Logged In',
+				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),
+				
+				#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
+				#'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
+
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+
+				#'UserTags': UserTags,
+
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+
+
+
+				#'UserTotalItems': UserTotalItems,
+				#'UserToDoItems': UserToDoItems,
+				#'UserDoneItems': UserDoneItems,
+				#'UserDonePercentage': UserDonePercentage,
+			}
+
+
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/userdonepage.html')
+			self.response.out.write(template.render(path, template_values))
+
+
+
+
 
 
 class Showtag(tarsusaRequestHandler):
@@ -679,8 +774,32 @@ class Showtag(tarsusaRequestHandler):
 			self.response.out.write(template.render(path, template_values))
 
 		except:
-			## There is no this tag!
-			self.redirect("/")
+			
+			if self.request.path[5:] == '':
+				## Show Items with no tag.
+
+				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
+				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
+
+				html_tag_ItemList = ""
+				for eachItem in browser_Items:
+					if len(eachItem.tags) == 0:
+							html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+
+				template_values = {
+						'PrefixCSSdir': "/",
+						
+						'UserLoggedIn': 'Logged In',
+
+						'UserNickName': users.get_current_user().nickname(),
+						'DeleteThisTag': '',
+						'TagName': "未分类项目",
+						'ItemList': html_tag_ItemList,
+				}
+
+			else:
+				## There is no this tag!
+				self.redirect("/")
 
 
 
@@ -1268,7 +1387,10 @@ def main():
 									   ('/undoneItem/\\d+',UnDoneItem),
 									   ('/removeItem/\\d+', RemoveItem),
 									   ('/tag/.+',Showtag),
+									   ('/tag/', Showtag),
 									   ('/user/.+/setting',UserSettingPage),
+									   ('/user/.+/todo',UserToDoPage),
+									   ('/user/.+/done',UserDonePage),
 									   ('/user/.+', UserMainPage),
 									   ('/img', Image),
 									   ('/FindFriend', FindFriendPage),

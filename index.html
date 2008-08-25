@@ -69,7 +69,7 @@
 
 							    {% endfor %}							  
 							    {% endif %}
-							  <br /><a href="/">(Read More)</a></p>
+							  <br /><a href="/user/{{UserNickName|escape}}/todo">查看更多</a></p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
@@ -91,7 +91,7 @@
 											<a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="x">撤销</a><br />
 								{% endfor %}
 								{% endif %}
-								<br /><a href="/">(Read More)</a></p>
+								<br /><a href="/user/{{UserNickName}}/done">查看更多</a></p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
