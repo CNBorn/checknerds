@@ -146,3 +146,9 @@
 		Added Viewing untagged Items in front page.
 		Added Simple UserToDoPage & UserDonePage.
 
+
+	IN 08.08.26
+		Tring to upload this project on: checknerds.appspot.com
+		After a lot of tries, finally success after removing all handler information for pages directory.
+		## TODO
+			Add Skip files in app.yaml just like cpedialog.

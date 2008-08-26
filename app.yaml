@@ -1,4 +1,4 @@
-application: nevada
+application: checknerds
 version: 1
 runtime: python
 api_version: 1
@@ -6,9 +6,6 @@ api_version: 1
 handlers:
 - url: /img
   static_dir: img
-
-- url: /pages
-  static_dir: pages
 
 - url: /(.*)\.css
   static_files: /\1
@@ -88,4 +85,4 @@ handlers:
 
 - url: /.*
   static_files: pages/404.html
-  upload: pages/.*
+  upload: /.*
