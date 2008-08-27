@@ -22,8 +22,8 @@
                     </div>
 
                     <div id="singleleft">
-                        <h2 class="posttitle" style="font-weight:normal;">{{ singlePageTitle }} </h2>
-						<a href="/">Home</a> &raquo; <a href="/">{{ singlePageTitle }}</a>
+                          <h2 class="posttitle" style="font-weight:normal;"><a href="/user/{{UserNickName}}">{{UserNickName}}</a> &raquo; <a href="/user/{{UserNickName}}/todo">已完成的项目</a>
+						</h2>
                         <p>
 								{% if AnonymousVisitor %}
 							    	{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}

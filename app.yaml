@@ -20,6 +20,9 @@ handlers:
 - url: /Blog
   script: hello.py
 
+- url: /Guestbook
+  script: hello.py
+
 - url: /Statstics
   script: hello.py
 

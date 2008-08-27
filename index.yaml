@@ -23,122 +23,122 @@ indexes:
   - name: date
     direction: desc
 
+# Used 2 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: done
+  - name: public
+  - name: routine
+  - name: date
+    direction: desc
+
+# Used 37 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: done
+  - name: routine
+  - name: user
+  - name: date
+    direction: desc
+
+# Unused in query history -- copied from input.
+- kind: tarsusaItem
+  properties:
+  - name: done
+  - name: user
+  - name: date
+    direction: desc
+
+# Unused in query history -- copied from input.
+- kind: tarsusaItem
+  properties:
+  - name: public
+  - name: date
+    direction: desc
+
+# Used 2 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: public
+  - name: routine
+  - name: date
+    direction: desc
+
+# Unused in query history -- copied from input.
+- kind: tarsusaItem
+  properties:
+  - name: public
+  - name: user
+  - name: date
+    direction: desc
+
+# Used 60 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: routine
+  - name: user
+  - name: date
+    direction: desc
+
+# Used 4 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: user
+  - name: date
+    direction: desc
+
+# Unused in query history -- copied from input.
+- kind: tarsusaItem
+  properties:
+  - name: user
+  - name: donedate
+    direction: desc
+
+# Unused in query history -- copied from input.
+- kind: tarsusaRoutineLogItem
+  properties:
+  - name: date
+    direction: desc
+
+# Used 12 times in query history.
+- kind: tarsusaRoutineLogItem
+  properties:
+  - name: routine
+  - name: routineid
+  - name: user
+  - name: donedate
+    direction: desc
+
+# Unused in query history -- copied from input.
+- kind: tarsusaRoutineLogItem
+  properties:
+  - name: routine
+  - name: user
+  - name: donedate
+    direction: desc
+
+# Unused in query history -- copied from input.
+- kind: tarsusaRoutineLogItem
+  properties:
+  - name: routineid
+  - name: donedate
+
+# Used 2 times in query history.
+- kind: tarsusaRoutineLogItem
+  properties:
+  - name: routineid
+  - name: user
+  - name: donedate
+    direction: desc
+
+# Unused in query history -- copied from input.
+- kind: tarsusaRoutineLogItem
+  properties:
+  - name: user
+  - name: date
+    direction: desc
+
 # Used once in query history.
-- kind: tarsusaItem
-  properties:
-  - name: done
-  - name: public
-  - name: routine
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaItem
-  properties:
-  - name: done
-  - name: routine
-  - name: user
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaItem
-  properties:
-  - name: done
-  - name: user
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaItem
-  properties:
-  - name: public
-  - name: date
-    direction: desc
-
-# Used once in query history.
-- kind: tarsusaItem
-  properties:
-  - name: public
-  - name: routine
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaItem
-  properties:
-  - name: public
-  - name: user
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaItem
-  properties:
-  - name: routine
-  - name: user
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaItem
-  properties:
-  - name: user
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaItem
-  properties:
-  - name: user
-  - name: donedate
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaRoutineLogItem
-  properties:
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaRoutineLogItem
-  properties:
-  - name: routine
-  - name: routineid
-  - name: user
-  - name: donedate
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaRoutineLogItem
-  properties:
-  - name: routine
-  - name: user
-  - name: donedate
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaRoutineLogItem
-  properties:
-  - name: routineid
-  - name: donedate
-
-# Unused in query history -- copied from input.
-- kind: tarsusaRoutineLogItem
-  properties:
-  - name: routineid
-  - name: user
-  - name: donedate
-    direction: desc
-
-# Unused in query history -- copied from input.
-- kind: tarsusaRoutineLogItem
-  properties:
-  - name: user
-  - name: date
-    direction: desc
-
-# Unused in query history -- copied from input.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: user
