@@ -5,6 +5,39 @@
 <title>{% block title%} {% endblock %} </title>
 <link rel="shortcut icon" href="{{ PrefixCSSdir }}img/favicon.ico" >
 <link href="{{ PrefixCSSdir }}img/style.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+<script type="text/javascript">
+<!--//
+//¶¨ÒåjLoad º¯Êý£¬ÊµÏÖajax¼°Ò»Ð©¼òµ¥µÄ»¥¶¯¶¯»­Ð§¹û
+function jLoad(theID, urlStr){
+	//¶¯»­Ð§¹û hide
+	$(theID).animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
+																		 //¶¯»­Íê³Éºó load
+																		 $(theID).load(urlStr, {nullid: Math.round(Math.random()*1000)}, function(){
+																																				 //load Íê³Éºó¶¯»­Ð§¹û show
+																																				 $(theID).animate({height: 'show', opacity: 'show'}, 'slow');
+																																				 });
+																		 });
+}
+//-->
+</script>
+
+<script type="text/javascript">
+<!--//
+//Ò³ÃæÓ¦ÓÃjqueryÊµÏÖajax
+$(function(){
+	$("#btns a").click(function(){
+									urlStr=$(this).attr("href");
+									jLoad("#googlead-bot", urlStr);
+									//È¥µô½¹µãÐéÏß¿ò
+									$(this).blur();
+									//È¡Ïûä¯ÀÀÆ÷Ö´ÐÐÁ´½ÓµÄhrefÊôÐÔµØÖ·
+									return false;
+									});
+});
+//-->
+</script>
 </head>
 
 <body>

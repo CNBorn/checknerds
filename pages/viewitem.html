@@ -42,7 +42,7 @@
 
 							<th width="60%" class="first"><a href="/i/{{ tarsusaItem.key.id }}">{{ tarsusaItem.name|escape }}</a></th>
 							<th><span class="date">分类：<a href="#">{{tarsusaItemTags}}</a></span></th></tr>
-							<tr class="rowB">创建者：<a href="/user/{{UserNickName|escape}}">{{tarsusaItem.user}}</a>&nbsp; 公开：{{tarsusaItem.public}}<td colspan="2">&nbsp; {{ tarsusaItem.comment }}</td>
+							<tr class="rowB">创建者：<a href="/user/{{tarsusaItem.user|escape}}">{{tarsusaItem.user}}</a>&nbsp; 公开：{{tarsusaItem.public}}<td colspan="2">&nbsp; {{ tarsusaItem.comment }}</td>
 							<tr><td width="50%" colspan="2"><span class="date">创建时间： &nbsp; {{tarsusaItem.date }}
 							| 预期完成： &nbsp; {{tarsusaItem.expectdate}}</span></td></tr>
 

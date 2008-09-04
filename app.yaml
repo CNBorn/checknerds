@@ -7,6 +7,9 @@ handlers:
 - url: /img
   static_dir: img
 
+- url: /js
+  static_dir: js
+
 - url: /(.*)\.css
   static_files: /\1
   upload: /
@@ -85,6 +88,13 @@ handlers:
 
 - url: /dashboard
   script: hello.py
+
+- url: /ajaxtest
+  script: hello.py
+
+- url: /ajax
+  script: ajax.py
+
 
 - url: /.*
   static_files: pages/404.html

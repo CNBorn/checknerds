@@ -70,9 +70,14 @@ class MainPage(tarsusaRequestHandler):
 			UserTags = '<a href=/tag/>Untagged Items</a>&nbsp;'
 			if CurrentUser.usedtags:
 				for each_cate in CurrentUser.usedtags:
-					each_tag =  db.get(each_cate)
-					UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+					## After adding code with avoiding add duplicated tag model, it runs error on live since there are some items are depending on the duplicated ones.
+					try:
+						each_tag =  db.get(each_cate)
+						UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
 			
+					except:
+						pass
+
 
 			# Show His Daily Routine.
 			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
@@ -305,9 +310,9 @@ class AddPage(tarsusaRequestHandler):
 		if user:
 	
 			html_tag_AddItemForm_OrdinaryForms = '''<form action="/additem" method="post">
-									标题  <input type="text" name="name" value="" size="18" class="sl"><br />
-									内容  <textarea name="comment" rows="4" cols="16" wrap="PHYSICAL" class="ml"></textarea><br />
-									类别  <input type="text" name="tags" size="18" class="sl"><br />
+									标题  <input type="text" name="name" value="" size="40" class="sl"><br />
+									内容  <textarea name="comment" rows="5" cols="28" wrap="PHYSICAL" class="ml"></textarea><br />
+									类别  <input type="text" name="tags" size="40" class="sl"><br />
 									预计完成于<br />'''
 
 			html_tag_AddItemForm_RoutineForms = '''性质：<select name="routine">
@@ -390,11 +395,30 @@ class AddItemProcess(tarsusaRequestHandler):
 		CurrentUser = q.get()
 	
 		for each_tag_in_tarsusaitem in tarsusaItem_Tags:
-			each_cat = Tag(name=each_tag_in_tarsusaitem)
+			
+			#each_cat = Tag(name=each_tag_in_tarsusaitem)
 			#each_cat.count += 1
-			each_cat.put()
+			#each_cat.put()
+			
+			## It seems that these code above will create duplicated tag model.
+			catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
+			try:
+				each_cat = catlist[0]
+			
+			except:
+				each_cat = Tag(name=each_tag_in_tarsusaitem)
+				each_cat.put()
+
 			first_tarsusa_item.tags.append(each_cat.key())
-			CurrentUser.usedtags.append(each_cat.key())		
+			# To Check whether this user is using this tag before.
+			for check_whether_used_tag in CurrentUser.usedtags:
+				tag_AlreadyUsed = False
+				if each_cat.key() == check_whether_used_tag:
+					tag_AlreadyUsed = True
+				
+			if tag_AlreadyUsed == False:
+				CurrentUser.usedtags.append(each_cat.key())		
+
 		first_tarsusa_item.put()
 		CurrentUser.put()
 
@@ -416,6 +440,15 @@ class ViewItem(tarsusaRequestHandler):
 		tItem = tarsusaItem.get_by_id(int(postid))
 
 		if tItem != None:  ## If this Item existed in Database.
+
+			## Unregistered Guest may ViewItem too,
+			## Check Their nickname here.
+			if users.get_current_user() == None:
+				UserNickName = "访客"
+				AnonymousVisitor = True 
+			else:
+				UserNickName = users.get_current_user().nickname()
+
 
 			# Check if this item is expired.
 			if tItem.expectdate != None:
@@ -462,14 +495,8 @@ class ViewItem(tarsusaRequestHandler):
 
 				elif tItem.public == 'public':
 					logictag_OtherpeopleViewThisItem = True
+					
 
-					## Unregistered Guest may ViewItem too,
-					## Check Their nickname here.
-					if users.get_current_user() == None:
-						UserNickName = "访客"
-						AnonymousVisitor = True 
-					else:
-						UserNickName = users.get_current_user().nickname()
 				else:
 					self.redirect('/')
 			else:
@@ -744,49 +771,60 @@ class Showtag(tarsusaRequestHandler):
 	def get(self):
 		#each_cat = Tag(name=cgi.escape(self.request.path[5:]))
 		catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", unicode(self.request.path[5:]))
-		try:
-			each_cat = catlist[0]
-
-			#self.write(each_cat.count)
-			
-			html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
-			## NOTICE that the /deleteTag should del the usertags in User model.
-
-			#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
-			browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
-
-			html_tag_ItemList = ""
-			for eachItem in browser_Items:
-				for eachTag in eachItem.tags:
-					if db.get(eachTag).name == self.request.path[5:]:
-						#self.write(eachItem.name)
-						#html_tag_ItemList += eachItem.name + "<br />"
-						html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-
-			template_values = {
-					'PrefixCSSdir': "/",
-					
-					'UserLoggedIn': 'Logged In',
-
-					'UserNickName': users.get_current_user().nickname(),
-					'DeleteThisTag': html_tag_DeleteThisTag,
-					'TagName': each_cat.name,
-					'ItemList': html_tag_ItemList,
-
-
-			}
-
 		
-			path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
-			self.response.out.write(template.render(path, template_values))
+		if self.request.path[5:] <> '':
+			
+			try:
 
-		except:
+				each_cat = catlist[0]
+
+				#self.write(each_cat.count)
+				
+				html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
+				## NOTICE that the /deleteTag should del the usertags in User model.
+
+				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
+				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
+
+				html_tag_ItemList = ""
+				for eachItem in browser_Items:
+					for eachTag in eachItem.tags:
+						if db.get(eachTag).name == self.request.path[5:]:
+							#self.write(eachItem.name)
+							#html_tag_ItemList += eachItem.name + "<br />"
+							html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+
+				template_values = {
+						'PrefixCSSdir': "/",
+						
+						'UserLoggedIn': 'Logged In',
+
+						'UserNickName': users.get_current_user().nickname(),
+						'DeleteThisTag': html_tag_DeleteThisTag,
+						'TagName': each_cat.name,
+						'ItemList': html_tag_ItemList,
+
+
+				}
+
+			
+				path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
+				self.response.out.write(template.render(path, template_values))
+
+			except:
+				## There is no this tag!
+				self.redirect("/")
+
+
+		else:
 			
 			if self.request.path[5:] == '':
 				## Show Items with no tag.
 
 				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
 				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
+
+				html_tag_DeleteThisTag = '无标签项目'
 
 				html_tag_ItemList = ""
 				for eachItem in browser_Items:
@@ -799,10 +837,13 @@ class Showtag(tarsusaRequestHandler):
 						'UserLoggedIn': 'Logged In',
 
 						'UserNickName': users.get_current_user().nickname(),
-						'DeleteThisTag': '',
+						'DeleteThisTag': html_tag_DeleteThisTag,
 						'TagName': "未分类项目",
 						'ItemList': html_tag_ItemList,
 				}
+				
+				path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
+				self.response.out.write(template.render(path, template_values))
 
 			else:
 				## There is no this tag!
@@ -1275,7 +1316,7 @@ class FindFriendPage(tarsusaRequestHandler):
 				'UserLoggedIn': 'Logged In',
 				
 				'UserNickName': cgi.escape(self.login_user.nickname()),
-
+				'UserID': CurrentUser.key().id(),
 				'UserFriends': UserFriends,	
 				'singlePageTitle': "查找朋友.",
 				'singlePageContent': "",
@@ -1359,13 +1400,18 @@ class GuestbookPage(tarsusaRequestHandler):
 		strAboutPageContent = '''Coming soon.<BR><BR>
 		
 		'''
-		
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+	
 
 		try:
 
 			template_values = {
 					'UserLoggedIn': 'Logged In',
-					'UserNickName': cgi.escape(self.login_user.nickname()),
+					'UserNickName': cgi.escape(users.get_current_user().nickname()),
+					'UserID': CurrentUser.key().id(),
 					'singlePageTitle': strAboutPageTitle,
 					'singlePageContent': strAboutPageContent,
 			}
@@ -1396,13 +1442,18 @@ class BlogPage(webapp.RequestHandler):
 		strAboutPageContent = '''Coming soon.<BR><BR>
 		
 		'''
-		
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+	
 
 		try:
 
 			template_values = {
 					'UserLoggedIn': 'Logged In',
-					'UserNickName': cgi.escape(self.login_user.nickname()),
+					'UserNickName': cgi.escape(users.get_current_user().nickname()),
+					'UserID': CurrentUser.key().id(),
 					'singlePageTitle': strAboutPageTitle,
 					'singlePageContent': strAboutPageContent,
 			}
@@ -1436,16 +1487,24 @@ class AboutPage(tarsusaRequestHandler):
 
 		tarsusa是一个非常简单的时间管理程序。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，tarsusa都游刃有余<BR>
 		更为重要的，是 tarsusa 可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
-			
+		
+		我正在寻找让它独立于其它成熟或不成熟的项目管理（或说是日程管理）程序的气质，简洁，仍然显得非常重要<BR><BR>
+
+		想太多无益，请立即开始吧！
 		
 		'''
-		
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+	
 
 		try:
 
 			template_values = {
 					'UserLoggedIn': 'Logged In',
-					'UserNickName': cgi.escape(self.login_user.nickname()),
+					'UserNickName': cgi.escape(users.get_current_user().nickname()),
+					'UserID': CurrentUser.key().id(),
 					'singlePageTitle': strAboutPageTitle,
 					'singlePageContent': strAboutPageContent,
 			}
@@ -1475,6 +1534,46 @@ class NotFoundPage(tarsusaRequestHandler):
 
 		
 
+class AjaxTestPage(webapp.RequestHandler):
+	def get(self):
+		
+		strAboutPageTitle = "Nevada项目 - Blog"
+	
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+	
+
+		try:
+
+			template_values = {
+					'UserLoggedIn': 'Logged In',
+					'UserNickName': cgi.escape(users.get_current_user().nickname()),
+					'UserID': CurrentUser.key().id(),
+					'singlePageTitle': strAboutPageTitle,
+			}
+		
+		except:
+
+			
+			template_values = {
+				
+				'UserNickName': "访客",
+				'AnonymousVisitor': "Yes",
+				'singlePageTitle': strAboutPageTitle,
+
+			}
+
+
+	
+		path = os.path.join(os.path.dirname(__file__), 'pages/ajax_test.html')
+		self.response.out.write(template.render(path, template_values))
+
+
+
+
+
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 									   ('/Add', AddPage),
@@ -1502,6 +1601,7 @@ def main():
 								       ('/Blog',BlogPage),
 									   ('/Guestbook', GuestbookPage),
 									   ('/dashboard', DashboardPage),
+									   ('/ajaxtest', AjaxTestPage),
 									   ('.*',NotFoundPage)],
                                        debug=True)
 

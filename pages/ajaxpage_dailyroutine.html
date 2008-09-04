@@ -1,0 +1,17 @@
+	<p>
+									{% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
+							        	<ul>
+												{% if tarsusaItem_DailyRoutine.donetoday %}
+													<img src="/img/accept16.png">												
+													{{ tarsusaItem_DailyRoutine.name|escape }}
+													<span class="text_tag"<a href="/undoneItem/{{tarsusaItem_DailyRoutine.key.id}}" class="x">撤销</a><br />
+												{% else %}
+													<input type="checkbox" name="checkboxname" onchange="location.href='/doneItem/{{tarsusaItem_DailyRoutine.key.id}}'";>
+													<a href="/i/{{tarsusaItem_DailyRoutine.key.id}}">{{ tarsusaItem_DailyRoutine.name|escape }}</a>
+												{% endif %}
+
+											
+																		    	</ul>
+									{% endfor %}
+									<ul>{{ htmltag_DoneAllDailyRoutine }}</ul>
+									</p>

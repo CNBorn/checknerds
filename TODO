@@ -155,3 +155,18 @@
 
 	IN 08.08.27
 		Usability Improvement. (Little)
+
+
+	IN 08.09.02
+		Fixed UserURL in ViewItem when anonymouse user is viewing.
+		Improved AddItem usability.
+	IN 08.09.03 
+		Morning
+			About, Blog page UserSetting URL fixed.
+
+
+
+	IN 08.09.04
+		Ajax test page, test code added.
+		base.html , index.html template modified to test.
+		Ajax test success.
