@@ -630,7 +630,7 @@ class UnDoneItem(tarsusaRequestHandler):
 
 
 
-		self.redirect('/')
+		#self.redirect('/')
 
 class RemoveItem(tarsusaRequestHandler):
 	def get(self):

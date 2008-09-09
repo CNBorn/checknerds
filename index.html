@@ -15,13 +15,21 @@
 									window.onload = function() {
 
 									$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
-												 $('#featuredcode-mid').load('/ajax', {nullid: Math.round(Math.random()*1000)}, function(){
+												 $('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
 												   $('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
 												   													 });
 																		 });
-																										}
 																									
-</script>
+																									
+									$('#latestcodes').load('/ajax/frontpage_bottomcontents');									
+																
+
+
+									}
+																									
+									</script>
+								
+								
                               	</td>
 							</tr>
 						</table>                                                    
@@ -42,28 +50,12 @@
                 </div>
 				
 				<table id="latestcodes">
-                    <tr>
+					<tr>
                         <td class="latestcode">
                             <div class="latestcode-top"></div>
                             <div class="latestcode-mid">
                             	<h2 class="posttitle"><a href="/">尚未完成</a></h2>
-							  <p>
-							    {% if AnonymousVisitor %}
-							    	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
-									<a href="/user/{{tarsusaItem_UserToDoItem.user|escape}}">{{ tarsusaItem_UserToDoItem.user }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><br />
-								{% endfor %}
-							    
-							    {% else %}
-							    
-							    
-							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
-									<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem_UserToDoItem.key.id}}'">
-									<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
-									<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_UserToDoItem.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_UserToDoItem.key.id}}';}" class="x">x</a><br />
-
-							    {% endfor %}							  
-							    {% endif %}
-							  <br /><a href="/user/{{UserNickName|escape}}/todo">查看更多</a></p>
+							  <p>正在载入……<br /></p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
@@ -71,21 +63,7 @@
                             <div class="latestcode-top"></div>
                             <div class="latestcode-mid">
                             	<h2 class="posttitle"><a href="/">已经完成</a></h2>
-								<p>
-								{% if AnonymousVisitor %}
-							    	{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-									<a href="/user/{{tarsusaItem_UserDoneItem.user|escape}}">{{ tarsusaItem_UserDoneItem.user }}</a> 做完了 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a><br />
-								{% endfor %}
-							    
-							    	{% else %}
-								
-								{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-											<img src="/img/accept16.png">
-											<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
-											<a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="x">撤销</a><br />
-								{% endfor %}
-								{% endif %}
-								<br /><a href="/user/{{UserNickName}}/done">查看更多</a></p>
+								<p>正在载入……</p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
@@ -95,10 +73,7 @@
                             <div class="latestcode-top"></div>
                             <div class="latestcode-mid">
                             	<h2 class="posttitle"><a href="/">朋友动态</a></h2>
-								<p>
-								{{ UserFriendsActivities }}
-								
-								</p>
+								<p>正在载入……</p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
@@ -107,17 +82,19 @@
                             <div class="latestcode-mid">
                             	<h2 class="posttitle"><a href="index.html">统计信息</a></h2>
 								<p>
-								总事项：{{ UserTotalItems }} <br />
-								已完成事项：{{ UserDoneItems }} <br />
-								待完成事项：{{ UserToDoItems }} <br />
-								完成百分比：{{ UserDonePercentage }} % <br />
-								
+								计算中 <br />
 								</p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
                     </tr>
-                </table>         
+
+
+
+
+
+
+				</table>         
 
             </div>
             

@@ -8,35 +8,12 @@
 
 <script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
 <script type="text/javascript">
-<!--//
-//¶¨ÒåjLoad º¯Êý£¬ÊµÏÖajax¼°Ò»Ð©¼òµ¥µÄ»¥¶¯¶¯»­Ð§¹û
-function jLoad(theID, urlStr){
-	//¶¯»­Ð§¹û hide
-	$(theID).animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
-																		 //¶¯»­Íê³Éºó load
-																		 $(theID).load(urlStr, {nullid: Math.round(Math.random()*1000)}, function(){
-																																				 //load Íê³Éºó¶¯»­Ð§¹û show
-																																				 $(theID).animate({height: 'show', opacity: 'show'}, 'slow');
-																																				 });
-																		 });
-}
-//-->
-</script>
-
-<script type="text/javascript">
-<!--//
-//Ò³ÃæÓ¦ÓÃjqueryÊµÏÖajax
-$(function(){
-	$("#btns a").click(function(){
-									urlStr=$(this).attr("href");
-									jLoad("#googlead-bot", urlStr);
-									//È¥µô½¹µãÐéÏß¿ò
-									$(this).blur();
-									//È¡Ïûä¯ÀÀÆ÷Ö´ÐÐÁ´½ÓµÄhrefÊôÐÔµØÖ·
-									return false;
-									});
-});
-//-->
+		$('#undoitems a').click(function(){
+			$.ajax({ type: "GET", url: $(this).attr("href"),success: function(msg){} }); 
+			$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+			return false;
+		});
+	
 </script>
 </head>
 
@@ -109,5 +86,13 @@ $(function(){
     </div>
 	<div id="container-bottom"></div>
 </div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-329713-4");
+pageTracker._trackPageview();
+</script>
 </body>
 </html>

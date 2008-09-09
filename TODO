@@ -170,3 +170,11 @@
 		Ajax test page, test code added.
 		base.html , index.html template modified to test.
 		Ajax test success.
+
+
+
+	IN 08.09.08
+		Added Ajax Bottom contents in front page, but  just not like what I want, and can not find a way to process the click into Ajax.
+
+	IN 08.09.09
+		Added Ajax UndoItem Function, but still trap in Checkbox.onchange with Ajax.... Temp Codes are in tempcode file.

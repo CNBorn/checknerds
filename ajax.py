@@ -136,6 +136,126 @@ class getdailyroutine(tarsusaRequestHandler):
 
 
 
+class get_fp_bottomcontents(tarsusaRequestHandler):
+
+	def get(self):
+	
+		if users.get_current_user() != None:
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+
+			# Count User's Todos and Dones
+			tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
+
+			# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
+			# SO there is implemented a stupid way.
+			UserTotalItems = 0
+			UserToDoItems = 0
+			UserDoneItems = 0
+
+			UserDonePercentage = 0.00
+
+			for eachItem in tarsusaItemCollection_UserItems:
+				UserTotalItems += 1
+				if eachItem.done == True:
+					UserDoneItems += 1
+				else:
+					UserToDoItems += 1
+			
+			if UserTotalItems != 0:
+				UserDonePercentage = UserDoneItems *100 / UserTotalItems 
+			else:
+				UserDonePercentage = 0.00
+
+
+
+			## SPEED KILLER!
+			## MULTIPLE DB QUERIES!
+			## CAUTION! MODIFY THESE LATER!
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 5", users.get_current_user())
+
+
+			## SHOW YOUR FRIENDs Recent Activities
+			## Currently the IN function is not supported, it is an headache.
+			
+			## first get current user. 
+			## THIS LINES OF CODE ARE DUPLICATED.
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+
+			tarsusaUserFriendCollection = CurrentUser.friends
+			
+			tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", users.get_current_user)
+
+
+			UserFriendsActivities = ''
+			if tarsusaUserFriendCollection: 
+				for each_FriendKey in tarsusaUserFriendCollection:
+					UsersFriend =  db.get(each_FriendKey)
+					## THE BELOW LINE IS UN SUPPORTED!
+					#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
+					## THERE are too many limits in GAE now...
+					tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 2", UsersFriend.user)
+
+					for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
+						## Check whether should show this item.
+						if tarsusaItem_UserFriendsRecentItems.public != 'private':
+						
+							## Check whether this item had done.
+							if tarsusaItem_UserFriendsRecentItems.done == True:
+								
+								UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + tarsusaItem_UserFriendsRecentItems.key().id() + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
+	 
+							else:
+								UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
+
+
+			else:
+				UserFriendsActivities = '当前没有添加朋友'
+
+								
+
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),
+				
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+
+
+				'UserFriendsActivities': UserFriendsActivities,
+
+				'UserTotalItems': UserTotalItems,
+				'UserToDoItems': UserToDoItems,
+				'UserDoneItems': UserDoneItems,
+				'UserDonePercentage': UserDonePercentage,
+			}
+
+
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_bottomcontents.html')
+			self.response.out.write(template.render(path, template_values))
+	
+	
+
+class ajax_error(tarsusaRequestHandler):
+
+	def post(self):
+
+		self.write("载入出错，请刷新重试")
+
+
+
+
+
 
 
 #user = check_api_user_pass(username, password)
@@ -157,13 +277,10 @@ class getdailyroutine(tarsusaRequestHandler):
 
 
 
-
-
-
-
 def main():
-	application = webapp.WSGIApplication([('/', getdailyroutine),
-									   ('.*',getdailyroutine)],
+	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
+										('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
+									   ('.*',ajax_error)],
                                        debug=True)
 
 

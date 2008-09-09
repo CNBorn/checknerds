@@ -92,7 +92,7 @@ handlers:
 - url: /ajaxtest
   script: hello.py
 
-- url: /ajax
+- url: /ajax/.+
   script: ajax.py
 
 
