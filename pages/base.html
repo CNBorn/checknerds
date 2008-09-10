@@ -7,14 +7,6 @@
 <link href="{{ PrefixCSSdir }}img/style.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
-<script type="text/javascript">
-		$('#undoitems a').click(function(){
-			$.ajax({ type: "GET", url: $(this).attr("href"),success: function(msg){} }); 
-			$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-			return false;
-		});
-	
-</script>
 </head>
 
 <body>

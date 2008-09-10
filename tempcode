@@ -5,3 +5,12 @@
 										function({$.ajax({ type: "GET", url: 'doneItem/{{tarsusaItem_UserToDoItem.key.id}}'});	$('#latestcodes').load('/ajax/frontpage_bottomcontents');});
 <input type="checkbox" name="checkboxname" onchange="function({$.ajax({ type: 'GET', url: 'doneItem/{{tarsusaItem_UserToDoItem.key.id}}'});	$('#latestcodes').load('/ajax/frontpage_bottomcontents');});">
 
+
+
+AJAX works! but can not get property with these codes.
+	$('#todoitems input').change(function(){
+			$.ajax({type: "GET", url: $(this).attr("href"),success: function(msg){ alert( "Data Saved: " + $(this).attr("href")  ); } }); 
+			$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+			return false;
+		});
+

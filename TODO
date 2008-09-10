@@ -178,3 +178,8 @@
 
 	IN 08.09.09
 		Added Ajax UndoItem Function, but still trap in Checkbox.onchange with Ajax.... Temp Codes are in tempcode file.
+
+
+	IN 08.09.10
+		Added Ajax with All Frontpage Done&Undone, Wonderful!
+		Frontpage layout modified, now it begins to make sense.
