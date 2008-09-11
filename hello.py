@@ -368,70 +368,97 @@ class AddPage(tarsusaRequestHandler):
 
 class AddItemProcess(tarsusaRequestHandler):
 	def post(self):
-		first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
 		
-		# for changed tags from String to List:
-		#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
-		tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-		
-		## TODO
-		## If user defines tag is None, Add '为分类项目' in Database?
-		## Or Just display it with Database Logical?
-		
-
-		first_tarsusa_item.public = self.request.get('public')
-
-		first_tarsusa_item.done = False
-
-		## the creation date will be added automatically by GAE datastore
-		first_tarsusa_item.put()
-		
-		# http://blog.ericsk.org/archives/1009
-		# This part of tag process inspired by ericsk.
-		# many to many
-
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-	
-		for each_tag_in_tarsusaitem in tarsusaItem_Tags:
+		if self.request.get('cancel') != "取消":
 			
-			#each_cat = Tag(name=each_tag_in_tarsusaitem)
-			#each_cat.count += 1
-			#each_cat.put()
+			first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
 			
-			## It seems that these code above will create duplicated tag model.
-			catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
-			try:
-				each_cat = catlist[0]
+			# for changed tags from String to List:
+			#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
+			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
 			
-			except:
-				each_cat = Tag(name=each_tag_in_tarsusaitem)
-				each_cat.put()
+			## TODO
+			## If user defines tag is None, Add '为分类项目' in Database?
+			## Or Just display it with Database Logical?
+			
 
-			first_tarsusa_item.tags.append(each_cat.key())
-			# To Check whether this user is using this tag before.
-			for check_whether_used_tag in CurrentUser.usedtags:
-				tag_AlreadyUsed = False
-				if each_cat.key() == check_whether_used_tag:
-					tag_AlreadyUsed = True
+			first_tarsusa_item.public = self.request.get('public')
+
+			first_tarsusa_item.done = False
+
+			## the creation date will be added automatically by GAE datastore
+			first_tarsusa_item.put()
+			
+			# http://blog.ericsk.org/archives/1009
+			# This part of tag process inspired by ericsk.
+			# many to many
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+		
+			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
 				
-			if tag_AlreadyUsed == False:
-				CurrentUser.usedtags.append(each_cat.key())		
+				#each_cat = Tag(name=each_tag_in_tarsusaitem)
+				#each_cat.count += 1
+				#each_cat.put()
+				
+				## It seems that these code above will create duplicated tag model.
+				catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
+				try:
+					each_cat = catlist[0]
+				
+				except:
+					each_cat = Tag(name=each_tag_in_tarsusaitem)
+					each_cat.put()
 
-		first_tarsusa_item.put()
-		CurrentUser.put()
+				first_tarsusa_item.tags.append(each_cat.key())
+				# To Check whether this user is using this tag before.
+				for check_whether_used_tag in CurrentUser.usedtags:
+					tag_AlreadyUsed = False
+					if each_cat.key() == check_whether_used_tag:
+						tag_AlreadyUsed = True
+					
+				if tag_AlreadyUsed == False:
+					CurrentUser.usedtags.append(each_cat.key())		
+
+			first_tarsusa_item.put()
+			CurrentUser.put()
 
 
 
-		#UserTags = ''
-		#for each_cate in CurrentUser.usedtags:
-		#	each_tag =  db.get(each_cate)
-		#	UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+			#UserTags = ''
+			#for each_cate in CurrentUser.usedtags:
+			#	each_tag =  db.get(each_cate)
+			#	UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
 
-		#self.write(UserTags)
+			#self.write(UserTags)
 
-		self.redirect('/')
+			
+			## After adding ajax,
+			## it should help to close the ajax box. //done, i just remove the &modar=true
+			## and ajax reload the routine and bottom-contents
+			
+			#self.redirect('/')
+			self.write('''
+
+	<script type="text/javascript">
+									self.parent.tb_remove();
+									self.parent.$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
+												 	self.parent.$('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
+												   	self.parent.$('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
+												   													 });
+																		 });
+																									
+										self.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');									
+									}
+																									
+									</script>
+
+
+
+			''')
+
 
 class ViewItem(tarsusaRequestHandler):
 	def get(self):

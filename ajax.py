@@ -244,6 +244,63 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_bottomcontents.html')
 			self.response.out.write(template.render(path, template_values))
 	
+
+class additem(tarsusaRequestHandler):
+
+	def get(self):
+
+		# "this is add page"
+		user = users.get_current_user()	
+		
+		if user:
+	
+			html_tag_AddItemForm_OrdinaryForms = '''<form action="/additem" method="post">
+									标题  <input type="text" name="name" value="" size="40" class="sl"><br />
+									内容  <textarea name="comment" rows="5" cols="28" wrap="PHYSICAL" class="ml"></textarea><br />
+									类别  <input type="text" name="tags" size="40" class="sl"><br />
+									预计完成于<br />'''
+
+			html_tag_AddItemForm_RoutineForms = '''性质：<select name="routine">
+									<option value="none" selected="selected">非坚持性任务</option>
+									<option value="daily">每天</option>
+									<option value="weekly">每周</option>
+									<option value="monthly">每月</option>
+									<option value="seasonly">每季度</option>
+									<option value="yearly">每年</option>
+									</select><br>'''
+	
+			## TODO 
+			## Added proper calendar date select form
+			## Tested django form, it doesnt contain that
+
+			html_tag_AddItemForm_PublicForms = '''公开项目：<select name="public"><option value="private" selected="selected">不公开</option>
+			<option value="public">公开</option>
+			<option value="publicOnlyforFriends">仅对朋友公开</option></select>
+			'''
+
+
+			html_tag_AddItemForm_SubmitForm = '''<br><input type="submit" name="submit" value="添加一个任务" onclick="ajax_addItem();">
+												</form>'''
+		
+			template_values = {
+				
+			'OrdinaryForms': html_tag_AddItemForm_OrdinaryForms,
+			'RoutineForms': html_tag_AddItemForm_RoutineForms,
+			'PublicForms': html_tag_AddItemForm_PublicForms,
+			'SubmitForm': html_tag_AddItemForm_SubmitForm,
+
+			}
+			
+
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_additem.html')
+			self.response.out.write(template.render(path, template_values))
+	
+		else:
+			self.write(" You must log in to add item!")
+
+
+
 	
 
 class ajax_error(tarsusaRequestHandler):
@@ -280,6 +337,7 @@ class ajax_error(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
 										('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
+										('/ajax/allpage_additem', additem),
 									   ('.*',ajax_error)],
                                        debug=True)
 
