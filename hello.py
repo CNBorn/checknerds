@@ -79,183 +79,17 @@ class MainPage(tarsusaRequestHandler):
 						pass
 
 
-			# Show His Daily Routine.
-			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
-
-			tarsusaItemCollection_DoneDailyRoutine = tarsusaRoutineLogItem 
-
-
-			# GAE datastore has a gqlquery.count limitation. So right here solve this manully.
-			tarsusaItemCollection_DailyRoutine_count = 0
-			for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
-				tarsusaItemCollection_DailyRoutine_count += 1
-
-			Today_DoneRoutine = 0
-
-			for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
-				
-				#This query should effectively read out all dailyroutine done by today.
-				#for the result will be traversed below, therefore it should be as short as possible.
-				#MARK FOR FUTURE IMPROVMENT
-				
-				# GAE datastore has a gqlquery.count limitation. So right here solve this manully.
-				#tarsusaItemCollection_DailyRoutine_count
-				# Refer to code above.
-				
-				
-				# LIMIT and OFFSET don't currently support bound parameters.
-				# http://code.google.com/p/googleappengine/issues/detail?id=179
-				# if this is realized, the code below next line will be used.
-
-				tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC ", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id())
-				
-				#tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT :3", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id(), int(tarsusaItemCollection_DailyRoutine_count))
-
-				
-				## traversed RoutineDaily
-				
-				## Check whether this single item is done.
-				DoneThisItemToday = False
-				
-				for tarsusaItem_DoneDailyRoutine in tarsusaItemCollection_DoneDailyRoutine:
-					if datetime.datetime.date(tarsusaItem_DoneDailyRoutine.donedate) == datetime.datetime.date(datetime.datetime.now()):
-						#Check if the user had done all his routine today.
-						Today_DoneRoutine += 1
-						DoneThisItemToday = True
-
-						# This routine have been done today.
-						
-						# Due to solve this part, I have to change tarsusaItemModel to db.Expando
-						# I hope there is not so much harm for performance.
-						each_tarsusaItemCollection_DailyRoutine.donetoday = 1
-						each_tarsusaItemCollection_DailyRoutine.put()
-
-					else:
-						## The Date from RoutineLogItem isn't the same of Today's date
-						## That means this tarsusaItem(as routine).donetoday should be removed.
-							
-						pass
-				
-				if DoneThisItemToday == False:
-						## Problem solved by Added this tag. DoneThisItemToday
-						try:
-							del each_tarsusaItemCollection_DailyRoutine.donetoday
-							each_tarsusaItemCollection_DailyRoutine.put()
-						except:
-							pass
-
-
-
-			
-			## Output the message for DailyRoutine
-			template_tag_donealldailyroutine = ''
-			
-			if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
-				template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
-			elif Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) - 1:
-				template_tag_donealldailyroutine = '只差一项，加油！'
-			elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
-				template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
-
-			
-			
-			
-			# Count User's Todos and Dones
-			tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
-
-			# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
-			# SO there is implemented a stupid way.
-			UserTotalItems = 0
-			UserToDoItems = 0
-			UserDoneItems = 0
-
-			UserDonePercentage = 0.00
-
-			for eachItem in tarsusaItemCollection_UserItems:
-				UserTotalItems += 1
-				if eachItem.done == True:
-					UserDoneItems += 1
-				else:
-					UserToDoItems += 1
-			
-			if UserTotalItems != 0:
-				UserDonePercentage = UserDoneItems *100 / UserTotalItems 
-			else:
-				UserDonePercentage = 0.00
-
-
-
-			## SPEED KILLER!
-			## MULTIPLE DB QUERIES!
-			## CAUTION! MODIFY THESE LATER!
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 5", users.get_current_user())
-
-
-			## SHOW YOUR FRIENDs Recent Activities
-			## Currently the IN function is not supported, it is an headache.
-			
-			## first get current user. 
-			## THIS LINES OF CODE ARE DUPLICATED.
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()
-
-			tarsusaUserFriendCollection = CurrentUser.friends
-			
-			tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", users.get_current_user)
-
-
-			UserFriendsActivities = ''
-			if tarsusaUserFriendCollection: 
-				for each_FriendKey in tarsusaUserFriendCollection:
-					UsersFriend =  db.get(each_FriendKey)
-					## THE BELOW LINE IS UN SUPPORTED!
-					#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
-					## THERE are too many limits in GAE now...
-					tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 2", UsersFriend.user)
-
-					for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
-						## Check whether should show this item.
-						if tarsusaItem_UserFriendsRecentItems.public != 'private':
-						
-							## Check whether this item had done.
-							if tarsusaItem_UserFriendsRecentItems.done == True:
-								
-								UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + tarsusaItem_UserFriendsRecentItems.key().id() + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
-	 
-							else:
-								UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
-
-
-			else:
-				UserFriendsActivities = '当前没有添加朋友'
-
-								
-
 			template_values = {
 				'UserLoggedIn': 'Logged In',
 				
 				'UserNickName': cgi.escape(self.login_user.nickname()),
 				'UserID': CurrentUser.key().id(),
 				
-				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-				'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
-
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 
 				'UserTags': UserTags,
 
-				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
-				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
 
-
-				'UserFriendsActivities': UserFriendsActivities,
-
-				'UserTotalItems': UserTotalItems,
-				'UserToDoItems': UserToDoItems,
-				'UserDoneItems': UserDoneItems,
-				'UserDonePercentage': UserDonePercentage,
 			}
 
 
@@ -271,14 +105,6 @@ class MainPage(tarsusaRequestHandler):
 			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' ORDER BY date DESC")
 
 			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = True ORDER BY date DESC")
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			template_values = {
 				
@@ -495,8 +321,13 @@ class ViewItem(tarsusaRequestHandler):
 
 			# for modified Tags (db.key)
 			ItemTags = ''
-			for each_tag in db.get(tItem.tags):
-				ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+			
+			try:
+				for each_tag in db.get(tItem.tags):
+					ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+			except:
+				# There is some chances that ThisItem do not have any tags.
+				pass
 			
 
 			logictag_OtherpeopleViewThisItem = None
@@ -1421,138 +1252,6 @@ class DashboardPage(tarsusaRequestHandler):
 	def get(self):
 		print 'dashboard page'
 
-class GuestbookPage(tarsusaRequestHandler):
-	def get(self):
-		strAboutPageTitle = "Nevada项目 - Guestbook"
-		strAboutPageContent = '''Coming soon.<BR><BR>
-		
-		'''
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-	
-
-		try:
-
-			template_values = {
-					'UserLoggedIn': 'Logged In',
-					'UserNickName': cgi.escape(users.get_current_user().nickname()),
-					'UserID': CurrentUser.key().id(),
-					'singlePageTitle': strAboutPageTitle,
-					'singlePageContent': strAboutPageContent,
-			}
-		
-		except:
-
-			
-			template_values = {
-				
-				'UserNickName': "访客",
-				'AnonymousVisitor': "Yes",
-				'singlePageTitle': strAboutPageTitle,
-				'singlePageContent': strAboutPageContent,
-
-			}
-
-
-	
-		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
-		self.response.out.write(template.render(path, template_values))
-
-	
-
-class BlogPage(webapp.RequestHandler):
-	def get(self):
-		
-		strAboutPageTitle = "Nevada项目 - Blog"
-		strAboutPageContent = '''Coming soon.<BR><BR>
-		
-		'''
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-	
-
-		try:
-
-			template_values = {
-					'UserLoggedIn': 'Logged In',
-					'UserNickName': cgi.escape(users.get_current_user().nickname()),
-					'UserID': CurrentUser.key().id(),
-					'singlePageTitle': strAboutPageTitle,
-					'singlePageContent': strAboutPageContent,
-			}
-		
-		except:
-
-			
-			template_values = {
-				
-				'UserNickName': "访客",
-				'AnonymousVisitor': "Yes",
-				'singlePageTitle': strAboutPageTitle,
-				'singlePageContent': strAboutPageContent,
-
-			}
-
-
-	
-		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
-		self.response.out.write(template.render(path, template_values))
-
-
-
-class AboutPage(tarsusaRequestHandler):
-	def get(self):
-	
-		strAboutPageTitle = "关于Nevada项目"
-		strAboutPageContent = '''这个项目目前可看作是tarsusa时间管理程序在GAE上面的延续，尽管目前离成熟相距甚远，而且GAE会被GFW时刻滋扰，不过我觉得体现出核心的东西才是最主要的<BR><BR>
-		
-		我正在准备写一篇较为详细的Nevada介绍，在完成之前，请先读下tarsusa的介绍以对这个工具有所了解<BR><BR>
-
-		tarsusa是一个非常简单的时间管理程序。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，tarsusa都游刃有余<BR>
-		更为重要的，是 tarsusa 可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
-		
-		我正在寻找让它独立于其它成熟或不成熟的项目管理（或说是日程管理）程序的气质，简洁，仍然显得非常重要<BR><BR>
-
-		想太多无益，请立即开始吧！
-		
-		'''
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-	
-
-		try:
-
-			template_values = {
-					'UserLoggedIn': 'Logged In',
-					'UserNickName': cgi.escape(users.get_current_user().nickname()),
-					'UserID': CurrentUser.key().id(),
-					'singlePageTitle': strAboutPageTitle,
-					'singlePageContent': strAboutPageContent,
-			}
-		
-		except:
-
-			
-			template_values = {
-				
-				'UserNickName': "访客",
-				'AnonymousVisitor': "Yes",
-				'singlePageTitle': strAboutPageTitle,
-				'singlePageContent': strAboutPageContent,
-
-			}
-
-
-	
-		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
-		self.response.out.write(template.render(path, template_values))
-
 
 class NotFoundPage(tarsusaRequestHandler):
 	def get(self):
@@ -1599,8 +1298,6 @@ class AjaxTestPage(webapp.RequestHandler):
 
 
 
-
-
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 									   ('/Add', AddPage),
@@ -1624,9 +1321,6 @@ def main():
 									   ('/SignOut',SignOutPage),
 								       ('/donelog/.+',DoneLogPage),
 								       ('/Statstics',StatsticsPage),
-								       ('/About',AboutPage),
-								       ('/Blog',BlogPage),
-									   ('/Guestbook', GuestbookPage),
 									   ('/dashboard', DashboardPage),
 									   ('/ajaxtest', AjaxTestPage),
 									   ('.*',NotFoundPage)],

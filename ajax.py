@@ -297,7 +297,7 @@ class additem(tarsusaRequestHandler):
 			self.response.out.write(template.render(path, template_values))
 	
 		else:
-			self.write(" You must log in to add item!")
+			self.write("您必须登录才可以添加条目，利用Google帐户登录，十分方便快捷，立即开始吧")
 
 
 
@@ -309,6 +309,59 @@ class ajax_error(tarsusaRequestHandler):
 
 		self.write("载入出错，请刷新重试")
 
+
+class get_fp_IntroductionForAnonymous(tarsusaRequestHandler):
+	
+	def post(self):
+
+		template_tag_shownText = '''<br> 这个项目目前可看作是tarsusa时间管理程序在GAE上面的延续，尽管目前离成熟相距甚远，而且GAE会被GFW时刻滋扰，不过我觉得体现出核心的东西才是最主要的。我正在准备写一篇较为详细的Nevada介绍，在完成之前，请先读下tarsusa的介绍以对这个工具有所了解<BR><BR>
+
+		tarsusa是一个非常简单的时间管理程序。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，tarsusa都游刃有余<BR>
+		更为重要的，是 tarsusa 可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
+
+		想太多无益，请立即开始吧！'''
+
+
+		template_values = {
+		'UserNickName': '访客',
+		'htmltag_DoneAllDailyRoutine': template_tag_shownText,
+
+		'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+
+
+		}
+
+
+		#Manupilating Templates	
+		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dailyroutine.html')
+		self.response.out.write(template.render(path, template_values))	
+
+
+class get_fp_IntroductionBottomForAnonymous(tarsusaRequestHandler):
+
+	
+	def get(self):
+		
+		## Homepage for Non-Registered Users.
+
+		## the not equal != is not supported!
+		tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = False ORDER BY date DESC")
+
+		tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = True ORDER BY donedate DESC")
+		
+
+		template_values = {
+		'UserNickName': '访客',
+		'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+		'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+		'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+
+		}
+
+
+		#Manupilating Templates	
+		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_anonymousbottomcontents.html')
+		self.response.out.write(template.render(path, template_values))	
 
 
 
@@ -337,6 +390,8 @@ class ajax_error(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
 										('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
+										('/ajax/frontpage_introforanonymous',get_fp_IntroductionForAnonymous),
+										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
 										('/ajax/allpage_additem', additem),
 									   ('.*',ajax_error)],
                                        debug=True)

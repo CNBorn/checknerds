@@ -21,9 +21,9 @@
                 <span id="sitename">Nevada</span>
             </a>  
 		<div class="textalign-right">
-                	<a href="/About">关于</a>&nbsp;|
-                	<a href="/Blog">Blog</a>&nbsp;|
-					<a href="/Guestbook">我有意见!</a>
+                	<a href="/about">关于</a>&nbsp;|
+                	<a href="/blog">Blog</a>&nbsp;|
+					<a href="/guestbook">我有意见!</a>
 		</div>
   
         </div>
@@ -49,7 +49,7 @@
 
                     	<td class="textalign-right">
                             {% if not UserLoggedIn %}
-							<img src="/img/favb16.png">&nbsp;<a href="/Login">登录</a>&nbsp;或&nbsp;<a href="/SignIn">注册</a>
+							<img src="/img/favb16.png">&nbsp;<a href="/Login">使用Google帐户登录</a></a>
 							{% endif %}
 							{% if UserLoggedIn %}
 							<a href="/user/{{UserID}}/setting">{{UserNickName}}的设置</a>

@@ -9,18 +9,31 @@
                     	<table>
                         	<tr>
 							   <td id="featuredcodedes">
-									<h2 class="posttitle" style="font-weight:normal;">您好，{{ UserNickName }}， 今天</h2>
+									<h2 class="posttitle" style="font-weight:normal;">{{ UserNickName }}您好， 今天</h2>
 				    - <strong class="posttitle">{{ htmltag_today }}</strong>
 									<script type="text/javascript">
 									window.onload = function() {
-
-									$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
-												 $('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
-												   $('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
-												   													 });
+									
+									{% if not AnonymousVisitor %}
+										$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
+													 $('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
+													   $('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
+																										 });
+																			 });
+																										
+										$('#latestcodes').load('/ajax/frontpage_bottomcontents');									
+									
+									{% else %}
+										$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
+													 $('#featuredcode-mid').load('/ajax/frontpage_introforanonymous', {nullid: Math.round(Math.random()*1000)}, function(){
+													   $('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
+													   													 });
 																		 });
 																									
-									$('#latestcodes').load('/ajax/frontpage_bottomcontents');									
+										$('#latestcodes').load('/ajax/frontpage_introbottomcontentsforanonymous');			
+									
+									{% endif %}
+									
 									}
 																									
 									</script>

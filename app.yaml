@@ -17,14 +17,14 @@ handlers:
 - url: /
   script: hello.py
 
-- url: /About
-  script: hello.py
+- url: /about
+  script: miscellaneous.py
 
-- url: /Blog
-  script: hello.py
+- url: /blog
+  script: miscellaneous.py
 
-- url: /Guestbook
-  script: hello.py
+- url: /guestbook
+  script: miscellaneous.py
 
 - url: /Statstics
   script: hello.py

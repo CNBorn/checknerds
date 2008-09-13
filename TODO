@@ -188,3 +188,8 @@
 	IN 08.09.11
 		added ThinkBox, Additem supports ajax popup.
 
+	IN 08.09.14
+
+		Added Proper anonymous front page. but I am afraid it will be changed into non-ajax page in future...
+		code begin to reorganize.
+		some little issue tweaked; bugs fixed.

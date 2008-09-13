@@ -1,0 +1,27 @@
+					<tr>
+                        <td class="latestcode">
+                            <div class="latestcode-top"></div>
+                            <div class="latestcode-mid">
+                            	<h2 class="posttitle">人们尚未完成……</h2>
+							  <p>
+							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
+									<a href="/user/{{tarsusaItem_UserToDoItem.user|escape}}">{{ tarsusaItem_UserToDoItem.user }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><br />
+								{% endfor %}
+							    
+							  </p>
+                            </div>
+                            <div class="latestcode-bot"></div>
+                        </td>
+                        <td class="latestcode">
+                            <div class="latestcode-top"></div>
+                            <div class="latestcode-mid">
+                            	<h2 class="posttitle">人们已经完成……</h2>
+								<p>
+							    {% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
+									<a href="/user/{{tarsusaItem_UserDoneItem.user|escape}}">{{ tarsusaItem_UserDoneItem.user }}</a> 做完了 <a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a><br />
+								{% endfor %}
+													</p>
+                            </div>
+                            <div class="latestcode-bot"></div>
+                        </td>
+                    </tr>                            
