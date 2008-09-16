@@ -193,3 +193,10 @@
 		Added Proper anonymous front page. but I am afraid it will be changed into non-ajax page in future...
 		code begin to reorganize.
 		some little issue tweaked; bugs fixed.
+
+
+	IN 08.09.16
+		TAG Duplicated bug fixed!
+		view tag bug fixed!
+		changed view doneitem by donedate
+		url of ajaxloading image fixed.

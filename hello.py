@@ -5,6 +5,7 @@
 import os
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
+import urllib
 import cgi
 import wsgiref.handlers
 from google.appengine.api import users
@@ -19,6 +20,7 @@ from google.appengine.api import images
 
 from modules import *
 from base import *
+import logging
 
 
 class MainPage(tarsusaRequestHandler):
@@ -240,9 +242,9 @@ class AddItemProcess(tarsusaRequestHandler):
 
 				first_tarsusa_item.tags.append(each_cat.key())
 				# To Check whether this user is using this tag before.
+				tag_AlreadyUsed = False
 				for check_whether_used_tag in CurrentUser.usedtags:
-					tag_AlreadyUsed = False
-					if each_cat.key() == check_whether_used_tag:
+					if each_cat.key() == check_whether_used_tag or each_cat.name == db.get(check_whether_used_tag).name:
 						tag_AlreadyUsed = True
 					
 				if tag_AlreadyUsed == False:
@@ -627,51 +629,66 @@ class UserDonePage(tarsusaRequestHandler):
 
 class Showtag(tarsusaRequestHandler):
 	def get(self):
-		#each_cat = Tag(name=cgi.escape(self.request.path[5:]))
-		catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", unicode(self.request.path[5:]))
+		RequestCatName = urllib.unquote(self.request.path[5:])
+		
+		#catlist = db.GqlQuery("SELECT * FROM Tag")
+		#for each_tag in catlist:
+		#	if each_tag.name.encode('utf-8') == RequestCatName:
+				#3html_tag_ItemList += each_tag.name + "&nbsp;" + "<br/>"
+		catlll = db.GqlQuery("SELECT * FROM Tag WHERE name = :1", RequestCatName.decode('utf-8'))
+
+				#html_tag_ItemList += catlll[0].name
+		#	else:
+				#self.write(each_tag.name.encode('utf-8'))
+				#self.write("begin request")
+				#self.write(RequestCatName)
+		#		pass
+ 
+		#catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1", RequestCatName)
 		
 		if self.request.path[5:] <> '':
 			
-			try:
+			#try:
 
-				each_cat = catlist[0]
+			each_cat = catlll[0]
 
-				#self.write(each_cat.count)
-				
-				html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
-				## NOTICE that the /deleteTag should del the usertags in User model.
-
-				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
-				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
-
-				html_tag_ItemList = ""
-				for eachItem in browser_Items:
-					for eachTag in eachItem.tags:
-						if db.get(eachTag).name == self.request.path[5:]:
-							#self.write(eachItem.name)
-							#html_tag_ItemList += eachItem.name + "<br />"
-							html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-
-				template_values = {
-						'PrefixCSSdir': "/",
-						
-						'UserLoggedIn': 'Logged In',
-
-						'UserNickName': users.get_current_user().nickname(),
-						'DeleteThisTag': html_tag_DeleteThisTag,
-						'TagName': each_cat.name,
-						'ItemList': html_tag_ItemList,
-
-
-				}
-
+			#self.write(each_cat.count)
 			
-				path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
-				self.response.out.write(template.render(path, template_values))
+			html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
+			## NOTICE that the /deleteTag should del the usertags in User model.
 
-			except:
+			#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
+			browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
+
+			html_tag_ItemList = ""
+			for eachItem in browser_Items:
+				for eachTag in eachItem.tags:
+					if db.get(eachTag).name == RequestCatName.decode('utf-8'):
+						#self.write(eachItem.name)
+						#html_tag_ItemList += eachItem.name + "<br />"
+						html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+			
+
+			template_values = {
+					'PrefixCSSdir': "/",
+					
+					'UserLoggedIn': 'Logged In',
+
+					'UserNickName': users.get_current_user().nickname(),
+					'DeleteThisTag': html_tag_DeleteThisTag,
+					'TagName': each_cat.name,
+					'ItemList': html_tag_ItemList,
+
+
+			}
+
+		
+			path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
+			self.response.out.write(template.render(path, template_values))
+
+			#except:
 				## There is no this tag!
-				self.redirect("/")
+			#	self.redirect("/")
 
 
 		else:

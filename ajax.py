@@ -175,7 +175,7 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 			## MULTIPLE DB QUERIES!
 			## CAUTION! MODIFY THESE LATER!
 			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 5", users.get_current_user())
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY donedate DESC LIMIT 5", users.get_current_user())
 
 
 			## SHOW YOUR FRIENDs Recent Activities
