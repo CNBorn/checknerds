@@ -658,16 +658,20 @@ class Showtag(tarsusaRequestHandler):
 			## NOTICE that the /deleteTag should del the usertags in User model.
 
 			#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
-			browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
+			browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", users.get_current_user())
 
 			html_tag_ItemList = ""
 			for eachItem in browser_Items:
 				for eachTag in eachItem.tags:
-					if db.get(eachTag).name == RequestCatName.decode('utf-8'):
-						#self.write(eachItem.name)
-						#html_tag_ItemList += eachItem.name + "<br />"
-						html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-			
+					try:
+
+						if db.get(eachTag).name == RequestCatName.decode('utf-8'):
+							#self.write(eachItem.name)
+							#html_tag_ItemList += eachItem.name + "<br />"
+							html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+					except:
+						pass
+
 
 			template_values = {
 					'PrefixCSSdir': "/",
@@ -697,7 +701,7 @@ class Showtag(tarsusaRequestHandler):
 				## Show Items with no tag.
 
 				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
-				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 100", users.get_current_user())
+				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", users.get_current_user())
 
 				html_tag_DeleteThisTag = '无标签项目'
 

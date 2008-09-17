@@ -95,6 +95,9 @@ handlers:
 - url: /ajax/.+
   script: ajax.py
 
+- url: /favicon.ico
+  static_files: /img/favicon.ico
+  upload: /img/favicon.ico
 
 - url: /.*
   static_files: pages/404.html
