@@ -204,3 +204,7 @@
 
 	IN 08.09.17
 		bug fixed on Appspot.com when viewing tag.
+
+
+	IN 08.09.22
+		Usability improvment, MainPage tags Duplicated problem solved ( -- due to legacy program bug.)

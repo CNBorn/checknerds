@@ -44,7 +44,7 @@ table{width:100%;}
 /*I don't know why there are differences between the width of lastestcode-top/bot and mid */
 .latestcode-top{background-image:url(./div-left-code-top.png);height:7px;width:331px;}
 .latestcode-bot{background-image:url(./div-left-code-bottom.png);height:7px;width:331px;}
-.latestcode-mid{min-height:175px;width:308px;}
+.latestcode-mid{min-height:155px;width:308px;}
 #tagcloud{width:686px;margin-top:5px;}
 #tagcloud-top{background-image:url(./div-left-top.png);height:7px;width:686px;}
 #tagcloud-bot{background-image:url(./div-left-bottom.png);height:6px;width:686px;}
@@ -75,4 +75,10 @@ table{width:100%;}
 .obu { margin: 0 0 10px 0; width: 80px; float: left; }
 .obu dt{ margin: 0; height: 50px; overflow: hidden; text-align: center; }
 .obu dd{ margin: 0px; height: 55px; text-align: center; overflow: hidden; }
+
+
+	/*small*/
+	#tablem{ float: left; margin: 0 -270px 0 0;  width:100%; }
+	#in_tablem{ margin: 0 270px 50px 0; padding: 0 65px 0 0;}
+	#tablerm{ float: right; width: 270px; word-break:break-all;}
 

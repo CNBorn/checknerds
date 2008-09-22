@@ -69,16 +69,34 @@ class MainPage(tarsusaRequestHandler):
 			
 			## Check usedtags as the evaluation for Tags Model
 			## TEMP CODE!
+			##UserTags = cgi.escape('<a href=/tag/>未分类项目</a>&nbsp;')
 			UserTags = '<a href=/tag/>Untagged Items</a>&nbsp;'
+
 			if CurrentUser.usedtags:
+				CheckUsedTags = []
 				for each_cate in CurrentUser.usedtags:
 					## After adding code with avoiding add duplicated tag model, it runs error on live since there are some items are depending on the duplicated ones.
+					
 					try:
-						each_tag =  db.get(each_cate)
-						UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
-			
+							
+						## Caution! Massive CPU consumption.
+						## Due to former BUG, there might be duplicated tags in usertags.
+						## TO Solve this.
+
+						DuplicatedTags = False
+						for each_cate_vaild in CheckUsedTags:
+							if each_cate.name == each_cate_vaild:
+								DuplicatedTags = True
+
+						CheckUsedTags.append(each_cate.name)
+
+						if DuplicatedTags != True:
+							each_tag =  db.get(each_cate)
+							UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+
 					except:
 						pass
+						UserTags += 'Error, On MainPage Tags Section.'
 
 
 			template_values = {
@@ -1204,7 +1222,7 @@ class FindFriendPage(tarsusaRequestHandler):
 		}
 
 	
-		path = os.path.join(os.path.dirname(__file__), 'addfriend.html')
+		path = os.path.join(os.path.dirname(__file__), 'pages/addfriend.html')
 		self.response.out.write(template.render(path, template_values))
 
 
@@ -1284,7 +1302,7 @@ class NotFoundPage(tarsusaRequestHandler):
 class AjaxTestPage(webapp.RequestHandler):
 	def get(self):
 		
-		strAboutPageTitle = "Nevada项目 - Blog"
+		strAboutPageTitle = "CheckNerds - Blog"
 	
 		## Get Current User.
 		# code below are comming from GAE example
