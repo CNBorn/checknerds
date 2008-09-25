@@ -91,8 +91,14 @@ class MainPage(tarsusaRequestHandler):
 						CheckUsedTags.append(each_cate.name)
 
 						if DuplicatedTags != True:
-							each_tag =  db.get(each_cate)
-							UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+							try:
+								## Since I have deleted some tags in CheckNerds manually, 
+								## so there will be raise such kind of errors, in which the tag will not be found.
+								each_tag =  db.get(each_cate)
+								UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+							except:
+								## Tag model can not be found.
+								pass
 
 					except:
 						pass
@@ -262,8 +268,13 @@ class AddItemProcess(tarsusaRequestHandler):
 				# To Check whether this user is using this tag before.
 				tag_AlreadyUsed = False
 				for check_whether_used_tag in CurrentUser.usedtags:
-					if each_cat.key() == check_whether_used_tag or each_cat.name == db.get(check_whether_used_tag).name:
-						tag_AlreadyUsed = True
+					item_check_whether_used_tag = db.get(check_whether_used_tag)
+					if item_check_whether_used_tag != None:
+						if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
+							tag_AlreadyUsed = True
+					else:
+						if each_cat.key() == check_whether_used_tag:
+							tag_AlreadyUsed = True
 					
 				if tag_AlreadyUsed == False:
 					CurrentUser.usedtags.append(each_cat.key())		
@@ -502,9 +513,15 @@ class UnDoneItem(tarsusaRequestHandler):
 					
 					# GAE can not make dateProperty as query now! There is a BUG for GAE!
 					# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
+					
 					tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now())
+					
+					one_day = datetime.timedelta(hours=24)
+					yesterday = datetime.datetime.now() - one_day
+
 					for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-						result.delete()
+						if result.donedate < datetime.datetime.now() and result.donedate.date() != yesterday.date() and result.donedate > yesterday:
+							result.delete()
 
 
 
@@ -557,11 +574,16 @@ class UserToDoPage(tarsusaRequestHandler):
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 			CurrentUser = q.get()	
 
+			CountTotalItems = 0
+
+
 			## SPEED KILLER!
 			## MULTIPLE DB QUERIES!
 			## CAUTION! MODIFY THESE LATER!
 			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 50", users.get_current_user())
 
+			CountTotalItems = tarsusaItemCollection_UserToDoItems.count()
+			strTodoStatus = "共有项目" + str(CountTotalItems)
 
 			template_values = {
 				'PrefixCSSdir': "/",
@@ -575,12 +597,10 @@ class UserToDoPage(tarsusaRequestHandler):
 				#'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
 
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-
+				'TodoStatus': strTodoStatus,
 				#'UserTags': UserTags,
 
 				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
-
-
 
 				#'UserTotalItems': UserTotalItems,
 				#'UserToDoItems': UserToDoItems,
@@ -604,11 +624,15 @@ class UserDonePage(tarsusaRequestHandler):
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 			CurrentUser = q.get()	
 
+			CountTotalItems = 0
+			
 			## SPEED KILLER!
 			## MULTIPLE DB QUERIES!
 			## CAUTION! MODIFY THESE LATER!
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC LIMIT 50", users.get_current_user())
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
 
+			CountTotalItems = tarsusaItemCollection_UserDoneItems.count()
+			strDoneStatus = "共有项目" + str(CountTotalItems)
 
 			template_values = {
 				'PrefixCSSdir': "/",
@@ -622,6 +646,7 @@ class UserDonePage(tarsusaRequestHandler):
 				#'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
 
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+				'DoneStatus': strDoneStatus,
 
 				#'UserTags': UserTags,
 
@@ -647,70 +672,72 @@ class UserDonePage(tarsusaRequestHandler):
 
 class Showtag(tarsusaRequestHandler):
 	def get(self):
+		
 		RequestCatName = urllib.unquote(self.request.path[5:])
 		
-		#catlist = db.GqlQuery("SELECT * FROM Tag")
-		#for each_tag in catlist:
-		#	if each_tag.name.encode('utf-8') == RequestCatName:
-				#3html_tag_ItemList += each_tag.name + "&nbsp;" + "<br/>"
 		catlll = db.GqlQuery("SELECT * FROM Tag WHERE name = :1", RequestCatName.decode('utf-8'))
 
-				#html_tag_ItemList += catlll[0].name
-		#	else:
-				#self.write(each_tag.name.encode('utf-8'))
-				#self.write("begin request")
-				#self.write(RequestCatName)
-		#		pass
- 
 		#catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1", RequestCatName)
 		
 		if self.request.path[5:] <> '':
 			
-			#try:
+			try:
 
-			each_cat = catlll[0]
+				each_cat = catlll[0]
+				UserNickName = users.get_current_user().nickname()
+				
+				CountDoneItems = 0
+				CountTotalItems = 0
 
-			#self.write(each_cat.count)
+				
+				html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
+				## NOTICE that the /deleteTag should del the usertags in User model.
+
+				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
+				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", users.get_current_user())
+
+				html_tag_ItemList = ""
+				for eachItem in browser_Items:
+					for eachTag in eachItem.tags:
+						try:
+
+							if db.get(eachTag).name == RequestCatName.decode('utf-8'):								
+								CountTotalItems += 1
+								#self.write(eachItem.name)
+								#html_tag_ItemList += eachItem.name + "<br />"
+								if eachItem.done == False:
+									html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+								else:
+									html_tag_ItemList += '<img src="/img/accept16.png"><a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+									CountDoneItems += 1
+								
+						except:
+							pass
+
+				strTagStatus = "共有项目" + str(CountTotalItems) + "&nbsp;完成项目" + str(CountDoneItems) + "&nbsp;未完成项目" + str(CountTotalItems - CountDoneItems)
+
+				template_values = {
+						'PrefixCSSdir': "/",
+						
+						'UserLoggedIn': 'Logged In',
+
+						'UserNickName': users.get_current_user().nickname(),
+						'DeleteThisTag': html_tag_DeleteThisTag,
+						'TagName': each_cat.name,
+						'TagStatus': strTagStatus,
+						'ItemList': html_tag_ItemList,
+
+
+				}
+
 			
-			html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
-			## NOTICE that the /deleteTag should del the usertags in User model.
+				path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
+				self.response.out.write(template.render(path, template_values))
 
-			#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
-			browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", users.get_current_user())
-
-			html_tag_ItemList = ""
-			for eachItem in browser_Items:
-				for eachTag in eachItem.tags:
-					try:
-
-						if db.get(eachTag).name == RequestCatName.decode('utf-8'):
-							#self.write(eachItem.name)
-							#html_tag_ItemList += eachItem.name + "<br />"
-							html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-					except:
-						pass
-
-
-			template_values = {
-					'PrefixCSSdir': "/",
-					
-					'UserLoggedIn': 'Logged In',
-
-					'UserNickName': users.get_current_user().nickname(),
-					'DeleteThisTag': html_tag_DeleteThisTag,
-					'TagName': each_cat.name,
-					'ItemList': html_tag_ItemList,
-
-
-			}
-
-		
-			path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
-			self.response.out.write(template.render(path, template_values))
-
-			#except:
+			except:
 				## There is no this tag!
-			#	self.redirect("/")
+				## There is something wrong with Showtag!
+				self.redirect("/")
 
 
 		else:
@@ -723,10 +750,20 @@ class Showtag(tarsusaRequestHandler):
 
 				html_tag_DeleteThisTag = '无标签项目'
 
+				CountDoneItems = 0
+				CountTotalItems = 0
+
 				html_tag_ItemList = ""
 				for eachItem in browser_Items:
 					if len(eachItem.tags) == 0:
+						CountTotalItems += 1
+						if eachItem.done == False:
 							html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+						else:
+							html_tag_ItemList += '<img src="/img/accept16.png"><a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+							CountDoneItems += 1
+				
+				strTagStatus = "共有项目" + str(CountTotalItems) + "&nbsp;完成项目" + str(CountDoneItems) + "&nbsp;未完成项目" + str(CountTotalItems - CountDoneItems)
 
 				template_values = {
 						'PrefixCSSdir': "/",
@@ -736,6 +773,7 @@ class Showtag(tarsusaRequestHandler):
 						'UserNickName': users.get_current_user().nickname(),
 						'DeleteThisTag': html_tag_DeleteThisTag,
 						'TagName': "未分类项目",
+						'TagStatus': strTagStatus,
 						'ItemList': html_tag_ItemList,
 				}
 				

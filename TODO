@@ -208,3 +208,35 @@
 
 	IN 08.09.22
 		Usability improvment, MainPage tags Duplicated problem solved ( -- due to legacy program bug.)
+
+
+	In 08.09.23
+		Showtag bug fixed. Viewitem tweaked, now no tag and anonymous will direct to /
+
+	IN 08.09.24
+		Add tag status in view tag page.
+		MIGHT BE: is there  any chance with anonymous user to check with /user/xxx/done page? or its items in it are displayed without permission check?
+		Add status(count) in done/todo page.
+
+
+	IN 08.09.25
+		Solved problem 'when you undo a dailyroutine item, all the previous doneroutinelog will be deleted'
+		Solved problem 'sometimes additem missing, and newly added item without Tags.'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

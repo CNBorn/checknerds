@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} Nevada - {{ UserNickName }}待完成项目 {% endblock title %}
+{% block title %} CheckNerds - {{ UserNickName }}待完成项目 {% endblock title %}
         <div id="content-holder">
 		{% block content-holder %}
 			<div id="singlepostholder">
@@ -24,7 +24,8 @@
                     <div id="singleleft">
                         <h2 class="posttitle" style="font-weight:normal;"><a href="/user/{{UserNickName}}">{{UserNickName}}</a> &raquo; <a href="/user/{{UserNickName}}/todo">未完成的项目</a>
 						</h2>
-                        <p> 
+                        <p>{{TodoStatus}}</p>
+						<p>
 							    {% if AnonymousVisitor %}
 							    	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
 									<a href="/user/{{tarsusaItem_UserToDoItem.user|escape}}">{{ tarsusaItem_UserToDoItem.user }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><br />
