@@ -1,12 +1,21 @@
 					<html><head><script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script></head>
 					<script type="text/javascript">
 							function ajax_addItem(strLink){
-									$.ajax({type: "POST", url: strLink ,success: function(msg){} }); 
-									self.parent.tb_remove();
-									self.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-									self.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-									//i have to refreash it two times
-									//it looks clumsy but it works.
+									$.ajax({type: "POST", url: strLink ,
+									
+									
+									      error: function(){
+          alert("Error loading json Object");
+      }, 
+									
+									
+									success: function(){
+										$.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+										$.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+										//i have to refreash it two times
+										//it looks clumsy but it works.																
+										$.parent.tb_remove();
+										} }); 
 							}
 					</script>
 					<body>

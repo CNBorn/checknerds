@@ -278,8 +278,10 @@ class additem(tarsusaRequestHandler):
 			<option value="publicOnlyforFriends">仅对朋友公开</option></select>
 			'''
 
+			##08.10.07
+			## In my opinion the js script runs first, then the form submits.
 
-			html_tag_AddItemForm_SubmitForm = '''<br><input type="submit" name="submit" value="添加一个任务" onclick="ajax_addItem();">
+			html_tag_AddItemForm_SubmitForm = '''<br><input type="submit" name="submit" value="添加一个任务" onclick="ajax_addItem('/ajax/allpage_additem');">
 												</form>'''
 		
 			template_values = {

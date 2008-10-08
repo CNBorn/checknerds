@@ -229,11 +229,6 @@ class AddItemProcess(tarsusaRequestHandler):
 			#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
 			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
 			
-			## TODO
-			## If user defines tag is None, Add '为分类项目' in Database?
-			## Or Just display it with Database Logical?
-			
-
 			first_tarsusa_item.public = self.request.get('public')
 
 			first_tarsusa_item.done = False
@@ -297,25 +292,18 @@ class AddItemProcess(tarsusaRequestHandler):
 			## and ajax reload the routine and bottom-contents
 			
 			#self.redirect('/')
-			self.write('''
-
-	<script type="text/javascript">
-									self.parent.tb_remove();
-									self.parent.$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
-												 	self.parent.$('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
-												   	self.parent.$('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
-												   													 });
-																		 });
-																									
-										self.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');									
-									}
-																									
-									</script>
-
-
-
-			''')
-
+			#self.write('''<script type="text/javascript">
+			#			  	self.parent.$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
+			#					self.parent.$('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
+			#					   	self.parent.$('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
+			#						 });
+			#					});
+			#																						
+			#					self.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');									
+			#				}
+			#				self.parent.tb_remove();
+			#																						
+			#			</script>''')
 
 class ViewItem(tarsusaRequestHandler):
 	def get(self):
@@ -477,7 +465,6 @@ class DoneItem(tarsusaRequestHandler):
 				NewlyDoneRoutineItem.put()
 
 		
-
 		#self.redirect(self.request.uri)
 		self.redirect('/')
 
