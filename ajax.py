@@ -249,12 +249,11 @@ class additem(tarsusaRequestHandler):
 
 	def get(self):
 
-		# "this is add page"
 		user = users.get_current_user()	
 		
 		if user:
-	
-			html_tag_AddItemForm_OrdinaryForms = '''<form action="/additem" method="post">
+			
+			html_tag_AddItemForm_OrdinaryForms = '''<form id="myForm" action="/additem" method="post">
 									标题  <input type="text" name="name" value="" size="40" class="sl"><br />
 									内容  <textarea name="comment" rows="5" cols="28" wrap="PHYSICAL" class="ml"></textarea><br />
 									类别  <input type="text" name="tags" size="40" class="sl"><br />
@@ -281,15 +280,15 @@ class additem(tarsusaRequestHandler):
 			##08.10.07
 			## In my opinion the js script runs first, then the form submits.
 
-			html_tag_AddItemForm_SubmitForm = '''<br><input type="submit" name="submit" value="添加一个任务" onclick="ajax_addItem('/ajax/allpage_additem');">
+			html_tag_AddItemForm_SubmitForm = '''<br><input type="submit" name="submit" value="添加一个任务">
 												</form>'''
 		
 			template_values = {
 				
-			'OrdinaryForms': html_tag_AddItemForm_OrdinaryForms,
-			'RoutineForms': html_tag_AddItemForm_RoutineForms,
-			'PublicForms': html_tag_AddItemForm_PublicForms,
-			'SubmitForm': html_tag_AddItemForm_SubmitForm,
+			'OrdinaryForms': html_tag_AddItemForm_OrdinaryForms.decode("utf-8"),
+			'RoutineForms': html_tag_AddItemForm_RoutineForms.decode("utf-8"),
+			'PublicForms': html_tag_AddItemForm_PublicForms.decode("utf-8"),
+			'SubmitForm': html_tag_AddItemForm_SubmitForm.decode("utf-8"),
 
 			}
 			

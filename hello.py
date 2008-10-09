@@ -147,89 +147,18 @@ class MainPage(tarsusaRequestHandler):
 			path = os.path.join(os.path.dirname(__file__), 'index.html')
 			self.response.out.write(template.render(path, template_values))
 
-
-
-class AddPage(tarsusaRequestHandler):
-	def get(self):
-		
-		# "this is add page"
-		user = users.get_current_user()	
-
-		## TODO
-		## An Brainstorming Idea - Made this additem as AJAX!
-
-		
-		if user:
-	
-			html_tag_AddItemForm_OrdinaryForms = '''<form action="/additem" method="post">
-									标题  <input type="text" name="name" value="" size="40" class="sl"><br />
-									内容  <textarea name="comment" rows="5" cols="28" wrap="PHYSICAL" class="ml"></textarea><br />
-									类别  <input type="text" name="tags" size="40" class="sl"><br />
-									预计完成于<br />'''
-
-			html_tag_AddItemForm_RoutineForms = '''性质：<select name="routine">
-									<option value="none" selected="selected">非坚持性任务</option>
-									<option value="daily">每天</option>
-									<option value="weekly">每周</option>
-									<option value="monthly">每月</option>
-									<option value="seasonly">每季度</option>
-									<option value="yearly">每年</option>
-									</select><br>'''
-	
-			## TODO 
-			## Added proper calendar date select form
-			## Tested django form, it doesnt contain that
-
-			html_tag_AddItemForm_PublicForms = '''公开项目：<select name="public"><option value="private" selected="selected">不公开</option>
-			<option value="public">公开</option>
-			<option value="publicOnlyforFriends">仅对朋友公开</option>
-			'''
-
-
-			html_tag_AddItemForm_SubmitForm = '''<input type="submit" name="submit" value="添加一个任务"></form>'''
-
-
-			template_values = {
-				
-			'UserLoggedIn': 'Logged In',
-			'UserNickName': cgi.escape(self.login_user.nickname()),
-
-			'OrdinaryForms': html_tag_AddItemForm_OrdinaryForms,
-			'RoutineForms': html_tag_AddItemForm_RoutineForms,
-			'PublicForms': html_tag_AddItemForm_PublicForms,
-			'SubmitForm': html_tag_AddItemForm_SubmitForm,
-
-			}
-
-
-			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/additem.html')
-			self.response.out.write(template.render(path, template_values))
-
-		else:
-			
-			## self.write ("Your are not logged in!")
-
-			## Prompt a message that ask the user to login.
-			## Or, the guest user will not be given with this url's direct visit?
-			
-			## redirect them to the rootpage.
-			self.redirect("/")
-
-
-
 class AddItemProcess(tarsusaRequestHandler):
 	def post(self):
 		
 		if self.request.get('cancel') != "取消":
 			
-			first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
+			first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
 			
 			# for changed tags from String to List:
 			#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
-			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+			tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
 			
-			first_tarsusa_item.public = self.request.get('public')
+			first_tarsusa_item.public = self.request.get('public').decode('utf-8')
 
 			first_tarsusa_item.done = False
 
@@ -1364,7 +1293,6 @@ class AjaxTestPage(webapp.RequestHandler):
 
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
-									   ('/Add', AddPage),
 								       ('/additem',AddItemProcess),
 									   ('/AddFriend/\\d+', AddFriendProcess),
 									   ('/RemoveFriend/\\d+', RemoveFriendProcess),

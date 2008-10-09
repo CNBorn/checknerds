@@ -231,8 +231,11 @@
 
 
 
+	IN 08.10.08
+		Added jQuery Form Plugin, work ok, but it can not process Chinese input.... codec problem... sigh...
 
-
+	IN 08.10.09
+		Solved jQuery Form Plugin UTF8 problem. Now the Problem of additem seems to be solved!
 
 
 

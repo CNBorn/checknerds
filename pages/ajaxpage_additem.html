@@ -1,23 +1,19 @@
-					<html><head><script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script></head>
-					<script type="text/javascript">
-							function ajax_addItem(strLink){
-									$.ajax({type: "POST", url: strLink ,
-									
-									
-									      error: function(){
-          alert("Error loading json Object");
-      }, 
-									
-									
-									success: function(){
-										$.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-										$.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-										//i have to refreash it two times
-										//it looks clumsy but it works.																
-										$.parent.tb_remove();
-										} }); 
-							}
-					</script>
+					<html>
+					<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+					<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+					<script type="text/javascript" src="/js/jquery.form.utf8.js"></script>
+					</head>
+					<script type="text/javascript"> 
+       				// wait for the DOM to be loaded 
+			        $(document).ready(function() {
+						// bind 'myForm' and provide a simple callback function 
+						$('#myForm').ajaxForm(function() { 
+							//alert("Thank you for your comment!");
+							self.parent.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+							self.parent.parent.tb_remove();							
+						}); 
+					}); 
+					</script> 
 					<body>
 					<div id="singleleft">
                         <p>{{ OrdinaryForms }}</p>
