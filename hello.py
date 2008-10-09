@@ -151,14 +151,21 @@ class AddItemProcess(tarsusaRequestHandler):
 	def post(self):
 		
 		if self.request.get('cancel') != "取消":
-			
-			first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+		
+			# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
+
+			#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8').encode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8').encode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8').encode('utf-8')))
+			#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+			first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
 			
 			# for changed tags from String to List:
 			#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
-			tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
+
+			#tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
+			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
 			
-			first_tarsusa_item.public = self.request.get('public').decode('utf-8')
+			#first_tarsusa_item.public = self.request.get('public').decode('utf-8')
+			first_tarsusa_item.public = self.request.get('public')
 
 			first_tarsusa_item.done = False
 
