@@ -1,9 +1,13 @@
 @charset "utf-8";
 body{background-image:url(./bg.png);background-repeat:repeat-x;background-color:#F0F8E4;font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#7f7f7f;margin:0;}
 a{color:#9c9b50;text-decoration:none;}
+ul{padding-top:10px;}
 ul li{
-	list-style-image:url(./listimg.png);
-	font-size: 11px;
+	list-style-type: none;
+	/*list-style-image:url(./listimg.png);*/
+	font-size: 12px;
+	padding-left: 20px;
+	padding-top: 2px;
 }
 #codelist-mid li a{color:#7f7f7f;}
 #breadcrumbs-mid a{border-bottom-width:1px;border-bottom-style:dotted;border-bottom-color:#B3D581;}
@@ -44,12 +48,12 @@ table{width:100%;}
 /*I don't know why there are differences between the width of lastestcode-top/bot and mid */
 .latestcode-top{background-image:url(./div-left-code-top.png);height:7px;width:331px;}
 .latestcode-bot{background-image:url(./div-left-code-bottom.png);height:7px;width:331px;}
-.latestcode-mid{min-height:155px;width:308px;}
+.latestcode-mid{min-height:200px;width:308px;}
 #tagcloud{width:686px;margin-top:5px;}
 #tagcloud-top{background-image:url(./div-left-top.png);height:7px;width:686px;}
 #tagcloud-bot{background-image:url(./div-left-bottom.png);height:6px;width:686px;}
 #rightside{margin-left:693px;width:241px;}
-#googlead{width:242px;}
+#googlead{width:242px;margin-top:10px;}
 #googlead-mid{background-color:#FEFEF1;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;height:203px;text-align:center;}
 #codelist{margin-top:10px;}
 #codelist-mid{border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;width:220px;padding:10px;}

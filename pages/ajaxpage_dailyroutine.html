@@ -5,16 +5,16 @@
 									{% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
 							        	<ul>
 												{% if tarsusaItem_DailyRoutine.donetoday %}
-													<img src="/img/accept16.png">												
+													<li><img src="/img/accept16.png">												
 													{{ tarsusaItem_DailyRoutine.name|escape }}
-													<span class="text_tag"><a href="#;" onclick="ajax_undoneRoutineItem('/undoneItem/{{tarsusaItem_DailyRoutine.key.id}}')" class="x">撤销</a><br />
+													<span class="text_tag"><a href="#;" onclick="ajax_undoneRoutineItem('/undoneItem/{{tarsusaItem_DailyRoutine.key.id}}')" class="x">撤销</a></li>
 												{% else %}
-													<input type="checkbox" name="checkboxname" onchange="ajax_doneRoutineItem('/doneItem/{{tarsusaItem_DailyRoutine.key.id}}')";>
-													<a href="/i/{{tarsusaItem_DailyRoutine.key.id}}">{{ tarsusaItem_DailyRoutine.name|escape }}</a>
+													<li><input type="checkbox" name="checkboxname" onchange="ajax_doneRoutineItem('/doneItem/{{tarsusaItem_DailyRoutine.key.id}}')";>
+													<a href="/i/{{tarsusaItem_DailyRoutine.key.id}}">{{ tarsusaItem_DailyRoutine.name|escape }}</a></li>
 												{% endif %}
 
 											
-																		    	</ul>
+										</ul>
 									{% endfor %}
 									<ul>{{ htmltag_DoneAllDailyRoutine }}</ul>
 									</p>

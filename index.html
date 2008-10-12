@@ -21,7 +21,8 @@
 																										 });
 																			 });
 																										
-										$('#latestcodes').load('/ajax/frontpage_bottomcontents');									
+										$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+										$('#dyminfo_onindex').load('/ajax/frontpage_dyminfo');
 									
 									{% else %}
 										$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
@@ -77,53 +78,48 @@
                             <div class="latestcode-bot"></div>
                         </td>
                     </tr>                            
-                    <tr>
-                        <td class="latestcode">
-                            <div class="latestcode-top"></div>
-                            <div class="latestcode-mid">
-                            	<h2 class="posttitle"><a href="/">朋友动态</a></h2>
-								<p>正在载入……</p>
-                            </div>
-                            <div class="latestcode-bot"></div>
-                        </td>
-                        <td class="latestcode">
-                            <div class="latestcode-top"></div>
-                            <div class="latestcode-mid">
-                            	<h2 class="posttitle"><a href="index.html">统计信息</a></h2>
-								<p>
-								计算中 <br />
-								</p>
-                            </div>
-                            <div class="latestcode-bot"></div>
-                        </td>
-                    </tr>
-
-
 				</table>         
 
             </div>
             
             <div id="rightside">
-            	<div id="googlead">
-                	<div id="googlead-top"></div>
-                    <div id="googlead-mid">
-                    
-                    			<!--Remove the next few lines to place an ad-->
-                    			<br />
-
-                    </div>
-                    <div id="googlead-bot"></div>
-                </div>
-                <div id="codelist">
+            	<div id="codelist">
                 	<div id="codelist-top"></div>
                 	<div id="codelist-mid">
                     	<h2 class="posttitle">{{UserNickName}}</h2>
                         <ul>
-                            <li><a href="/ajax/allpage_additem?TB_iframe=true&height=400&width=400" class="thickbox" title="添加新项目">添加项目</a></li>
+                            <li><img src="/img/add.png"><a href="/ajax/allpage_additem?TB_iframe=true&height=400&width=400" class="thickbox" title="添加新项目">添加项目</a></li>
+							<li><img src="/img/globe_accept.png"><a href="#">完成日志</a></li>
+							<li><img src="/img/info.png"><a href="#">用户信息</a></li>
                         </ul>
                     </div>
                 	<div id="codelist-bot"></div>
                 </div>
+
+				<div id="dyminfo_onindex">
+					<div id="codelist">
+						<div id="codelist-top"></div>
+						<div id="codelist-mid">
+							<h2 class="posttitle">统计信息</h2>
+							<ul>
+							正在载入
+							</ul>
+						</div>
+						<div id="codelist-bot"></div>
+					</div>
+
+					<div id="codelist">
+						<div id="codelist-top"></div>
+						<div id="codelist-mid">
+							<h2 class="posttitle">朋友动态</h2>
+							<ul>
+							正在载入
+							</ul>
+						</div>
+						<div id="codelist-bot"></div>
+					</div>
+				</div>
+
             </div>
         {% endblock content-holder %}
 

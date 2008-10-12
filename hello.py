@@ -152,33 +152,49 @@ class AddItemProcess(tarsusaRequestHandler):
 		
 		if self.request.get('cancel') != "取消":
 		
-			# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
-
-			#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8').encode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8').encode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8').encode('utf-8')))
-			#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
-			first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
+			try:
+				# The following code works on GAE platform.
 			
-			# for changed tags from String to List:
-			#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
+				# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
 
-			#tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
-			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-			
-			#first_tarsusa_item.public = self.request.get('public').decode('utf-8')
-			first_tarsusa_item.public = self.request.get('public')
+				#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8').encode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8').encode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8').encode('utf-8')))
+				#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+				first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
+				
+				# for changed tags from String to List:
+				#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
 
-			first_tarsusa_item.done = False
+				#tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
+				tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+				
+				#first_tarsusa_item.public = self.request.get('public').decode('utf-8')
+				first_tarsusa_item.public = self.request.get('public')
 
-			## the creation date will be added automatically by GAE datastore
-			first_tarsusa_item.put()
-			
-			# http://blog.ericsk.org/archives/1009
-			# This part of tag process inspired by ericsk.
-			# many to many
+				first_tarsusa_item.done = False
 
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()
+				## the creation date will be added automatically by GAE datastore
+				first_tarsusa_item.put()
+				
+				# http://blog.ericsk.org/archives/1009
+				# This part of tag process inspired by ericsk.
+				# many to many
+
+				# code below are comming from GAE example
+				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+				CurrentUser = q.get()
+
+			except:
+				## the following code works on the localhost GAE runtimes.
+				first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+				tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
+				first_tarsusa_item.public = self.request.get('public').decode('utf-8')
+				first_tarsusa_item.done = False
+				first_tarsusa_item.put()
+				# code below are comming from GAE example
+				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+				CurrentUser = q.get()
+
+				
 		
 			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
 				

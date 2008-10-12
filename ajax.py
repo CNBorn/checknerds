@@ -146,6 +146,38 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 			CurrentUser = q.get()
 
+			## SPEED KILLER!
+			## MULTIPLE DB QUERIES!
+			## CAUTION! MODIFY THESE LATER!
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY donedate DESC LIMIT 5", users.get_current_user())									
+
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),
+				
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+			}
+
+
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_bottomcontents.html')
+			self.response.out.write(template.render(path, template_values))
+
+class get_fp_dyminfo(tarsusaRequestHandler):
+	def get(self):
+		
+		if users.get_current_user() != None:
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+
 			# Count User's Todos and Dones
 			tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
 
@@ -168,14 +200,6 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 				UserDonePercentage = UserDoneItems *100 / UserTotalItems 
 			else:
 				UserDonePercentage = 0.00
-
-
-
-			## SPEED KILLER!
-			## MULTIPLE DB QUERIES!
-			## CAUTION! MODIFY THESE LATER!
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY donedate DESC LIMIT 5", users.get_current_user())
 
 
 			## SHOW YOUR FRIENDs Recent Activities
@@ -217,7 +241,6 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 			else:
 				UserFriendsActivities = '当前没有添加朋友'
 
-								
 
 			template_values = {
 				'UserLoggedIn': 'Logged In',
@@ -226,10 +249,6 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 				'UserID': CurrentUser.key().id(),
 				
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-
-				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
-				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
-
 
 				'UserFriendsActivities': UserFriendsActivities,
 
@@ -241,9 +260,9 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 
 
 			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_bottomcontents.html')
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dyminfo.html')
 			self.response.out.write(template.render(path, template_values))
-	
+
 
 class additem(tarsusaRequestHandler):
 
@@ -391,6 +410,7 @@ class get_fp_IntroductionBottomForAnonymous(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
 										('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
+										('/ajax/frontpage_dyminfo', get_fp_dyminfo),
 										('/ajax/frontpage_introforanonymous',get_fp_IntroductionForAnonymous),
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
 										('/ajax/allpage_additem', additem),
