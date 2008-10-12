@@ -345,6 +345,64 @@ class ViewItem(tarsusaRequestHandler):
 				html_tag_tarsusaRoutineItem = None
 
 
+			
+			
+			#Show Undone items in the same category, just like in tarsusa r6
+			#Since Nevada allows mutiple tags, It finds item that with any one tags of this showing items.
+
+			tarsusaItemCollection_SameCategoryUndone = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
+			# filter current viewing Item from the related items!
+			# GqlQuery doesn't have the filter function!
+			#tarsusaItemCollection_SameCategoryUndone.filter("id=", tItem.id)
+
+			for eachItem in tarsusaItemCollection_SameCategoryUndone:
+				#THIS IS A LOT CPU CONSUMPTIONS
+				for eachTag in eachItem.tags:
+					try:
+						IsSameCategory = False
+						for each_tag in db.get(tItem.tags):
+							#Find any tags are the same:
+							if db.get(eachTag).name == each_tag.name:							
+								IsSameCategory = True
+						if IsSameCategory == False:
+							
+							# GqlQuery doesn't have the filter function!
+							# TODO SO THERE IS BUG HERE! HERE! HERE!
+
+							pass
+							#tarsusaItemCollection_SameCategoryUndone.filter("id=", eachItem.id)					
+							
+							#if eachItem.done == False:
+							#	html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+							#else:
+							#	html_tag_ItemList += '<img src="/img/accept16.png"><a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+							#	CountDoneItems += 1
+							
+					except:
+						pass
+
+
+
+			#Show the items that are created in the same day, just like in tarsusa r6.
+			TheDay = datetime.datetime.date(tItem.date)
+				
+			one_day = datetime.timedelta(hours=24)
+			yesterday_ofTheDay = TheDay - one_day
+			nextday_ofTheDay = TheDay + one_day
+
+			tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date >:2 AND date <:3 ORDER BY date DESC LIMIT 10", users.get_current_user(), yesterday_ofTheDay, nextday_ofTheDay)
+			# filter current viewing Item from the related items!			
+			#tarsusaItemCollection_SameDayCreated.filter("id=", tItem.id)
+
+			#for result in tarsusaItemCollection_SameDayCreated:
+			#	if datetime.datetime.date(result.date) != TheDay:
+					#tarsusaItemCollection_SameDayCreated.filter('id=', result.id)
+			#		pass	
+				#else:
+				#	print 'abc'
+
+
+
 			if UserNickName != "访客":
 				UserNickName = users.get_current_user().nickname()
 				## or dispname?
@@ -354,7 +412,7 @@ class ViewItem(tarsusaRequestHandler):
 						'UserLoggedIn': 'Logged In',
 
 						'UserNickName': UserNickName, 
-						'singlePageTitle': "View Item",
+						'singlePageTitle': "项目详细信息",
 						'singlePageContent': "",
 
 						'logictag_OtherpeopleViewThisItem': logictag_OtherpeopleViewThisItem,
@@ -365,12 +423,17 @@ class ViewItem(tarsusaRequestHandler):
 						'tarsusaItemTags': ItemTags,
 						'tarsusaRoutineItem': html_tag_tarsusaRoutineItem,
 						'tarsusaRoutineLogItem': tarsusaItemCollection_DoneDailyRoutine,
+
+						'tarsusaItemCollection_SameCategoryUndone': tarsusaItemCollection_SameCategoryUndone,
+
+						'TheDayCreated': TheDay,
+						'tarsusaItemCollection_SameDayCreated': tarsusaItemCollection_SameDayCreated,
 				}
 
 			else:
 						template_values = {
 						'PrefixCSSdir': "../",
-						'singlePageTitle': "View Item",
+						'singlePageTitle': "项目详细信息",
 						'singlePageContent': "",
 
 						'logictag_OtherpeopleViewThisItem': logictag_OtherpeopleViewThisItem,
@@ -454,7 +517,8 @@ class UnDoneItem(tarsusaRequestHandler):
 					# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
 					
 					tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now())
-					
+				
+					#It has been fixed. For just deleting TODAY's routinelog.
 					one_day = datetime.timedelta(hours=24)
 					yesterday = datetime.datetime.now() - one_day
 
@@ -464,7 +528,7 @@ class UnDoneItem(tarsusaRequestHandler):
 
 
 
-		#self.redirect('/')
+		self.redirect('/')
 
 class RemoveItem(tarsusaRequestHandler):
 	def get(self):

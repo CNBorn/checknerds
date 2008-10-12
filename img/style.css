@@ -39,6 +39,16 @@ table{width:100%;}
 #featuredcode-top{background-image:url(./div-featured-top.png);background-repeat:no-repeat;background-position:center bottom;height:7px;}
 #featuredcode-mid{background-color:#F3FAE8;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DFE8D1;border-left-color:#DFE8D1;padding:5px 5px 15px 15px; min-height: 180px;}
 #featuredcode-bot{background-image:url(./div-featured-bottom.png);background-repeat:no-repeat;background-position:center top;height:7px;}
+
+#featuredcode2-top{background-image:url(./div-featured-top.png);background-repeat:no-repeat;background-position:center bottom;height:7px;}
+#featuredcode2-mid{background-color:#F3FAE8;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DFE8D1;border-left-color:#DFE8D1;padding:5px 5px 15px 15px; min-height: 280px;}
+#featuredcode2-bot{background-image:url(./div-featured-bottom.png);background-repeat:no-repeat;background-position:center top;height:7px;}
+
+.featuredcode3-top{background-image:url(./div-featured-top.png);background-repeat:no-repeat;background-position:center bottom;height:7px; margin-top: 10px;}
+.featuredcode3-mid{border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DFE8D1;border-left-color:#DFE8D1;padding:5px 5px 15px 15px; min-height: 180px;}
+.featuredcode3-bot{background-image:url(./div-featured-bottom.png);background-repeat:no-repeat;background-position:center top;height:7px;}
+
+
 #featuredcodeimage{text-align:center;width:370px;}
 #featuredcodeimage img{border:1px solid #CCC;}
 #featuredcodedes{vertical-align:top;padding-left:10px;}
@@ -59,13 +69,24 @@ table{width:100%;}
 #codelist-mid{border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;width:220px;padding:10px;}
 #codelist-mid ul li{margin-left:-15px;line-height:18px;}
 #singlepostholder #top{background-image:url(./div-green-top.png);height:7px;width:737px;}
-#singlepostholder #mid{width:735px;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#E3EBD6;border-left-color:#E3EBD6;background-color:#EFF8E1;min-height:250px;}
+#singlepostholder #mid{width:735px;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#E3EBD6;border-left-color:#E3EBD6;background-color:#EFF8E1;min-height:275px;}
 #singlepostholder #bot{background-image:url(./div-green-bottom.png);height:8px;width:737px;}
 #singleleft{
 	padding-left:10px;
 	padding-top:10px;
 	padding-bottom: 5px;
 }
+
+/* Styles that used in ViewItem page */
+/* Derived from tarsusa - bookish template by node33. */
+#featuredcode2 table{margin-top: 10px; width: 650px; border-right: solid 1px #e1e1e1; border-bottom: solid 1px #e1e1e1; border-top: solid 1px #e1e1e1;} 
+#featuredcode2 table th.viewitem_title{background-color: #96BE57; height: 40px; padding-left: 20px; padding-right: 11px; color: #fff; text-align: left; border-left: solid 1px #9c9b50; border-bottom: solid 1px #ffffff; }
+#featuredcode2 table th.viewitem_tags{height: 30px; padding-left: 15px; padding-right: 11px; text-align: left; border-left: solid 1px #9c9b50; border-bottom: solid 1px #ffffff; border-top: solid 1px #E1E1E1;}
+#featuredcode2 table td.viewitem_creator{height: 25px; padding-left: 15px; padding-right: 11px; text-align: left; border-left: solid 1px #9c9b50; border-bottom: solid 1px #ffffff; border-top: solid 1px #E1E1E1;}
+#featuredcode2 table td.viewitem_comment{height: 55px; padding-left: 15px; padding-right: 11px; text-align: left; border-left: solid 1px #9c9b50; border-bottom: solid 1px #ffffff; border-top: solid 1px #E1E1E1;}
+#featuredcode2 table tr td.rowA{background: #FFF0DE; height: 30px; padding-left: 15px; padding-right: 11px; border-left: solid 1px #9c9b50; border-top: solid 1px #e1e1e1; border-bottom: solid 1px #ffffff; }
+#featuredcode2 table tr td.rowB{background: #FFFAF4; height: 30px; padding-left: 15px; padding-right: 11px; border-left: solid 1px #9c9b50; border-top: solid 1px #e1e1e1; border-bottom: solid 1px #ffffff; }
+
 #singleright{float:right;width:245px;margin:4px 10px 10px;}
 #copy{margin-top:10px;text-align:center;}
 .posttitle{font-size:14px;display:inline;color:#9c9b50;}

@@ -10,6 +10,7 @@
 						$('#myForm').ajaxForm(function() { 
 							//alert("Thank you for your comment!");
 							self.parent.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+							self.parent.parent.$('#dyminfo_onindex').load('/ajax/frontpage_dyminfo');
 							self.parent.parent.tb_remove();							
 						}); 
 					}); 

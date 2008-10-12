@@ -232,14 +232,14 @@ class get_fp_dyminfo(tarsusaRequestHandler):
 							## Check whether this item had done.
 							if tarsusaItem_UserFriendsRecentItems.done == True:
 								
-								UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + tarsusaItem_UserFriendsRecentItems.key().id() + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
+								UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + tarsusaItem_UserFriendsRecentItems.key().id() + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
 	 
 							else:
-								UserFriendsActivities += '<a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a><br />'
-
-
+								UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+				if UserFriendsActivities == '':
+					UserFriendsActivities = '<li>暂无友邻公开项目</li>'
 			else:
-				UserFriendsActivities = '当前没有添加朋友'
+				UserFriendsActivities = '<li>当前没有添加朋友</li>'
 
 
 			template_values = {

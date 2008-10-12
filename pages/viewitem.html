@@ -2,77 +2,217 @@
 {% block title %} CheckNerds - {{ tarsusaItem.name|escape }} - 查看项目 {% endblock title %}
 
 			{% block content-holder %}
-			<div id="singlepostholder">
-            	<div id="top"></div>
-                <div id="mid">
+        	<div id="leftside">
+            	<div id="featuredcode2">
+                	<div id="featuredcode2-top"></div>
+                   	<div id="featuredcode2-mid">
 
-                    <div id="singleleft">
-                        <h2 class="posttitle" style="font-weight:normal;">{{ singlePageTitle }} - {{tarsusaItem.name|escape}} </h2>
-                        <p><br />
-					
-						{% if DonelogItemCollection %}
-							{% for DonelogItem in DonelogItemCollection %}
-								{{ DonelogItem.donedate }}<br />
-								Name: {{ DonelogItem.name|escape }}<br />
-							{% endfor %}
-						{% endif %}
+					<h2 class="posttitle" style="font-weight:normal;">{{ singlePageTitle }} - {{tarsusaItem.name|escape}} </h2>
+					<p>
+				
+					{% if DonelogItemCollection %}
+						{% for DonelogItem in DonelogItemCollection %}
+							{{ DonelogItem.donedate }}<br />
+							Name: {{ DonelogItem.name|escape }}<br />
+						{% endfor %}
+					{% endif %}
 
-						{% if tarsusaItem %}
-							项目详细信息
-							<table cellpadding="0" cellspacing="5" border="0" align="left">
-							<tr>
-								<th width="60%" class="first"><a href="/i/{{ tarsusaItem.key.id }}">{{ tarsusaItem.name|escape }}</a></th>
-								<th><span class="date">分类：<a href="#">{{tarsusaItemTags}}</a></span></th>
-							</tr>
-							<tr>
-								<td>创建者：<a href="/user/{{tarsusaItem.user|escape}}">{{tarsusaItem.user}}</a></td><td>公开：{{tarsusaItem.public}}</td></tr>
-							<tr>
-							<td colspan="2">说明:&nbsp; {{ tarsusaItem.comment }}</td></tr>
-							<tr><td width="50%" colspan="2"><span class="date">创建时间： &nbsp; {{tarsusaItem.date }}
-							| 预期完成： &nbsp; {{tarsusaItem.expectdate}}</span></td></tr>
-
-							<tr class="rowA"><td colspan="2">当前状态：
-							{% if tarsusaItemDone %}
-								<img src="/img/accept16.png">
-								已经完成于{{ tarsusaItem.donedate }} &nbsp;
-								<a href="#;" onclick="if (confirm('确认撤销完成？{{tarsusaItem.name|escape}}')) {location.href = '/undoneItem/{{tarsusaItem.key.id}}';}" class="x">撤销完成</a>
-							{% else %}
-								{% if not tarsusaRoutineItem %}
-									<tr class="rowA"><td colspan="2">当前状态：未完成
-									{% if tarsusaItem.expired %}
-										<span style="color: #F00000">注意：此任务已过期！</span>
-										<a href=/cancelexpireitem.py?itemId= class="x">取消日期限制</a>
-									{% endif %}
-								{% else %}
-									<tr class="rowA"><td colspan="2">周期性任务：{{ tarsusaItem.routine }}
-								{% endif %}
-
-							{% endif %}
-
-							{% if tarsusaRoutineItem %}
-								<tr class="rowB"><td colspan="2">最近完成<br />
-								{% for eachRoutineLogItem in tarsusaRoutineLogItem %}
-									{{ eachRoutineLogItem.donedate}} &nbsp; <br />
-								{% endfor %}
-								</td></tr>
-							{% endif %}						
-
-
-							{% if not logictag_OtherpeopleViewThisItem %}
-								{% if not tarsusaRoutineItem %}
-									{% if not tarsusaItemDone %}
-										<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem.key.id}}'";>完成这个任务
-									{% endif %}
-									&nbsp; <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="x">x</a>
-								{% endif %}
-							{% endif %}
+					{% if tarsusaItem %}
+						<table cellpadding="0" cellspacing="0" border="0" align="left">
+						<tr>
+							<th colspan="2" class="viewitem_title">{{ tarsusaItem.name|escape }}</th>
+						</tr>
+						<tr>
+							<th colspan="2" class="viewitem_tags"><span class="date">分类：<a href="#">{{tarsusaItemTags}}</a></span></th>
+						</tr>
+						<tr> 
+							<td class="viewitem_creator">创建者：<a href="/user/{{tarsusaItem.user|escape}}">{{tarsusaItem.user}}</a>
+							&nbsp;&nbsp;
+							{% ifequal tarsusaItem.public "private" %}
+								不公开
+							{% endifequal %}
+							{% ifequal tarsusaItem.public "publicOnlyforFriends" %}
+								仅对朋友公开
+							{% endifequal %}
+							{% ifequal tarsusaItem.public "public" %}
+								完全公开
+							{% endifequal %}
 							</td></tr>
-							</table>
-						{% endif %}
-						</p>
+						<tr>
+							<td colspan="2" class="viewitem_comment">说明:&nbsp; {{ tarsusaItem.comment }}</td>
+						</tr>
+						<tr><td width="50%" colspan="2" class="rowB"><span class="date">创建时间： &nbsp; {{tarsusaItem.date }}
+						&nbsp;|&nbsp;
+							{% if not tarsusaItem.expectdate %}
+								没有完成期限限制
+							{% else %}
+								预期完成： &nbsp; {{tarsusaItem.expectdate}}
+							{% endif %}
+							</span>
+						</td></tr>
 
+						<tr><td colspan="2" class="rowA">
+						{% if tarsusaItemDone %}
+							<img src="/img/accept16.png">
+							已经完成于{{ tarsusaItem.donedate }} &nbsp;
+							<a href="#;" onclick="if (confirm('确认撤销完成？{{tarsusaItem.name|escape}}')) {location.href = '/undoneItem/{{tarsusaItem.key.id}}';}" class="x">撤销完成</a>
+						{% else %}
+							{% if not tarsusaRoutineItem %}
+								当前状态：未完成
+								{% if tarsusaItem.expired %}
+									<span style="color: #F00000">注意：此任务已过期！</span>
+									<a href=/cancelexpireitem.py?itemId= class="x">取消日期限制</a>
+								{% endif %}
+							{% else %}
+								{% ifequal tarsusaItem.routine "daily" %}
+									每日任务
+								{% endifequal %}
+								{% ifequal tarsusaItem.routine "weekly" %}
+									每周任务
+								{% endifequal %}
+								{% ifequal tarsusaItem.routine "monthly" %}
+									每月任务
+								{% endifequal %}
+								{% ifequal tarsusaItem.routine "seasonly" %}
+									每季度任务
+								{% endifequal %}
+								{% ifequal tarsusaItem.routine "yearly" %}
+									每年任务
+								{% endifequal %}	
+							
+							<tr><td colspan="2" class="rowB">最近完成<br />
+							{% for eachRoutineLogItem in tarsusaRoutineLogItem %}
+								{{ eachRoutineLogItem.donedate}} &nbsp; <br />
+							{% endfor %}
+							
+							{% endif %}
+
+						{% endif %}
+
+						{% if not logictag_OtherpeopleViewThisItem %}
+							{% if not tarsusaRoutineItem %}
+								{% if not tarsusaItemDone %}
+									<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem.key.id}}'";>完成这个任务
+								{% endif %}
+								&nbsp; <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="x">x</a>
+							{% endif %}
+						{% endif %}
+						</td></tr>
+						</table>
+					{% endif %}
+					</p>
 					</div>
+               	<div id="featuredcode2-bot"></div>
+            </div>
+				 
+				<div class="featuredcode3-top"></div>
+				<div class="featuredcode3-mid">
+					<h2 class="posttitle"><a href="/">相关信息</a></h2>
+				<p>
+				在{{TheDayCreated}}那天还创建了<br />
+			 	{% if AnonymousVisitor %}
+					{% for tarsusaItem_SameDayCreated in tarsusaItemCollection_SameDayCreated %}
+						{% ifnotequal tarsusaItem_SameDayCreated.public "public" %}
+						<li><a href="/user/{{tarsusaItem_SameDayCreated.user|escape}}">{{ tarsusaItem_SameDayCreated.user }}</a> 要做 <a href="/i/{{ tarsusaItem_SameDayCreated.key.id }}">{{ tarsusaItem_SameDayCreated.name|escape }}</a></li>
+						{% endifnotequal %}
+					{% endfor %}
+							    
+				{% else %}							   
+					<div id="todoitems">
+						{% for tarsusaItem_SameDayCreated in tarsusaItemCollection_SameDayCreated %}
+							<li>
+							{% if tarsusaItem_SameDayCreated.done %}
+								<img src="/img/accept16.png">	
+							{% else %}
+								<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_SameDayCreated.key.id}}')">
+							{% endif %}
+							<a href="/i/{{ tarsusaItem_SameDayCreated.key.id }}">{{ tarsusaItem_SameDayCreated.name|escape }}</a>
+							<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_SameDayCreated.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_SameDayCreated.key.id}}';}" class="x">x</a></li>
+						{% endfor %}
+					</div>
+				{% endif %}
+		
+
+
+				同类别未完成项目<br />
+			 	{% if AnonymousVisitor %}
+					{% for tarsusaItem_SameCategoryUndone in tarsusaItemCollection_SameCategoryUndone %}
+						{% ifnotequal tarsusaItem_SameCategoryUndone.public "public" %}
+						<li><a href="/user/{{tarsusaItem_SameCategoryUndone.user|escape}}">{{ tarsusaItem_SameCategoryUndone.user }}</a> 要做 <a href="/i/{{ tarsusaItem_SameCategoryUndone.key.id }}">{{ tarsusaItem_SameDayCreated.name|escape }}</a></li>
+						{% endifnotequal %}
+					{% endfor %}
+							    
+				{% else %}							   
+					<div id="todoitems">
+						{% for tarsusaItem_SameCategoryUndone in tarsusaItemCollection_SameCategoryUndone %}
+							<li>
+							{% ifequal tarsusaItem_SameCategoryUndone.routine 'none' %}
+								<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_SameCategoryUndone.key.id}}')">
+							{% endifequal %}
+							<a href="/i/{{ tarsusaItem_SameCategoryUndone.key.id }}">{{ tarsusaItem_SameCategoryUndone.name|escape }}</a>
+							<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_SameCategoryUndone.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_SameCategoryUndone.key.id}}';}" class="x">x</a></li>
+						{% endfor %}
+					</div>
+				{% endif %}
+
+
+
+
+
+				</p>
+				</div>
+				<div class="featuredcode3-bot"></div>
+				
+			</div>
+
+
+			<div id="rightside">
+            	<div id="codelist">
+                	<div id="codelist-top"></div>
+                	<div id="codelist-mid">
+                    	<h2 class="posttitle">{{UserNickName}}</h2>
+                        <ul>
+                            <li><img src="/img/add.png"><a href="/ajax/allpage_additem?TB_iframe=true&height=400&width=400" class="thickbox" title="添加新项目">添加项目</a></li>
+							<li><img src="/img/globe_accept.png"><a href="#">完成日志</a></li>
+							<li><img src="/img/info.png"><a href="#">用户信息</a></li>
+                        </ul>
+                    </div>
+                	<div id="codelist-bot"></div>
                 </div>
-                <div id="bot"></div>
-            </div>			
+
+				<div id="dyminfo_onindex">
+					<div id="codelist">
+						<div id="codelist-top"></div>
+						<div id="codelist-mid">
+							<h2 class="posttitle">统计信息</h2>
+							<ul>
+							正在载入
+							</ul>
+						</div>
+						<div id="codelist-bot"></div>
+					</div>
+
+					<div id="codelist">
+						<div id="codelist-top"></div>
+						<div id="codelist-mid">
+							<h2 class="posttitle">朋友动态</h2>
+							<ul>
+							正在载入
+							</ul>
+						</div>
+						<div id="codelist-bot"></div>
+					</div>
+				</div>
+						
+			<script type="text/javascript">
+				window.onload = function() {
+				{% if not AnonymousVisitor %}
+					$('#dyminfo_onindex').load('/ajax/frontpage_dyminfo');
+				{% else %}
+					$('#dyminfo_onindex').load('/ajax/frontpage_introbottomcontentsforanonymous');			
+				{% endif %}
+				}
+				</script>
+								
+
         {% endblock content-holder %}
