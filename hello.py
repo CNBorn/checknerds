@@ -207,9 +207,14 @@ class AddItemProcess(tarsusaRequestHandler):
 				try:
 					each_cat = catlist[0]
 				
-				except:
-					each_cat = Tag(name=each_tag_in_tarsusaitem)
-					each_cat.put()
+				except:				
+					try:
+						#added this line for Localhost GAE runtime...
+						each_cat = Tag(name=each_tag_in_tarsusaitem.decode('utf-8'))			
+						each_cat.put()
+					except:
+						each_cat = Tag(name=each_tag_in_tarsusaitem)
+						each_cat.put()
 
 				first_tarsusa_item.tags.append(each_cat.key())
 				# To Check whether this user is using this tag before.
@@ -350,7 +355,7 @@ class ViewItem(tarsusaRequestHandler):
 			#Show Undone items in the same category, just like in tarsusa r6
 			#Since Nevada allows mutiple tags, It finds item that with any one tags of this showing items.
 
-			tarsusaItemCollection_SameCategoryUndone = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
+			tarsusaItemCollection_SameCategoryUndone = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and done = False and id != :2 ORDER BY id DESC LIMIT 5", users.get_current_user(), tItem.key().id())
 			# filter current viewing Item from the related items!
 			# GqlQuery doesn't have the filter function!
 			#tarsusaItemCollection_SameCategoryUndone.filter("id=", tItem.id)
@@ -384,13 +389,16 @@ class ViewItem(tarsusaRequestHandler):
 
 
 			#Show the items that are created in the same day, just like in tarsusa r6.
-			TheDay = datetime.datetime.date(tItem.date)
+			#TheDay = datetime.datetime.date(tItem.date)
+
+			TheDay = tItem.date
 				
 			one_day = datetime.timedelta(hours=24)
 			yesterday_ofTheDay = TheDay - one_day
 			nextday_ofTheDay = TheDay + one_day
 
-			tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date >:2 AND date <:3 ORDER BY date DESC LIMIT 10", users.get_current_user(), yesterday_ofTheDay, nextday_ofTheDay)
+			# SOME how bug is here, there is no way to determine the same date within the gql query.
+			tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 ORDER BY date DESC LIMIT 10", users.get_current_user(), yesterday_ofTheDay, nextday_ofTheDay)
 			# filter current viewing Item from the related items!			
 			#tarsusaItemCollection_SameDayCreated.filter("id=", tItem.id)
 
@@ -586,7 +594,7 @@ class UserToDoPage(tarsusaRequestHandler):
 			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 50", users.get_current_user())
 
 			CountTotalItems = tarsusaItemCollection_UserToDoItems.count()
-			strTodoStatus = "共有项目" + str(CountTotalItems)
+			strTodoStatus = "共有" + str(CountTotalItems) + "个未完成项目"
 
 			template_values = {
 				'PrefixCSSdir': "/",

@@ -245,6 +245,9 @@
 			Concerning to filter theViewingItem away from its related items.
 
 
+	IN 08.10.13
+		Checkout that there are serious bugs(TODO features) concerning ViewItem
+		Implemented UserToDoPage's CSS style. - begin to think this page is kinda useless, most people will check the category page directly...
 
 
 
