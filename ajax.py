@@ -134,6 +134,109 @@ class getdailyroutine(tarsusaRequestHandler):
 
 
 
+class getdailyroutine_yesterday(tarsusaRequestHandler):
+
+	def post(self):
+	
+		if users.get_current_user() != None:
+
+				# code below are comming from GAE example
+				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+				CurrentUser = q.get()
+
+				# Show His Daily Routine.
+				tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
+				tarsusaItemCollection_DoneDailyRoutine = tarsusaRoutineLogItem 
+
+				# GAE datastore has a gqlquery.count limitation. So right here solve this manully.
+				tarsusaItemCollection_DailyRoutine_count = 0
+				for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
+					tarsusaItemCollection_DailyRoutine_count += 1
+
+				Yesterday_DoneRoutine = 0
+
+				for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
+					
+					#This query should effectively read out all dailyroutine done by today.
+					#for the result will be traversed below, therefore it should be as short as possible.
+					#MARK FOR FUTURE IMPROVMENT
+					
+					# GAE datastore has a gqlquery.count limitation. So right here solve this manully.
+					#tarsusaItemCollection_DailyRoutine_count
+					# Refer to code above.
+					
+					# LIMIT and OFFSET don't currently support bound parameters.
+					# http://code.google.com/p/googleappengine/issues/detail?id=179
+					# if this is realized, the code below next line will be used.
+
+					tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC ", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id())
+					
+					## traversed RoutineDaily
+					
+					## Check whether this single item is done.
+					DoneThisItemYesterday = False
+					
+					for tarsusaItem_DoneDailyRoutine in tarsusaItemCollection_DoneDailyRoutine:
+						if datetime.datetime.date(tarsusaItem_DoneDailyRoutine.donedate) == datetime.datetime.date(datetime.datetime.now()) - datetime.timedelta(days=1):
+							
+							#Check if the user had done all his routine today.
+							Yesterday_DoneRoutine += 1
+							DoneThisItemYesterday = True
+
+							# This routine have been done today.
+							
+							# Due to solve this part, I have to change tarsusaItemModel to db.Expando
+							# I hope there is not so much harm for performance.
+							each_tarsusaItemCollection_DailyRoutine.doneyesterday = 1
+							each_tarsusaItemCollection_DailyRoutine.put()
+
+						else:
+							## The Date from RoutineLogItem isn't the same of Today's date
+							## That means this tarsusaItem(as routine).donetoday should be removed.
+								
+							pass
+					
+					if DoneThisItemYesterday == False:
+							## Problem solved by Added this tag. DoneThisItemYesterday
+							try:
+								del each_tarsusaItemCollection_DailyRoutine.doneyesterday
+								each_tarsusaItemCollection_DailyRoutine.put()
+							except:
+								pass
+
+
+
+				
+				## Output the message for DailyRoutine
+				template_tag_donealldailyroutine = ''
+				
+				if Yesterday_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Yesterday_DoneRoutine != 0:
+					template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了昨天要做的所有事情！'
+				elif Yesterday_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) - 1:
+					template_tag_donealldailyroutine = '只差一项，加油！'
+				elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
+					template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
+
+
+				template_values = {
+				'UserLoggedIn': 'Logged In',
+				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),
+				
+				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
+				'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
+
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now() - datetime.timedelta(days=1)), 
+
+
+				}
+
+
+				#Manupilating Templates	
+				path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dailyroutine_yesterday.html')
+				self.response.out.write(template.render(path, template_values))
+
 
 
 class get_fp_bottomcontents(tarsusaRequestHandler):
@@ -409,6 +512,7 @@ class get_fp_IntroductionBottomForAnonymous(tarsusaRequestHandler):
 
 def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
+										('/ajax/frontpage_getdailyroutine_yesterday', getdailyroutine_yesterday),
 										('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
 										('/ajax/frontpage_dyminfo', get_fp_dyminfo),
 										('/ajax/frontpage_introforanonymous',get_fp_IntroductionForAnonymous),

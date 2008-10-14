@@ -467,6 +467,11 @@ class ViewItem(tarsusaRequestHandler):
 class DoneItem(tarsusaRequestHandler):
 	def get(self):
 		ItemId = self.request.path[10:]
+		DoneYesterdaysDailyRoutine = False
+		if ItemId[-2:] == '/y':
+			ItemId = self.request.path[10:-2]			
+			DoneYesterdaysDailyRoutine = True
+
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 
 		if tItem.user == users.get_current_user():
@@ -483,13 +488,16 @@ class DoneItem(tarsusaRequestHandler):
 				NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
 				NewlyDoneRoutineItem.user = users.get_current_user()
 				NewlyDoneRoutineItem.routineid = int(ItemId)
+				if DoneYesterdaysDailyRoutine == True:
+					NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
+				
 				#NewlyDoneRoutineItem.routine = tItem.routine
 				# The done date will be automatically added by GAE datastore.			
 				NewlyDoneRoutineItem.put()
 
 		
 		#self.redirect(self.request.uri)
-		self.redirect('/')
+		#self.redirect('/')
 
 
 class UnDoneItem(tarsusaRequestHandler):
@@ -498,12 +506,17 @@ class UnDoneItem(tarsusaRequestHandler):
 		# Permission check is very important.
 
 		ItemId = self.request.path[12:]
+		UndoneYesterdaysDailyRoutine = False
+		if ItemId[-2:] == '/y':
+			ItemId = self.request.path[12:-2]			
+			UndoneYesterdaysDailyRoutine = True
+		
 		## Please be awared that ItemId here is a string!
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 
 
 		if tItem.user == users.get_current_user():
-			## Check User Permission to done this Item
+			## Check User Permission to undone this Item
 
 			if tItem.routine == 'none':
 				## if this item is not a routine item.
@@ -513,30 +526,43 @@ class UnDoneItem(tarsusaRequestHandler):
 				tItem.put()
 			else:
 				if tItem.routine == 'daily':
-					del tItem.donetoday
-					tItem.put()
-					## Please Do not forget to .put()!
+					if UndoneYesterdaysDailyRoutine != True:
 
-					## This is a daily routine, and we are going to undone it.
-					## For DailyRoutine, now I just count the matter of deleting today's record.
-					## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
+						del tItem.donetoday
+						tItem.put()
+						## Please Do not forget to .put()!
+
+						## This is a daily routine, and we are going to undone it.
+						## For DailyRoutine, now I just count the matter of deleting today's record.
+						## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
+						
+						# GAE can not make dateProperty as query now! There is a BUG for GAE!
+						# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
+						
+						tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now())
 					
-					# GAE can not make dateProperty as query now! There is a BUG for GAE!
-					# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
+						#It has been fixed. For just deleting TODAY's routinelog.
+						one_day = datetime.timedelta(hours=24)
+						yesterday = datetime.datetime.now() - one_day
+
+						for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
+							if result.donedate < datetime.datetime.now() and result.donedate.date() != yesterday.date() and result.donedate > yesterday:
+								result.delete()
+					else:
+						# Undone Yesterday's daily routine item.	
+						del tItem.doneyesterday
+						tItem.put()
+						
+						tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now() - datetime.timedelta(days=1))
 					
-					tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now())
-				
-					#It has been fixed. For just deleting TODAY's routinelog.
-					one_day = datetime.timedelta(hours=24)
-					yesterday = datetime.datetime.now() - one_day
+						one_day = datetime.timedelta(days=1)
+						yesterday = datetime.datetime.now() - one_day
 
-					for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-						if result.donedate < datetime.datetime.now() and result.donedate.date() != yesterday.date() and result.donedate > yesterday:
-							result.delete()
+						for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
+							if result.donedate < datetime.datetime.now() and result.donedate.date() == yesterday.date() and result.donedate > datetime.datetime.now() - datetime.timedelta(days=2):
+								result.delete()
 
-
-
-		self.redirect('/')
+		#self.redirect('/')
 
 class RemoveItem(tarsusaRequestHandler):
 	def get(self):
@@ -643,7 +669,7 @@ class UserDonePage(tarsusaRequestHandler):
 			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
 
 			CountTotalItems = tarsusaItemCollection_UserDoneItems.count()
-			strDoneStatus = "共有项目" + str(CountTotalItems)
+			strDoneStatus = "共有" + str(CountTotalItems) + "个已完成项目"
 
 			template_values = {
 				'PrefixCSSdir': "/",
@@ -705,7 +731,7 @@ class Showtag(tarsusaRequestHandler):
 				## NOTICE that the /deleteTag should del the usertags in User model.
 
 				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
-				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", users.get_current_user())
+				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY done, date DESC", users.get_current_user())
 
 				html_tag_ItemList = ""
 				for eachItem in browser_Items:
@@ -1392,8 +1418,8 @@ def main():
 									   ('/AddFriend/\\d+', AddFriendProcess),
 									   ('/RemoveFriend/\\d+', RemoveFriendProcess),
 									   ('/i/\\d+',ViewItem),
-									   ('/doneItem/\\d+',DoneItem),
-									   ('/undoneItem/\\d+',UnDoneItem),
+									   ('/doneItem/\\d+.+',DoneItem),
+									   ('/undoneItem/\\d+.+',UnDoneItem),
 									   ('/removeItem/\\d+', RemoveItem),
 									   ('/tag/.+',Showtag),
 									   ('/tag/', Showtag),

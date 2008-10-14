@@ -2,48 +2,42 @@
 {% block title %} CheckNerds - {{ UserNickName }}已完成项目 {% endblock title %}
         <div id="content-holder">
 		{% block content-holder %}
-			<div id="singlepostholder">
-            	<div id="top"></div>
-                <div id="mid">
-                    <div id="singleright">
-                        <div id="googlead">
-                            <div id="googlead-top"></div>
-                            <div id="googlead-mid">
-                            
-                    			<!--Remove the next few lines to place an ad-->
-                    			<br />
-								<div style="margin-top:70px;">
-                                	Ad Space
-                                </div>
+  		<div id="leftside">
+            	<div id="featuredcode2">
+                	<div id="featuredcode2-top"></div>
+                   	<div id="featuredcode2-mid">
 
-                            </div>
-                            <div id="googlead-bot"></div>
-                        </div>
-                    </div>
-
-                    <div id="singleleft">
-                          <h2 class="posttitle" style="font-weight:normal;"><a href="/user/{{UserNickName}}">{{UserNickName}}</a> &raquo; <a href="/user/{{UserNickName}}/todo">已完成的项目</a>
+                          <h2 class="posttitle" style="font-weight:normal;">{{UserNickName}}</a> &raquo; 已完成的项目
 						</h2>
-                        <p>{{DoneStatus}}</p>
+                        <table cellpadding="0" cellspacing="0" border="0" align="left">
+						<tr>
+							<th colspan="2" class="viewitem_title">&nbsp;{{DoneStatus}}</th>
+						</tr>
+						<tr>
+							<th width="70%" class="viewitem_tags">名称</th><th class="viewitem_tags">添加日期</th>
+						</tr>
 
 						<p>
 								{% if AnonymousVisitor %}
 							    	{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-									<a href="/user/{{tarsusaItem_UserDoneItem.user|escape}}">{{ tarsusaItem_UserDoneItem.user }}</a> 做完了 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a><br />
+									<tr><td><a href="/user/{{tarsusaItem_UserDoneItem.user|escape}}">{{ tarsusaItem_UserDoneItem.user }}</a> 做完了 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a></td>
+									<td>{{tarsusaItem_UserDoneItem.date}}</td></tr>
 								{% endfor %}
 							    
 							    	{% else %}
 								
 								{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-											<img src="/img/accept16.png">
+											<tr><td class="viewitem_creator"><img src="/img/accept16.png">
 											<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
 											<a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="x">撤销</a><br />
-											{{tarsusaItem_UserDoneItem.comment|escape }}<br />
+											<br />{{tarsusaItem_UserDoneItem.comment|escape }}
+											<td>{{tarsusaItem_UserDoneItem.date}}</td></tr>
+
 								{% endfor %}
 								{% endif %}
-								<br /><a href="/">(Read More)</a></p>
+					</table>	
 					</div>
                 </div>
-                <div id="bot"></div>
+                <div id="featuredcode2-bot"></div>
             </div>			
         {% endblock content-holder %}

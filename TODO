@@ -250,4 +250,6 @@
 		Implemented UserToDoPage's CSS style. - begin to think this page is kinda useless, most people will check the category page directly...
 
 
-
+	IN 08.10.14
+		Added Done&Undone Yesterday's daily routine function.
+		Made UserTodoPage and UserDonePage the same layout and look.
