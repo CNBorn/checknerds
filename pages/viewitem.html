@@ -92,7 +92,7 @@
 						{% if not logictag_OtherpeopleViewThisItem %}
 							{% if not tarsusaRoutineItem %}
 								{% if not tarsusaItemDone %}
-									<input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem.key.id}}'";>完成这个任务
+									<input type="button" value="完成这个任务" name="donebutton" onclick="ajax_doneItem('/doneItem/{{tarsusaItem.key.id}}')";>
 								{% endif %}
 								&nbsp; <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="x">x</a>
 							{% endif %}
@@ -134,7 +134,7 @@
 		
 
 
-				同类别未完成项目<br />
+				<!--- 同类别未完成项目<br />
 			 	{% if AnonymousVisitor %}
 					{% for tarsusaItem_SameCategoryUndone in tarsusaItemCollection_SameCategoryUndone %}
 						{% ifnotequal tarsusaItem_SameCategoryUndone.public "public" %}
@@ -153,7 +153,7 @@
 							<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_SameCategoryUndone.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_SameCategoryUndone.key.id}}';}" class="x">x</a></li>
 						{% endfor %}
 					</div>
-				{% endif %}
+				{% endif %} !-->
 
 
 
@@ -212,6 +212,12 @@
 					$('#dyminfo_onindex').load('/ajax/frontpage_introbottomcontentsforanonymous');			
 				{% endif %}
 				}
+				
+				function ajax_doneItem(strLink){
+				$.ajax({type: "GET", url: strLink ,success: function(){location.reload();}}); 
+				return false;
+				}
+				
 				</script>
 								
 

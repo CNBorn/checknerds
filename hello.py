@@ -70,7 +70,7 @@ class MainPage(tarsusaRequestHandler):
 			## Check usedtags as the evaluation for Tags Model
 			## TEMP CODE!
 			##UserTags = cgi.escape('<a href=/tag/>未分类项目</a>&nbsp;')
-			UserTags = '<a href=/tag/>Untagged Items</a>&nbsp;'
+			UserTags = '<a href=/tag/>未分类项目</a>&nbsp;'.decode('utf-8')
 
 			if CurrentUser.usedtags:
 				CheckUsedTags = []
@@ -95,7 +95,7 @@ class MainPage(tarsusaRequestHandler):
 								## Since I have deleted some tags in CheckNerds manually, 
 								## so there will be raise such kind of errors, in which the tag will not be found.
 								each_tag =  db.get(each_cate)
-								UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+								UserTags += '<a href="/tag/' + cgi.escape(each_tag.name) +  '">' + cgi.escape(each_tag.name) + '</a>&nbsp;'
 							except:
 								## Tag model can not be found.
 								pass
@@ -369,31 +369,26 @@ class ViewItem(tarsusaRequestHandler):
 							#Find any tags are the same:
 							if db.get(eachTag).name == each_tag.name:							
 								IsSameCategory = True
-						if IsSameCategory == False:
+						if IsSameCategory == True:
 							
-							# GqlQuery doesn't have the filter function!
+							# GqlQuery doesn't have the filter function! and the filter function also doesn't support !=
 							# TODO SO THERE IS BUG HERE! HERE! HERE!
-
-							pass
 							#tarsusaItemCollection_SameCategoryUndone.filter("id=", eachItem.id)					
 							
-							#if eachItem.done == False:
-							#	html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-							#else:
-							#	html_tag_ItemList += '<img src="/img/accept16.png"><a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-							#	CountDoneItems += 1
+							html_tag_SameCategory_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+							#	CountUndoneItems += 1
 							
 					except:
 						pass
 
 
-
+			# -----
 			#Show the items that are created in the same day, just like in tarsusa r6.
 			#TheDay = datetime.datetime.date(tItem.date)
 
 			TheDay = tItem.date
 				
-			one_day = datetime.timedelta(hours=24)
+			one_day = datetime.timedelta(days=1)
 			yesterday_ofTheDay = TheDay - one_day
 			nextday_ofTheDay = TheDay + one_day
 
@@ -1021,17 +1016,14 @@ class UserMainPage(tarsusaRequestHandler):
 			#self.write(ViewUser.avatar)
 			#self.response.headers['Content-Type'] = 'image/'  #str(avatar.url_mime) 
 			if ViewUser.avatar:
-				outputStringUserMainPageTitle = ""
-				outputStringUserMainPageTitle = "<img src='/img?img_user=" + str(ViewUser.key()) + "' width=64 height=64>"
-				outputStringUserMainPageTitle += ViewUser.user.nickname() + "'s homepage"
-
+				outputStringUserAvatar = "<img src='/img?img_user=" + str(ViewUser.key()) + "' width=64 height=64>"
 			else:
 				#self.write('none image')
 				#self.response.out.write(' %s</div>' % cgi.escape(greeting.content))
 				#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
-				outputStringUserMainPageTitle = ""
-				outputStringUserMainPageTitle = "<img src='/img/default_avatar.jpg' width=64 height=64>"
-				outputStringUserMainPageTitle += ViewUser.user.nickname() + "'s homepage"
+				outputStringUserAvatar = "<img src='/img/default_avatar.jpg' width=64 height=64>"
+			
+			outputStringUserMainPageTitle = ViewUser.user.nickname() + "公开的项目".decode("utf-8")
 
 				
 				
@@ -1066,8 +1058,12 @@ class UserMainPage(tarsusaRequestHandler):
 				## Added Item public permission check.
 		
 				if each_Item.public == 'publicOnlyforFriends' and logictag_OneoftheFriendsViewThisPage == True:
+					if each_Item.done == True:
+						outputStringRoutineLog += "<img src='/img/accept16.png'>" 
 					outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 				elif each_Item.public == 'public':
+					if each_Item.done == True:
+						outputStringRoutineLog += "<img src='/img/accept16.png'>" 
 					outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 				else:
 					pass
@@ -1077,8 +1073,8 @@ class UserMainPage(tarsusaRequestHandler):
 		else:
 			#self.write('not found this user and any items')
 			outputStringUserMainPageTitle = 'not found this user and any items'
-
 			outputStringRoutineLog = 'None'
+			self.redirect('/')
 
 
 		if UserNickName != "访客":
@@ -1086,9 +1082,12 @@ class UserMainPage(tarsusaRequestHandler):
 					'PrefixCSSdir': "../",
 					
 					'UserLoggedIn': 'Logged In',
-
-					'UserNickName': UserNickName, 
 					
+					'UserNickName': UserNickName,
+					'UserAvatarImage': outputStringUserAvatar,
+					
+					'UserJoinInDate': datetime.datetime.date(CurrentUser.datejoinin),
+					'UserWebsite': CurrentUser.website,
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
 					
 					'StringRoutineLog': outputStringRoutineLog,
@@ -1265,19 +1264,16 @@ class FindFriendPage(tarsusaRequestHandler):
 			for each_FriendKey in tarsusaUserFriendCollection:
 				UsersFriend =  db.get(each_FriendKey)
 				if UsersFriend.avatar:
-					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;'
-					
-					UserFriends += '<a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a>'
-					
-					UserFriends += 	'<br />'
+					UserFriends += '<dl class="obu"><dt><a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=32 height=32>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;</dt>'
 
 				else:
 					## Show Default Avatar
-					UserFriends += '<a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src='/img/default_avatar.jpg' width=64 height=64>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;'
-					UserFriends += '<a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a>'
-					
-					UserFriends += 	'<br />'
-					
+					UserFriends += '<dl class="obu"><dt><a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;</dt>'
+				
+				#UserFriends += 	'<dd><a href="/user/''' + cgi.escape(UsersFriend.user.nickname()) +  '>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd>'
+
+				UserFriends += '<a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dl>'
+
 
 
 		else:

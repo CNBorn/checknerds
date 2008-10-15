@@ -24,7 +24,8 @@
 							    {% else %}
 							    
 							    	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
-									<tr><td class="viewitem_creator"><input type="checkbox" name="checkboxname" onchange="location.href = '/doneItem/{{tarsusaItem_UserToDoItem.key.id}}'">
+									<tr><td class="viewitem_creator">
+									<input type="checkbox" name="checkboxname" onclick="ajax_doneItem('/doneItem/{{tarsusaItem_UserToDoItem.key.id}}')">
 									<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
 									<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_UserToDoItem.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_UserToDoItem.key.id}}';}" class="x">x</a>
 									<br />{{tarsusaItem_UserToDoItem.comment|escape }}</td>
@@ -37,5 +38,20 @@
 					</div>
                 </div>
                 <div id="featuredcode2-bot"></div>
-            </div>			
+            </div>
+
+<script type="text/javascript">
+		function ajax_doneItem(strLink){
+				$.ajax({type: "GET", url: strLink ,success: function(){					
+					// jQuery cancel all checkbox, from http://www.ruofeel.cn/192.html
+					$("input[@name='checkboxname']").each(function() { 
+					$(this).attr("checked", false); 
+					});
+					location.reload();}}); 
+				return false;
+		}
+</script>
+
+
+
         {% endblock content-holder %}

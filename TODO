@@ -253,3 +253,8 @@
 	IN 08.10.14
 		Added Done&Undone Yesterday's daily routine function.
 		Made UserTodoPage and UserDonePage the same layout and look.
+
+	IN 08.10.15
+		UserMainPage Layout improved.
+		Little Usability improvment.
+
