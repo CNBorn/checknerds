@@ -108,11 +108,12 @@ class BlogPage(webapp.RequestHandler):
 
 class AboutPage(tarsusaRequestHandler):
 	def get(self):
-	
-		strAboutPageTitle = "关于Nevada项目"
+		import os
+
+		strAboutPageTitle = "关于CheckNerds项目"
 		strAboutPageContent = '''这个项目目前可看作是tarsusa时间管理程序在GAE上面的延续，尽管目前离成熟相距甚远，而且GAE会被GFW时刻滋扰，不过我觉得体现出核心的东西才是最主要的<BR><BR>
 		
-		我正在准备写一篇较为详细的Nevada介绍，在完成之前，请先读下tarsusa的介绍以对这个工具有所了解<BR><BR>
+		我正在准备写一篇较为详细的CheckNerds介绍，在完成之前，请先读下tarsusa的介绍以对这个工具有所了解<BR><BR>
 
 		tarsusa是一个非常简单的时间管理程序。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，tarsusa都游刃有余<BR>
 		更为重要的，是 tarsusa 可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
@@ -122,6 +123,14 @@ class AboutPage(tarsusaRequestHandler):
 		想太多无益，请立即开始吧！
 		
 		'''
+		
+		#for name in os.environ.keys():
+		#	self.response.out.write("%s = %s<br />\n" % (name, os.environ[name]))
+		strAboutPageContent += '<br /><br />ENV:<br /><p>CheckNerds - dev ' + os.environ['CURRENT_VERSION_ID']
+		strAboutPageContent += '<br />server - ' + os.environ['SERVER_SOFTWARE']
+		strAboutPageContent += '<br />http_user_agent - ' + os.environ['HTTP_USER_AGENT']
+		strAboutPageContent += '</p>'
+
 		## Get Current User.
 		# code below are comming from GAE example
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())

@@ -414,6 +414,7 @@ class ViewItem(tarsusaRequestHandler):
 						'PrefixCSSdir': "../",
 						'UserLoggedIn': 'Logged In',
 
+						'UserID': CurrentUser.key().id(),
 						'UserNickName': UserNickName, 
 						'singlePageTitle': "项目详细信息",
 						'singlePageContent': "",
@@ -752,6 +753,7 @@ class Showtag(tarsusaRequestHandler):
 						'PrefixCSSdir': "/",
 						
 						'UserLoggedIn': 'Logged In',
+						'UserID': CurrentUser.key().id(),
 
 						'UserNickName': users.get_current_user().nickname(),
 						'DeleteThisTag': html_tag_DeleteThisTag,
@@ -869,19 +871,19 @@ class UserSettingPage(tarsusaRequestHandler):
 				
 				#category = forms.CharField(widget=forms.HiddenInput())
 				#description =	forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
-				mail = 	forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10','value':CurrentUser.user.email()}))
-				urlname =forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10','value':CurrentUser.urlname}))
-				dispname = forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10','value':CurrentUser.dispname}))
-				website = forms.CharField(widget=forms.TextInput(attrs={'size':'10','maxlength':'10','value':CurrentUser.website}))	
+				mail = 	forms.CharField(label='您的邮箱',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.user.email()})) 
+				#urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
+				dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.dispname}))
+				website = forms.CharField(label='您的网址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.website}))	
 				##Please reference more from the URL
 
 				class Meta:
 					model = tarsusaUser
-					exclude =['user','userid','usedtags','friends','datejoinin']
+					exclude =['user','userid','usedtags','urlname','friends','datejoinin']
 
 
 			
-			outputStringUserSettingForms = ItemForm()
+			outputStringUserSettingForms = ItemForm().as_p() #also got as_table(), as_ul()
 
 			
 
@@ -893,15 +895,15 @@ class UserSettingPage(tarsusaRequestHandler):
 			outputStringUserAvatarSetting = ""
 			
 			if CurrentUser.avatar:
-				outputStringUserAvatarSetting += "<img src=/img?img_user=" + str(CurrentUser.key()) + " width=64 height=64><br />" + cgi.escape(CurrentUser.user.nickname()) + '&nbsp;<br />'
+				outputStringUserAvatarImage = "<img src=/img?img_user=" + str(CurrentUser.key()) + " width=64 height=64><br />" + cgi.escape(CurrentUser.user.nickname()) + '&nbsp;<br />'
 			else:
-				outputStringUserAvatarSetting += "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(CurrentUser.user.nickname()) + '&nbsp;<br />'
+				outputStringUserAvatarImage = "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(CurrentUser.user.nickname()) + '&nbsp;<br />'
 
 			
 			outputStringUserAvatarSetting += '''
 						 <form method="post" enctype="multipart/form-data"> 
-						 choose file: <input type="file" name="avatar"/>
-						 <input type="submit" value="Update Avatar"/></form> '''
+						 选择图像文件(<1M): <input type="file" name="avatar"/ size=15>
+						 <input type="submit" value="更新头像"/></form> '''.decode('utf-8')
 
 
 
@@ -914,10 +916,10 @@ class UserSettingPage(tarsusaRequestHandler):
 
 					'UserNickName': CurrentUser.user.nickname(),
 					'UserID': CurrentUser.key().id(),
-					'UserJoinInDate': CurrentUser.datejoinin,
+					'UserJoinInDate': datetime.datetime.date(CurrentUser.datejoinin),
 
 					'UserSettingForms': outputStringUserSettingForms,
-
+					'UserAvatarImage': outputStringUserAvatarImage,
 					'UserAvatarSetting': outputStringUserAvatarSetting,
 
 
@@ -937,8 +939,12 @@ class UserSettingPage(tarsusaRequestHandler):
 		
 		#checkauth(self)  
 		
-		url_mime = 'image/' 
-		avatar = self.request.get('avatar')  
+		url_mime = 'image/'
+
+		avatar = self.request.get('avatar') 
+		mail = self.request.get('mail')
+		dispname = self.request.get('dispname')
+		website = self.request.get('website')
 		
 		if url_mime:  
 			if avatar:
@@ -957,6 +963,21 @@ class UserSettingPage(tarsusaRequestHandler):
 
 			else:  
 				
+				# code below are comming from GAE example
+				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+				CurrentUser = q.get()	
+				
+				CurrentUser.mail = mail
+				CurrentUser.dispname = dispname
+				CurrentUser.website = website
+				CurrentUser.put()
+
+
+				self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
+
+
+
+
 				if self.request.get('fetch') == 'yes':  
 					try:
 						fc = urlfetch.fetch(url_mime)  
@@ -981,8 +1002,12 @@ class UserSettingPage(tarsusaRequestHandler):
 						self.write('avcx')
 
 				else:  
-					avatar = Avatar(url_mime=url_mime)  
-					avatar.put()  
+					try:
+						avatar = Avatar(url_mime=url_mime)  
+						avatar.put()  
+					except:
+						pass
+						self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
 					#sendmsg(self, 'added')  
 		else:
 			 #sendmsg(self, 'fill in the form!')  
@@ -999,17 +1024,23 @@ class UserMainPage(tarsusaRequestHandler):
 		ViewUser = q.get()
 
 		if ViewUser == None:
-			## try another way
-			## Get this user.
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
-			ViewUser = q.get()
-		
+			try:
+				## try another way
+				## Get this user.
+				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
+				ViewUser = q.get()
+			except:
+				pass		
+				
 		if ViewUser == None:
 			## try another way
 			## Get this user.
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE dispname = :1 LIMIT 1", username)
 			ViewUser = q.get()
 
+
+		UserNickName = '访客'
+		outputStringUserAvatar = ''
 
 		if ViewUser != None:
 				
@@ -1035,7 +1066,7 @@ class UserMainPage(tarsusaRequestHandler):
 				UserNickName = "访客"
 				logictag_OneoftheFriendsViewThisPage = False
 			else:
-				UserNickName = users.get_current_user().nickname()
+				UserNickName = ViewUser.user.nickname()
 
 				## Check whether the currentuser is a friend of this User.
 				## Made preparation for the following public permission check.
@@ -1074,19 +1105,18 @@ class UserMainPage(tarsusaRequestHandler):
 			#self.write('not found this user and any items')
 			outputStringUserMainPageTitle = 'not found this user and any items'
 			outputStringRoutineLog = 'None'
-			self.redirect('/')
-
+			self.error(404)
 
 		if UserNickName != "访客":
 			template_values = {
 					'PrefixCSSdir': "../",
 					
 					'UserLoggedIn': 'Logged In',
-					
+					'UserID': CurrentUser.key().id(),	
 					'UserNickName': UserNickName,
 					'UserAvatarImage': outputStringUserAvatar,
 					
-					'UserJoinInDate': datetime.datetime.date(CurrentUser.datejoinin),
+					'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
 					'UserWebsite': CurrentUser.website,
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
 					
@@ -1200,7 +1230,7 @@ class DoneLogPage(tarsusaRequestHandler):
 				'PrefixCSSdir': "../",
 				
 				'UserLoggedIn': 'Logged In',
-
+				'UserID': CurrentUser.key().id(),
 				'UserNickName': CurrentUser.user.nickname(), 
 				'singlePageTitle': "DoneLog Page",
 				

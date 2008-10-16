@@ -16,10 +16,10 @@
                                 	{{UserAvatarImage}}
                                 </div>
 								<div style="float: left; text-align: left; margin-left: 15px;">
-                                	id:{{UserNickName|escape}}<br />
+                                	id:&nbsp;{{UserNickName|escape}}<br />
 									{{UserJoinInDate}}加入<br />
 									{% if UserWebsite %}
-										Website:{{UserWebsite|escape}}<br />
+										网址:&nbsp;<a href="{{UserWebsite|escape}}" target="_blank">{{UserWebsite|escape}}<br />
 									{% endif %}
 								</div>
                             </div>

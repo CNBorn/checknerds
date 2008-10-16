@@ -257,4 +257,8 @@
 	IN 08.10.15
 		UserMainPage Layout improved.
 		Little Usability improvment.
+	IN 08.10.16
+		UserSettingPage Improved, and usable now.
+		Setting URL Bug fixed. (It once didn't work in some pages, now it is ok.)
+		Now can Display Version info in AboutPage.
 
