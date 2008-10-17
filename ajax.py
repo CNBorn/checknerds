@@ -308,12 +308,6 @@ class get_fp_dyminfo(tarsusaRequestHandler):
 			## SHOW YOUR FRIENDs Recent Activities
 			## Currently the IN function is not supported, it is an headache.
 			
-			## first get current user. 
-			## THIS LINES OF CODE ARE DUPLICATED.
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()
-
 			tarsusaUserFriendCollection = CurrentUser.friends
 			
 			tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", users.get_current_user)
@@ -348,11 +342,6 @@ class get_fp_dyminfo(tarsusaRequestHandler):
 			template_values = {
 				'UserLoggedIn': 'Logged In',
 				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
-				'UserID': CurrentUser.key().id(),
-				
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-
 				'UserFriendsActivities': UserFriendsActivities,
 
 				'UserTotalItems': UserTotalItems,

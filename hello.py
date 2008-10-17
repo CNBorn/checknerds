@@ -306,15 +306,17 @@ class ViewItem(tarsusaRequestHandler):
 				pass
 			
 
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+
+
 			logictag_OtherpeopleViewThisItem = None
 			if tItem.user != users.get_current_user():
 				
 				if tItem.public == 'publicOnlyforFriends':
 					## Check if the viewing user is a friend of the ItemAuthor.
 				
-					# code below are comming from GAE example
-					q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-					CurrentUser = q.get()
 					# code below are comming from GAE example
 					q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", tItem.user)
 					ItemAuthorUser = q.get()
@@ -712,6 +714,10 @@ class Showtag(tarsusaRequestHandler):
 
 		#catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1", RequestCatName)
 		
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()	
+		
 		if self.request.path[5:] <> '':
 			
 			try:
@@ -772,6 +778,7 @@ class Showtag(tarsusaRequestHandler):
 				## There is no this tag!
 				## There is something wrong with Showtag!
 				self.redirect("/")
+				#pass
 
 
 		else:
@@ -1192,7 +1199,7 @@ class DoneLogPage(tarsusaRequestHandler):
 			DoneDateOfThisItem = datetime.datetime.date(each_RoutineLogItem.donedate)
 
 			if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
-				outputStringRoutineLog += str(DoneDateOfThisItem) + "Done<br />"
+				outputStringRoutineLog += ('<br /><h2 class="posttitle" style="font-weight:normal;">' + str(DoneDateOfThisItem) + '完成</h2><br />').decode('utf-8')
 			
 			## TODO
 			## NOTICE! SPEED KILLER!
@@ -1204,10 +1211,19 @@ class DoneLogPage(tarsusaRequestHandler):
 			ThisRoutineBelongingstarsusaItem = tarsusaItem.get_by_id(each_RoutineLogItem.routineid)
 			
 			if each_RoutineLogItem.routine != 'none':
-				outputStringRoutineLog += 'Done ' + each_RoutineLogItem.routine + ' Routine - '
-				## TODO
-				## There will be updated when I need the Chinese Version.
+				strRoutineLogItemPrompt = ''
+				if each_RoutineLogItem.routine == 'daily':
+					strRoutineLogItemPrompt = '每日'
+				elif each_RoutineLogItem.routine == 'weekly':
+					strRoutineLogItemPrompt = '每周'
+				elif each_RoutineLogItem.routine == 'monthly':
+					strRoutineLogItemPrompt = '每月'
+				elif each_RoutineLogItem.routine == 'seasonly':
+					strRoutineLogItemPrompt = '每季'
+				elif each_RoutineLogItem.routine == 'yearly':
+					strRoutineLogItemPrompt = '每年'
 
+				outputStringRoutineLog += ('<img src="/img/accept16.png">' + strRoutineLogItemPrompt + '任务 - ').decode('utf-8')
 			
 				
 			outputStringRoutineLog += '<a href=/i/' + str(ThisRoutineBelongingstarsusaItem.key().id()) + '>' + ThisRoutineBelongingstarsusaItem.name + "</a><br/>"
@@ -1232,7 +1248,7 @@ class DoneLogPage(tarsusaRequestHandler):
 				'UserLoggedIn': 'Logged In',
 				'UserID': CurrentUser.key().id(),
 				'UserNickName': CurrentUser.user.nickname(), 
-				'singlePageTitle': "DoneLog Page",
+				'singlePageTitle': "",
 				
 				'StringRoutineLog': outputStringRoutineLog,
 		}
