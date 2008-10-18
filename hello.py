@@ -850,92 +850,107 @@ class UserSettingPage(tarsusaRequestHandler):
 
 		# code below are comming from GAE example
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1", username)
+		EditedUser = q.get()
+
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 		CurrentUser = q.get()
 
-		if CurrentUser == None:
+		if EditedUser == None:
 			## try another way
 			## Get this user.
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
-			CurrentUser = q.get()
+			EditedUser = q.get()
 		
-		if CurrentUser == None:
+		if EditedUser == None:
 			## try another way
 			## Get this user.
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE dispname = :1 LIMIT 1", username)
-			CurrentUser = q.get()
+			EditedUser = q.get()
 
 
 
-		if CurrentUser != None:
-
-			from google.appengine.ext.db import djangoforms
-			from django import newforms as forms 
+		if EditedUser != None:			
 			
-			class ItemForm(djangoforms.ModelForm):
+			if CurrentUser.key().id() == EditedUser.key().id():
+
+				from google.appengine.ext.db import djangoforms
+				from django import newforms as forms 
 				
-				## Custom djangoforms.ModelForm,
-				## http://groups.google.com/group/google-appengine/browse_thread/thread/d3673d0ec7ead0e2
+				class ItemForm(djangoforms.ModelForm):
+					
+					## Custom djangoforms.ModelForm,
+					## http://groups.google.com/group/google-appengine/browse_thread/thread/d3673d0ec7ead0e2
+					
+					#category = forms.CharField(widget=forms.HiddenInput())
+					#description =	forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
+					mail = 	forms.CharField(label='您的邮箱',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.user.email()})) 
+					#urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
+					dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname}))
+					website = forms.CharField(label='您的网址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.website}))	
+					##Please reference more from the URL
+
+					class Meta:
+						model = tarsusaUser
+						exclude =['user','userid','usedtags','urlname','friends','datejoinin']
+
+
 				
-				#category = forms.CharField(widget=forms.HiddenInput())
-				#description =	forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
-				mail = 	forms.CharField(label='您的邮箱',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.user.email()})) 
-				#urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
-				dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.dispname}))
-				website = forms.CharField(label='您的网址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.website}))	
-				##Please reference more from the URL
+				outputStringUserSettingForms = ItemForm().as_p() #also got as_table(), as_ul()
 
-				class Meta:
-					model = tarsusaUser
-					exclude =['user','userid','usedtags','urlname','friends','datejoinin']
+				
 
-
-			
-			outputStringUserSettingForms = ItemForm().as_p() #also got as_table(), as_ul()
+				## The Avatar part is inspired by 
+				## http://blog.liangent.cn/2008/07/google-app-engine_28.html
 
 			
 
-			## The Avatar part is inspired by 
-			## http://blog.liangent.cn/2008/07/google-app-engine_28.html
+				outputStringUserAvatarSetting = ""
+				
+				if EditedUser.avatar:
+					outputStringUserAvatarImage = "<img src=/img?img_user=" + str(EditedUser.key()) + " width=64 height=64><br />" + cgi.escape(EditedUser.user.nickname()) + '&nbsp;<br />'
+				else:
+					outputStringUserAvatarImage = "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(EditedUser.user.nickname()) + '&nbsp;<br />'
 
-		
+				
+				outputStringUserAvatarSetting += '''
+							 <form method="post" enctype="multipart/form-data"> 
+							 选择图像文件(<1M): <input type="file" name="avatar"/ size=15>
+							 <input type="submit" value="更新头像"/></form> '''.decode('utf-8')
 
-			outputStringUserAvatarSetting = ""
+
+
+
+
+				template_values = {
+						'PrefixCSSdir': "/",
+						
+						'UserLoggedIn': 'Logged In',
+
+						'EditedUserNickName': EditedUser.user.nickname(), 
+						'UserNickName': CurrentUser.user.nickname(), #used for base template. Actully right here, shoudl be the same.
+						
+						'UserID': CurrentUser.key().id(), #This one used for base.html to identified setting URL.
+						'EditedUserID': EditedUser.key().id(),
+
+						'UserJoinInDate': datetime.datetime.date(EditedUser.datejoinin),
+
+						'UserSettingForms': outputStringUserSettingForms,
+						'UserAvatarImage': outputStringUserAvatarImage,
+						'UserAvatarSetting': outputStringUserAvatarSetting,
+
+
+						
+				}
+
 			
-			if CurrentUser.avatar:
-				outputStringUserAvatarImage = "<img src=/img?img_user=" + str(CurrentUser.key()) + " width=64 height=64><br />" + cgi.escape(CurrentUser.user.nickname()) + '&nbsp;<br />'
+				path = os.path.join(os.path.dirname(__file__), 'pages/usersettingpage.html')
+				self.response.out.write(template.render(path, template_values))
+
 			else:
-				outputStringUserAvatarImage = "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(CurrentUser.user.nickname()) + '&nbsp;<br />'
+				# the editedUser is not CurrentUser.
+				self.redirect("/")
 
-			
-			outputStringUserAvatarSetting += '''
-						 <form method="post" enctype="multipart/form-data"> 
-						 选择图像文件(<1M): <input type="file" name="avatar"/ size=15>
-						 <input type="submit" value="更新头像"/></form> '''.decode('utf-8')
-
-
-
-
-
-			template_values = {
-					'PrefixCSSdir': "/",
-					
-					'UserLoggedIn': 'Logged In',
-
-					'UserNickName': CurrentUser.user.nickname(),
-					'UserID': CurrentUser.key().id(),
-					'UserJoinInDate': datetime.datetime.date(CurrentUser.datejoinin),
-
-					'UserSettingForms': outputStringUserSettingForms,
-					'UserAvatarImage': outputStringUserAvatarImage,
-					'UserAvatarSetting': outputStringUserAvatarSetting,
-
-
-					
-			}
-
-		
-			path = os.path.join(os.path.dirname(__file__), 'pages/usersettingpage.html')
-			self.response.out.write(template.render(path, template_values))
 
 		else:
 			## can not find this user.
@@ -1119,12 +1134,17 @@ class UserMainPage(tarsusaRequestHandler):
 					'PrefixCSSdir': "../",
 					
 					'UserLoggedIn': 'Logged In',
-					'UserID': CurrentUser.key().id(),	
-					'UserNickName': UserNickName,
+
+					'UserID': CurrentUser.key().id(), #This indicates the UserSettingPage Link on the topright of the Page, so it should be CurrentUser
+
+					'ViewedUserNickName': UserNickName,
+					'UserNickName': CurrentUser.user.nickname(),
+
+
 					'UserAvatarImage': outputStringUserAvatar,
 					
 					'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
-					'UserWebsite': CurrentUser.website,
+					'UserWebsite': ViewUser.website,
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
 					
 					'StringRoutineLog': outputStringRoutineLog,

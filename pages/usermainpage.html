@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}CheckNerds - {{ UserNickName|escape }} {% endblock title %}
+{% block title %}CheckNerds - {{ ViewedUserNickName|escape }} {% endblock title %}
 		{% block content-holder %}
       	<div id="leftside">
             	<div id="featuredcode2">
@@ -16,7 +16,7 @@
                                 	{{UserAvatarImage}}
                                 </div>
 								<div style="float: left; text-align: left; margin-left: 15px;">
-                                	id:&nbsp;{{UserNickName|escape}}<br />
+                                	id:&nbsp;{{ViewedUserNickName|escape}}<br />
 									{{UserJoinInDate}}加入<br />
 									{% if UserWebsite %}
 										网址:&nbsp;<a href="{{UserWebsite|escape}}" target="_blank">{{UserWebsite|escape}}<br />

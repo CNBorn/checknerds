@@ -264,4 +264,6 @@
 	IN 08.10.17
 		ViewItem bug(caused by UserID) fixed.
 		DoneLogPage has improved a little bit..
+	IN 08.10.18
+		Fixed the BUG with Tags in base.html and UserSetting/UserMain confusion. Seperate the tag names
 
