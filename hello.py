@@ -144,7 +144,7 @@ class MainPage(tarsusaRequestHandler):
 
 
 			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'index.html')
+			path = os.path.join(os.path.dirname(__file__), 'pages/welcome.html')
 			self.response.out.write(template.render(path, template_values))
 
 class AddItemProcess(tarsusaRequestHandler):
@@ -1153,6 +1153,13 @@ class UserMainPage(tarsusaRequestHandler):
 		else:
 				template_values = {
 					'PrefixCSSdir': "../",
+					
+					'ViewedUserNickName': ViewUser.user.nickname(),
+
+					'UserAvatarImage': outputStringUserAvatar,
+					
+					'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
+					'UserWebsite': ViewUser.website,
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
 					'StringRoutineLog': outputStringRoutineLog,
 			}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %} CheckNerds {% endblock title %}
+
+		{% block content-holder %}
+        	<div id="leftside">
+            	<div id="featuredcode3" style="padding-left: 3px; padding-right: 3px;">
+                	<div id="featuredcode3-top"></div>
+                   	<div id="featuredcode3-mid">
+                    	<div id="welcome_ajaxcontent">
+                        <table>
+							<tr>
+								<p>
+							        <ul><div name="fl" style="float:left; margin-right: 10px;"><img src="/img/intro1.jpg"></div>
+			受够了繁琐的项目管理？面对任务列表上的诸多任务不知所措？如何能把自己每天要做的事情培养成一种习惯？<BR><BR>
+
+			CheckNerds是一个简单的任务管理网站。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，CheckNerds都游刃有余<BR><BR>
+			
+			更为重要的是CheckNerds可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
+
+			想太多无益，请立即开始吧！
+									</ul>
+			</p>			
+							</tr>
+						</table>
+						</div>
+                    <br />
+						<span style="text-align: center;">	
+							<a class="g" href="#;" onclick="ajax_WelcomeAjaxContent('/ajax/frontpage_introforanonymous/1')";>1</a>
+							<a class="g" href="#;" onclick="ajax_WelcomeAjaxContent('/ajax/frontpage_introforanonymous/2')";>2</a>
+							<a class="g" href="#;" onclick="ajax_WelcomeAjaxContent('/ajax/frontpage_introforanonymous/3')";>3</a>
+						</span>
+					</div>
+                   	<div id="featuredcode3-bot"></div>
+					<br />
+					<script type="text/javascript">
+						function ajax_WelcomeAjaxContent(strLink){
+											$('#welcome_ajaxcontent').animate({height: 'hide', opacity: 'hide'}, 'fast', function(){
+												 $('#welcome_ajaxcontent').load(strLink, {nullid: Math.round(Math.random()*1000)}, function(){
+												   $('#welcome_ajaxcontent').animate({height: 'show', opacity: 'show'}, 'fast');
+												   													 });
+																		 });
+
+										}
+
+						window.onload = function() {							
+										$('#latestcodes').load('/ajax/frontpage_introbottomcontentsforanonymous');			
+						}
+
+					</script>
+                </div>
+				
+				<table id="latestcodes">
+					<tr>
+                        <td class="latestcode">
+                            <div class="latestcode-top"></div>
+                            <div class="latestcode-mid">
+                            	<h2 class="posttitle"><a href="/">人们尚未完成</a></h2>
+							  <p>正在载入……<br /></p>
+                            </div>
+                            <div class="latestcode-bot"></div>
+                        </td>
+                        <td class="latestcode">
+                            <div class="latestcode-top"></div>
+                            <div class="latestcode-mid">
+                            	<h2 class="posttitle"><a href="/">人们已经完成</a></h2>
+								<p>正在载入……</p>
+                            </div>
+                            <div class="latestcode-bot"></div>
+                        </td>
+                    </tr>                            
+				</table>         
+
+            </div>
+            
+            <div id="rightside">
+            	<div id="codelist">
+                	<div id="codelist-top"></div>
+                	<div id="codelist-mid">
+                        <ul>
+                        </ul>
+                    </div>
+                	<div id="codelist-bot"></div>
+                </div>
+
+				
+            </div>
+        {% endblock content-holder %}
+

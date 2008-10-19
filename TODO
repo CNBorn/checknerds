@@ -266,4 +266,7 @@
 		DoneLogPage has improved a little bit..
 	IN 08.10.18
 		Fixed the BUG with Tags in base.html and UserSetting/UserMain confusion. Seperate the tag names
-
+	IN 08.10.19
+		New Introduction page for visitors.
+		A Permission bug in ViewItem fixed.
+		Fixed a bug when Visitor views other User's mainpage.

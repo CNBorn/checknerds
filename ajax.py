@@ -423,29 +423,51 @@ class ajax_error(tarsusaRequestHandler):
 
 
 class get_fp_IntroductionForAnonymous(tarsusaRequestHandler):
-	
 	def post(self):
+		urllen = len('/ajax/frontpage_introforanonymous/')
+		ajaxContentId = self.request.path[urllen:]
+		if ajaxContentId == "1":
+			template_tag_shownText = '''<div name="fl" style="float:left; margin-right: 10px;"><img src="/img/intro1.jpg"></div>
+			受够了繁琐的项目管理？面对任务列表上的诸多任务不知所措？如何能把自己每天要做的事情培养成一种习惯？<BR><BR>
 
-		template_tag_shownText = '''<br> 这个项目目前可看作是tarsusa时间管理程序在GAE上面的延续，尽管目前离成熟相距甚远，而且GAE会被GFW时刻滋扰，不过我觉得体现出核心的东西才是最主要的。我正在准备写一篇较为详细的Nevada介绍，在完成之前，请先读下tarsusa的介绍以对这个工具有所了解<BR><BR>
+			CheckNerds是一个简单的任务管理网站。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，CheckNerds都游刃有余<BR><BR>
+			
+			更为重要的是CheckNerds可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
 
-		tarsusa是一个非常简单的时间管理程序。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，tarsusa都游刃有余<BR>
-		更为重要的，是 tarsusa 可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
+			想太多无益，请立即开始吧！'''
 
-		想太多无益，请立即开始吧！'''
+
+		elif ajaxContentId == "2":
+			
+			template_tag_shownText = '''<div name="fl" style="float:right; margin-left: 10px;"><img src="/img/intro2.jpg"></div>
+			
+			CheckNerds小巧实用，很多时候就像白纸那样简单！又具备白纸所不具备的“重复性任务”以及日期提醒功能。<BR><BR>
+
+			记录，记录您任务的完成情况；发现，在CheckNerds发现与您行为相近的朋友！<BR><BR>
+			
+			CheckNerds使用Google App Engine构建，可保证您的数据长期有效。使用Google帐户登录，相信也可免除您需要再多注册一个帐号的烦恼。<BR><BR>
+
+			'''
+
+		else:
+			template_tag_shownText = '''<div name="fl" style="float:left;margin-right: 10px;"><img src="/img/intro3.jpg"></div>
+			
+			为您节约时间！！！<BR><BR>
+			
+			人的一生中真正有意义、可以自由支配的时间只有10000天左右，如何更好地利用它们？我们不能让时间停止，而我们能做的，就是努力过好每一分钟，并且在时间流逝后，还可发掘出自己使用时间的记录。或许可从中改进自己的一些习惯。<BR><BR>
+			
+			'''
+
 
 
 		template_values = {
 		'UserNickName': '访客',
-		'htmltag_DoneAllDailyRoutine': template_tag_shownText,
-
-		'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-
-
+		'htmltag_IntroHTML': template_tag_shownText,
 		}
 
 
 		#Manupilating Templates	
-		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dailyroutine.html')
+		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_welcomecontent.html')
 		self.response.out.write(template.render(path, template_values))	
 
 
@@ -504,7 +526,7 @@ def main():
 										('/ajax/frontpage_getdailyroutine_yesterday', getdailyroutine_yesterday),
 										('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
 										('/ajax/frontpage_dyminfo', get_fp_dyminfo),
-										('/ajax/frontpage_introforanonymous',get_fp_IntroductionForAnonymous),
+										('/ajax/frontpage_introforanonymous/.+',get_fp_IntroductionForAnonymous),
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
 										('/ajax/allpage_additem', additem),
 									   ('.*',ajax_error)],
