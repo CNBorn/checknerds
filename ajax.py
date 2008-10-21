@@ -368,7 +368,7 @@ class additem(tarsusaRequestHandler):
 									标题  <input type="text" name="name" value="" size="40" class="sl"><br />
 									内容  <textarea name="comment" rows="5" cols="28" wrap="PHYSICAL" class="ml"></textarea><br />
 									类别  <input type="text" name="tags" size="40" class="sl"><br />
-									预计完成于<br />'''
+									预计完成于<input class="inputDate" name="inputDate" id="inputDate" value="''' + str(datetime.datetime.date(datetime.datetime.now())) + '''" />'''
 
 			html_tag_AddItemForm_RoutineForms = '''性质：<select name="routine">
 									<option value="none" selected="selected">非坚持性任务</option>

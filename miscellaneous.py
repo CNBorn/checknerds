@@ -25,7 +25,7 @@ from base import *
 
 class GuestbookPage(tarsusaRequestHandler):
 	def get(self):
-		strAboutPageTitle = "Nevada项目 - Guestbook"
+		strAboutPageTitle = "CheckNerds项目 - Guestbook"
 		strAboutPageContent = '''Coming soon.<BR><BR>
 		
 		'''
@@ -67,7 +67,7 @@ class GuestbookPage(tarsusaRequestHandler):
 class BlogPage(webapp.RequestHandler):
 	def get(self):
 		
-		strAboutPageTitle = "Nevada项目 - Blog"
+		strAboutPageTitle = "CheckNerds - Blog"
 		strAboutPageContent = '''Coming soon.<BR><BR>
 		
 		'''

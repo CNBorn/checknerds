@@ -23,7 +23,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 92 times in query history.
+# Used 99 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -32,7 +32,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 80 times in query history.
+# Used 87 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -41,7 +41,7 @@ indexes:
   - name: donedate
     direction: desc
 
-# Used 1432 times in query history.
+# Used 1505 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -50,7 +50,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 369 times in query history.
+# Used 398 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -67,7 +67,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 154 times in query history.
+# Used 254 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -98,7 +98,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 4094 times in query history.
+# Used 4205 times in query history.
 - kind: tarsusaItem
   properties:
   - name: routine
@@ -106,14 +106,14 @@ indexes:
   - name: date
     direction: desc
 
-# Used 943 times in query history.
+# Used 1108 times in query history.
 - kind: tarsusaItem
   properties:
   - name: user
   - name: date
     direction: desc
 
-# Used 10 times in query history.
+# Used 11 times in query history.
 - kind: tarsusaItem
   properties:
   - name: user
@@ -134,7 +134,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 1270 times in query history.
+# Used 1314 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: routine
@@ -157,7 +157,7 @@ indexes:
   - name: routineid
   - name: donedate
 
-# Used 65 times in query history.
+# Used 68 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: routineid
@@ -172,7 +172,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 26 times in query history.
+# Used 28 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: user

@@ -2,6 +2,8 @@
 					<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 					<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
 					<script type="text/javascript" src="/js/jquery.form.js"></script>
+					<link rel="stylesheet" media="screen" type="text/css" href="/img/datepicker.css" />
+					<script type="text/javascript" src="/js/datepicker.js"></script>
 					</head>
 					<script type="text/javascript"> 
        				// wait for the DOM to be loaded 
@@ -22,4 +24,23 @@
 						<p>{{ PublicForms }}</p>
 						<p>{{ SubmitForm }}</p>
 					</div>
-					</body></html>
+					</body>
+					
+		<script type="text/javascript">
+				$('#inputDate').DatePicker({
+					format:'Y-m-d',
+					date: $('#inputDate').val(),
+					current: $('#inputDate').val(),
+					starts: 1,
+					position: 'r',
+					onBeforeShow: function(){
+						$('#inputDate').DatePickerSetDate($('#inputDate').val(), true);
+					},
+					onChange: function(formated, dates){
+						$('#inputDate').val(formated);
+					}
+				});
+		</script>
+					
+					
+					</html>

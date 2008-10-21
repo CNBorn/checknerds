@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block title %} CheckNerds - {{ UserNickName }}已完成项目 {% endblock title %}
-        <div id="content-holder">
 		{% block content-holder %}
   		<div id="leftside">
             	<div id="featuredcode2">
@@ -29,7 +28,7 @@
 								{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
 											<tr><td class="viewitem_creator"><img src="/img/accept16.png">
 											<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
-											<a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="x">撤销</a><br />
+											<a onclick="ajax_undoneItem('/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}');" href="#;" class="x">撤销</a><br />
 											<br />{{tarsusaItem_UserDoneItem.comment|escape }}
 											<td>{{tarsusaItem_UserDoneItem.date}}</td></tr>
 
@@ -39,5 +38,12 @@
 					</div>
                 </div>
                 <div id="featuredcode2-bot"></div>
-            </div>			
+            </div>
+			<script type="text/javascript">
+				function ajax_undoneItem(strLink){
+					$.ajax({type: "GET", url: strLink ,success: function(){location.reload();}});
+					return false;
+				}
+			</script>
+
         {% endblock content-holder %}

@@ -12,6 +12,7 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 
+import time
 import datetime
 import string
 from google.appengine.ext.webapp import template
@@ -124,13 +125,16 @@ class MainPage(tarsusaRequestHandler):
 			self.response.out.write(template.render(path, template_values))
 			
 		else:
-			
+		
+			TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
+			TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
+
 			## Homepage for Non-Registered Users.
 
 			## the not equal != is not supported!
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' ORDER BY date DESC")
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' ORDER BY date DESC LIMIT 6")
 
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = True ORDER BY date DESC")
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = True ORDER BY date DESC LIMIT 6")
 			
 			template_values = {
 				
@@ -139,6 +143,8 @@ class MainPage(tarsusaRequestHandler):
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
 				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+				'htmltag_TotalUser': TotalUserCount,
+				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
 
 			}
 
@@ -171,6 +177,24 @@ class AddItemProcess(tarsusaRequestHandler):
 				first_tarsusa_item.public = self.request.get('public')
 
 				first_tarsusa_item.done = False
+		
+		
+				# DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
+				# The easiest way to convert this to a datetime seems to be;
+				#datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
+				# the '*' operator unpacks the tuple, producing the argument list.	
+				# also learned sth from: http://bytes.com/forum/thread603681.html
+
+				# Logic: If the expectdate is the same day as today, It is none.
+				expectdatetime = None
+				expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
+				if expectdate == datetime.datetime.date(datetime.datetime.today()):
+					expectdatetime == None
+				else:
+					currenttime = datetime.datetime.time(datetime.datetime.now())
+					expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+				first_tarsusa_item.expectdate =  expectdatetime
+
 
 				## the creation date will be added automatically by GAE datastore
 				first_tarsusa_item.put()
@@ -185,14 +209,29 @@ class AddItemProcess(tarsusaRequestHandler):
 
 			except:
 				## the following code works on the localhost GAE runtimes.
-				first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
-				tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
-				first_tarsusa_item.public = self.request.get('public').decode('utf-8')
-				first_tarsusa_item.done = False
-				first_tarsusa_item.put()
-				# code below are comming from GAE example
-				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-				CurrentUser = q.get()
+				try:
+					first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+					tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
+					first_tarsusa_item.public = self.request.get('public').decode('utf-8')
+									
+					expectdatetime = None
+					expectdate = datetime.date(*time.strptime(self.request.get('inputDate').decode('utf-8'),"%Y-%m-%d")[:3])
+					if expectdate == datetime.datetime.date(datetime.datetime.today()):
+						expectdatetime == None
+					else:
+						currenttime = datetime.datetime.time(datetime.datetime.now())
+						expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+					first_tarsusa_item.expectdate =  expectdatetime
+					
+					first_tarsusa_item.done = False
+					first_tarsusa_item.put()
+					# code below are comming from GAE example
+					q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+					CurrentUser = q.get()
+
+				except:
+					## SOMETHING WRONG
+						self.write('something is wrong.') 
 
 				
 		
