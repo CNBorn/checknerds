@@ -275,4 +275,11 @@
 		Added jQuery Date plugin in Ajax_AddItem page. to be made in Functionality.
 	IN 08.10.21
 		Added DatePick Plugin and with full functionality. (CSS Style may need to tweak in future)
-	
+	IN 08.10.22
+		Press Release Article READY to go.
+		little tweak of Viewtag page.
+	IN 08.10.23
+		Press Release!
+		seperate the dyminfo ajax function.
+		bugs in friendstats fixed.
+

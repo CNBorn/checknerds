@@ -272,7 +272,7 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_bottomcontents.html')
 			self.response.out.write(template.render(path, template_values))
 
-class get_fp_dyminfo(tarsusaRequestHandler):
+class get_fp_itemstats(tarsusaRequestHandler):
 	def get(self):
 		
 		if users.get_current_user() != None:
@@ -304,6 +304,26 @@ class get_fp_dyminfo(tarsusaRequestHandler):
 			else:
 				UserDonePercentage = 0.00
 
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				'UserTotalItems': UserTotalItems,
+				'UserToDoItems': UserToDoItems,
+				'UserDoneItems': UserDoneItems,
+				'UserDonePercentage': UserDonePercentage,
+			}
+
+
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_itemstats.html')
+			self.response.out.write(template.render(path, template_values))
+
+
+class get_fp_friendstats(tarsusaRequestHandler):
+	def get(self):
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
 
 			## SHOW YOUR FRIENDs Recent Activities
 			## Currently the IN function is not supported, it is an headache.
@@ -329,7 +349,7 @@ class get_fp_dyminfo(tarsusaRequestHandler):
 							## Check whether this item had done.
 							if tarsusaItem_UserFriendsRecentItems.done == True:
 								
-								UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + tarsusaItem_UserFriendsRecentItems.key().id() + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+								UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
 	 
 							else:
 								UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
@@ -341,18 +361,12 @@ class get_fp_dyminfo(tarsusaRequestHandler):
 
 			template_values = {
 				'UserLoggedIn': 'Logged In',
-				
 				'UserFriendsActivities': UserFriendsActivities,
-
-				'UserTotalItems': UserTotalItems,
-				'UserToDoItems': UserToDoItems,
-				'UserDoneItems': UserDoneItems,
-				'UserDonePercentage': UserDonePercentage,
 			}
 
 
 			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dyminfo.html')
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_friendstats.html')
 			self.response.out.write(template.render(path, template_values))
 
 
@@ -525,7 +539,8 @@ def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
 										('/ajax/frontpage_getdailyroutine_yesterday', getdailyroutine_yesterday),
 										('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
-										('/ajax/frontpage_dyminfo', get_fp_dyminfo),
+										('/ajax/frontpage_getfriendstats', get_fp_friendstats),
+										('/ajax/frontpage_getitemstats', get_fp_itemstats),
 										('/ajax/frontpage_introforanonymous/.+',get_fp_IntroductionForAnonymous),
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
 										('/ajax/allpage_additem', additem),

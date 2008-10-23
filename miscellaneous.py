@@ -112,13 +112,12 @@ class AboutPage(tarsusaRequestHandler):
 
 		strAboutPageTitle = "关于CheckNerds项目"
 		strAboutPageContent = '''这个项目目前可看作是tarsusa时间管理程序在GAE上面的延续，尽管目前离成熟相距甚远，而且GAE会被GFW时刻滋扰，不过我觉得体现出核心的东西才是最主要的<BR><BR>
-		
-		我正在准备写一篇较为详细的CheckNerds介绍，在完成之前，请先读下tarsusa的介绍以对这个工具有所了解<BR><BR>
-
-		tarsusa是一个非常简单的时间管理程序。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，tarsusa都游刃有余<BR>
-		更为重要的，是 tarsusa 可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
+		CheckNerds是一个非常简单的时间管理程序。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，都游刃有余<BR>
+		更为重要的，是CheckNerds提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
 		
 		我正在寻找让它独立于其它成熟或不成熟的项目管理（或说是日程管理）程序的气质，简洁，仍然显得非常重要<BR><BR>
+
+		想要了解详细的CheckNerds介绍，您可<a href="http://blog.donews.com/CNBorn/archive/2008/10/23/1366803.aspx" target="_blank">点击这里</a><br /><br />
 
 		想太多无益，请立即开始吧！
 		

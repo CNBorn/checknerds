@@ -22,7 +22,8 @@
 																			 });
 																										
 										$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-										$('#dyminfo_onindex').load('/ajax/frontpage_dyminfo');
+										$('#div_itemstats').load('/ajax/frontpage_getitemstats');
+										$('#div_friendstats').load('/ajax/frontpage_getfriendstats');
 									
 									{% else %}
 										$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
@@ -96,7 +97,7 @@
                 	<div id="codelist-bot"></div>
                 </div>
 
-				<div id="dyminfo_onindex">
+				<div id="div_itemstats">
 					<div id="codelist">
 						<div id="codelist-top"></div>
 						<div id="codelist-mid">
@@ -107,7 +108,9 @@
 						</div>
 						<div id="codelist-bot"></div>
 					</div>
-
+				</div>
+				
+				<div id="div_friendstats">
 					<div id="codelist">
 						<div id="codelist-top"></div>
 						<div id="codelist-mid">

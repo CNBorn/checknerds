@@ -184,22 +184,11 @@
                 	<div id="codelist-bot"></div>
                 </div>
 
-				<div id="dyminfo_onindex">
+				<div id="div_itemstats">
 					<div id="codelist">
 						<div id="codelist-top"></div>
 						<div id="codelist-mid">
 							<h2 class="posttitle">统计信息</h2>
-							<ul>
-							正在载入
-							</ul>
-						</div>
-						<div id="codelist-bot"></div>
-					</div>
-
-					<div id="codelist">
-						<div id="codelist-top"></div>
-						<div id="codelist-mid">
-							<h2 class="posttitle">朋友动态</h2>
 							<ul>
 							正在载入
 							</ul>
@@ -211,9 +200,10 @@
 			<script type="text/javascript">
 				window.onload = function() {
 				{% if not AnonymousVisitor %}
-					$('#dyminfo_onindex').load('/ajax/frontpage_dyminfo');
+					$('#div_itemstats').load('/ajax/frontpage_getitemstats');
 				{% else %}
-					$('#dyminfo_onindex').load('/ajax/frontpage_introbottomcontentsforanonymous');			
+					// $('#dyminfo_onindex').load('/ajax/frontpage_introbottomcontentsforanonymous');			
+
 				{% endif %}
 				}
 				

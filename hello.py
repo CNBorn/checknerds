@@ -768,7 +768,8 @@ class Showtag(tarsusaRequestHandler):
 				CountTotalItems = 0
 
 				
-				html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
+				#html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
+				html_tag_DeleteThisTag = ''
 				## NOTICE that the /deleteTag should del the usertags in User model.
 
 				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
@@ -926,7 +927,7 @@ class UserSettingPage(tarsusaRequestHandler):
 					mail = 	forms.CharField(label='您的邮箱',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.user.email()})) 
 					#urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
 					dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname}))
-					website = forms.CharField(label='您的网址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.website}))	
+					website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website}))	
 					##Please reference more from the URL
 
 					class Meta:
