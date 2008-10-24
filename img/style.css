@@ -112,12 +112,20 @@ text-decoration:none;
 
 /*user list learnt from douban*/
 .obu { margin: 0 0 10px 0; width: 80px; float: left; }
-.obu dt{ margin: 0; height: 50px; overflow: hidden; text-align: center; }
-.obu dd{ margin: 0px; height: 55px; text-align: center; overflow: hidden; }
+.obu dt{ margin: 0; height: 35px; overflow: hidden; text-align: center; }
+.obu dd{ margin: 0px; height: 45px; text-align: center; overflow: hidden; }
 
+/*small*/
+#tablem{ float: left; margin: 0 -270px 0 0;  width:100%; }
+#in_tablem{ margin: 0 0 0 0; padding: 0 65px 0 0;}
+#tablerm{ float: right; width: 270px; word-break:break-all;}
 
-	/*small*/
-	#tablem{ float: left; margin: 0 -270px 0 0;  width:100%; }
-	#in_tablem{ margin: 0 270px 50px 0; padding: 0 65px 0 0;}
-	#tablerm{ float: right; width: 270px; word-break:break-all;}
+/*small2*/
+#tablerm2{width: 270px; word-break:break-all;}
+#tablem2{margin: 0px;  width: 100%; }
+#in_tablem2{ margin: 10px; padding: 0px;}
+
+.obu2 { margin: 0px; width: 70px; float: left; }
+.obu2 dt{ margin: 0px; height: 32px; overflow: hidden; text-align: center; }
+.obu2 dd{ margin: 0px; height: 20px; text-align: center; overflow: hidden; }
 

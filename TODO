@@ -282,4 +282,7 @@
 		Press Release!
 		seperate the dyminfo ajax function.
 		bugs in friendstats fixed.
+	IN 08.10.24
+		Added User's Friends in UserMainPage
+		url in UserSetting Bug fixed.
 

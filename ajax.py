@@ -328,36 +328,41 @@ class get_fp_friendstats(tarsusaRequestHandler):
 			## SHOW YOUR FRIENDs Recent Activities
 			## Currently the IN function is not supported, it is an headache.
 			
-			tarsusaUserFriendCollection = CurrentUser.friends
-			
-			tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", users.get_current_user)
+			# there once happens an error the CurrentUser can not be found.
+			# I think that is due to the loginout, and non-refreshed index page.
+			try:
+				tarsusaUserFriendCollection = CurrentUser.friends
+				
+				tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", users.get_current_user)
 
 
-			UserFriendsActivities = ''
-			if tarsusaUserFriendCollection: 
-				for each_FriendKey in tarsusaUserFriendCollection:
-					UsersFriend =  db.get(each_FriendKey)
-					## THE BELOW LINE IS UN SUPPORTED!
-					#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
-					## THERE are too many limits in GAE now...
-					tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 2", UsersFriend.user)
+				UserFriendsActivities = ''
+				if tarsusaUserFriendCollection: 
+					for each_FriendKey in tarsusaUserFriendCollection:
+						UsersFriend =  db.get(each_FriendKey)
+						## THE BELOW LINE IS UN SUPPORTED!
+						#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
+						## THERE are too many limits in GAE now...
+						tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 2", UsersFriend.user)
 
-					for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
-						## Check whether should show this item.
-						if tarsusaItem_UserFriendsRecentItems.public != 'private':
-						
-							## Check whether this item had done.
-							if tarsusaItem_UserFriendsRecentItems.done == True:
-								
-								UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
-	 
-							else:
-								UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
-				if UserFriendsActivities == '':
-					UserFriendsActivities = '<li>暂无友邻公开项目</li>'
-			else:
+						for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
+							## Check whether should show this item.
+							if tarsusaItem_UserFriendsRecentItems.public != 'private':
+							
+								## Check whether this item had done.
+								if tarsusaItem_UserFriendsRecentItems.done == True:
+									
+									UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+		 
+								else:
+									UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+					if UserFriendsActivities == '':
+						UserFriendsActivities = '<li>暂无友邻公开项目</li>'
+				else:
+					UserFriendsActivities = '<li>当前没有添加朋友</li>'
+
+			except:
 				UserFriendsActivities = '<li>当前没有添加朋友</li>'
-
 
 			template_values = {
 				'UserLoggedIn': 'Logged In',

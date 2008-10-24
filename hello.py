@@ -1031,7 +1031,10 @@ class UserSettingPage(tarsusaRequestHandler):
 				
 				CurrentUser.mail = mail
 				CurrentUser.dispname = dispname
-				CurrentUser.website = website
+				try:
+					CurrentUser.website = website
+				except:
+					CurrentUser.website = "http://" + website
 				CurrentUser.put()
 
 
@@ -1127,6 +1130,7 @@ class UserMainPage(tarsusaRequestHandler):
 			if users.get_current_user() == None:
 				UserNickName = "访客"
 				logictag_OneoftheFriendsViewThisPage = False
+				UserFriends = '请登录查看此用户的朋友信息'
 			else:
 				UserNickName = ViewUser.user.nickname()
 
@@ -1162,6 +1166,29 @@ class UserMainPage(tarsusaRequestHandler):
 					pass
 
 
+			#Check This Users Friends.
+			tarsusaUserFriendCollection = ViewUser.friends
+			UserFriends = ''
+			if tarsusaUserFriendCollection: 
+				for each_FriendKey in tarsusaUserFriendCollection:
+					UsersFriend =  db.get(each_FriendKey)
+					if UsersFriend.avatar:
+						UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=32 height=32>" + '</dt>'
+					else:
+						## Show Default Avatar
+						UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
+					
+					#UserFriends += 	'<dd><a href="/user/''' + cgi.escape(UsersFriend.user.nickname()) +  '>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd>'
+
+					UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd></dl>'
+
+
+
+			else:
+				UserFriends = '当前没有添加朋友'
+
+
+
 
 		else:
 			#self.write('not found this user and any items')
@@ -1180,6 +1207,7 @@ class UserMainPage(tarsusaRequestHandler):
 					'ViewedUserNickName': UserNickName,
 					'UserNickName': CurrentUser.user.nickname(),
 
+					'ViewedUserFriends': UserFriends,	
 
 					'UserAvatarImage': outputStringUserAvatar,
 					
@@ -1198,6 +1226,7 @@ class UserMainPage(tarsusaRequestHandler):
 
 					'UserAvatarImage': outputStringUserAvatar,
 					
+					'ViewedUserFriends': UserFriends,	
 					'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
 					'UserWebsite': ViewUser.website,
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
@@ -1377,15 +1406,15 @@ class FindFriendPage(tarsusaRequestHandler):
 			for each_FriendKey in tarsusaUserFriendCollection:
 				UsersFriend =  db.get(each_FriendKey)
 				if UsersFriend.avatar:
-					UserFriends += '<dl class="obu"><dt><a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=32 height=32>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;</dt>'
+					UserFriends += '<dl class="obu"><dt>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=32 height=32>" + '<a href=/user/' + cgi.escape(str(UsersFriend.key().id())) +  '></a></dt>'
 
 				else:
 					## Show Default Avatar
-					UserFriends += '<dl class="obu"><dt><a href=/user/' + cgi.escape(UsersFriend.user.nickname()) +  '>' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + cgi.escape(UsersFriend.user.nickname()) + '</a>&nbsp;</dt>'
+					UserFriends += '<dl class="obu"><dt>' + '<a href=/user/' + cgi.escape(str(UsersFriend.key().id())) +  '>' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
 				
 				#UserFriends += 	'<dd><a href="/user/''' + cgi.escape(UsersFriend.user.nickname()) +  '>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd>'
 
-				UserFriends += '<a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dl>'
+				UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a><br /><a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dd></dl>'
 
 
 

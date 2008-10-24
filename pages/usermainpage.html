@@ -19,7 +19,7 @@
                                 	id:&nbsp;{{ViewedUserNickName|escape}}<br />
 									{{UserJoinInDate}}加入<br />
 									{% if UserWebsite %}
-										网址:&nbsp;<a href="{{UserWebsite|escape}}" target="_blank">{{UserWebsite|escape}}<br />
+										网址:&nbsp;<a href="{{UserWebsite|escape}}" target="_blank">{{UserWebsite|escape}}</a><br />
 									{% endif %}
 								</div>
                             </div>
@@ -38,4 +38,23 @@
                 <div id="featuredcode2-bot"></div>
             </div>
 		</div>
+
+				
+		<div id="rightside">
+			<div id="codelist">
+					<h2 class="posttitle">{{ViewedUserNickName}}的朋友</h2>
+					<p>
+						<div id="tablem2">
+				    		<div id="in_tablem2">
+								{{ ViewedUserFriends }}
+							</div>
+						</div>
+					<br />
+					</p>
+			</div>
+
+
+		</div>
+
+
         {% endblock content-holder %}
