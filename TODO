@@ -285,4 +285,9 @@
 	IN 08.10.24
 		Added User's Friends in UserMainPage
 		url in UserSetting Bug fixed.
-
+	IN 08.10.25,26
+		Fixed Statstics page with permission and leaking information problem.
+		Fixed an ajax effect in Ajax AddItem page.
+		Try to Add RSS fetch in Blog section but FAILED.
+		Try to Add Ajax Notification when item added but FAILED.
+		added robots.txt

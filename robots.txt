@@ -1,0 +1,5 @@
+User-Agent: *
+Disallow: /i/
+Disallow: /tag/
+Disallow: /user/
+Allow: /

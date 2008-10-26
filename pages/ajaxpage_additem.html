@@ -12,10 +12,15 @@
 						$('#myForm').ajaxForm(function() { 
 							//alert("Thank you for your comment!");
 							self.parent.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-							self.parent.parent.$('#dyminfo_onindex').load('/ajax/frontpage_dyminfo');
-							self.parent.parent.tb_remove();							
-						}); 
-					}); 
+							self.parent.parent.$('#div_itemstats').load('/ajax/frontpage_getitemstats');
+							
+							//self.parent.parent.$('#latestcodes').fadeOut(500);
+							//self.parent.parent.$('#latestcodes').fadeIn(500);								
+							
+							self.parent.parent.tb_remove();
+							}); 
+
+					});
 					</script> 
 					<body>
 					<div id="singleleft">

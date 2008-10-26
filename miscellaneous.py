@@ -3,6 +3,7 @@
 #from django.conf import settings
 #settings._target = None
 import os
+import sys
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 import cgi
@@ -19,7 +20,6 @@ from google.appengine.api import images
 
 from modules import *
 from base import *
-
 
 
 
@@ -62,15 +62,34 @@ class GuestbookPage(tarsusaRequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
 
-	
-
-class BlogPage(webapp.RequestHandler):
+class BlogPage(tarsusaRequestHandler):
 	def get(self):
 		
-		strAboutPageTitle = "CheckNerds - Blog"
-		strAboutPageContent = '''Coming soon.<BR><BR>
+		#from google.appengine.api import urlfetch
+		# GAE中对远程网页的获取不能通过urllib，只能通过google自己的urlfetch   
+
+		#url = "http://feed.feedsky.com/cnborn"
+		#result = urlfetch.fetch(url)
 		
-		'''
+		#if result.status_code == 200:
+			
+			#import xml.sax
+			#from xml.dom import minidom
+			#xmldoc = minidom.parseString(result.content.decode('utf-8')))
+
+
+
+			#parser = rss_parser()
+			#strAboutPageContent = result.content.decode('utf-8')
+
+
+
+
+
+		strAboutPageContent = '''Coming soon.<BR><BR>''' #+ d.entries[0].title + d.entries[0].link + d.entries[0].description + d.entries[0].date + d.entries[0].date_parsed + d.entries[0].id
+
+		strAboutPageTitle = "CheckNerds - Blog"
+		
 		## Get Current User.
 		# code below are comming from GAE example
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())

@@ -26,7 +26,7 @@ handlers:
 - url: /guestbook
   script: miscellaneous.py
 
-- url: /Statstics
+- url: /statstics
   script: hello.py
 
 - url: /Login

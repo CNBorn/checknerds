@@ -1359,23 +1359,54 @@ class DoneLogPage(tarsusaRequestHandler):
 
 class StatsticsPage(tarsusaRequestHandler):
 	def get(self):
-		tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem ORDER BY date DESC")
+	
+		# Show statstics information.
 
-		for tarsusaItem in tarsusaItemCollection:
-			self.response.out.write('<blockquote>%s</blockquote>' %
-                cgi.escape(tarsusaItem.name))
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+		
+		TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
+		TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
+		
+		htmltag = ''
+		htmltag += 'Uptime: ' + str(datetime.datetime.now() - datetime.datetime(2008,8,26,20,0,0))
+		htmltag += '<br />Since: ' + str(datetime.date(2008, 7, 19))
+		htmltag += '<br />User Account: ' + str(TotalUserCount)
+		htmltag += '<br />Total Items: ' + str(TotaltarsusaItem)
 
-			self.response.out.write('<blockquote>%s</blockquote>' %
-                cgi.escape(tarsusaItem.comment))
+				
+		if users.get_current_user() != None:
 
-		self.write('--------------')
+			template_values = {
+				'UserLoggedIn': 'Logged In',				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),	
+				
+				'singlePageTitle': 'Statstics',
+				'singlePageContent': htmltag,
 
-		tarsusaRoutineItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem ORDER BY date DESC")
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+				'htmltag_TotalUser': TotalUserCount,
+				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
 
-		for result in tarsusaRoutineItemCollection:
-			self.response.out.write(result.routineid)
+			}
+		else:
+			template_values = {				
+				'UserNickName': "访客",
+				'AnonymousVisitor': "Yes",
 
-			self.response.out.write(result.donedate)
+				'SinglePageTitle': 'Statstics',
+				'SinglePageContent': htmltag,
+
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+				'htmltag_TotalUser': TotalUserCount,
+				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
+			}
+
+		#Manupilating Templates	
+		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
+		self.response.out.write(template.render(path, template_values))
 
 class FindFriendPage(tarsusaRequestHandler):
 	def get(self):
@@ -1571,7 +1602,7 @@ def main():
 								       ('/SignIn',SignInPage),
 									   ('/SignOut',SignOutPage),
 								       ('/donelog/.+',DoneLogPage),
-								       ('/Statstics',StatsticsPage),
+								       ('/statstics',StatsticsPage),
 									   ('/dashboard', DashboardPage),
 									   ('/ajaxtest', AjaxTestPage),
 									   ('.*',NotFoundPage)],
