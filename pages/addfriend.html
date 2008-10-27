@@ -2,6 +2,13 @@
 {% block title %} CheckNerds - {{ UserNickName }}的朋友 {% endblock title %}
 
         	{% block content-holder %}
+			<script type="text/javascript">
+				window.onload = function() {
+					$('#div_friendstats').load('/ajax/frontpage_getfriendstats');
+				}
+			</script>
+			
+			
 			<div id="leftside">
             	<div id="featuredcode">
                 	<div id="featuredcode-top"></div>
@@ -55,23 +62,28 @@
 			</div>
 
             <div id="rightside">
-            	<div id="googlead">
+            	<!--
+				<div id="googlead">
                 	<div id="googlead-top"></div>
                     <div id="googlead-mid">
                     
-                    			<!--Remove the next few lines to place an ad-->
+                    			<!--Remove the next few lines to place an ad--!>
                     			<br />
 
                     </div>
                     <div id="googlead-bot"></div>
                 </div>
-                <div id="codelist">
-                	<div id="codelist-top"></div>
-                	<div id="codelist-mid">
-                    	<h2 class="posttitle">{{UserNickName}}</h2>
-                    </div>
-                	<div id="codelist-bot"></div>
-                </div>
+				--!>
+				<div id="div_friendstats">
+					<div id="codelist">
+						<div id="codelist-top"></div>
+						<div id="codelist-mid">
+							<h2 class="posttitle">朋友动态</h2>
+							正在载入……
+						</div>
+						<div id="codelist-bot"></div>
+                	</div>
+				</div>
             </div>
         
 		{% endblock content-holder %}

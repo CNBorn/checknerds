@@ -21,7 +21,7 @@ from modules import *
 from base import *
 
 
-
+import random
 
 class getdailyroutine(tarsusaRequestHandler):
 
@@ -333,8 +333,8 @@ class get_fp_friendstats(tarsusaRequestHandler):
 			try:
 				tarsusaUserFriendCollection = CurrentUser.friends
 				
-				tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", users.get_current_user)
-
+				## Add shuffle in tarsusaUserFriendCollection, therefore the result in page will be in better looking.
+				random.shuffle(tarsusaUserFriendCollection)
 
 				UserFriendsActivities = ''
 				if tarsusaUserFriendCollection: 
@@ -343,7 +343,7 @@ class get_fp_friendstats(tarsusaRequestHandler):
 						## THE BELOW LINE IS UN SUPPORTED!
 						#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
 						## THERE are too many limits in GAE now...
-						tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 2", UsersFriend.user)
+						tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 5", UsersFriend.user)
 
 						for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
 							## Check whether should show this item.
@@ -352,10 +352,10 @@ class get_fp_friendstats(tarsusaRequestHandler):
 								## Check whether this item had done.
 								if tarsusaItem_UserFriendsRecentItems.done == True:
 									
-									UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + '">' +  UsersFriend.user.nickname() + '</a> Done <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+									UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' +  UsersFriend.user.nickname() + '</a> 完成了 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
 		 
 								else:
-									UserFriendsActivities += '<li><a href="/user/' + UsersFriend.user.nickname() + u'">' + UsersFriend.user.nickname() + '</a> ToDO <a href="/i/' + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+									UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' + UsersFriend.user.nickname() + '</a> 要做 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
 					if UserFriendsActivities == '':
 						UserFriendsActivities = '<li>暂无友邻公开项目</li>'
 				else:
@@ -378,7 +378,12 @@ class get_fp_friendstats(tarsusaRequestHandler):
 class additem(tarsusaRequestHandler):
 
 	def get(self):
+		
+		import urllib
 
+		urllen = len('/ajax/allpage_additem/')
+		RequestCatName = urllib.unquote(self.request.path[urllen:])
+		#self.write(str(len(RequestCatName)))
 		user = users.get_current_user()	
 		
 		if user:
@@ -386,8 +391,12 @@ class additem(tarsusaRequestHandler):
 			html_tag_AddItemForm_OrdinaryForms = '''<form id="myForm" action="/additem" method="post">
 									标题  <input type="text" name="name" value="" size="40" class="sl"><br />
 									内容  <textarea name="comment" rows="5" cols="28" wrap="PHYSICAL" class="ml"></textarea><br />
-									类别  <input type="text" name="tags" size="40" class="sl"><br />
-									预计完成于<input class="inputDate" name="inputDate" id="inputDate" value="''' + str(datetime.datetime.date(datetime.datetime.now())) + '''" />'''
+									'''
+			if RequestCatName != '':
+				html_tag_AddItemForm_OrdinaryForms += '类别  <input type="text" name="tags" size="40" value="' + str(RequestCatName) + '"><br />' + '预计完成于<input class="inputDate" name="inputDate" id="inputDate" value="' + str(datetime.datetime.date(datetime.datetime.now())) + '" />'
+			else:
+				html_tag_AddItemForm_OrdinaryForms +='类别  <input type="text" name="tags" size="40" class="sl"><br />' + '预计完成于<input class="inputDate" name="inputDate" id="inputDate" value="' + str(datetime.datetime.date(datetime.datetime.now())) + '" />'
+
 
 			html_tag_AddItemForm_RoutineForms = '''性质：<select name="routine">
 									<option value="none" selected="selected">非坚持性任务</option>
@@ -397,10 +406,6 @@ class additem(tarsusaRequestHandler):
 									<option value="seasonly">每季度</option>
 									<option value="yearly">每年</option>
 									</select><br>'''
-	
-			## TODO 
-			## Added proper calendar date select form
-			## Tested django form, it doesnt contain that
 
 			html_tag_AddItemForm_PublicForms = '''公开项目：<select name="public"><option value="private" selected="selected">不公开</option>
 			<option value="public">公开</option>
@@ -548,7 +553,7 @@ def main():
 										('/ajax/frontpage_getitemstats', get_fp_itemstats),
 										('/ajax/frontpage_introforanonymous/.+',get_fp_IntroductionForAnonymous),
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
-										('/ajax/allpage_additem', additem),
+										(r'/ajax/allpage_additem.+', additem),
 									   ('.*',ajax_error)],
                                        debug=True)
 

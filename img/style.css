@@ -9,7 +9,9 @@ ul li{
 	padding-left: 20px;
 	padding-top: 2px;
 }
-#codelist-mid li a{color:#7f7f7f;}
+
+/*#codelist-mid li a{color:#7f7f7f;}*/
+
 #breadcrumbs-mid a{border-bottom-width:1px;border-bottom-style:dotted;border-bottom-color:#B3D581;}
 a img{border:none;}
 p{font-size:11px;line-height:18px;}
@@ -129,3 +131,10 @@ text-decoration:none;
 .obu2 dt{ margin: 0px; height: 32px; overflow: hidden; text-align: center; }
 .obu2 dd{ margin: 0px; height: 20px; text-align: center; overflow: hidden; }
 
+#codelist ul li {list-style-type: none;}
+#codelist ul li a{color:#9c9b50;
+	text-decoration:none;
+	font-size: 12px;
+	/*padding-left: 20px;*/
+	padding-top: 2px;
+}

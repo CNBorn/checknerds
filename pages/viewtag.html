@@ -13,5 +13,22 @@
 					</div>
                 	</div>
                 <div id="featuredcode2-bot"></div>
-            </div>	
+            </div>
+
+			<div id="rightside">
+            	<div id="codelist">
+                	<div id="codelist-top"></div>
+                	<div id="codelist-mid">
+                    	<h2 class="posttitle">{{UserNickName}}</h2>
+                        <ul>
+                            <li><img src="/img/add.png"><a href="/ajax/allpage_additem/{{TagName}}?TB_iframe=true&height=400&width=400" class="thickbox" title="添加新项目 - {{TagName}}">添加项目</a></li>
+							<li><img src="/img/globe_accept.png"><a href="#">完成日志</a></li>
+							<li><img src="/img/info.png"><a href="#">用户信息</a></li>
+                        </ul>
+                    </div>
+                	<div id="codelist-bot"></div>
+                </div>
+
+			</div>				
+
         {% endblock content-holder %}
