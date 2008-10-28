@@ -292,6 +292,11 @@
 		Try to Add Ajax Notification when item added but FAILED.
 		added robots.txt
 	IN 08.10.27
-		Added More Friends related UserExperience.
+		Improved Friends related UserExperience.
 		Added AddItem function in ViewTag page with the same tag as default new item tag.
 		Optimized Performance in Friendstats and some tweak in it.
+	In 08.10.28
+		Link issue in FindFriend page is fixed.
+		ViewItem now can show OtherUser's Sameday Created items.
+		Permission issue in ViewItem improved.
+

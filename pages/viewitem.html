@@ -113,15 +113,24 @@
 				<div class="featuredcode3-mid">
 					<h2 class="posttitle"><a href="/">相关信息</a></h2>
 				<p>
-				在{{TheDayCreated}}那天还创建了<br />
-			 	{% if AnonymousVisitor %}
-					{% for tarsusaItem_SameDayCreated in tarsusaItemCollection_SameDayCreated %}
-						{% ifnotequal tarsusaItem_SameDayCreated.public "public" %}
-						<li><a href="/user/{{tarsusaItem_SameDayCreated.user|escape}}">{{ tarsusaItem_SameDayCreated.user }}</a> 要做 <a href="/i/{{ tarsusaItem_SameDayCreated.key.id }}">{{ tarsusaItem_SameDayCreated.name|escape }}</a></li>
-						{% endifnotequal %}
-					{% endfor %}
+			 	{% if logictag_OtherpeopleViewThisItem %}
+				{{ItemBelongsToUser}}在{{TheDayCreated}}那天还创建了<br />
+					{% if not logictag_CurrentUserIsOneofAuthorsFriends %}					
+						{% for tarsusaItem_SameDayCreated in tarsusaItemCollection_SameDayCreated %}
+							{% ifnotequal tarsusaItem_SameDayCreated.public "public" %}
+								{% if tarsusaItem_SameDayCreated.done %}
+									<img src='/img/accept16.png'><a href="/i/{{ tarsusaItem_SameDayCreated.key.id }}">>{{ tarsusaItem_SameDayCreated.name|escape }}</a></br>
+								{% else %}
+									<a href="/i/{{ tarsusaItem_SameDayCreated.key.id }}">>{{ tarsusaItem_SameDayCreated.name|escape }}</a></br>
+								{% endif %}
+							{% endifnotequal %}
+						{% endfor %}
+					{% else %}
+						{{htmlstring_outputStringRoutineLog}}
+					{% endif %}
 							    
 				{% else %}							   
+				在{{TheDayCreated}}那天还创建了<br />
 					<div id="todoitems">
 						{% for tarsusaItem_SameDayCreated in tarsusaItemCollection_SameDayCreated %}
 							<li>
@@ -159,10 +168,6 @@
 					</div>
 				{% endif %} !-->
 
-
-
-
-
 				</p>
 				</div>
 				<div class="featuredcode3-bot"></div>
@@ -184,6 +189,7 @@
                 	<div id="codelist-bot"></div>
                 </div>
 
+				{% if not logictag_OtherpeopleViewThisItem %}
 				<div id="div_itemstats">
 					<div id="codelist">
 						<div id="codelist-top"></div>
@@ -196,16 +202,14 @@
 						<div id="codelist-bot"></div>
 					</div>
 				</div>
+				{% endif %}
 						
 			<script type="text/javascript">
+				{% if not logictag_OtherpeopleViewThisItem %}
 				window.onload = function() {
-				{% if not AnonymousVisitor %}
 					$('#div_itemstats').load('/ajax/frontpage_getitemstats');
-				{% else %}
-					// $('#dyminfo_onindex').load('/ajax/frontpage_introbottomcontentsforanonymous');			
-
-				{% endif %}
 				}
+				{% endif %}
 				
 				function ajax_doneItem(strLink){
 				$.ajax({type: "GET", url: strLink ,success: function(){location.reload();}}); 

@@ -351,32 +351,33 @@ class ViewItem(tarsusaRequestHandler):
 
 
 			logictag_OtherpeopleViewThisItem = None
+			CurrentUserIsOneofAuthorsFriends = False
 			if tItem.user != users.get_current_user():
-				
+			
+				## Check if the viewing user is a friend of the ItemAuthor.
+			
+				# code below are comming from GAE example
+				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", tItem.user)
+				ItemAuthorUser = q.get()
+
+				CurrentUserIsOneofAuthorsFriends = False
+
+				for each_Friend_key in ItemAuthorUser.friends:
+					if each_Friend_key == CurrentUser.key():
+						CurrentUserIsOneofAuthorsFriends = True
+
 				if tItem.public == 'publicOnlyforFriends':
-					## Check if the viewing user is a friend of the ItemAuthor.
-				
-					# code below are comming from GAE example
-					q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", tItem.user)
-					ItemAuthorUser = q.get()
-
-					CurrentUserIsOneofAuthorsFriends = False
-
-					for each_Friend_key in ItemAuthorUser.friends:
-						if each_Friend_key == CurrentUser.key():
-							CurrentUserIsOneofAuthorsFriends = True
-
 					logictag_OtherpeopleViewThisItem = True
 
 				elif tItem.public == 'public':
 					logictag_OtherpeopleViewThisItem = True
 					
-
 				else:
 					self.redirect('/')
 			else:
 				## Viewing User is the Owner of this Item.
 				UserNickName = users.get_current_user().nickname()
+				logictag_OtherpeopleViewThisItem = False
 
 			# process html_tag_tarsusaRoutineItem
 			if tItem.routine != 'none':
@@ -391,41 +392,41 @@ class ViewItem(tarsusaRequestHandler):
 				html_tag_tarsusaRoutineItem = None
 
 
-			
+			## Since Rev.7x Since GqlQuery can not filter, this function is disabled.	
 			
 			#Show Undone items in the same category, just like in tarsusa r6
 			#Since Nevada allows mutiple tags, It finds item that with any one tags of this showing items.
 
-			tarsusaItemCollection_SameCategoryUndone = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and done = False and id != :2 ORDER BY id DESC LIMIT 5", users.get_current_user(), tItem.key().id())
+			#/code# tarsusaItemCollection_SameCategoryUndone = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and done = False and id != :2 ORDER BY id DESC LIMIT 5", users.get_current_user(), tItem.key().id())
+
 			# filter current viewing Item from the related items!
 			# GqlQuery doesn't have the filter function!
 			#tarsusaItemCollection_SameCategoryUndone.filter("id=", tItem.id)
 
-			for eachItem in tarsusaItemCollection_SameCategoryUndone:
+			#/code# for eachItem in tarsusaItemCollection_SameCategoryUndone:
 				#THIS IS A LOT CPU CONSUMPTIONS
-				for eachTag in eachItem.tags:
-					try:
-						IsSameCategory = False
-						for each_tag in db.get(tItem.tags):
+				#/code# tfor eachTag in eachItem.tags:
+					#/code# ttry:
+						#/code# tIsSameCategory = False
+						#/code# tfor each_tag in db.get(tItem.tags):
 							#Find any tags are the same:
-							if db.get(eachTag).name == each_tag.name:							
-								IsSameCategory = True
-						if IsSameCategory == True:
+							#/code# tif db.get(eachTag).name == each_tag.name:							
+								#/code# tIsSameCategory = True
+						#/code# tif IsSameCategory == True:
 							
 							# GqlQuery doesn't have the filter function! and the filter function also doesn't support !=
 							# TODO SO THERE IS BUG HERE! HERE! HERE!
 							#tarsusaItemCollection_SameCategoryUndone.filter("id=", eachItem.id)					
 							
-							html_tag_SameCategory_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+							#/code# thtml_tag_SameCategory_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
 							#	CountUndoneItems += 1
 							
-					except:
-						pass
+					#/code# texcept:
+						#/code# tpass
 
 
 			# -----
 			#Show the items that are created in the same day, just like in tarsusa r6.
-			#TheDay = datetime.datetime.date(tItem.date)
 
 			TheDay = tItem.date
 				
@@ -433,18 +434,41 @@ class ViewItem(tarsusaRequestHandler):
 			yesterday_ofTheDay = TheDay - one_day
 			nextday_ofTheDay = TheDay + one_day
 
-			# SOME how bug is here, there is no way to determine the same date within the gql query.
-			tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 ORDER BY date DESC LIMIT 10", users.get_current_user(), yesterday_ofTheDay, nextday_ofTheDay)
-			# filter current viewing Item from the related items!			
-			#tarsusaItemCollection_SameDayCreated.filter("id=", tItem.id)
+			#if the viewedUser is not the currentuser, first have to determine whether he is or is not a friend of currentuser.
+			# and then display the sameday items of that user.
+			outputStringRoutineLog = ""
 
-			#for result in tarsusaItemCollection_SameDayCreated:
-			#	if datetime.datetime.date(result.date) != TheDay:
-					#tarsusaItemCollection_SameDayCreated.filter('id=', result.id)
-			#		pass	
-				#else:
-				#	print 'abc'
+			if logictag_OtherpeopleViewThisItem == True and CurrentUserIsOneofAuthorsFriends == True:
+				## Display public items and friendvisible items.
+				## BUG HERE! Because of the stupid GAE != issue, friends can only see friendpublic items. :(
+				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 ORDER BY date DESC LIMIT 20", tItem.user, yesterday_ofTheDay, nextday_ofTheDay)
+				
+				## Code from UserMainPage class.
+				for each_Item in tarsusaItemCollection_SameDayCreated:
+				## Added Item public permission check.
+		
+					if each_Item.public == 'publicOnlyforFriends':
+						if each_Item.done == True:
+							outputStringRoutineLog += "<img src='/img/accept16.png'>" 
+						outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+					elif each_Item.public == 'public':
+						if each_Item.done == True:
+							outputStringRoutineLog += "<img src='/img/accept16.png'>" 
+						outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+					else:
+						pass
 
+
+			elif logictag_OtherpeopleViewThisItem == True and CurrentUserIsOneofAuthorsFriends == False:
+				## Display on public items.
+				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 AND public = 'public' ORDER BY date DESC LIMIT 10", tItem.user, yesterday_ofTheDay, nextday_ofTheDay)
+
+			elif logictag_OtherpeopleViewThisItem == False:
+				## if the viewedUser is the currentuser, just display the sameday items of currentuser.
+							
+				# SOME how bug is here, there is no way to determine the same date within the gql query.
+				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 ORDER BY date DESC LIMIT 10", users.get_current_user(), yesterday_ofTheDay, nextday_ofTheDay)
+				# filter current viewing Item from the related items!			
 
 
 			if UserNickName != "访客":
@@ -457,11 +481,12 @@ class ViewItem(tarsusaRequestHandler):
 
 						'UserID': CurrentUser.key().id(),
 						'UserNickName': UserNickName, 
+						'ItemBelongsToUser': tItem.user,
 						'singlePageTitle': "项目详细信息",
 						'singlePageContent': "",
 
 						'logictag_OtherpeopleViewThisItem': logictag_OtherpeopleViewThisItem,
-
+						'logictag_CurrentUserIsOneofAuthorsFriends': CurrentUserIsOneofAuthorsFriends,
 
 						'tarsusaItem': tItem,
 						'tarsusaItemDone': tItem.done,
@@ -469,10 +494,11 @@ class ViewItem(tarsusaRequestHandler):
 						'tarsusaRoutineItem': html_tag_tarsusaRoutineItem,
 						'tarsusaRoutineLogItem': tarsusaItemCollection_DoneDailyRoutine,
 
-						'tarsusaItemCollection_SameCategoryUndone': tarsusaItemCollection_SameCategoryUndone,
+						#'tarsusaItemCollection_SameCategoryUndone': tarsusaItemCollection_SameCategoryUndone,
 
 						'TheDayCreated': TheDay,
 						'tarsusaItemCollection_SameDayCreated': tarsusaItemCollection_SameDayCreated,
+						'htmlstring_outputStringRoutineLog': outputStringRoutineLog,
 				}
 
 			else:
@@ -1146,15 +1172,15 @@ class UserMainPage(tarsusaRequestHandler):
 				for each_Friend_key in ViewUser.friends:
 					if each_Friend_key == CurrentUser.key():
 						CurrentUserIsOneofViewUsersFriends = True
+						logictag_OneoftheFriendsViewThisPage = True
 
 				logictag_OtherpeopleViewThisPage = True
-				logictag_OneoftheFriendsViewThisPage = True
 
 			
 			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
 				## Added Item public permission check.
 		
-				if each_Item.public == 'publicOnlyforFriends' and logictag_OneoftheFriendsViewThisPage == True:
+				if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
 					if each_Item.done == True:
 						outputStringRoutineLog += "<img src='/img/accept16.png'>" 
 					outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
@@ -1177,8 +1203,6 @@ class UserMainPage(tarsusaRequestHandler):
 					else:
 						## Show Default Avatar
 						UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
-					
-					#UserFriends += 	'<dd><a href="/user/''' + cgi.escape(UsersFriend.user.nickname()) +  '>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd>'
 
 					UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd></dl>'
 
@@ -1419,16 +1443,8 @@ class FindFriendPage(tarsusaRequestHandler):
 		if users.get_current_user() == None:
 			## Prompt them to register!
 			self.redirect('/')
-			##
-
 
 		tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser LIMIT 500")
-
-		#for each_tarsusaUser in tarsusaPeopleCollection:
-		#	self.write(each_tarsusaUser)
-		#	self.write('---<BR>')
-
-
 
 		tarsusaUserFriendCollection = CurrentUser.friends
 
@@ -1437,13 +1453,11 @@ class FindFriendPage(tarsusaRequestHandler):
 			for each_FriendKey in tarsusaUserFriendCollection:
 				UsersFriend =  db.get(each_FriendKey)
 				if UsersFriend.avatar:
-					UserFriends += '<dl class="obu"><dt>' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=32 height=32>" + '<a href=/user/' + cgi.escape(str(UsersFriend.key().id())) +  '></a></dt>'
+					UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?img_user=' + str(UsersFriend.key()) + " width=32 height=32></dt>"
 
 				else:
 					## Show Default Avatar
-					UserFriends += '<dl class="obu"><dt>' + '<a href=/user/' + cgi.escape(str(UsersFriend.key().id())) +  '>' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
-				
-				#UserFriends += 	'<dd><a href="/user/''' + cgi.escape(UsersFriend.user.nickname()) +  '>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd>'
+					UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
 
 				UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a><br /><a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dd></dl>'
 
