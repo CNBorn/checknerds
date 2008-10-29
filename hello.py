@@ -1156,6 +1156,7 @@ class UserMainPage(tarsusaRequestHandler):
 			if users.get_current_user() == None:
 				UserNickName = "访客"
 				logictag_OneoftheFriendsViewThisPage = False
+				CurrentUserIsOneofViewUsersFriends = False
 				UserFriends = '请登录查看此用户的朋友信息'
 			else:
 				UserNickName = ViewUser.user.nickname()
@@ -1174,7 +1175,14 @@ class UserMainPage(tarsusaRequestHandler):
 						CurrentUserIsOneofViewUsersFriends = True
 						logictag_OneoftheFriendsViewThisPage = True
 
-				logictag_OtherpeopleViewThisPage = True
+
+				## Check whether the ViewedUser is a friend of CurrentUser.
+				## For AddUserAsFriend button.
+				ViewedUserIsOneofCurrentUsersFriends = False
+
+				for each_Friend_key in CurrentUser.friends:
+					if each_Friend_key == ViewUser.key():
+						ViewedUserIsOneofCurrentUsersFriends = True
 
 			
 			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
@@ -1230,6 +1238,7 @@ class UserMainPage(tarsusaRequestHandler):
 
 					'ViewedUserNickName': UserNickName,
 					'UserNickName': CurrentUser.user.nickname(),
+					'ViewedUser': ViewUser,
 
 					'ViewedUserFriends': UserFriends,	
 
@@ -1238,7 +1247,8 @@ class UserMainPage(tarsusaRequestHandler):
 					'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
 					'UserWebsite': ViewUser.website,
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
-					
+				
+					'ViewedUserIsOneofCurrentUsersFriends': ViewedUserIsOneofCurrentUsersFriends,
 					'StringRoutineLog': outputStringRoutineLog,
 			}
 

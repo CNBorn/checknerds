@@ -138,8 +138,10 @@ class AboutPage(tarsusaRequestHandler):
 
 		想要了解详细的CheckNerds介绍，您可<a href="http://blog.donews.com/CNBorn/archive/2008/10/23/1366803.aspx" target="_blank">点击这里</a><br /><br />
 
-		想太多无益，请立即开始吧！
-		
+		想太多无益，请立即开始吧！<br />
+		<br />
+	
+		CheckNerds每天都在改进中！想要了解开发详情，欢迎关注Twitter: <a href="http://www.twitter.com/CNBorn">http://twitter.com/CNBorn</a><br />
 		'''
 		
 		#for name in os.environ.keys():
@@ -169,12 +171,10 @@ class AboutPage(tarsusaRequestHandler):
 
 			
 			template_values = {
-				
 				'UserNickName': "访客",
 				'AnonymousVisitor': "Yes",
 				'singlePageTitle': strAboutPageTitle,
 				'singlePageContent': strAboutPageContent,
-
 			}
 
 

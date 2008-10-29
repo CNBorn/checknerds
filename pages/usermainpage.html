@@ -21,6 +21,14 @@
 									{% if UserWebsite %}
 										网址:&nbsp;<a href="{{UserWebsite|escape}}" target="_blank">{{UserWebsite|escape}}</a><br />
 									{% endif %}
+									{% ifnotequal ViewedUser.key.id UserID %}
+										{% if not ViewedUserIsOneofCurrentUsersFriends %}
+											<br /><a href="/AddFriend/{{ViewedUser.key.id}}" class="g">加为朋友</a>
+										{% else %}
+											<br /><a href="#;" onclick="if (confirm('Are you sure to remove {{ViewedUserNickName}}')) {location.href = '/RemoveFriend/{{ViewedUser.key.id}}';}" class="g">不再是朋友</a>
+										{% endif %}
+									{% endifnotequal %}
+
 								</div>
                             </div>
                             <div id="googlead-bot"></div>

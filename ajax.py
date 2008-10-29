@@ -343,7 +343,8 @@ class get_fp_friendstats(tarsusaRequestHandler):
 						## THE BELOW LINE IS UN SUPPORTED!
 						#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
 						## THERE are too many limits in GAE now...
-						tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 5", UsersFriend.user)
+						tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 50", UsersFriend.user)
+						## the LIMIT number above line will indicate how frequently CurrentUser will receive Other users public item information.
 
 						for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
 							## Check whether should show this item.

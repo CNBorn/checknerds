@@ -299,4 +299,7 @@
 		Link issue in FindFriend page is fixed.
 		ViewItem now can show OtherUser's Sameday Created items.
 		Permission issue in ViewItem improved.
-
+	IN 08.10.29
+		Added FriendConnection buttons in UserMainPage
+		Optimized FindFriend Page.
+		Added Twitter information in AboutPage.

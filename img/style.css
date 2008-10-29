@@ -113,9 +113,9 @@ text-decoration:none;
 }
 
 /*user list learnt from douban*/
-.obu { margin: 0 0 10px 0; width: 80px; float: left; }
-.obu dt{ margin: 0; height: 35px; overflow: hidden; text-align: center; }
-.obu dd{ margin: 0px; height: 45px; text-align: center; overflow: hidden; }
+.obu { margin: 0px; width: 70px; float: left; }
+.obu dt{ margin: 0; height: 32px; overflow: hidden; text-align: center; }
+.obu dd{ margin: 0px; height: 40px; text-align: center; overflow: hidden; }
 
 /*small*/
 #tablem{ float: left; margin: 0 -270px 0 0;  width:100%; }
