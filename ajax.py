@@ -390,33 +390,40 @@ class additem(tarsusaRequestHandler):
 		if user:
 			
 			html_tag_AddItemForm_OrdinaryForms = '''<form id="myForm" action="/additem" method="post">
-									标题  <input type="text" name="name" value="" size="40" class="sl"><br />
-									内容  <textarea name="comment" rows="5" cols="28" wrap="PHYSICAL" class="ml"></textarea><br />
+									<table>
+									<tr colspan="2">
+									<td align="right">标题</td> <td><input type="text" name="name" value="" size="35" class="sl"></td>
+									</tr>
+									<tr colspan="2">
+									<td align="right">内容</td> <td><textarea name="comment" rows="6" cols="33" wrap="PHYSICAL" class="ml"></textarea></td>
+									</tr>
+									<tr colspan="2">
 									'''
 			if RequestCatName != '':
-				html_tag_AddItemForm_OrdinaryForms += '类别  <input type="text" name="tags" size="40" value="' + str(RequestCatName) + '"><br />' + '预计完成于<input class="inputDate" name="inputDate" id="inputDate" value="' + str(datetime.datetime.date(datetime.datetime.now())) + '" />'
+				html_tag_AddItemForm_OrdinaryForms += '<td align="right">类别</td> <td><input type="text" name="tags" size="35" value="' + str(RequestCatName) + '"></td>'
 			else:
-				html_tag_AddItemForm_OrdinaryForms +='类别  <input type="text" name="tags" size="40" class="sl"><br />' + '预计完成于<input class="inputDate" name="inputDate" id="inputDate" value="' + str(datetime.datetime.date(datetime.datetime.now())) + '" />'
+				html_tag_AddItemForm_OrdinaryForms += '<td align="right">类别</td> <td><input type="text" name="tags" size="35" class="sl"></td>'
+			
+			html_tag_AddItemForm_OrdinaryForms += '</tr><tr colspan="2"><td align="right">预计完成于</td><td><input class="sl" name="inputDate" id="inputDate" size="9" value="' + str(datetime.datetime.date(datetime.datetime.now())) + '" /></td></tr>'
 
-
-			html_tag_AddItemForm_RoutineForms = '''性质：<select name="routine">
+			html_tag_AddItemForm_RoutineForms = '''<tr colspan="2">
+									<td align="right">性质</td><td><select name="routine">
 									<option value="none" selected="selected">非坚持性任务</option>
 									<option value="daily">每天</option>
 									<option value="weekly">每周</option>
 									<option value="monthly">每月</option>
 									<option value="seasonly">每季度</option>
 									<option value="yearly">每年</option>
-									</select><br>'''
+									</select></td></tr>'''
 
-			html_tag_AddItemForm_PublicForms = '''公开项目：<select name="public"><option value="private" selected="selected">不公开</option>
+			html_tag_AddItemForm_PublicForms = '''<tr colspan="2"><td align="right">公开项目</td><td><select name="public"><option value="private" selected="selected">不公开</option>
 			<option value="public">公开</option>
-			<option value="publicOnlyforFriends">仅对朋友公开</option></select>
+			<option value="publicOnlyforFriends">仅对朋友公开</option></select></td></tr>
 			'''
 
 			##08.10.07
 			## In my opinion the js script runs first, then the form submits.
-
-			html_tag_AddItemForm_SubmitForm = '''<br><input type="submit" name="submit" value="添加一个任务">
+			html_tag_AddItemForm_SubmitForm = '''<tr colspan="2"><td align="right"><img src="/img/add.png"></td><td><input type="submit" name="submit" style="height: 65px; width: 150px;" value="添加一个任务"></td></tr></table>
 												</form>'''
 		
 			template_values = {
@@ -521,29 +528,6 @@ class get_fp_IntroductionBottomForAnonymous(tarsusaRequestHandler):
 		#Manupilating Templates	
 		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_anonymousbottomcontents.html')
 		self.response.out.write(template.render(path, template_values))	
-
-
-
-
-
-
-#user = check_api_user_pass(username, password)
-#	if not user:
-#		raise Exception, 'access denied'
-#
-#	post = Post.get_by_id(int(postid))
-#
-#	return {
-#			'postid' : postid,
-#			'dateCreated' : post.date,
-#			'title' : post.title,
-#			'description' : unicode(post.content),
-#			'categories' : post.tags,
-#			'publish' : True,
-#			}
-#
-#
-
 
 
 def main():

@@ -1,35 +1,30 @@
-					<html>
-					<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-					<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
-					<script type="text/javascript" src="/js/jquery.form.js"></script>
-					<link rel="stylesheet" media="screen" type="text/css" href="/img/datepicker.css" />
-					<script type="text/javascript" src="/js/datepicker.js"></script>
-					</head>
-					<script type="text/javascript"> 
-       				// wait for the DOM to be loaded 
-			        $(document).ready(function() {
-						// bind 'myForm' and provide a simple callback function 
-						$('#myForm').ajaxForm(function() { 
-							//alert("Thank you for your comment!");
-							self.parent.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-							self.parent.parent.$('#div_itemstats').load('/ajax/frontpage_getitemstats');
-							
-							//self.parent.parent.$('#latestcodes').fadeOut(500);
-							//self.parent.parent.$('#latestcodes').fadeIn(500);								
-							
-							self.parent.parent.tb_remove();
-							}); 
+		<html>
+		<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+		<link href="/img/style.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="/js/jquery.form.js"></script>
+		<link rel="stylesheet" media="screen" type="text/css" href="/img/datepicker.css" />
+		<script type="text/javascript" src="/js/datepicker.js"></script>
+		</head>
+		<script type="text/javascript"> 
+		// wait for the DOM to be loaded 
+		$(document).ready(function() {
+			// bind 'myForm' and provide a simple callback function 
+			$('#myForm').ajaxForm(function() { 
+				//alert("Thank you for your comment!");
+				self.parent.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+				self.parent.parent.$('#div_itemstats').load('/ajax/frontpage_getitemstats');
+				self.parent.parent.tb_remove();
+				}); 
 
-					});
-					</script> 
-					<body>
-					<div id="singleleft">
-                        <p>{{ OrdinaryForms }}</p>
-						<p>{{ RoutineForms }}</p>
-						<p>{{ PublicForms }}</p>
-						<p>{{ SubmitForm }}</p>
-					</div>
-					</body>
+		});
+		</script> 
+		<body style="background-image: none; background-color: #FEFEF1;">
+			<p>{{ OrdinaryForms }}</p>
+			<p>{{ RoutineForms }}</p>
+			<p>{{ PublicForms }}</p>
+			<p>{{ SubmitForm }}</p>
+		</body>
 					
 		<script type="text/javascript">
 				$('#inputDate').DatePicker({
@@ -37,7 +32,7 @@
 					date: $('#inputDate').val(),
 					current: $('#inputDate').val(),
 					starts: 1,
-					position: 'r',
+					position: 'right',
 					onBeforeShow: function(){
 						$('#inputDate').DatePickerSetDate($('#inputDate').val(), true);
 					},
@@ -47,5 +42,5 @@
 				});
 		</script>
 					
-					
-					</html>
+				
+		</html>

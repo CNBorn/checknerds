@@ -1405,7 +1405,7 @@ class StatsticsPage(tarsusaRequestHandler):
 		
 		htmltag = ''
 		htmltag += 'Uptime: ' + str(datetime.datetime.now() - datetime.datetime(2008,8,26,20,0,0))
-		htmltag += '<br />Since: ' + str(datetime.date(2008, 7, 19))
+		htmltag += '<br />Project Started Since: ' + str(datetime.date.today() - datetime.date(2008, 7, 19)) + ' ago.'
 		htmltag += '<br />User Account: ' + str(TotalUserCount)
 		htmltag += '<br />Total Items: ' + str(TotaltarsusaItem)
 
