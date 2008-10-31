@@ -362,9 +362,13 @@ class ViewItem(tarsusaRequestHandler):
 
 				CurrentUserIsOneofAuthorsFriends = False
 
-				for each_Friend_key in ItemAuthorUser.friends:
-					if each_Friend_key == CurrentUser.key():
-						CurrentUserIsOneofAuthorsFriends = True
+				try:
+					## may get anonymous user here.
+					for each_Friend_key in ItemAuthorUser.friends:
+						if each_Friend_key == CurrentUser.key():
+							CurrentUserIsOneofAuthorsFriends = True
+				except:
+					CurrentUserIsOneofAuthorsFriends = False
 
 				if tItem.public == 'publicOnlyforFriends':
 					logictag_OtherpeopleViewThisItem = True

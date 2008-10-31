@@ -26,7 +26,7 @@ from base import *
 class GuestbookPage(tarsusaRequestHandler):
 	def get(self):
 		strAboutPageTitle = "CheckNerds项目 - Guestbook"
-		strAboutPageContent = '''Coming soon.<BR><BR>
+		strAboutPageContent = '''<br /><iframe src="http://spreadsheets.google.com/embeddedform?key=pWd4_W1-LSL4xnGNRuHq6JA" width="95%" height="735" frameborder="0" marginheight="0" marginwidth="0">正在加载...</iframe><BR>
 		
 		'''
 		## Get Current User.

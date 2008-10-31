@@ -23,9 +23,9 @@
 									{% endif %}
 									{% ifnotequal ViewedUser.key.id UserID %}
 										{% if not ViewedUserIsOneofCurrentUsersFriends %}
-											<br /><a href="/AddFriend/{{ViewedUser.key.id}}" class="g">加为朋友</a>
+											<br /><a href="#;" onclick="ajax_FriendAction('/AddFriend/{{ViewedUser.key.id}}');" class="g">加为朋友</a>
 										{% else %}
-											<br /><a href="#;" onclick="if (confirm('Are you sure to remove {{ViewedUserNickName}}')) {location.href = '/RemoveFriend/{{ViewedUser.key.id}}';}" class="g">不再是朋友</a>
+											<br /><a href="#;" onclick="if (confirm('确定与{{ViewedUserNickName}}不再是朋友了么？')) {ajax_FriendAction('/RemoveFriend/{{ViewedUser.key.id}}');}" class="g">不再是朋友</a>
 										{% endif %}
 									{% endifnotequal %}
 
@@ -63,6 +63,12 @@
 
 
 		</div>
-
+<script type="text/javascript">
+		function ajax_FriendAction(strLink){
+				$.ajax({type: "GET", url: strLink ,success: function(){					
+					location.reload();}}); 
+				return false;
+		}
+</script>
 
         {% endblock content-holder %}
