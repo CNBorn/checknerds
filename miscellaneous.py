@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+
+# CheckNerds 
+# - miscellaneous.py
+# Cpoyright (C) CNBorn, 2008
+# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+
+
 #from django.conf import settings
 #settings._target = None
 import os

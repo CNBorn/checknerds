@@ -1,0 +1,94 @@
+		<html>
+		<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+		<link href="/img/style.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="/js/jquery.form.js"></script>
+		<link rel="stylesheet" media="screen" type="text/css" href="/img/datepicker.css" />
+		<script type="text/javascript" src="/js/datepicker.js"></script>
+		<title>编辑项目</title>
+		</head>
+		<script type="text/javascript"> 
+		// wait for the DOM to be loaded 
+		$(document).ready(function() {
+			// bind 'myForm' and provide a simple callback function 
+			$('#myForm').ajaxForm(function() { 
+				//alert("Thank you for your comment!");
+				//self.parent.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+				//self.parent.parent.$('#div_itemstats').load('/ajax/frontpage_getitemstats');
+				self.parent.parent.tb_remove();
+				self.parent.parent.location.reload();
+				}); 
+
+		});
+		</script> 
+		<body style="background-image: none; background-color: #FEFEF1;">
+			<form id="myForm" action="/edititem/{{tItemId}}" method="post">
+				<table>
+					<tr colspan="2">
+					<td align="right">标题</td> <td><input type="text" name="name" size="35" class="sl" value="{{tItemName}}"></td>
+					</tr>
+					<tr colspan="2">
+					<td align="right">内容</td> <td><textarea name="comment" rows="6" cols="33" wrap="PHYSICAL" class="ml">{{tItemComment}}</textarea></td>
+					</tr>
+					<tr colspan="2">
+					<td align="right">类别</td> <td><input type="text" name="tags" size="35" value="{{tItemTag}}" class="sl">
+					</td>
+					</tr>
+					<tr colspan="2">
+						<td></td><td>
+						<small>请使半角,分隔</small>
+					</td>
+					</tr>
+					<tr colspan="2">
+					<td align="right">预计完成于</td>
+						<td><input class="sl" name="inputDate" id="inputDate" size="9" value="{{tItemExpectdate}}" />
+						</td>
+					</tr>					
+					<tr colspan="2">
+						<td></td><td>
+						<small>取消日期限制请填None</small>
+					</td>
+	
+					<tr colspan="2">
+						<td align="right">性质</td><td><select name="routine">
+						<option value="none" {% ifequal tItemRoutine 'none' %} selected="selected" {% endifequal %}>非坚持性任务</option>
+						<option value="daily" {% ifequal tItemRoutine 'daily' %} selected="selected" {% endifequal %}>每天</option>
+						<option value="weekly" {% ifequal tItemRoutine 'weekly' %} selected="selected" {% endifequal %}>每周</option>
+						<option value="monthly" {% ifequal tItemRoutine 'monthly' %} selected="selected" {% endifequal %}>每月</option>
+						<option value="seasonly" {% ifequal tItemRoutine 'seasonly' %} selected="selected" {% endifequal %}>每季度</option>
+						<option value="yearly" {% ifequal tItemRoutine 'yearly' %} selected="selected" {% endifequal %}>每年</option>
+						</select></td>
+					</tr>
+
+					<tr colspan="2">
+						<td align="right">公开项目</td><td><select name="public">
+						<option value="private" {% ifequal tItemPublic 'private' %} selected="selected" {% endifequal %}>不公开</option>
+						<option value="public" {% ifequal tItemPublic 'public' %} selected="selected" {% endifequal %}>完全公开</option>
+						<option value="publicOnlyforFriends" {% ifequal tItemPublic 'publicOnlyforFriends' %} selected="selected" {% endifequal %}>仅对朋友公开</option>
+						</select></td>
+					</tr>
+
+					<tr colspan="2"><td align="right"><img src="/img/page_edit.png"></td><td><input type="submit" name="submit" style="height: 35px; width: 150px;" value="更新信息"></td>
+					</tr>
+				</table>
+			</form>
+		</body>
+					
+		<script type="text/javascript">
+				$('#inputDate').DatePicker({
+					format:'Y-m-d',
+					date: $('#inputDate').val(),
+					current: $('#inputDate').val(),
+					starts: 1,
+					position: 'right',
+					onBeforeShow: function(){
+						$('#inputDate').DatePickerSetDate($('#inputDate').val(), true);
+					},
+					onChange: function(formated, dates){
+						$('#inputDate').val(formated);
+					}
+				});
+		</script>
+					
+				
+		</html>

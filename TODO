@@ -309,3 +309,13 @@
 		Fixed a Bug when Clicking DoneItems when AnonymousUser visiting Frontpage(WelcomePage).
 		Added a rough Guestbook function using GoogleDocs Form.
 		Polished FriendAction in UserMainPage, won't redirect to frontpage again.
+	IN 08.11.03
+		Going to implement ItemEdit Feature. Done all the elements needed in ViewItemPage and Ajax Module
+		Need to write /edititem process class tomorrow.
+	IN 08.11.04
+		Improved EditItem function:
+			Protential BUG spot: When change a item between Non-routine and routine, is this gonna affect the RoutineLog?
+								When Editing Tag with 'Nevada,' there is gonna be wrong.
+		Will Uploaded after Test.
+		AjaxAddItem will be tweaked like AjaxEditItem
+

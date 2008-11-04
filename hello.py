@@ -242,6 +242,7 @@ class AddItemProcess(tarsusaRequestHandler):
 				#each_cat.put()
 				
 				## It seems that these code above will create duplicated tag model.
+				## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
 				catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
 				try:
 					each_cat = catlist[0]
@@ -300,6 +301,80 @@ class AddItemProcess(tarsusaRequestHandler):
 			#				self.parent.tb_remove();
 			#																						
 			#			</script>''')
+
+class EditItemProcess(tarsusaRequestHandler):
+	def post(self):
+		
+		# Permission check is very important.
+
+		tItemId = self.request.path[10:]
+		## Please be awared that tItemId here is a string!
+		tItem = tarsusaItem.get_by_id(int(tItemId))
+
+		## Get Current User.
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+
+		
+		if tItem.user == users.get_current_user():
+			
+			#Update Expectdate.
+			if self.request.get('inputDate') == 'None':
+				expectdatetime = None
+			else:
+				expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
+				currenttime = datetime.datetime.time(datetime.datetime.now())
+				expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+			tItem.expectdate =  expectdatetime
+
+			tItem.name = cgi.escape(self.request.get('name'))
+			tItem.comment = cgi.escape(self.request.get('comment'))
+			tItem.routine = cgi.escape(self.request.get('routine'))
+			tItem.public = cgi.escape(self.request.get('public'))
+			
+			tItem.put()
+
+			
+			## Deal with Tags.			
+			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+
+			# Hard to find a way to clear this list.
+			tItem.tags = []
+			tItem.put()
+			
+			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
+		
+				## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
+				catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
+				try:
+					each_cat = catlist[0]				
+				except:				
+					each_cat = Tag(name=each_tag_in_tarsusaitem)
+					each_cat.put()
+				
+				tItem.tags.append(each_cat.key())
+				
+				# To Check whether this user is using this tag before.
+				tag_AlreadyUsed = False
+				for check_whether_used_tag in CurrentUser.usedtags:
+					item_check_whether_used_tag = db.get(check_whether_used_tag)
+					if item_check_whether_used_tag != None:
+						if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
+							tag_AlreadyUsed = True
+					else:
+						if each_cat.key() == check_whether_used_tag:
+							tag_AlreadyUsed = True
+					
+				if tag_AlreadyUsed == False:
+					CurrentUser.usedtags.append(each_cat.key())		
+
+			tItem.put()
+			CurrentUser.put()
+
+		else:
+			self.write('Sorry, Your session is out of time.')
+
 
 class ViewItem(tarsusaRequestHandler):
 	def get(self):
@@ -1569,51 +1644,12 @@ class NotFoundPage(tarsusaRequestHandler):
 		
 		self.redirect('/page/404.html')
 
-		
-
-class AjaxTestPage(webapp.RequestHandler):
-	def get(self):
-		
-		strAboutPageTitle = "CheckNerds - Blog"
-	
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-	
-
-		try:
-
-			template_values = {
-					'UserLoggedIn': 'Logged In',
-					'UserNickName': cgi.escape(users.get_current_user().nickname()),
-					'UserID': CurrentUser.key().id(),
-					'singlePageTitle': strAboutPageTitle,
-			}
-		
-		except:
-
-			
-			template_values = {
-				
-				'UserNickName': "访客",
-				'AnonymousVisitor': "Yes",
-				'singlePageTitle': strAboutPageTitle,
-
-			}
-
-
-	
-		path = os.path.join(os.path.dirname(__file__), 'pages/ajax_test.html')
-		self.response.out.write(template.render(path, template_values))
-
-
-
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 								       ('/additem',AddItemProcess),
 									   ('/AddFriend/\\d+', AddFriendProcess),
 									   ('/RemoveFriend/\\d+', RemoveFriendProcess),
+									   ('/edititem/\\d+', EditItemProcess), 
 									   ('/i/\\d+',ViewItem),
 									   ('/doneItem/\\d+.+',DoneItem),
 									   ('/undoneItem/\\d+.+',UnDoneItem),
@@ -1632,7 +1668,6 @@ def main():
 								       ('/donelog/.+',DoneLogPage),
 								       ('/statstics',StatsticsPage),
 									   ('/dashboard', DashboardPage),
-									   ('/ajaxtest', AjaxTestPage),
 									   ('.*',NotFoundPage)],
                                        debug=True)
 

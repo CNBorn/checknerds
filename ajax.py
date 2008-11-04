@@ -21,6 +21,7 @@ from modules import *
 from base import *
 
 
+import urllib
 import random
 
 class getdailyroutine(tarsusaRequestHandler):
@@ -379,8 +380,6 @@ class get_fp_friendstats(tarsusaRequestHandler):
 class additem(tarsusaRequestHandler):
 
 	def get(self):
-		
-		import urllib
 
 		urllen = len('/ajax/allpage_additem/')
 		RequestCatName = urllib.unquote(self.request.path[urllen:])
@@ -443,6 +442,74 @@ class additem(tarsusaRequestHandler):
 		else:
 			self.write("您必须登录才可以添加条目，利用Google帐户登录，十分方便快捷，立即开始吧")
 
+
+class edititem(tarsusaRequestHandler):
+	def get(self):
+
+		urllen = len('/ajax/allpage_edititem/')
+		RequestItemId = urllib.unquote(self.request.path[urllen:])
+		user = users.get_current_user()	
+	
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()	
+		
+		tItem = tarsusaItem.get_by_id(int(RequestItemId))
+	
+		if tItem.user == users.get_current_user():
+			
+			## Handle Tags
+			# for modified Tags (db.key)
+			tItemTags = ''
+			try:
+				for each_tag in db.get(tItem.tags):
+					if tItemTags == '':
+						tItemTags += cgi.escape(each_tag.name)
+					else:
+						tItemTags += ',' + cgi.escape(each_tag.name)
+			except:
+				# There is some chances that ThisItem do not have any tags.
+				pass	
+			
+			try:
+				tItemExpectdate = datetime.datetime.date(tItem.expectdate)
+			except:
+				tItemExpectdate = None
+			
+			try:
+
+				template_values = {
+					'tItemId': tItem.key().id(),
+					'tItemName': tItem.name,
+					'tItemComment': tItem.comment,
+					'tItemTag': tItemTags,
+					'tItemRoutine': tItem.routine,
+					'tItemExpectdate': tItemExpectdate, 
+					'tItemPublic': tItem.public,
+					}			
+
+				#Manupilating Templates	
+				path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_edititem.html')
+				self.response.out.write(template.render(path, template_values))
+
+			except:
+				## GAE Localhost Environment
+				template_values = {
+					'tItemId': tItem.key().id(),
+					'tItemName': tItem.name.encode('utf-8'),
+					'tItemComment': tItem.comment.encode('utf-8'),
+					'tItemTag': tItemTags.encode('utf-8'),
+					'tItemRoutine': tItem.routine,
+					'tItemExpectdate': tItemExpectdate,
+					'tItemPublic': tItem.public,
+					}			
+
+				#Manupilating Templates	
+				path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_edititem.html')
+				self.response.out.write(template.render(path, template_values))	
+
+		else:
+			self.write("您没有登录或没有权限编辑该项目")
 
 
 	
@@ -539,6 +606,7 @@ def main():
 										('/ajax/frontpage_introforanonymous/.+',get_fp_IntroductionForAnonymous),
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
 										(r'/ajax/allpage_additem.+', additem),
+										(r'/ajax/allpage_edititem.+', edititem),
 									   ('.*',ajax_error)],
                                        debug=True)
 

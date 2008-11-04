@@ -20,7 +20,11 @@
 					{% if tarsusaItem %}
 						<table cellpadding="0" cellspacing="0" border="0" align="left">
 						<tr>
-							<th colspan="2" class="viewitem_title">{{ tarsusaItem.name|escape }}</th>
+							<th class="viewitem_title">{{ tarsusaItem.name|escape }}&nbsp;&nbsp;
+							{% if not logictag_OtherpeopleViewThisItem %}
+								<a href="/ajax/allpage_edititem/{{tarsusaItem.key.id}}?TB_iframe=true&height=400&width=400" class="thickbox" title="编辑项目"><img src="/img/page_edit.png" alt="编辑项目"></a>
+							{% endif %}
+							</th>
 						</tr>
 						<tr>
 							<th colspan="2" class="viewitem_tags"><span class="date">分类：<a href="#">{{tarsusaItemTags}}</a></span></th>
@@ -145,29 +149,6 @@
 					</div>
 				{% endif %}
 		
-
-
-				<!--- 同类别未完成项目<br />
-			 	{% if AnonymousVisitor %}
-					{% for tarsusaItem_SameCategoryUndone in tarsusaItemCollection_SameCategoryUndone %}
-						{% ifnotequal tarsusaItem_SameCategoryUndone.public "public" %}
-						<li><a href="/user/{{tarsusaItem_SameCategoryUndone.user|escape}}">{{ tarsusaItem_SameCategoryUndone.user }}</a> 要做 <a href="/i/{{ tarsusaItem_SameCategoryUndone.key.id }}">{{ tarsusaItem_SameDayCreated.name|escape }}</a></li>
-						{% endifnotequal %}
-					{% endfor %}
-							    
-				{% else %}							   
-					<div id="todoitems">
-						{% for tarsusaItem_SameCategoryUndone in tarsusaItemCollection_SameCategoryUndone %}
-							<li>
-							{% ifequal tarsusaItem_SameCategoryUndone.routine 'none' %}
-								<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_SameCategoryUndone.key.id}}')">
-							{% endifequal %}
-							<a href="/i/{{ tarsusaItem_SameCategoryUndone.key.id }}">{{ tarsusaItem_SameCategoryUndone.name|escape }}</a>
-							<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_SameCategoryUndone.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_SameCategoryUndone.key.id}}';}" class="x">x</a></li>
-						{% endfor %}
-					</div>
-				{% endif %} !-->
-
 				</p>
 				</div>
 				<div class="featuredcode3-bot"></div>

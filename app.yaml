@@ -44,6 +44,9 @@ handlers:
 - url: /additem
   script: hello.py
 
+- url: /edititem/.*
+  script: hello.py
+
 - url: /removeItem/.*
   script: hello.py
 
@@ -87,9 +90,6 @@ handlers:
   script: hello.py
 
 - url: /dashboard
-  script: hello.py
-
-- url: /ajaxtest
   script: hello.py
 
 - url: /m/.+
