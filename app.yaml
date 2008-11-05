@@ -99,8 +99,12 @@ handlers:
   script: ajax.py
 
 - url: /favicon.ico
-  static_files: /img/favicon.ico
-  upload: /img/favicon.ico
+  static_files: img/favicon.ico
+  upload: /
+
+- url: /robots.txt
+  static_files: robots.txt
+  upload: /
 
 - url: /.*
   static_files: pages/404.html

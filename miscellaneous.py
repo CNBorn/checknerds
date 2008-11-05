@@ -84,18 +84,17 @@ class BlogPage(tarsusaRequestHandler):
 			#from xml.dom import minidom
 			#xmldoc = minidom.parseString(result.content.decode('utf-8')))
 
-
-
 			#parser = rss_parser()
 			#strAboutPageContent = result.content.decode('utf-8')
 
 
+		#strAboutPageContent = '''Coming soon.<BR><BR>''' #+ d.entries[0].title + d.entries[0].link + d.entries[0].description + d.entries[0].date + d.entries[0].date_parsed + d.entries[0].id
 
+		strAboutPageContent = '''<div id="twitter_div"><ul id="twitter_update_list"></ul></div>
+								<script type="text/javascript" src="http://twitter.com/javascripts/blogger.js"></script>
+								<script type="text/javascript" src="http://twitter.com/statuses/user_timeline/checknerds.json?callback=twitterCallback2&amp;count=10"></script>'''
 
-
-		strAboutPageContent = '''Coming soon.<BR><BR>''' #+ d.entries[0].title + d.entries[0].link + d.entries[0].description + d.entries[0].date + d.entries[0].date_parsed + d.entries[0].id
-
-		strAboutPageTitle = "CheckNerds - Blog"
+		strAboutPageTitle = "CheckNerds - Recent Updates (powered by Twitter)"
 		
 		## Get Current User.
 		# code below are comming from GAE example

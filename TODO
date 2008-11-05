@@ -314,8 +314,10 @@
 		Need to write /edititem process class tomorrow.
 	IN 08.11.04
 		Improved EditItem function:
-			Protential BUG spot: When change a item between Non-routine and routine, is this gonna affect the RoutineLog?
-								When Editing Tag with 'Nevada,' there is gonna be wrong.
+			Protential BUG spot: 11.5 SOLVED - When change a item between Non-routine and routine, is this gonna affect the RoutineLog?
+								11.5 SOLVED - When Editing Tag with 'Nevada,' there is gonna be wrong. 
 		Will Uploaded after Test.
 		AjaxAddItem will be tweaked like AjaxEditItem
-
+	IN 08.11.05
+		AjaxAddItem page tweaked.
+		Added CheckNerds twitter updates in Blog Page.

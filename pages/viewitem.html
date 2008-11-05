@@ -67,9 +67,6 @@
 								当前状态：未完成
 								{% if tarsusaItem.expired %}
 									<span style="color: #F00000">注意：此任务已过期！</span>
-									{% if not logictag_OtherpeopleViewThisItem %}
-										<a href=/cancelexpireitem.py?itemId= class="x">取消日期限制</a>
-									{% endif %}
 								{% endif %}
 							{% else %}
 								{% ifequal tarsusaItem.routine "daily" %}
