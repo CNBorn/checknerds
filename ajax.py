@@ -23,7 +23,7 @@ from base import *
 
 import urllib
 import random
-
+from django.utils import simplejson 
 class getdailyroutine(tarsusaRequestHandler):
 
 	def post(self):
@@ -475,7 +475,63 @@ class edititem(tarsusaRequestHandler):
 			self.write("您没有登录或没有权限编辑该项目")
 
 
-	
+class jsontest(tarsusaRequestHandler):
+	### JSON Referrences: http://code.google.com/apis/opensocial/articles/appengine-0.8.html
+	#					  http://www.ibm.com/developerworks/cn/opensource/os-eclipse-mashup-google-pt2/
+	#					  http://www.cnblogs.com/leleroyn/archive/2008/06/17/1224039.html
+	def get(self):
+		if users.get_current_user() != None:
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()	
+
+			CountTotalItems = 0
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
+			UserDoneItems = []
+    		for UserDoneItem in tarsusaItemCollection_UserDoneItems:
+      			item = {'id' : str(UserDoneItem.key().id()), 'name' : UserDoneItem.name, 'date' : str(UserDoneItem.date), 'comment' : UserDoneItem.comment}
+			UserDoneItems.append(item)
+			
+		self.response.out.write(simplejson.dumps(UserDoneItems))
+
+			
+class jsonpage(tarsusaRequestHandler):
+	def get(self):
+		if users.get_current_user() != None:
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()	
+
+			CountTotalItems = 0
+			
+			## SPEED KILLER!
+			## MULTIPLE DB QUERIES!
+			## CAUTION! MODIFY THESE LATER!
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
+
+			CountTotalItems = tarsusaItemCollection_UserDoneItems.count()
+			strDoneStatus = "共有" + str(CountTotalItems) + "个已完成项目"
+
+			template_values = {
+				'PrefixCSSdir': "/",
+
+				'UserLoggedIn': 'Logged In',
+				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),
+				
+				#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
+				#'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
+
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+				'DoneStatus': strDoneStatus
+			}
+
+		#Manupilating Templates	
+		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_jsontest.html')
+		self.response.out.write(template.render(path, template_values))	
 
 class ajax_error(tarsusaRequestHandler):
 
@@ -570,6 +626,8 @@ def main():
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
 										(r'/ajax/allpage_additem.+', additem),
 										(r'/ajax/allpage_edititem.+', edititem),
+										('/ajax/getjson_test', jsontest),
+										('/ajax/jsonpage', jsonpage),
 									   ('.*',ajax_error)],
                                        debug=True)
 

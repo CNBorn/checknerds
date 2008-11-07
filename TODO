@@ -321,3 +321,7 @@
 	IN 08.11.05
 		AjaxAddItem page tweaked.
 		Added CheckNerds twitter updates in Blog Page.
+	IN 08.11.06
+		Begin to do some json test for the pagination of UserDonePage.
+	IN 08.11.08
+		Ajax_JSON test phase 2 completed.
