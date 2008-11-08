@@ -475,7 +475,7 @@ class edititem(tarsusaRequestHandler):
 			self.write("您没有登录或没有权限编辑该项目")
 
 
-class jsontest(tarsusaRequestHandler):
+class getjson_userdoneitems(tarsusaRequestHandler):
 	### JSON Referrences: http://code.google.com/apis/opensocial/articles/appengine-0.8.html
 	#					  http://www.ibm.com/developerworks/cn/opensource/os-eclipse-mashup-google-pt2/
 	#					  http://www.cnblogs.com/leleroyn/archive/2008/06/17/1224039.html
@@ -529,9 +529,11 @@ class jsonpage(tarsusaRequestHandler):
 				'DoneStatus': strDoneStatus
 			}
 
-		#Manupilating Templates	
-		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_jsontest.html')
-		self.response.out.write(template.render(path, template_values))	
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_jsontest.html')
+			self.response.out.write(template.render(path, template_values))
+		else:
+			self.redirect('/')
 
 class ajax_error(tarsusaRequestHandler):
 
@@ -626,7 +628,7 @@ def main():
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
 										(r'/ajax/allpage_additem.+', additem),
 										(r'/ajax/allpage_edititem.+', edititem),
-										('/ajax/getjson_test', jsontest),
+										('/ajax/getjson_userdoneitems', getjson_userdoneitems),
 										('/ajax/jsonpage', jsonpage),
 									   ('.*',ajax_error)],
                                        debug=True)

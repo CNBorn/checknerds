@@ -7,51 +7,38 @@
                    	<div id="featuredcode2-mid">
 					<h2 class="posttitle" style="font-weight:normal;">{{UserNickName}}</a> &raquo; 已完成的项目</h2>
  
-						<div id="alist"></div>
-						<div id="Searchresult"></div>
-						<div id="Pagination" class="pagination"></div>
+						<table id='mt' cellpadding="0" cellspacing="0" border="0" align="left"><tbody><tr><th colspan="2" class="viewitem_title">&nbsp;{{DoneStatus}}</th></tr><tr><th width="70%" class="viewitem_tags">名称</th><th class="viewitem_tags">添加日期</th></tr>	
+						</tbody></table>
+						
+						<div id="Pagination" class="pagination" style="clear:both;"></div>
+						
+						<!-- http://www.positioniseverything.net/easyclearing.html --!>
+						<div style="clear:both;"></div>
 
-						</table>
-					</div>
                 </div>
                 <div id="featuredcode2-bot"></div>
             </div>
 			<script type="text/javascript">
-				/*window.onload = function() {
-					$("#list").html("");//清空列表中的数据
-					//发送ajax请求
-					$.getJSON("/ajax/getjson_test",function(json){
-						//循环取json中的数据,并呈现在列表中
-						$.each(json,function(i){
-							$("#alist").append('<tr><td class="viewitem_creator"><img src="/img/accept16.png">' + '<a href="/i/' + json[i].id + '">' + json[i].name + '</td></tr>');
-							
-							/*'<tr><td class="viewitem_creator"><img src="/img/accept16.png">' + 
-											'<a href="/i/' + json[i].id + '">' + json[i].name + '</a>' + 
-											'<a onclick="ajax_undoneItem(' + "'/undoneItem/" json[i].id + "')" + ';" href="#;" class="x">撤销</a><br />' + 
-											'<br />{{tarsusaItem_UserDoneItem.comment|escape }}' + '<td>' + json[i].date + '</td></tr>');*/
-						//});
-					//});
-					
-				//}
 				function pageselectCallback(page_id, jq){
-						//$.ajaxSetup({async:true});
-    					//$('#Searchresult').text("Showing search results "+((page_id*10)+1)+"-"+((page_id*10)+10));
-						$('#alist').html('');
 						
-						//$('#alist').append('<table cellpadding="0" cellspacing="0" border="0" align="left"><tbody><tr><th colspan="2" class="viewitem_title">&nbsp;{{DoneStatus}}</th></tr><tr><th width="70%" class="viewitem_tags">名称</th><th class="viewitem_tags">添加日期</th></tr>');
+						var $table = $('#mt');
+						$table.children('tbody').empty();
+						$table.children('tbody').append('<tr><th colspan="2" class="viewitem_title">&nbsp;{{DoneStatus}}</th></tr><tr><th width="70%" class="viewitem_tags">名称</th><th class="viewitem_tags">添加日期</th></tr>');
 
-						$.getJSON("/ajax/getjson_test",function(json){
+						//var rows = $table.find('tbody > tr').get();
+
+						$.getJSON("/ajax/getjson_userdoneitems",function(json){
 							//http://liuyami.com/archives/14.html
 							for(var i=((page_id*10)+1); i<=((page_id*10)+10); i++)
 							{
-								//var dispstr = '<tr colspan="2"><td class="viewitem_creator"><img src="/img/accept16.png">' + '<a href="/i/' + json[i].id + '">' + json[i].name;
-								//dispstr = dispstr + '' + json[i].comment + '</td><td>' + json[i].date + '</td></tr>';
-								var dispstr = '<img src="/img/accept16.png"><a href="/i/' + json[i].id + '">' + json[i].name + '</a><br />';
-								dispstr = dispstr + json[i].comment + '&nbsp;<br />' + json[i].date + '<br />';
-								$("#alist").append(dispstr);
+								var dispstr = '<tr colspan="2"><td class="viewitem_creator"><img src="/img/accept16.png">' + '<a href="/i/' + json[i].id + '">' + json[i].name;
+								dispstr = dispstr + '' + json[i].comment + '</td><td>' + json[i].date + '</td></tr>';
+								
+								//ideas inspired by http://www.packtpub.com/article/jquery-table-manipulation-part1
+								$table.children('tbody').append(dispstr);
 							}
 						});
-						$("#alist").append('</tbody></table>');
+						//$("#alist").append('</tbody></table>');
                 }
 			
             	window.onload = function() {
@@ -59,9 +46,8 @@
 					$.ajaxSetup({async:false});
 					
 					var icount;
-					$.getJSON("/ajax/getjson_test",function(json){
+					$.getJSON("/ajax/getjson_userdoneitems",function(json){
 						icount = json.length-1;
-						//$('#alist').append(icount);
 					});
 					
 					// Create pagination element					
@@ -74,7 +60,5 @@
                 	});
 					pageselectCallback(0); //show the first page.
 				}
-
-
    			</script>
         {% endblock content-holder %}

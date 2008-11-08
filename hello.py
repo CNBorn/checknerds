@@ -792,9 +792,6 @@ class UserToDoPage(tarsusaRequestHandler):
 			path = os.path.join(os.path.dirname(__file__), 'pages/usertodopage.html')
 			self.response.out.write(template.render(path, template_values))
 
-
-
-
 class UserDonePage(tarsusaRequestHandler):
 	def get(self):
 		if users.get_current_user() != None:
@@ -803,16 +800,6 @@ class UserDonePage(tarsusaRequestHandler):
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 			CurrentUser = q.get()	
 
-			CountTotalItems = 0
-			
-			## SPEED KILLER!
-			## MULTIPLE DB QUERIES!
-			## CAUTION! MODIFY THESE LATER!
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
-
-			CountTotalItems = tarsusaItemCollection_UserDoneItems.count()
-			strDoneStatus = "共有" + str(CountTotalItems) + "个已完成项目"
-
 			template_values = {
 				'PrefixCSSdir': "/",
 
@@ -820,34 +807,13 @@ class UserDonePage(tarsusaRequestHandler):
 				
 				'UserNickName': cgi.escape(self.login_user.nickname()),
 				'UserID': CurrentUser.key().id(),
-				
-				#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-				#'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
-
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				'DoneStatus': strDoneStatus,
-
-				#'UserTags': UserTags,
-
-				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
-
-
-
-				#'UserTotalItems': UserTotalItems,
-				#'UserToDoItems': UserToDoItems,
-				#'UserDoneItems': UserDoneItems,
-				#'UserDonePercentage': UserDonePercentage,
 			}
-
 
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/userdonepage.html')
 			self.response.out.write(template.render(path, template_values))
-
-
-
-
-
+		else:
+			self.redirect('/')
 
 class Showtag(tarsusaRequestHandler):
 	def get(self):

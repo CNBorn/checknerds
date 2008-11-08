@@ -325,3 +325,6 @@
 		Begin to do some json test for the pagination of UserDonePage.
 	IN 08.11.08
 		Ajax_JSON test phase 2 completed.
+	IN 08.11.09
+		Now implemented Ajax pagination in UserDonePage.
+		Will be applied to other pages soon.

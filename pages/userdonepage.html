@@ -5,45 +5,59 @@
             	<div id="featuredcode2">
                 	<div id="featuredcode2-top"></div>
                    	<div id="featuredcode2-mid">
+					<h2 class="posttitle" style="font-weight:normal;">{{UserNickName}} &raquo; 已完成的项目</h2>
+ 
+						<table id='mt' cellpadding="0" cellspacing="0" border="0" align="left"><tbody></tbody></table>
+						
+						<div id="Pagination" class="pagination" style="clear:both;"></div>
+						
+						<!-- http://www.positioniseverything.net/easyclearing.html --!>
+						<div style="clear:both;"></div>
 
-                          <h2 class="posttitle" style="font-weight:normal;">{{UserNickName}}</a> &raquo; 已完成的项目
-						</h2>
-                        <table cellpadding="0" cellspacing="0" border="0" align="left">
-						<tr>
-							<th colspan="2" class="viewitem_title">&nbsp;{{DoneStatus}}</th>
-						</tr>
-						<tr>
-							<th width="70%" class="viewitem_tags">名称</th><th class="viewitem_tags">添加日期</th>
-						</tr>
-
-						<p>
-								{% if AnonymousVisitor %}
-							    	{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-									<tr><td><a href="/user/{{tarsusaItem_UserDoneItem.user|escape}}">{{ tarsusaItem_UserDoneItem.user }}</a> 做完了 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a></td>
-									<td>{{tarsusaItem_UserDoneItem.date}}</td></tr>
-								{% endfor %}
-							    
-							    	{% else %}
-								
-								{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-											<tr><td class="viewitem_creator"><img src="/img/accept16.png">
-											<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
-											<a onclick="ajax_undoneItem('/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}');" href="#;" class="x">撤销</a><br />
-											<br />{{tarsusaItem_UserDoneItem.comment|escape }}
-											<td>{{tarsusaItem_UserDoneItem.date}}</td></tr>
-
-								{% endfor %}
-								{% endif %}
-					</table>	
-					</div>
                 </div>
                 <div id="featuredcode2-bot"></div>
             </div>
 			<script type="text/javascript">
-				function ajax_undoneItem(strLink){
-					$.ajax({type: "GET", url: strLink ,success: function(){location.reload();}});
-					return false;
-				}
-			</script>
+				//TODO add css ajax table selector: http://yueguangyuan.javaeye.com/blog/241395
+				
+				var icount;
+				var json_userdoneitems;
+				function pageselectCallback(page_id, jq){
+						var $table = $('#mt');
+						$table.children('tbody').empty();
+						$table.children('tbody').append('<tr><th colspan="2" class="viewitem_title">&nbsp; 共有' + icount.toString() + '个已完成项目</th></tr><tr><th width="70%" class="viewitem_tags">名称</th><th class="viewitem_tags">添加日期</th></tr>');
 
+						//http://liuyami.com/archives/14.html
+						for(var i=((page_id*15)+0); i<=((page_id*15)+14); i++)
+						{
+							var dispstr = '<tr colspan="2"><td class="viewitem_creator"><img src="/img/accept16.png">' + '<a href="/i/' + json_userdoneitems[i].id + '">' + json_userdoneitems[i].name;
+							dispstr = dispstr + '' + json_userdoneitems[i].comment + '</td><td>' + json_userdoneitems[i].date + '</td></tr>';
+							
+							//ideas inspired by http://www.packtpub.com/article/jquery-table-manipulation-part1
+							$table.children('tbody').append(dispstr);
+						}
+                }
+			
+            	window.onload = function() {
+					//http://bbs.jquery.org.cn/viewthread.php?tid=1739
+					$.ajaxSetup({async:false});
+					
+					
+					$.getJSON("/ajax/getjson_userdoneitems",function(json){
+						icount = json.length;
+						json_userdoneitems = json;
+					});
+
+					// Create pagination element					
+					$("#Pagination").pagination(icount, {
+						num_edge_entries: 1,
+						items_per_page: 15,
+						num_display_entries: 10,
+						prev_text: '上一页',
+						next_text: '下一页',
+						callback: pageselectCallback
+                	});					
+					pageselectCallback(0,$("#Pagination")); //show the first page.
+				}
+   			</script>
         {% endblock content-holder %}
