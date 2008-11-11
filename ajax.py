@@ -495,6 +495,24 @@ class getjson_userdoneitems(tarsusaRequestHandler):
 			
 		self.response.out.write(simplejson.dumps(UserDoneItems))
 
+
+class getjson_usertodoitems(tarsusaRequestHandler):
+	
+	def get(self):
+		if users.get_current_user() != None:
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()	
+
+			CountTotalItems = 0
+			tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", users.get_current_user())
+			UserTodoItems = []
+    		for UserTodoItem in tarsusaItemCollection_UserTodoItems:
+      			item = {'id' : str(UserTodoItem.key().id()), 'name' : UserTodoItem.name, 'date' : str(UserTodoItem.date), 'comment' : UserTodoItem.comment}
+			UserTodoItems.append(item)
+			
+		self.response.out.write(simplejson.dumps(UserTodoItems))
 			
 class jsonpage(tarsusaRequestHandler):
 	def get(self):
@@ -542,55 +560,6 @@ class ajax_error(tarsusaRequestHandler):
 		self.write("载入出错，请刷新重试")
 
 
-class get_fp_IntroductionForAnonymous(tarsusaRequestHandler):
-	def post(self):
-		urllen = len('/ajax/frontpage_introforanonymous/')
-		ajaxContentId = self.request.path[urllen:]
-		if ajaxContentId == "1":
-			template_tag_shownText = '''<div name="fl" style="float:left; margin-right: 10px;"><img src="/img/intro1.jpg"></div>
-			受够了繁琐的项目管理？面对任务列表上的诸多任务不知所措？如何能把自己每天要做的事情培养成一种习惯？<BR><BR>
-
-			CheckNerds是一个简单的任务管理网站。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，CheckNerds都游刃有余<BR><BR>
-			
-			更为重要的是CheckNerds可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
-
-			想太多无益，请立即开始吧！'''
-
-
-		elif ajaxContentId == "2":
-			
-			template_tag_shownText = '''<div name="fl" style="float:right; margin-left: 10px;"><img src="/img/intro2.jpg"></div>
-			
-			CheckNerds小巧实用，很多时候就像白纸那样简单！又具备白纸所不具备的“重复性任务”以及日期提醒功能。<BR><BR>
-
-			记录，记录您任务的完成情况；发现，在CheckNerds发现与您行为相近的朋友！<BR><BR>
-			
-			CheckNerds使用Google App Engine构建，可保证您的数据长期有效。使用Google帐户登录，相信也可免除您需要再多注册一个帐号的烦恼。<BR><BR>
-
-			'''
-
-		else:
-			template_tag_shownText = '''<div name="fl" style="float:left;margin-right: 10px;"><img src="/img/intro3.jpg"></div>
-			
-			为您节约时间！！！<BR><BR>
-			
-			人的一生中真正有意义、可以自由支配的时间只有10000天左右，如何更好地利用它们？我们不能让时间停止，而我们能做的，就是努力过好每一分钟，并且在时间流逝后，还可发掘出自己使用时间的记录。或许可从中改进自己的一些习惯。<BR><BR>
-			
-			'''
-
-
-
-		template_values = {
-		'UserNickName': '访客',
-		'htmltag_IntroHTML': template_tag_shownText,
-		}
-
-
-		#Manupilating Templates	
-		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_welcomecontent.html')
-		self.response.out.write(template.render(path, template_values))	
-
-
 class get_fp_IntroductionBottomForAnonymous(tarsusaRequestHandler):
 
 	
@@ -624,10 +593,10 @@ def main():
 										('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
 										('/ajax/frontpage_getfriendstats', get_fp_friendstats),
 										('/ajax/frontpage_getitemstats', get_fp_itemstats),
-										('/ajax/frontpage_introforanonymous/.+',get_fp_IntroductionForAnonymous),
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
 										(r'/ajax/allpage_additem.+', additem),
 										(r'/ajax/allpage_edititem.+', edititem),
+										('/ajax/getjson_usertodoitems', getjson_usertodoitems),
 										('/ajax/getjson_userdoneitems', getjson_userdoneitems),
 										('/ajax/jsonpage', jsonpage),
 									   ('.*',ajax_error)],

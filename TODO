@@ -328,3 +328,14 @@
 	IN 08.11.09
 		Now implemented Ajax pagination in UserDonePage.
 		Will be applied to other pages soon.
+	IN 08.11.10
+		WelcomePage AjaxContent now will not need to call the server.
+		UE Improved.
+	IN 08.11.11
+		UE Image bug fixed.
+		UE Improves.
+		AjaxPagination in UserTodoPage implemented.
+		BUG fixed in ViewItemPage.
+		
+		TODO: Javascript BUG in AjaxPagination Page.
+

@@ -9,7 +9,7 @@
  
 						<table id='mt' cellpadding="0" cellspacing="0" border="0" align="left"><tbody></tbody></table>
 						
-						<div id="Pagination" class="pagination" style="clear:both;"></div>
+						<div id="Pagination" class="pagination" style="clear:both; padding-top: 10px;"></div>
 						
 						<!-- http://www.positioniseverything.net/easyclearing.html --!>
 						<div style="clear:both;"></div>
@@ -17,6 +17,7 @@
                 </div>
                 <div id="featuredcode2-bot"></div>
             </div>
+			
 			<script type="text/javascript">
 				//TODO add css ajax table selector: http://yueguangyuan.javaeye.com/blog/241395
 				
@@ -28,15 +29,30 @@
 						$table.children('tbody').append('<tr><th colspan="2" class="viewitem_title">&nbsp; 共有' + icount.toString() + '个已完成项目</th></tr><tr><th width="70%" class="viewitem_tags">名称</th><th class="viewitem_tags">添加日期</th></tr>');
 
 						//http://liuyami.com/archives/14.html
-						for(var i=((page_id*15)+0); i<=((page_id*15)+14); i++)
+						for(var i=((page_id*15)+0); i<((page_id*15)+14); i++)
 						{
-							var dispstr = '<tr colspan="2"><td class="viewitem_creator"><img src="/img/accept16.png">' + '<a href="/i/' + json_userdoneitems[i].id + '">' + json_userdoneitems[i].name;
-							dispstr = dispstr + '' + json_userdoneitems[i].comment + '</td><td>' + json_userdoneitems[i].date + '</td></tr>';
-							
-							//ideas inspired by http://www.packtpub.com/article/jquery-table-manipulation-part1
-							$table.children('tbody').append(dispstr);
+							try
+							{
+								var dispstr = '<tr colspan="2"><td class="viewitem_creator"><img src="/img/accept16.png">' + '<a href="/i/' + json_userdoneitems[i].id + '">' + json_userdoneitems[i].name + '</a>&nbsp;';
+								dispstr = dispstr + '<a onclick="ajax_undoneItem(' + "'/undoneItem/" + json_userdoneitems[i].id + "');" + '" href="#;" class="x">撤销</a>'; 
+								dispstr = dispstr + '<br />' + json_userdoneitems[i].comment + '</td><td>' + json_userdoneitems[i].date + '</td></tr>';
+								
+								//ideas inspired by http://www.packtpub.com/article/jquery-table-manipulation-part1
+								$table.children('tbody').append(dispstr);
+							}
+							catch(err){}
 						}
-                }
+                
+					$("#mt tr:odd style").backgroundColor='#000000';
+					$("#mt tr:not(:has('th'))").mouseover(function(ev){  
+						this.style.backgroundColor='#FEFEFE';
+					});  
+					$("#mt tr:not(:has('th'))").mouseout(function(ev){  
+						this.style.backgroundColor='';  
+					});  
+				
+				
+				}
 			
             	window.onload = function() {
 					//http://bbs.jquery.org.cn/viewthread.php?tid=1739
@@ -59,5 +75,11 @@
                 	});					
 					pageselectCallback(0,$("#Pagination")); //show the first page.
 				}
+
+				function ajax_undoneItem(strLink){
+                	$.ajax({type: "GET", url: strLink ,success: function(){location.reload();}});
+                    return false; 
+				}
+
    			</script>
         {% endblock content-holder %}

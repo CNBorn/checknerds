@@ -408,16 +408,6 @@ class ViewItem(tarsusaRequestHandler):
 			else:
 				pass
 
-
-			# for modified Tags (db.key)
-			ItemTags = ''
-			
-			try:
-				for each_tag in db.get(tItem.tags):
-					ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
-			except:
-				# There is some chances that ThisItem do not have any tags.
-				pass
 			
 
 			# code below are comming from GAE example
@@ -457,6 +447,23 @@ class ViewItem(tarsusaRequestHandler):
 				## Viewing User is the Owner of this Item.
 				UserNickName = users.get_current_user().nickname()
 				logictag_OtherpeopleViewThisItem = False
+
+
+			# for modified Tags (db.key)
+			ItemTags = ''
+			
+			try:
+				if logictag_OtherpeopleViewThisItem == True:
+					for each_tag in db.get(tItem.tags):
+						ItemTags += cgi.escape(each_tag.name) + '&nbsp;'
+				else:
+					for each_tag in db.get(tItem.tags):
+						ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+			except:
+				# There is some chances that ThisItem do not have any tags.
+				pass
+
+
 
 			# process html_tag_tarsusaRoutineItem
 			if tItem.routine != 'none':

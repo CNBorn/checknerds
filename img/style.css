@@ -1,6 +1,23 @@
 @charset "utf-8";
 body{background-image:url(./bg.png);background-repeat:repeat-x;background-color:#F0F8E4;font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#7f7f7f;margin:0;}
+
 a{color:#9c9b50;text-decoration:none;}
+
+a.x
+{
+color: #bfb4a7;
+text-decoration: none;
+font-size: 9px;
+}
+
+a.x:hover
+{
+font-size: 9px;
+text-decoration: none;
+background-color: #D00900;
+color: #FFFAF3;
+}
+
 ul{padding-top:10px;}
 ul li{
 	list-style-type: none;
@@ -58,9 +75,9 @@ table{width:100%;}
 #latestcodes td{padding:4px;}
 .latestcode{width:308px;}
 /*I don't know why there are differences between the width of lastestcode-top/bot and mid */
-.latestcode-top{background-image:url(./div-left-code-top.png);height:7px;width:331px;}
-.latestcode-bot{background-image:url(./div-left-code-bottom.png);height:7px;width:331px;}
-.latestcode-mid{min-height:200px;width:308px;}
+.latestcode-top{background-image:url(./div-left-code-top.png);height:7px;width:337px;}
+.latestcode-bot{background-image:url(./div-left-code-bottom.png);height:7px;width:337px;}
+.latestcode-mid{min-height:200px;width:315px;}
 #tagcloud{width:686px;margin-top:5px;}
 #tagcloud-top{background-image:url(./div-left-top.png);height:7px;width:686px;}
 #tagcloud-bot{background-image:url(./div-left-bottom.png);height:6px;width:686px;}
@@ -99,17 +116,15 @@ table{width:100%;}
 
 /* button style of a, from mac.6.cn */
 a.g, a.g:active, a.g:visited {
--moz-border-radius-bottomleft:5px;
--moz-border-radius-bottomright:5px;
--moz-border-radius-topleft:5px;
--moz-border-radius-topright:5px;
-background-color:#EFEFEF;
-border:2px solid #D0D0D0;
-color:#000000;
-font-size:12px;
-margin-right:2px;
-padding:2px 4px;
-text-decoration:none;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	background-color:#EFEFEF;
+	border:1px solid #E1E1E1;
+	color:#000000;
+	font-size:12px;
+	margin-right:2px;
+	padding:2px 4px;
+	text-decoration:none;
 }
 
 /*user list learnt from douban*/
@@ -141,18 +156,16 @@ text-decoration:none;
 
 
 /* input box style, from tarsusa, originally from V2EX. */
-
 input.sl
-{color: #333;
-border-style: solid;
-border-width: 2px;
-border-top-color: #D0D0D0;
-border-left-color: #D0D0D0;
-border-right-color: #DDD;
-border-bottom-color: #DDD;
-
+{
+	color: #333;
+	border-style: solid;
+	border-width: 2px;
+	border-top-color: #D0D0D0;
+	border-left-color: #D0D0D0;
+	border-right-color: #DDD;
+	border-bottom-color: #DDD;
 }
-
 
 input.sl:focus 
 {
@@ -161,7 +174,6 @@ input.sl:focus
 	border-width: 2px;
 	border-color: #96BE57;
 }
-
 
 textarea.ml 
 {
@@ -191,10 +203,10 @@ select
 font: 13px Verdana, Geneva, Arial, Helvetica, sans-serif;
 background-color: #FFFFFF;
 border-style: solid;
-border-width: 2px;
-border-top-color: #D0D0D0;
-border-left-color: #D0D0D0;
-border-right-color: #DDD;
+border-width: 2px;
+border-top-color: #D0D0D0;
+border-left-color: #D0D0D0;
+border-right-color: #DDD;
 border-bottom-color: #DDD;
 }
 
