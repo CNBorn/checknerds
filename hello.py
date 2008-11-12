@@ -17,7 +17,7 @@ import datetime
 import string
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
-
+from google.appengine.api import memcache
 
 from modules import *
 from base import *
@@ -1097,6 +1097,9 @@ class UserSettingPage(tarsusaRequestHandler):
 
 				CurrentUser.avatar=db.Blob(avatar_image)
 				CurrentUser.put()  
+				
+				if not memcache.set(str(CurrentUser.key()), db.Blob(avatar_image), 1800):
+					logging.error("Memcache set failed: When uploading avatar_image")
 
 				self.redirect("/user/" + CurrentUser.user.nickname() + "/setting")
 
@@ -1147,7 +1150,13 @@ class UserSettingPage(tarsusaRequestHandler):
 				else:  
 					try:
 						avatar = Avatar(url_mime=url_mime)  
-						avatar.put()  
+						avatar.put() 
+						if not memcache.set(str(CurrentUser.key()), db.Blob(avatar_image), 1800):
+							logging.error("Memcache set failed: When uploading(2) avatar_image")
+						##if not memcache.add(self.request.get("img_user"), greeting.avatar, 1800):
+						##	logging.error("Memcache set failed: When Loading avatar_image")
+
+
 					except:
 						pass
 						self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
@@ -1327,17 +1336,25 @@ class UserMainPage(tarsusaRequestHandler):
 
 class Image (webapp.RequestHandler):
 	def get(self):
-		greeting = db.get(self.request.get("img_user"))
-		
-		if greeting.avatar:
+		#Add memcached here to improve the performence.
+		usravatardata = memcache.get(self.request.get("img_user"))
+  		
+		if usravatardata is not None:
 			self.response.headers['Content-Type'] = "image/"
-			self.response.out.write(greeting.avatar)
-			#img = images.Image(greeting.avatar)
-			#tumbimg = img.execute_transforms(output_encoding=images.PNG)
-			#self.response.headers['Content-Type'] = 'image/png'
-			#self.response.out.write(tumbimg)
-		else:
-			self.error(404)
+			self.response.out.write(usravatardata)
+  		else:
+			
+			# Request it from BigTable
+			greeting = db.get(self.request.get("img_user"))
+			
+			if greeting.avatar:
+				self.response.headers['Content-Type'] = "image/"
+				self.response.out.write(greeting.avatar)
+				
+				if not memcache.set(self.request.get("img_user"), greeting.avatar, 7200):
+					logging.error("Memcache set failed: When Loading avatar_image")
+			else:
+				self.error(404)
 
 	
 
@@ -1461,7 +1478,19 @@ class StatsticsPage(tarsusaRequestHandler):
 		htmltag += '<br />User Account: ' + str(TotalUserCount)
 		htmltag += '<br />Total Items: ' + str(TotaltarsusaItem)
 
-				
+		try:
+			htmltag += '<br /><br /><b>memcached stats:</b>'
+			stats = memcache.get_stats()    
+			htmltag += "<br /><b>Cache Hits:</b>" + str(stats['hits'])
+			htmltag += "<br /><b>Cache Misses:</b>" +str(stats['misses'])
+					
+			htmltag += "<br /><b>Total Requested Cache bytes:</b>" +str(stats['byte_hits'])
+			htmltag += "<br /><b>Total Cache items:</b>" +str(stats['items'])
+			htmltag += "<br /><b>Total Cache bytes:</b>" +str(stats['bytes'])
+			htmltag += "<br /><b>Oldest Cache items:</b>" +str(stats['oldest_item_age'])
+		except:
+			pass
+
 		if users.get_current_user() != None:
 
 			template_values = {

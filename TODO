@@ -338,4 +338,8 @@
 		BUG fixed in ViewItemPage.
 		
 		TODO: Javascript BUG in AjaxPagination Page.
+	IN 08.11.12
+		Added Memcache in AvatarImage function, and AJax_FriendStatsPage
+		Updated StatsticsPage with Memcache information
+
 

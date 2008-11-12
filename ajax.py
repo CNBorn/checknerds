@@ -15,10 +15,11 @@ import datetime
 import string
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
-
+from google.appengine.api import memcache
 
 from modules import *
 from base import *
+import logging
 
 
 import urllib
@@ -325,52 +326,62 @@ class get_fp_friendstats(tarsusaRequestHandler):
 			# code below are comming from GAE example
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 			CurrentUser = q.get()
-
-			## SHOW YOUR FRIENDs Recent Activities
-			## Currently the IN function is not supported, it is an headache.
 			
-			# there once happens an error the CurrentUser can not be found.
-			# I think that is due to the loginout, and non-refreshed index page.
-			try:
-				tarsusaUserFriendCollection = CurrentUser.friends
+			cachedUserFriendsActivities = memcache.get("%s_friendstats" % (str(CurrentUser.key().id())))
+			if cachedUserFriendsActivities:
+				template_values = {
+								'UserLoggedIn': 'Logged In',
+								'UserFriendsActivities': cachedUserFriendsActivities,
+				}
+			else:
 				
-				## Add shuffle in tarsusaUserFriendCollection, therefore the result in page will be in better looking.
-				random.shuffle(tarsusaUserFriendCollection)
+				## SHOW YOUR FRIENDs Recent Activities
+				## Currently the IN function is not supported, it is an headache.
+				
+				# there once happens an error the CurrentUser can not be found.
+				# I think that is due to the loginout, and non-refreshed index page.
+				try:
+					tarsusaUserFriendCollection = CurrentUser.friends
+					
+					## Add shuffle in tarsusaUserFriendCollection, therefore the result in page will be in better looking.
+					random.shuffle(tarsusaUserFriendCollection)
 
-				UserFriendsActivities = ''
-				if tarsusaUserFriendCollection: 
-					for each_FriendKey in tarsusaUserFriendCollection:
-						UsersFriend =  db.get(each_FriendKey)
-						## THE BELOW LINE IS UN SUPPORTED!
-						#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
-						## THERE are too many limits in GAE now...
-						tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 50", UsersFriend.user)
-						## the LIMIT number above line will indicate how frequently CurrentUser will receive Other users public item information.
+					UserFriendsActivities = ''
+					if tarsusaUserFriendCollection: 
+						for each_FriendKey in tarsusaUserFriendCollection:
+							UsersFriend =  db.get(each_FriendKey)
+							## THE BELOW LINE IS UN SUPPORTED!
+							#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
+							## THERE are too many limits in GAE now...
+							tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 50", UsersFriend.user)
+							## the LIMIT number above line will indicate how frequently CurrentUser will receive Other users public item information.
 
-						for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
-							## Check whether should show this item.
-							if tarsusaItem_UserFriendsRecentItems.public != 'private':
-							
-								## Check whether this item had done.
-								if tarsusaItem_UserFriendsRecentItems.done == True:
-									
-									UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' +  UsersFriend.user.nickname() + '</a> 完成了 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
-		 
-								else:
-									UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' + UsersFriend.user.nickname() + '</a> 要做 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
-					if UserFriendsActivities == '':
-						UserFriendsActivities = '<li>暂无友邻公开项目</li>'
-				else:
+							for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
+								## Check whether should show this item.
+								if tarsusaItem_UserFriendsRecentItems.public != 'private':
+								
+									## Check whether this item had done.
+									if tarsusaItem_UserFriendsRecentItems.done == True:
+										
+										UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' +  UsersFriend.user.nickname() + '</a> 完成了 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+			 
+									else:
+										UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' + UsersFriend.user.nickname() + '</a> 要做 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+						if UserFriendsActivities == '':
+							UserFriendsActivities = '<li>暂无友邻公开项目</li>'
+					else:
+						UserFriendsActivities = '<li>当前没有添加朋友</li>'
+
+				except:
 					UserFriendsActivities = '<li>当前没有添加朋友</li>'
 
-			except:
-				UserFriendsActivities = '<li>当前没有添加朋友</li>'
-
-			template_values = {
-				'UserLoggedIn': 'Logged In',
-				'UserFriendsActivities': UserFriendsActivities,
-			}
-
+				template_values = {
+					'UserLoggedIn': 'Logged In',
+					'UserFriendsActivities': UserFriendsActivities,
+				}
+				
+				if not memcache.set("%s_friendstats" % (str(CurrentUser.key().id())), UserFriendsActivities, 900):
+					logging.error('Cache set failed: Users_FriendStats')
 
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_friendstats.html')
