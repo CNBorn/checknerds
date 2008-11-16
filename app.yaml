@@ -29,13 +29,13 @@ handlers:
 - url: /statstics
   script: hello.py
 
-- url: /Login
+- url: /Login/.+
   script: hello.py
 
 - url: /SignIn
   script: hello.py
 
-- url: /SignOut
+- url: /SignOut/.+
   script: hello.py
 
 - url: /Add

@@ -147,6 +147,18 @@ class mMainPage(tarsusaRequestHandler):
 			self.response.out.write(template.render(path, template_values))
 
 
+		else:
+			##Show Mobile Welcome page
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				'UserNickName': '',#cgi.escape(self.login_user.nickname()),
+				'UserID': '',#CurrentUser.key().id(),
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+			}
+
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_welcomepage.html')
+			self.response.out.write(template.render(path, template_values))
 
 
 class mErrorPage(tarsusaRequestHandler):

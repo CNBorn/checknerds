@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+# CheckNerds 
+# - ajax.py
+# Cpoyright (C) CNBorn, 2008
+# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+
+
 #from django.conf import settings
 #settings._target = None
 import os
@@ -380,7 +386,7 @@ class get_fp_friendstats(tarsusaRequestHandler):
 					'UserFriendsActivities': UserFriendsActivities,
 				}
 				
-				if not memcache.set("%s_friendstats" % (str(CurrentUser.key().id())), UserFriendsActivities, 900):
+				if not memcache.set("%s_friendstats" % (str(CurrentUser.key().id())), UserFriendsActivities, 300):
 					logging.error('Cache set failed: Users_FriendStats')
 
 			#Manupilating Templates	
@@ -572,30 +578,41 @@ class ajax_error(tarsusaRequestHandler):
 
 
 class get_fp_IntroductionBottomForAnonymous(tarsusaRequestHandler):
-
 	
 	def get(self):
 		
 		## Homepage for Non-Registered Users.
 
-		## the not equal != is not supported!
-		tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = False ORDER BY date DESC")
-
-		tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = True ORDER BY donedate DESC")
+		## Since this page will be shown often to the anonymous visitors, and the information can be shown in not actully real-time.
+		## Therefore Memcache implemented.
+		## I can't figure out how to use get_multi so I just cache the whole ajaxpage output. 
+		IsCachedAnonymousWelcomePage = memcache.get('strCachedAnonymousWelcomePage')
 		
+		if IsCachedAnonymousWelcomePage:
+			
+			strCachedAnonymousWelcomePage = IsCachedAnonymousWelcomePage
 
-		template_values = {
-		'UserNickName': '访客',
-		'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-		'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
-		'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+		else:
 
-		}
+			## the not equal != is not supported!
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = False ORDER BY date DESC")
 
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = True ORDER BY donedate DESC")
 
-		#Manupilating Templates	
-		path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_anonymousbottomcontents.html')
-		self.response.out.write(template.render(path, template_values))	
+			template_values = {
+				'UserNickName': '访客',
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+ 		     }
+			
+			#Manupilating Templates 
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_anonymousbottomcontents.html')	
+			strCachedAnonymousWelcomePage = template.render(path, template_values)
+			if not memcache.add('strCachedAnonymousWelcomePage',strCachedAnonymousWelcomePage, 300):
+				logging.error('Memcache add failed: ajax_AnonymousIntroBottomInfo')
+
+		self.response.out.write(strCachedAnonymousWelcomePage)
+		
 
 
 def main():

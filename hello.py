@@ -947,10 +947,13 @@ class Showtag(tarsusaRequestHandler):
 
 class LoginPage(tarsusaRequestHandler):
 	def get(self):
-		# if seems that self.chk_login can not determine the right status
+		#Handle the URL like /Login/m/1
+		try:
+			destURL = urllib.unquote(cgi.escape(self.request.path[7:])) 
+		except:
+			pass
 		
-		#if self.chk_login == False:		
-			self.redirect(users.create_login_url('/'))
+		self.redirect(users.create_login_url(destURL))
 
 class SignInPage(webapp.RequestHandler):
 	def get(self):
@@ -958,13 +961,17 @@ class SignInPage(webapp.RequestHandler):
 
 class SignOutPage(tarsusaRequestHandler):
 	def get(self):
-		self.redirect(users.create_logout_url('/'))
-
+		#Handle the URL like /Logout/m/1
+		try:
+			destURL = urllib.unquote(cgi.escape(self.request.path[8:])) 
+		except:
+			pass
+		
+		self.redirect(users.create_logout_url(destURL))
 
 class UserSettingPage(tarsusaRequestHandler):
 	def get(self):
-		
-		username = cgi.escape(self.request.path[6:-8])  ## Get the username in the middle of /user/CNBorn/setting
+		username = urllib.unquote(cgi.escape(self.request.path[6:-8])) ## Get the username in the middle of /user/CNBorn/setting
 
 		# code below are comming from GAE example
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1", username)
@@ -988,7 +995,7 @@ class UserSettingPage(tarsusaRequestHandler):
 
 
 
-		if EditedUser != None:			
+		if EditedUser is not None and CurrentUser is not None:			
 			
 			if CurrentUser.key().id() == EditedUser.key().id():
 
@@ -1169,7 +1176,7 @@ class UserSettingPage(tarsusaRequestHandler):
 class UserMainPage(tarsusaRequestHandler):
 	def get(self):
 
-		username = cgi.escape(self.request.path[6:])  ## Get the username in the middle of /user/CNBorn/
+		username = urllib.unquote(cgi.escape(self.request.path[6:]))  ## Get the username in the middle of /user/CNBorn/
 
 		## Get this user.
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1 LIMIT 1", username)
@@ -1369,8 +1376,8 @@ class DoneLogPage(tarsusaRequestHandler):
 		#Donelog should shows User's Done Routine Log
 		
 		#Donelog page shows User Done's Log.
-
-		username = cgi.escape(self.request.path[9:])  ## Get the username in the middle of /donelog/CNBorn
+		
+		username = urllib.unquote(cgi.escape(self.request.path[9:])) ## Get the username in the middle of /donelog/CNBorn
 		
 		if username == "": ## if the url are not directed to specific user.
 
@@ -1531,48 +1538,67 @@ class FindFriendPage(tarsusaRequestHandler):
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 		CurrentUser = q.get()
 		
-		if users.get_current_user() == None:
+		##if users.get_current_user() is None 
+		if CurrentUser == None:
+			#TODO	
+			template_values = {
+					'UserLoggedIn': 'Logged In',
+					
+					'UserNickName': '', #cgi.escape(self.login_user.nickname()),
+					'UserID': '', #CurrentUser.key().id(),
+					'UserFriends': '', #UserFriends,	
+					'singlePageTitle': "查找朋友.",
+					'singlePageContent': "",
+
+					'tarsusaPeopleCollection': '', #tarsusaPeopleCollection,
+			}	
+			path = os.path.join(os.path.dirname(__file__), 'pages/welcome_friends.html')
+			self.response.out.write(template.render(path, template_values))
+			
+			
 			## Prompt them to register!
-			self.redirect('/')
-
-		tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser LIMIT 500")
-
-		tarsusaUserFriendCollection = CurrentUser.friends
-
-		UserFriends = ''
-		if tarsusaUserFriendCollection: 
-			for each_FriendKey in tarsusaUserFriendCollection:
-				UsersFriend =  db.get(each_FriendKey)
-				if UsersFriend.avatar:
-					UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?img_user=' + str(UsersFriend.key()) + " width=32 height=32></dt>"
-
-				else:
-					## Show Default Avatar
-					UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
-
-				UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a><br /><a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dd></dl>'
-
-
 
 		else:
-			UserFriends = '当前没有添加朋友'
+
+
+			tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser LIMIT 500")
+
+			tarsusaUserFriendCollection = CurrentUser.friends
+
+			UserFriends = ''
+			if tarsusaUserFriendCollection: 
+				for each_FriendKey in tarsusaUserFriendCollection:
+					UsersFriend =  db.get(each_FriendKey)
+					if UsersFriend.avatar:
+						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?img_user=' + str(UsersFriend.key()) + " width=32 height=32></dt>"
+
+					else:
+						## Show Default Avatar
+						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
+
+					UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a><br /><a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dd></dl>'
+
+
+
+			else:
+				UserFriends = '当前没有添加朋友'
+
+			
+			template_values = {
+					'UserLoggedIn': 'Logged In',
+					
+					'UserNickName': cgi.escape(self.login_user.nickname()),
+					'UserID': CurrentUser.key().id(),
+					'UserFriends': UserFriends,	
+					'singlePageTitle': "查找朋友.",
+					'singlePageContent': "",
+
+					'tarsusaPeopleCollection': tarsusaPeopleCollection,
+			}
 
 		
-		template_values = {
-				'UserLoggedIn': 'Logged In',
-				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
-				'UserID': CurrentUser.key().id(),
-				'UserFriends': UserFriends,	
-				'singlePageTitle': "查找朋友.",
-				'singlePageContent': "",
-
-				'tarsusaPeopleCollection': tarsusaPeopleCollection,
-		}
-
-	
-		path = os.path.join(os.path.dirname(__file__), 'pages/addfriend.html')
-		self.response.out.write(template.render(path, template_values))
+			path = os.path.join(os.path.dirname(__file__), 'pages/addfriend.html')
+			self.response.out.write(template.render(path, template_values))
 
 
 class AddFriendProcess(tarsusaRequestHandler):
@@ -1664,9 +1690,9 @@ def main():
 									   ('/user/.+', UserMainPage),
 									   ('/img', Image),
 									   ('/FindFriend', FindFriendPage),
-									   ('/Login',LoginPage),
+									   ('/Login.+',LoginPage),
 								       ('/SignIn',SignInPage),
-									   ('/SignOut',SignOutPage),
+									   ('/SignOut.+',SignOutPage),
 								       ('/donelog/.+',DoneLogPage),
 								       ('/statstics',StatsticsPage),
 									   ('/dashboard', DashboardPage),

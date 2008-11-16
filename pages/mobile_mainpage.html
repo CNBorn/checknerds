@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xml:lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta id="viewport" name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"><title>CheckNerds Mobile</title><link rel="stylesheet" type="text/css" href="{{ PrefixCSSdir }}/img/m_style.css"></head><body><h1>CheckNerds Mobile</h1><div class="content"><small><a href="#">{{UserNickName}}</a> - {{htmltag_today}} - <a href="/SignIn">登出</a></small></div><div class="content"><ul>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xml:lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta id="viewport" name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"><title>CheckNerds Mobile</title><link rel="stylesheet" type="text/css" href="{{ PrefixCSSdir }}/img/m_style.css"></head><body><h1>CheckNerds Mobile</h1><div class="content"><small><a href="#">{{UserNickName}}</a> - {{htmltag_today}} - <a href="/SignOut/m/1">登出</a></small></div><div class="content"><ul>
 {% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
 <li>
 {% if tarsusaItem_DailyRoutine.donetoday %}
@@ -11,4 +11,4 @@ Done-{{ tarsusaItem_DailyRoutine.name|escape }}<small><a href='/undoneItem/{{tar
 {% endfor %}
 {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
 <li><a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><small><a href="/doneItem/{{tarsusaItem_UserToDoItem.key.id}}">完成</a><a href="#;" onclick="if(confirm('确认删除？{{tarsusaItem_UserToDoItem.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_UserToDoItem.key.id}}';}">x</a></small></li>
-{% endfor %}</ul><small>&nbsp;&nbsp;<a href="#">下一页</a>&nbsp;&nbsp;1/377</small></div><div><small>© 2008 <a href="#" target="_blank">CNBorn</a> | CheckNerds - GAE</small></div></body></html>
+{% endfor %}</ul><small>&nbsp;&nbsp;<a href="#">下一页</a>&nbsp;&nbsp;1/377</small></div><div><small>© 2008 CNBorn | CheckNerds - GAE</small></div></body></html>

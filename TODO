@@ -342,4 +342,14 @@
 		Added Memcache in AvatarImage function, and AJax_FriendStatsPage
 		Updated StatsticsPage with Memcache information
 
+	IN 08.11.13
+		Fixed /User/Page bug, now user whose name is email address , their page can be directly visited.
+		Fixed a bug in SettingPage
 
+	IN 08.11.14,15
+		Fixed URL bug in UserSettingPage, UserDoneLogPage.
+		Added Memcache in Ajax_AnonymousWelcomePageBottomContents
+	IN 08.11.16
+		Fixed FindFriendPage when User are not login. Trying to add an welcome_friends page.
+		Fixed Mobile page problem: Now added a Mobile_Welcome page. And User now can login from Mobile page.
+		
