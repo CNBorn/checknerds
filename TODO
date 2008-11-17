@@ -352,4 +352,7 @@
 	IN 08.11.16
 		Fixed FindFriendPage when User are not login. Trying to add an welcome_friends page.
 		Fixed Mobile page problem: Now added a Mobile_Welcome page. And User now can login from Mobile page.
-		
+	IN 08.11.17
+		Seperate friends.py
+		Added memcache in ShowDailyRoutineToday, added messy code into different functions to handle the clear cache..
+

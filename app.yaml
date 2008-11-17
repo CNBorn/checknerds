@@ -10,6 +10,9 @@ handlers:
 - url: /js
   static_dir: js
 
+- url: /files
+  static_dir: files
+
 - url: /(.*)\.css
   static_files: /\1
   upload: /
@@ -29,13 +32,13 @@ handlers:
 - url: /statstics
   script: hello.py
 
-- url: /Login/.+
+- url: /Login.+
   script: hello.py
 
 - url: /SignIn
   script: hello.py
 
-- url: /SignOut/.+
+- url: /SignOut.+
   script: hello.py
 
 - url: /Add
@@ -51,10 +54,10 @@ handlers:
   script: hello.py
 
 - url: /AddFriend/.*
-  script: hello.py
+  script: friends.py
 
 - url: /RemoveFriend/.*
-  script: hello.py
+  script: friends.py
 
 - url: /i/.*
   script: hello.py
@@ -69,7 +72,7 @@ handlers:
   script: hello.py
 
 - url: /FindFriend
-  script: hello.py
+  script: friends.py
 
 - url: /donelog
   script: hello.py
@@ -103,7 +106,7 @@ handlers:
   upload: /
 
 - url: /robots.txt
-  static_files: robots.txt
+  static_files: files/robots.txt
   upload: /
 
 - url: /.*

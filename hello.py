@@ -158,6 +158,10 @@ class AddItemProcess(tarsusaRequestHandler):
 		
 		if self.request.get('cancel') != "取消":
 		
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+
 			try:
 				# The following code works on GAE platform.
 			
@@ -203,10 +207,6 @@ class AddItemProcess(tarsusaRequestHandler):
 				# This part of tag process inspired by ericsk.
 				# many to many
 
-				# code below are comming from GAE example
-				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-				CurrentUser = q.get()
-
 			except:
 				## the following code works on the localhost GAE runtimes.
 				try:
@@ -225,15 +225,22 @@ class AddItemProcess(tarsusaRequestHandler):
 					
 					first_tarsusa_item.done = False
 					first_tarsusa_item.put()
-					# code below are comming from GAE example
-					q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-					CurrentUser = q.get()
 
 				except:
 					## SOMETHING WRONG
 						self.write('something is wrong.') 
 
-				
+			
+			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
+			if cgi.escape(self.request.get('routine')) == 'daily':
+				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
+				if cachedUserDailyroutineToday:
+					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
+						logging.error('Memcache delete failed: Adding Daily RoutineItem')
+			else:
+				pass
+
+
 		
 			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
 				
@@ -274,34 +281,6 @@ class AddItemProcess(tarsusaRequestHandler):
 			first_tarsusa_item.put()
 			CurrentUser.put()
 
-
-
-			#UserTags = ''
-			#for each_cate in CurrentUser.usedtags:
-			#	each_tag =  db.get(each_cate)
-			#	UserTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
-
-			#self.write(UserTags)
-
-			
-			## After adding ajax,
-			## it should help to close the ajax box. //done, i just remove the &modar=true
-			## and ajax reload the routine and bottom-contents
-			
-			#self.redirect('/')
-			#self.write('''<script type="text/javascript">
-			#			  	self.parent.$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
-			#					self.parent.$('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
-			#					   	self.parent.$('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
-			#						 });
-			#					});
-			#																						
-			#					self.parent.$('#latestcodes').load('/ajax/frontpage_bottomcontents');									
-			#				}
-			#				self.parent.tb_remove();
-			#																						
-			#			</script>''')
-
 class EditItemProcess(tarsusaRequestHandler):
 	def post(self):
 		
@@ -335,7 +314,16 @@ class EditItemProcess(tarsusaRequestHandler):
 			
 			tItem.put()
 
-			
+			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
+			if cgi.escape(self.request.get('routine')) == 'daily':
+				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
+				if cachedUserDailyroutineToday:
+					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
+						logging.error('Memcache delete failed: Edit an item into daily RoutineItem')
+			else:
+				pass
+
+	
 			## Deal with Tags.			
 			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
 
@@ -622,7 +610,11 @@ class DoneItem(tarsusaRequestHandler):
 			DoneYesterdaysDailyRoutine = True
 
 		tItem = tarsusaItem.get_by_id(int(ItemId))
-
+		
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+		
 		if tItem.user == users.get_current_user():
 			## Check User Permission to done this Item
 
@@ -643,6 +635,15 @@ class DoneItem(tarsusaRequestHandler):
 				#NewlyDoneRoutineItem.routine = tItem.routine
 				# The done date will be automatically added by GAE datastore.			
 				NewlyDoneRoutineItem.put()
+					
+				#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
+				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
+				if cachedUserDailyroutineToday:
+					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
+						logging.error('Memcache delete failed: Done a Daily RoutineItem')
+				else:
+					pass
+
 
 		
 		#self.redirect(self.request.uri)
@@ -662,7 +663,11 @@ class UnDoneItem(tarsusaRequestHandler):
 		
 		## Please be awared that ItemId here is a string!
 		tItem = tarsusaItem.get_by_id(int(ItemId))
-
+		
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+		
 
 		if tItem.user == users.get_current_user():
 			## Check User Permission to undone this Item
@@ -675,6 +680,15 @@ class UnDoneItem(tarsusaRequestHandler):
 				tItem.put()
 			else:
 				if tItem.routine == 'daily':
+					
+					#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
+					cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
+					if cachedUserDailyroutineToday:
+						if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
+							logging.error('Memcache delete failed: delete Daily RoutinelogItem')
+					else:
+						pass
+					
 					if UndoneYesterdaysDailyRoutine != True:
 
 						del tItem.donetoday
@@ -722,7 +736,10 @@ class RemoveItem(tarsusaRequestHandler):
 		ItemId = self.request.path[12:]
 		## Please be awared that ItemId here is a string!
 		tItem = tarsusaItem.get_by_id(int(ItemId))
-
+			
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
 
 		if tItem.user == users.get_current_user():
 			## Check User Permission to done this Item
@@ -748,6 +765,13 @@ class RemoveItem(tarsusaRequestHandler):
 					result.delete()
 
 				tItem.delete()
+
+				#memcache related. Clear ajax_DailyroutineTodayCache after remove a routine item
+				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
+				if cachedUserDailyroutineToday:
+					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
+						logging.error('Memcache delete failed: Deleteing RoutineItem')
+
 
 		self.redirect('/')
 
@@ -953,7 +977,7 @@ class LoginPage(tarsusaRequestHandler):
 		except:
 			pass
 		
-		self.redirect(users.create_login_url(destURL))
+		self.redirect(users.create_login_url('/' + destURL))
 
 class SignInPage(webapp.RequestHandler):
 	def get(self):
@@ -967,7 +991,7 @@ class SignOutPage(tarsusaRequestHandler):
 		except:
 			pass
 		
-		self.redirect(users.create_logout_url(destURL))
+		self.redirect(users.create_logout_url('/' + destURL))
 
 class UserSettingPage(tarsusaRequestHandler):
 	def get(self):
@@ -1530,138 +1554,6 @@ class StatsticsPage(tarsusaRequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
 
-class FindFriendPage(tarsusaRequestHandler):
-	def get(self):
-	
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-		
-		##if users.get_current_user() is None 
-		if CurrentUser == None:
-			#TODO	
-			template_values = {
-					'UserLoggedIn': 'Logged In',
-					
-					'UserNickName': '', #cgi.escape(self.login_user.nickname()),
-					'UserID': '', #CurrentUser.key().id(),
-					'UserFriends': '', #UserFriends,	
-					'singlePageTitle': "查找朋友.",
-					'singlePageContent': "",
-
-					'tarsusaPeopleCollection': '', #tarsusaPeopleCollection,
-			}	
-			path = os.path.join(os.path.dirname(__file__), 'pages/welcome_friends.html')
-			self.response.out.write(template.render(path, template_values))
-			
-			
-			## Prompt them to register!
-
-		else:
-
-
-			tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser LIMIT 500")
-
-			tarsusaUserFriendCollection = CurrentUser.friends
-
-			UserFriends = ''
-			if tarsusaUserFriendCollection: 
-				for each_FriendKey in tarsusaUserFriendCollection:
-					UsersFriend =  db.get(each_FriendKey)
-					if UsersFriend.avatar:
-						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?img_user=' + str(UsersFriend.key()) + " width=32 height=32></dt>"
-
-					else:
-						## Show Default Avatar
-						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
-
-					UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a><br /><a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dd></dl>'
-
-
-
-			else:
-				UserFriends = '当前没有添加朋友'
-
-			
-			template_values = {
-					'UserLoggedIn': 'Logged In',
-					
-					'UserNickName': cgi.escape(self.login_user.nickname()),
-					'UserID': CurrentUser.key().id(),
-					'UserFriends': UserFriends,	
-					'singlePageTitle': "查找朋友.",
-					'singlePageContent': "",
-
-					'tarsusaPeopleCollection': tarsusaPeopleCollection,
-			}
-
-		
-			path = os.path.join(os.path.dirname(__file__), 'pages/addfriend.html')
-			self.response.out.write(template.render(path, template_values))
-
-
-class AddFriendProcess(tarsusaRequestHandler):
-	def get(self):
-		
-		# Permission check is very important.
-
-		ToBeAddedUserId = self.request.path[11:]
-			## Please be awared that ItemId here is a string!
-		ToBeAddedUser = tarsusaUser.get_by_id(int(ToBeAddedUserId))
-
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-
-		AlreadyAddedAsFriend = False
-		for eachFriend in CurrentUser.friends:
-			if eachFriend == ToBeAddedUser.key():
-				AlreadyAddedAsFriend = True	
-
-
-		if ToBeAddedUser.key() != CurrentUser.key() and AlreadyAddedAsFriend == False:
-			CurrentUser.friends.append(ToBeAddedUser.key())
-			CurrentUser.put()
-
-		else:
-			## You can't add your self! and You can add a person twice!
-			pass
-		
-		self.redirect('/FindFriend')
-
-
-class RemoveFriendProcess(tarsusaRequestHandler):
-	def get(self):
-		
-		# Permission check is very important.
-
-		ToBeRemovedUserId = self.request.path[14:]
-			## Please be awared that ItemId here is a string!
-		ToBeRemovedUser = tarsusaUser.get_by_id(int(ToBeRemovedUserId))
-
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-
-		AlreadyAddedAsFriend = False
-		for eachFriend in CurrentUser.friends:
-			if eachFriend == ToBeRemovedUser.key():
-				AlreadyAddedAsFriend = True	
-
-
-		if ToBeRemovedUser.key() != CurrentUser.key() and AlreadyAddedAsFriend == True:
-			CurrentUser.friends.remove(ToBeRemovedUser.key())
-			CurrentUser.put()
-
-		else:
-			## You can't remove your self! and You can not remove a person that are not your friend!
-			pass
-		
-		self.redirect('/FindFriend')
-	
 class DashboardPage(tarsusaRequestHandler):
 	def get(self):
 		print 'dashboard page'
@@ -1675,8 +1567,6 @@ class NotFoundPage(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 								       ('/additem',AddItemProcess),
-									   ('/AddFriend/\\d+', AddFriendProcess),
-									   ('/RemoveFriend/\\d+', RemoveFriendProcess),
 									   ('/edititem/\\d+', EditItemProcess), 
 									   ('/i/\\d+',ViewItem),
 									   ('/doneItem/\\d+.+',DoneItem),
@@ -1689,7 +1579,6 @@ def main():
 									   ('/user/.+/done',UserDonePage),
 									   ('/user/.+', UserMainPage),
 									   ('/img', Image),
-									   ('/FindFriend', FindFriendPage),
 									   ('/Login.+',LoginPage),
 								       ('/SignIn',SignInPage),
 									   ('/SignOut.+',SignOutPage),

@@ -52,11 +52,11 @@
 
                     	<td class="textalign-right">
                             {% if not UserLoggedIn %}
-							<img src="/img/favb16.png">&nbsp;<a href="/Login">使用Google帐户登录</a></a>
+							<img src="/img/favb16.png">&nbsp;<a href="/Login/">使用Google帐户登录</a></a>
 							{% endif %}
 							{% if UserLoggedIn %}
 							<a href="/user/{{UserID}}/setting">{{UserNickName}}的设置</a>
-							<a href="/SignOut">登出</a>
+							<a href="/SignOut/">登出</a>
 							{% endif %}							
 							<em style="color:#86a05f"></em>
 						</td>

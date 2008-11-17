@@ -37,9 +37,16 @@ class getdailyroutine(tarsusaRequestHandler):
 	
 		if users.get_current_user() != None:
 
-				# code below are comming from GAE example
-				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-				CurrentUser = q.get()
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+			CurrentUser = q.get()
+
+			cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
+			if cachedUserDailyroutineToday:
+
+				strcachedUserDailyroutineToday = cachedUserDailyroutineToday
+
+			else:			
 
 				# Show His Daily Routine.
 				tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
@@ -109,37 +116,39 @@ class getdailyroutine(tarsusaRequestHandler):
 
 
 				
-				## Output the message for DailyRoutine
-				template_tag_donealldailyroutine = ''
-				
-				if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
-					template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
-				elif Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) - 1:
-					template_tag_donealldailyroutine = '只差一项，加油！'
-				elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
-					template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
+					## Output the message for DailyRoutine
+					template_tag_donealldailyroutine = ''
+					
+					if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
+						template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
+					elif Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) - 1:
+						template_tag_donealldailyroutine = '只差一项，加油！'
+					elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
+						template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
 
 
-				template_values = {
-				'UserLoggedIn': 'Logged In',
-				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
-				'UserID': CurrentUser.key().id(),
-				
-				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-				'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
+					template_values = {
+					'UserLoggedIn': 'Logged In',
+					
+					'UserNickName': cgi.escape(self.login_user.nickname()),
+					'UserID': CurrentUser.key().id(),
+					
+					'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
+					'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
 
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-
-
-				}
+					'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 
 
-				#Manupilating Templates	
-				path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dailyroutine.html')
-				self.response.out.write(template.render(path, template_values))
+					}
 
+					#Manupilating Templates 
+					path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dailyroutine.html')
+					strcachedUserDailyroutineToday = template.render(path, template_values)
+					if not memcache.add(("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))),strcachedUserDailyroutineToday, 3600):
+						logging.error('Memcache add failed: ajax_ShowUserDailyRoutineToday')
 
+		self.response.out.write(strcachedUserDailyroutineToday)
+		
 
 
 class getdailyroutine_yesterday(tarsusaRequestHandler):
