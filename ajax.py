@@ -144,10 +144,10 @@ class getdailyroutine(tarsusaRequestHandler):
 					#Manupilating Templates 
 					path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dailyroutine.html')
 					strcachedUserDailyroutineToday = template.render(path, template_values)
-					if not memcache.add(("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))),strcachedUserDailyroutineToday, 3600):
-						logging.error('Memcache add failed: ajax_ShowUserDailyRoutineToday')
+					if not memcache.set(("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))),strcachedUserDailyroutineToday, 3600):
+						logging.error('Memcache set failed: ajax_ShowUserDailyRoutineToday')
 
-		self.response.out.write(strcachedUserDailyroutineToday)
+			self.response.out.write(strcachedUserDailyroutineToday)
 		
 
 

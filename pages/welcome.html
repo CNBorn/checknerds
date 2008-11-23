@@ -3,15 +3,12 @@
 
 		{% block content-holder %}
         	<div id="leftside">
-            	<div id="featuredcode3" style="padding-left: 3px; padding-right: 3px;">
+            	<div id="featuredcode3" >
                 	<div id="featuredcode3-top"></div>
                    	<div id="featuredcode3-mid">
                     	
 						<div id="welcome_ajaxcontent1">
-                        <table>
-							<tr>
-								<p>
-							        <ul><div name="fl" style="float:left; margin-right: 10px;"><img src="/img/intro1.jpg"></div>
+                       	<ul><div name="fl" style="float:left; margin-right: 10px;"><img src="/img/intro1.jpg"></div>
 			受够了繁琐的项目管理？面对任务列表上的诸多任务不知所措？如何能把自己每天要做的事情培养成一种习惯？<BR><BR>
 
 			CheckNerds是一个简单的任务管理网站。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，CheckNerds都游刃有余<BR><BR>
@@ -20,16 +17,10 @@
 
 			想太多无益，请立即开始吧！
 									</ul>
-								</p>			
-							</tr>
-						</table>
 						</div>
 						
 						<div id="welcome_ajaxcontent2" style="display:none;">
-                        <table>
-							<tr>
-								<p>
-							        <div name="fl" style="float:right; margin-left: 10px;"><img src="/img/intro2.jpg"></div>
+                        <ul><div name="fl" style="float:right; margin-left: 10px;"><img src="/img/intro2.jpg"></div>
 			
 			CheckNerds小巧实用，很多时候就像白纸那样简单！又具备白纸所不具备的“重复性任务”以及日期提醒功能。<BR><BR>
 
@@ -37,44 +28,38 @@
 			
 			CheckNerds使用Google App Engine构建，可保证您的数据长期有效。使用Google帐户登录，相信也可免除您需要再多注册一个帐号的烦恼。<BR><BR>
 									</ul>
-								</p>			
-							</tr>
-						</table>
 						</div>
+
 						
 						<div id="welcome_ajaxcontent3" style="display:none;">
-                        <table>
-							<tr>
-								<p>
-							        <div name="fl" style="float:left;margin-right: 10px;"><img src="/img/intro3.jpg"></div>
+                        <ul><div name="fl" style="float:left; margin-right: 10px;"><img src="/img/intro3.jpg"></div>
 			
 			为您节约时间！！！<BR><BR>
 			
 			人的一生中真正有意义、可以自由支配的时间只有10000天左右，如何更好地利用它们？我们不能让时间停止，而我们能做的，就是努力过好每一分钟，并且在时间流逝后，还可发掘出自己使用时间的记录。或许可从中改进自己的一些习惯。<BR><BR>
 									</ul>
-								</p>			
-							</tr>
-						</table>
 						</div>
-						
-
-
-                    <br />
-						<span style="text-align: center;">	
+					
+					</div>
+                    	
+							
+					<div id="featuredcode3-bot"></div>
+					
+					<div style="margin: 10px 10px 5px 10px;">		
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('1')";>1</a>
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('2')";>2</a>
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('3')";>3</a>
-						</span>
 					</div>
-                   	<div id="featuredcode3-bot"></div>
-					<br />
+
+			
+					 
 					<script type="text/javascript">
 						function ajax_WelcomeAjaxHTMLContent(strPageNum){						
-							$('#welcome_ajaxcontent1 style').display='none';
+							//$('#welcome_ajaxcontent1 style').display='block';
 							$('#welcome_ajaxcontent1').hide();
-							$('#welcome_ajaxcontent2 style').display='none';
+							//$('#welcome_ajaxcontent2 style').display='block';
 							$('#welcome_ajaxcontent2').hide();
-							$('#welcome_ajaxcontent3 style').display='none';
+							//$('#welcome_ajaxcontent3 style').display='block';
 							$('#welcome_ajaxcontent3').hide();
 
 							$('#welcome_ajaxcontent' + strPageNum).fadeIn('slow');

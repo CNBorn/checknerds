@@ -1368,7 +1368,7 @@ class UserMainPage(tarsusaRequestHandler):
 class Image (webapp.RequestHandler):
 	def get(self):
 		#Add memcached here to improve the performence.
-		usravatardata = memcache.get(self.request.get("img_user"))
+		usravatardata = memcache.get(self.request.get("img_user")[:250])
   		
 		if usravatardata is not None:
 			self.response.headers['Content-Type'] = "image/"
@@ -1382,7 +1382,7 @@ class Image (webapp.RequestHandler):
 				self.response.headers['Content-Type'] = "image/"
 				self.response.out.write(greeting.avatar)
 				
-				if not memcache.set(self.request.get("img_user"), greeting.avatar, 7200):
+				if not memcache.set(self.request.get("img_user")[:250], greeting.avatar, 7200):
 					logging.error("Memcache set failed: When Loading avatar_image")
 			else:
 				self.error(404)
