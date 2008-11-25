@@ -363,7 +363,6 @@ class EditItemProcess(tarsusaRequestHandler):
 		else:
 			self.write('Sorry, Your session is out of time.')
 
-
 class ViewItem(tarsusaRequestHandler):
 	def get(self):
 		#self.current_page = "home"
@@ -600,181 +599,6 @@ class ViewItem(tarsusaRequestHandler):
 			## Can't find this Item by this id.
 			self.redirect('/')
 
-
-class DoneItem(tarsusaRequestHandler):
-	def get(self):
-		ItemId = self.request.path[10:]
-		DoneYesterdaysDailyRoutine = False
-		if ItemId[-2:] == '/y':
-			ItemId = self.request.path[10:-2]			
-			DoneYesterdaysDailyRoutine = True
-
-		tItem = tarsusaItem.get_by_id(int(ItemId))
-		
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-		
-		if tItem.user == users.get_current_user():
-			## Check User Permission to done this Item
-
-			if tItem.routine == 'none':
-				## if this item is not a routine item.
-				tItem.donedate = datetime.datetime.now()
-				tItem.done = True
-				tItem.put()
-			
-			else:
-				## if this item is a routine item.
-				NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
-				NewlyDoneRoutineItem.user = users.get_current_user()
-				NewlyDoneRoutineItem.routineid = int(ItemId)
-				if DoneYesterdaysDailyRoutine == True:
-					NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
-				
-				#NewlyDoneRoutineItem.routine = tItem.routine
-				# The done date will be automatically added by GAE datastore.			
-				NewlyDoneRoutineItem.put()
-					
-				#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
-				if cachedUserDailyroutineToday:
-					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
-						logging.error('Memcache delete failed: Done a Daily RoutineItem')
-				else:
-					pass
-
-
-		
-		#self.redirect(self.request.uri)
-		#self.redirect('/')
-
-
-class UnDoneItem(tarsusaRequestHandler):
-	def get(self):
-
-		# Permission check is very important.
-
-		ItemId = self.request.path[12:]
-		UndoneYesterdaysDailyRoutine = False
-		if ItemId[-2:] == '/y':
-			ItemId = self.request.path[12:-2]			
-			UndoneYesterdaysDailyRoutine = True
-		
-		## Please be awared that ItemId here is a string!
-		tItem = tarsusaItem.get_by_id(int(ItemId))
-		
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-		
-
-		if tItem.user == users.get_current_user():
-			## Check User Permission to undone this Item
-
-			if tItem.routine == 'none':
-				## if this item is not a routine item.
-				tItem.donedate = ""
-				tItem.done = False
-
-				tItem.put()
-			else:
-				if tItem.routine == 'daily':
-					
-					#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-					cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
-					if cachedUserDailyroutineToday:
-						if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
-							logging.error('Memcache delete failed: delete Daily RoutinelogItem')
-					else:
-						pass
-					
-					if UndoneYesterdaysDailyRoutine != True:
-
-						del tItem.donetoday
-						tItem.put()
-						## Please Do not forget to .put()!
-
-						## This is a daily routine, and we are going to undone it.
-						## For DailyRoutine, now I just count the matter of deleting today's record.
-						## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
-						
-						# GAE can not make dateProperty as query now! There is a BUG for GAE!
-						# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
-						
-						tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now())
-					
-						#It has been fixed. For just deleting TODAY's routinelog.
-						one_day = datetime.timedelta(hours=24)
-						yesterday = datetime.datetime.now() - one_day
-
-						for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-							if result.donedate < datetime.datetime.now() and result.donedate.date() != yesterday.date() and result.donedate > yesterday:
-								result.delete()
-					else:
-						# Undone Yesterday's daily routine item.	
-						del tItem.doneyesterday
-						tItem.put()
-						
-						tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now() - datetime.timedelta(days=1))
-					
-						one_day = datetime.timedelta(days=1)
-						yesterday = datetime.datetime.now() - one_day
-
-						for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-							if result.donedate < datetime.datetime.now() and result.donedate.date() == yesterday.date() and result.donedate > datetime.datetime.now() - datetime.timedelta(days=2):
-								result.delete()
-
-		#self.redirect('/')
-
-class RemoveItem(tarsusaRequestHandler):
-	def get(self):
-		#self.write('this is remove page')
-
-		# Permission check is very important.
-
-		ItemId = self.request.path[12:]
-		## Please be awared that ItemId here is a string!
-		tItem = tarsusaItem.get_by_id(int(ItemId))
-			
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-
-		if tItem.user == users.get_current_user():
-			## Check User Permission to done this Item
-
-			if tItem.routine == 'none':
-				## if this item is not a routine item.
-				tItem.delete()
-
-			else:
-				## Del a RoutineLog item!
-				## All its doneRoutineLogWillBeDeleted!
-
-				## wether there will be another log for this? :-) for record nerd?
-
-				## This is a daily routine, and we are going to delete it.
-				## For DailyRoutine, now I just count the matter of deleting today's record.
-				## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
-				
-				# GAE can not make dateProperty as query now! There is a BUG for GAE!
-				# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
-				tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1", int(ItemId))
-				for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-					result.delete()
-
-				tItem.delete()
-
-				#memcache related. Clear ajax_DailyroutineTodayCache after remove a routine item
-				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
-				if cachedUserDailyroutineToday:
-					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
-						logging.error('Memcache delete failed: Deleteing RoutineItem')
-
-
-		self.redirect('/')
-
 class UserToDoPage(tarsusaRequestHandler):
 	def get(self):
 		
@@ -846,152 +670,13 @@ class UserDonePage(tarsusaRequestHandler):
 		else:
 			self.redirect('/')
 
-class Showtag(tarsusaRequestHandler):
-	def get(self):
-		
-		RequestCatName = urllib.unquote(self.request.path[5:])
-		
-		catlll = db.GqlQuery("SELECT * FROM Tag WHERE name = :1", RequestCatName.decode('utf-8'))
-
-		#catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1", RequestCatName)
-		
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()	
-		
-		if self.request.path[5:] <> '':
-			
-			try:
-
-				each_cat = catlll[0]
-				UserNickName = users.get_current_user().nickname()
-				
-				CountDoneItems = 0
-				CountTotalItems = 0
-
-				
-				#html_tag_DeleteThisTag = '<a href="/deleteTag/"' + str(each_cat.key().id()) + '>X</a>'
-				html_tag_DeleteThisTag = ''
-				## NOTICE that the /deleteTag should del the usertags in User model.
-
-				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
-				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY done, date DESC", users.get_current_user())
-
-				html_tag_ItemList = ""
-				for eachItem in browser_Items:
-					for eachTag in eachItem.tags:
-						try:
-
-							if db.get(eachTag).name == RequestCatName.decode('utf-8'):								
-								CountTotalItems += 1
-								#self.write(eachItem.name)
-								#html_tag_ItemList += eachItem.name + "<br />"
-								if eachItem.done == False:
-									html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-								else:
-									html_tag_ItemList += '<img src="/img/accept16.png"><a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-									CountDoneItems += 1
-								
-						except:
-							pass
-
-				strTagStatus = "共有项目" + str(CountTotalItems) + "&nbsp;完成项目" + str(CountDoneItems) + "&nbsp;未完成项目" + str(CountTotalItems - CountDoneItems)
-
-				template_values = {
-						'PrefixCSSdir': "/",
-						
-						'UserLoggedIn': 'Logged In',
-						'UserID': CurrentUser.key().id(),
-
-						'UserNickName': users.get_current_user().nickname(),
-						'DeleteThisTag': html_tag_DeleteThisTag,
-						'TagName': each_cat.name,
-						'TagStatus': strTagStatus,
-						'ItemList': html_tag_ItemList,
-
-
-				}
-
-			
-				path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
-				self.response.out.write(template.render(path, template_values))
-
-			except:
-				## There is no this tag!
-				## There is something wrong with Showtag!
-				self.redirect("/")
-				#pass
-
-
-		else:
-			
-			if self.request.path[5:] == '':
-				## Show Items with no tag.
-
-				#browser_Items = tarsusaItem(user=users.get_current_user(), routine="none")
-				browser_Items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", users.get_current_user())
-
-				html_tag_DeleteThisTag = '无标签项目'
-
-				CountDoneItems = 0
-				CountTotalItems = 0
-
-				html_tag_ItemList = ""
-				for eachItem in browser_Items:
-					if len(eachItem.tags) == 0:
-						CountTotalItems += 1
-						if eachItem.done == False:
-							html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-						else:
-							html_tag_ItemList += '<img src="/img/accept16.png"><a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-							CountDoneItems += 1
-				
-				strTagStatus = "共有项目" + str(CountTotalItems) + "&nbsp;完成项目" + str(CountDoneItems) + "&nbsp;未完成项目" + str(CountTotalItems - CountDoneItems)
-
-				template_values = {
-						'PrefixCSSdir': "/",
-						
-						'UserLoggedIn': 'Logged In',
-
-						'UserNickName': users.get_current_user().nickname(),
-						'DeleteThisTag': html_tag_DeleteThisTag,
-						'TagName': "未分类项目",
-						'TagStatus': strTagStatus,
-						'ItemList': html_tag_ItemList,
-				}
-				
-				path = os.path.join(os.path.dirname(__file__), 'pages/viewtag.html')
-				self.response.out.write(template.render(path, template_values))
-
-			else:
-				## There is no this tag!
-				self.redirect("/")
-
-
-
 class LoginPage(tarsusaRequestHandler):
 	def get(self):
-		#Handle the URL like /Login/m/1
-		try:
-			destURL = urllib.unquote(cgi.escape(self.request.path[7:])) 
-		except:
-			pass
-		
-		self.redirect(users.create_login_url('/' + destURL))
-
-class SignInPage(webapp.RequestHandler):
-	def get(self):
-		print "this is signinpage"
+		self.redirect(self.get_login_url(True))
 
 class SignOutPage(tarsusaRequestHandler):
 	def get(self):
-		#Handle the URL like /Logout/m/1
-		try:
-			destURL = urllib.unquote(cgi.escape(self.request.path[8:])) 
-		except:
-			pass
-		
-		self.redirect(users.create_logout_url('/' + destURL))
+		self.redirect(self.get_logout_url(True))
 
 class UserSettingPage(tarsusaRequestHandler):
 	def get(self):
@@ -1569,19 +1254,13 @@ def main():
 								       ('/additem',AddItemProcess),
 									   ('/edititem/\\d+', EditItemProcess), 
 									   ('/i/\\d+',ViewItem),
-									   ('/doneItem/\\d+.+',DoneItem),
-									   ('/undoneItem/\\d+.+',UnDoneItem),
-									   ('/removeItem/\\d+', RemoveItem),
-									   ('/tag/.+',Showtag),
-									   ('/tag/', Showtag),
 									   ('/user/.+/setting',UserSettingPage),
 									   ('/user/.+/todo',UserToDoPage),
 									   ('/user/.+/done',UserDonePage),
 									   ('/user/.+', UserMainPage),
 									   ('/img', Image),
 									   ('/Login.+',LoginPage),
-								       ('/SignIn',SignInPage),
-									   ('/SignOut.+',SignOutPage),
+									   ('/Logout.+',SignOutPage),
 								       ('/donelog/.+',DoneLogPage),
 								       ('/statstics',StatsticsPage),
 									   ('/dashboard', DashboardPage),

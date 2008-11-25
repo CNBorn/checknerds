@@ -357,5 +357,17 @@
 		Added memcache in ShowDailyRoutineToday, added messy code into different functions to handle the clear cache..
 	IN 08.11.23
 		Fixed Div position bug in WelcomePage. Tested with FF,WebKitGTKLauncher,Opera
-		SEEMS fixed a bug when people done a dailyroutine. TO BE CHECKED AGAIN.
-
+		SEEMS fixed a bug when people done a dailyroutine. TO BE CHECKED AGAIN. <-- None
+	IN 08.11.24
+		Provisions for Next Phase Rev.
+			Memcache in low level phase 1.
+			Proper Code serparation phase 1.
+			Proper Comment header in Code
+		------------------------------------
+		Serperate Tag Code.	
+		SEEMS fixed a bug when people done a dailyroutine. TO BE CHECKED AGAIN.		
+		FOUND A BUG, I can't undone a routineitem in yesterday!
+		Small Improves: Begin to implement new chk_login
+	In 08.11.25
+		Serperate tarsusaItemCore
+		Seems Fixed undone routineItem in yesterday BUG.

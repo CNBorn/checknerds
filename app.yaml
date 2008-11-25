@@ -51,7 +51,7 @@ handlers:
   script: hello.py
 
 - url: /removeItem/.*
-  script: hello.py
+  script: tarsusaItemCore.py
 
 - url: /AddFriend/.*
   script: friends.py
@@ -63,13 +63,13 @@ handlers:
   script: hello.py
 
 - url: /doneItem/.*
-  script: hello.py
+  script: tarsusaItemCore.py
 
 - url: /undoneItem/.*
-  script: hello.py
+  script: tarsusaItemCore.py
 
 - url: /tag
-  script: hello.py
+  script: tag.py
 
 - url: /FindFriend
   script: friends.py
@@ -84,10 +84,10 @@ handlers:
   script: hello.py
 
 - url: /tag/.*
-  script: hello.py
+  script: tag.py
 
 - url: /tag/
-  script: hello.py
+  script: tag.py
 
 - url: /img
   script: hello.py
