@@ -20,9 +20,11 @@
 					{% if tarsusaItem %}
 						<table cellpadding="0" cellspacing="0" border="0" align="left">
 						<tr>
-							<th class="viewitem_title">{{ tarsusaItem.name|escape }}&nbsp;&nbsp;
+							<th class="viewitem_title" width="90%">{{ tarsusaItem.name|escape }}&nbsp;&nbsp;</th>
+							<th>
 							{% if not logictag_OtherpeopleViewThisItem %}
 								<a href="/ajax/allpage_edititem/{{tarsusaItem.key.id}}?TB_iframe=true&height=400&width=400" class="thickbox" title="编辑项目"><img src="/img/page_edit.png" alt="编辑项目"></a>
+								<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem.name|escape}}')) {ajax_deleteItem('/removeItem/{{tarsusaItem.key.id}}');}"><img src="/img/delete.png" alt="删除项目"></a>
 							{% endif %}
 							</th>
 						</tr>
@@ -30,7 +32,7 @@
 							<th colspan="2" class="viewitem_tags"><span class="date">分类：{{tarsusaItemTags}}</span></th>
 						</tr>
 						<tr> 
-							<td class="viewitem_creator">创建者：<a href="/user/{{tarsusaItem.user|escape}}">{{tarsusaItem.user}}</a>
+							<td colspan="2" class="viewitem_creator">创建者：<a href="/user/{{tarsusaItem.user|escape}}">{{tarsusaItem.user}}</a>
 							&nbsp;&nbsp;
 							{% ifequal tarsusaItem.public "private" %}
 								不公开
@@ -110,8 +112,8 @@
                	<div id="featuredcode2-bot"></div>
             </div>
 				 
-				<div class="featuredcode3-top"></div>
-				<div class="featuredcode3-mid">
+				<div id="div-leftbottom-relateditems-top"></div>
+				<div id="div-leftbottom-relateditems-mid">
 					<h2 class="posttitle"><a href="/">相关信息</a></h2>
 				<p>
 			 	{% if logictag_OtherpeopleViewThisItem %}
@@ -148,7 +150,7 @@
 		
 				</p>
 				</div>
-				<div class="featuredcode3-bot"></div>
+				<div id="div-leftbottom-relateditems-bot"></div>
 			</div>
 			</div>
 
@@ -200,7 +202,7 @@
 				}
 
 				function ajax_deleteItem(strLink){
-				$.ajax({type: "GET", url: strLink ,success: function(){location.redirect("/");}}); 
+				$.ajax({type: "GET", url: strLink ,success: function(){location.href="/";}}); 
 				return false;
 				}
 				</script>

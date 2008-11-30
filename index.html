@@ -13,34 +13,16 @@
 				    - <strong class="posttitle">{{ htmltag_today }}</strong>
 									<script type="text/javascript">
 									window.onload = function() {
-									
-									{% if not AnonymousVisitor %}
-										$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
-													 $('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
-													   $('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
-																										 });
-																			 });
-																										
-										$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-										$('#div_itemstats').load('/ajax/frontpage_getitemstats');
-										$('#div_friendstats').load('/ajax/frontpage_getfriendstats');
-									
-									{% else %}
-										$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
-													 $('#featuredcode-mid').load('/ajax/frontpage_introforanonymous', {nullid: Math.round(Math.random()*1000)}, function(){
-													   $('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
-													   													 });
+									$('#featuredcode-mid').animate({height: 'hide', opacity: 'hide'}, 'slow', function(){
+												 $('#featuredcode-mid').load('/ajax/frontpage_getdailyroutine', {nullid: Math.round(Math.random()*1000)}, function(){
+												   $('#featuredcode-mid').animate({height: 'show', opacity: 'show'}, 'slow');
+																									 });
 																		 });
-																									
-										$('#latestcodes').load('/ajax/frontpage_introbottomcontentsforanonymous');			
-									
-									{% endif %}
-									
+									$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+									$('#div_itemstats').load('/ajax/frontpage_getitemstats');
+									$('#div_friendstats').load('/ajax/frontpage_getfriendstats');
 									}
-																									
 									</script>
-								
-								
                               	</td>
 							</tr>
 						</table>                                                    

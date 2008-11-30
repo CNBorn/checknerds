@@ -35,20 +35,14 @@ handlers:
 - url: /Login.+
   script: hello.py
 
-- url: /SignIn
-  script: hello.py
-
-- url: /SignOut.+
-  script: hello.py
-
-- url: /Add
+- url: /Logout.+
   script: hello.py
 
 - url: /additem
-  script: hello.py
+  script: tarsusaItemCore.py
 
 - url: /edititem/.*
-  script: hello.py
+  script: tarsusaItemCore.py
 
 - url: /removeItem/.*
   script: tarsusaItemCore.py
@@ -90,9 +84,6 @@ handlers:
   script: tag.py
 
 - url: /img
-  script: hello.py
-
-- url: /dashboard
   script: hello.py
 
 - url: /m/.+

@@ -18,15 +18,12 @@ from google.appengine.ext import db
 
 import datetime
 import string
-from google.appengine.ext.webapp import template
-from google.appengine.api import images
-from google.appengine.api import memcache
 
+import memcache
 
 from modules import *
 from base import *
 import logging
-
 
 class DoneItem(tarsusaRequestHandler):
 	def get(self):
@@ -52,6 +49,8 @@ class DoneItem(tarsusaRequestHandler):
 				tItem.donedate = datetime.datetime.now()
 				tItem.done = True
 				tItem.put()
+
+				memcache.event('doneitem', CurrentUser.key().id())
 			
 			else:
 				## if this item is a routine item.
@@ -60,24 +59,18 @@ class DoneItem(tarsusaRequestHandler):
 				NewlyDoneRoutineItem.routineid = int(ItemId)
 				if DoneYesterdaysDailyRoutine == True:
 					NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
+
+					memcache.event('doneroutineitem_daily_yesterday', CurrentUser.key().id())
+				else:
+					memcache.event('doneroutineitem_daily_today', CurrentUser.key().id())
 				
 				#NewlyDoneRoutineItem.routine = tItem.routine
 				# The done date will be automatically added by GAE datastore.			
+				
 				NewlyDoneRoutineItem.put()
 					
-				#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
-				if cachedUserDailyroutineToday:
-					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
-						logging.error('Memcache delete failed: Done a Daily RoutineItem')
-				else:
-					pass
-
-
-		
 		#self.redirect(self.request.uri)
 		#self.redirect('/')
-
 
 class UnDoneItem(tarsusaRequestHandler):
 	def get(self):
@@ -108,21 +101,18 @@ class UnDoneItem(tarsusaRequestHandler):
 				tItem.done = False
 
 				tItem.put()
+				
+				memcache.event('undoneitem', CurrentUser.key().id())
 			else:
-				if tItem.routine == 'daily':
-					
-					#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-					cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
-					if cachedUserDailyroutineToday:
-						if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
-							logging.error('Memcache delete failed: delete Daily RoutinelogItem')
-					else:
-						pass
-					
+				if tItem.routine == 'daily':				
+
 					if UndoneYesterdaysDailyRoutine != True:
 
 						del tItem.donetoday
 						tItem.put()
+						
+						memcache.event('undoneroutineitem_daily_today', CurrentUser.key().id())
+						
 						## Please Do not forget to .put()!
 
 						## This is a daily routine, and we are going to undone it.
@@ -143,6 +133,9 @@ class UnDoneItem(tarsusaRequestHandler):
 								result.delete()
 					else:
 						# Undone Yesterday's daily routine item.	
+						
+						memcache.event('undoneroutineitem_daily_yesterday', CurrentUser.key().id())
+						
 						try:
 							del tItem.doneyesterday
 							tItem.put()
@@ -152,29 +145,23 @@ class UnDoneItem(tarsusaRequestHandler):
 						one_day = datetime.timedelta(days=1)
 						#yesterday = datetime.date.today() - one_day
 						yesterday = datetime.datetime.combine(datetime.date.today() - one_day,datetime.time(0))
-						#self.write('y' + str(yesterday))
 						tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday, datetime.datetime.today())
 						## CAUTION: SOME ITEM MAY BE DONE IN THE NEXT DAY, SO THE DONEDATE WILL BE IN NEXT DAY
 						## THEREFORE donedate>:2 and donedate<datetime.datetime.today() <--today() is datetime
 
 						for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-							#self.write(str(result.donedate)+'#')
 							if result.donedate < datetime.datetime.now() and result.donedate.date() == yesterday.date(): #and result.donedate.date() > datetime.datetime.date(datetime.datetime.now() - datetime.timedelta(days=2)):
-								#self.write('got')
 								result.delete()
 							else:
 								pass
 
 class RemoveItem(tarsusaRequestHandler):
 	def get(self):
-		#self.write('this is remove page')
-
-		# Permission check is very important.
-
 		ItemId = self.request.path[12:]
 		## Please be awared that ItemId here is a string!
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 			
+		# Permission check is very important.
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login:
 			CurrentUser = self.get_user_db()
@@ -187,6 +174,8 @@ class RemoveItem(tarsusaRequestHandler):
 			if tItem.routine == 'none':
 				## if this item is not a routine item.
 				tItem.delete()
+				
+				memcache.event('deleteitem', CurrentUser.key().id())
 
 			else:
 				## Del a RoutineLog item!
@@ -205,22 +194,215 @@ class RemoveItem(tarsusaRequestHandler):
 					result.delete()
 
 				tItem.delete()
-
-				#memcache related. Clear ajax_DailyroutineTodayCache after remove a routine item
-				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
-				if cachedUserDailyroutineToday:
-					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
-						logging.error('Memcache delete failed: Deleteing RoutineItem')
-
+				
+				memcache.event('deleteroutineitem_daily', CurrentUser.key().id())
 
 		self.redirect('/')
 
+
+class AddItemProcess(tarsusaRequestHandler):
+	def post(self):
+		
+		if self.request.get('cancel') != "取消":
+		
+			# Permission check is very important.
+			# New CheckLogin code built in tarsusaRequestHandler 
+			if self.chk_login:
+				CurrentUser = self.get_user_db()
+			else:
+				#self.redirect('/')
+				return False
+
+			try:
+				# The following code works on GAE platform.
+				# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
+				first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
+				
+				# for changed tags from String to List:
+				#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
+
+				tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+				first_tarsusa_item.public = self.request.get('public')
+				first_tarsusa_item.done = False
+		
+				# DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
+				# The easiest way to convert this to a datetime seems to be;
+				#datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
+				# the '*' operator unpacks the tuple, producing the argument list.	
+				# also learned sth from: http://bytes.com/forum/thread603681.html
+
+				# Logic: If the expectdate is the same day as today, It is none.
+				expectdatetime = None
+				expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
+				if expectdate == datetime.datetime.date(datetime.datetime.today()):
+					expectdatetime == None
+				else:
+					currenttime = datetime.datetime.time(datetime.datetime.now())
+					expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+				first_tarsusa_item.expectdate =  expectdatetime
+
+				## the creation date will be added automatically by GAE datastore
+				first_tarsusa_item.put()
+				
+				# http://blog.ericsk.org/archives/1009
+				# This part of tag process inspired by ericsk.
+				# many to many
+
+			except:
+				## the following code works on the localhost GAE runtimes.
+				try:
+					first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+					tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
+					first_tarsusa_item.public = self.request.get('public').decode('utf-8')
+									
+					expectdatetime = None
+					expectdate = datetime.date(*time.strptime(self.request.get('inputDate').decode('utf-8'),"%Y-%m-%d")[:3])
+					if expectdate == datetime.datetime.date(datetime.datetime.today()):
+						expectdatetime == None
+					else:
+						currenttime = datetime.datetime.time(datetime.datetime.now())
+						expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+					first_tarsusa_item.expectdate =  expectdatetime
+					
+					first_tarsusa_item.done = False
+					first_tarsusa_item.put()
+
+				except:
+					## SOMETHING WRONG
+						self.write('something is wrong.') 
+
+			
+			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
+			if cgi.escape(self.request.get('routine')) == 'daily':
+				memcache.event('addroutineitem_daily', CurrentUser.key().id())
+			else:
+				memcache.event('additem', CurrentUser.key().id())
+
+		
+			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
+				
+				#each_cat = Tag(name=each_tag_in_tarsusaitem)
+				#each_cat.count += 1
+				#each_cat.put()
+				
+				## It seems that these code above will create duplicated tag model.
+				## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
+				catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
+				try:
+					each_cat = catlist[0]
+				
+				except:				
+					try:
+						#added this line for Localhost GAE runtime...
+						each_cat = Tag(name=each_tag_in_tarsusaitem.decode('utf-8'))			
+						each_cat.put()
+					except:
+						each_cat = Tag(name=each_tag_in_tarsusaitem)
+						each_cat.put()
+
+				first_tarsusa_item.tags.append(each_cat.key())
+				# To Check whether this user is using this tag before.
+				tag_AlreadyUsed = False
+				for check_whether_used_tag in CurrentUser.usedtags:
+					item_check_whether_used_tag = db.get(check_whether_used_tag)
+					if item_check_whether_used_tag != None:
+						if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
+							tag_AlreadyUsed = True
+					else:
+						if each_cat.key() == check_whether_used_tag:
+							tag_AlreadyUsed = True
+					
+				if tag_AlreadyUsed == False:
+					CurrentUser.usedtags.append(each_cat.key())		
+
+			first_tarsusa_item.put()
+			CurrentUser.put()
+
+class EditItemProcess(tarsusaRequestHandler):
+	def post(self):	
+
+		tItemId = self.request.path[10:]
+		## Please be awared that tItemId here is a string!
+		tItem = tarsusaItem.get_by_id(int(tItemId))
+
+		# Permission check is very important.
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login:
+			CurrentUser = self.get_user_db()
+		else:
+			self.redirect('/')
+
+		
+		if tItem.user == users.get_current_user():
+			
+			#Update Expectdate.
+			if self.request.get('inputDate') == 'None':
+				expectdatetime = None
+			else:
+				expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
+				currenttime = datetime.datetime.time(datetime.datetime.now())
+				expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+			tItem.expectdate =  expectdatetime
+
+			tItem.name = cgi.escape(self.request.get('name'))
+			tItem.comment = cgi.escape(self.request.get('comment'))
+			tItem.routine = cgi.escape(self.request.get('routine'))
+			tItem.public = cgi.escape(self.request.get('public'))
+			
+			tItem.put()
+
+			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
+			if cgi.escape(self.request.get('routine')) == 'daily':			
+				memcache.event('editroutineitem_daily', CurrentUser.key().id())
+			else:
+				memcache.event('editroutineitem', CurrentUser.key().id())
+	
+			## Deal with Tags.			
+			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+
+			# Hard to find a way to clear this list.
+			tItem.tags = []
+			tItem.put()
+			
+			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
+		
+				## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
+				catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
+				try:
+					each_cat = catlist[0]				
+				except:				
+					each_cat = Tag(name=each_tag_in_tarsusaitem)
+					each_cat.put()
+				
+				tItem.tags.append(each_cat.key())
+				
+				# To Check whether this user is using this tag before.
+				tag_AlreadyUsed = False
+				for check_whether_used_tag in CurrentUser.usedtags:
+					item_check_whether_used_tag = db.get(check_whether_used_tag)
+					if item_check_whether_used_tag != None:
+						if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
+							tag_AlreadyUsed = True
+					else:
+						if each_cat.key() == check_whether_used_tag:
+							tag_AlreadyUsed = True
+					
+				if tag_AlreadyUsed == False:
+					CurrentUser.usedtags.append(each_cat.key())		
+
+			tItem.put()
+			CurrentUser.put()
+
+		else:
+			self.write('Sorry, Your session is out of time.')
 
 
 def main():
 	application = webapp.WSGIApplication([('/doneItem/\\d+.+',DoneItem),
 									   ('/undoneItem/\\d+.+',UnDoneItem),
 									   ('/removeItem/\\d+', RemoveItem),
+								       ('/additem',AddItemProcess),
+									   ('/edititem/\\d+', EditItemProcess), 
 									   ],
                                        debug=True)
 

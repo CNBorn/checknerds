@@ -131,237 +131,17 @@ class MainPage(tarsusaRequestHandler):
 
 			## Homepage for Non-Registered Users.
 
-			## the not equal != is not supported!
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' ORDER BY date DESC LIMIT 6")
-
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE public = 'public' and routine = 'none' and done = True ORDER BY date DESC LIMIT 6")
-			
 			template_values = {
-				
 				'UserNickName': "访客",
 				'AnonymousVisitor': "Yes",
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
-				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
 				'htmltag_TotalUser': TotalUserCount,
 				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-
 			}
-
 
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/welcome.html')
 			self.response.out.write(template.render(path, template_values))
 
-class AddItemProcess(tarsusaRequestHandler):
-	def post(self):
-		
-		if self.request.get('cancel') != "取消":
-		
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()
-
-			try:
-				# The following code works on GAE platform.
-			
-				# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
-
-				#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8').encode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8').encode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8').encode('utf-8')))
-				#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
-				first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
-				
-				# for changed tags from String to List:
-				#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
-
-				#tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
-				tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-				
-				#first_tarsusa_item.public = self.request.get('public').decode('utf-8')
-				first_tarsusa_item.public = self.request.get('public')
-
-				first_tarsusa_item.done = False
-		
-		
-				# DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
-				# The easiest way to convert this to a datetime seems to be;
-				#datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
-				# the '*' operator unpacks the tuple, producing the argument list.	
-				# also learned sth from: http://bytes.com/forum/thread603681.html
-
-				# Logic: If the expectdate is the same day as today, It is none.
-				expectdatetime = None
-				expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
-				if expectdate == datetime.datetime.date(datetime.datetime.today()):
-					expectdatetime == None
-				else:
-					currenttime = datetime.datetime.time(datetime.datetime.now())
-					expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
-				first_tarsusa_item.expectdate =  expectdatetime
-
-
-				## the creation date will be added automatically by GAE datastore
-				first_tarsusa_item.put()
-				
-				# http://blog.ericsk.org/archives/1009
-				# This part of tag process inspired by ericsk.
-				# many to many
-
-			except:
-				## the following code works on the localhost GAE runtimes.
-				try:
-					first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
-					tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
-					first_tarsusa_item.public = self.request.get('public').decode('utf-8')
-									
-					expectdatetime = None
-					expectdate = datetime.date(*time.strptime(self.request.get('inputDate').decode('utf-8'),"%Y-%m-%d")[:3])
-					if expectdate == datetime.datetime.date(datetime.datetime.today()):
-						expectdatetime == None
-					else:
-						currenttime = datetime.datetime.time(datetime.datetime.now())
-						expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
-					first_tarsusa_item.expectdate =  expectdatetime
-					
-					first_tarsusa_item.done = False
-					first_tarsusa_item.put()
-
-				except:
-					## SOMETHING WRONG
-						self.write('something is wrong.') 
-
-			
-			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-			if cgi.escape(self.request.get('routine')) == 'daily':
-				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
-				if cachedUserDailyroutineToday:
-					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
-						logging.error('Memcache delete failed: Adding Daily RoutineItem')
-			else:
-				pass
-
-
-		
-			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
-				
-				#each_cat = Tag(name=each_tag_in_tarsusaitem)
-				#each_cat.count += 1
-				#each_cat.put()
-				
-				## It seems that these code above will create duplicated tag model.
-				## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
-				catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
-				try:
-					each_cat = catlist[0]
-				
-				except:				
-					try:
-						#added this line for Localhost GAE runtime...
-						each_cat = Tag(name=each_tag_in_tarsusaitem.decode('utf-8'))			
-						each_cat.put()
-					except:
-						each_cat = Tag(name=each_tag_in_tarsusaitem)
-						each_cat.put()
-
-				first_tarsusa_item.tags.append(each_cat.key())
-				# To Check whether this user is using this tag before.
-				tag_AlreadyUsed = False
-				for check_whether_used_tag in CurrentUser.usedtags:
-					item_check_whether_used_tag = db.get(check_whether_used_tag)
-					if item_check_whether_used_tag != None:
-						if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
-							tag_AlreadyUsed = True
-					else:
-						if each_cat.key() == check_whether_used_tag:
-							tag_AlreadyUsed = True
-					
-				if tag_AlreadyUsed == False:
-					CurrentUser.usedtags.append(each_cat.key())		
-
-			first_tarsusa_item.put()
-			CurrentUser.put()
-
-class EditItemProcess(tarsusaRequestHandler):
-	def post(self):
-		
-		# Permission check is very important.
-
-		tItemId = self.request.path[10:]
-		## Please be awared that tItemId here is a string!
-		tItem = tarsusaItem.get_by_id(int(tItemId))
-
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-
-		
-		if tItem.user == users.get_current_user():
-			
-			#Update Expectdate.
-			if self.request.get('inputDate') == 'None':
-				expectdatetime = None
-			else:
-				expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
-				currenttime = datetime.datetime.time(datetime.datetime.now())
-				expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
-			tItem.expectdate =  expectdatetime
-
-			tItem.name = cgi.escape(self.request.get('name'))
-			tItem.comment = cgi.escape(self.request.get('comment'))
-			tItem.routine = cgi.escape(self.request.get('routine'))
-			tItem.public = cgi.escape(self.request.get('public'))
-			
-			tItem.put()
-
-			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-			if cgi.escape(self.request.get('routine')) == 'daily':
-				cachedUserDailyroutineToday = memcache.get("%s_dailyroutinetoday" % (str(CurrentUser.key().id())))
-				if cachedUserDailyroutineToday:
-					if not memcache.delete("%s_dailyroutinetoday" % (str(CurrentUser.key().id()))):
-						logging.error('Memcache delete failed: Edit an item into daily RoutineItem')
-			else:
-				pass
-
-	
-			## Deal with Tags.			
-			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-
-			# Hard to find a way to clear this list.
-			tItem.tags = []
-			tItem.put()
-			
-			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
-		
-				## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
-				catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
-				try:
-					each_cat = catlist[0]				
-				except:				
-					each_cat = Tag(name=each_tag_in_tarsusaitem)
-					each_cat.put()
-				
-				tItem.tags.append(each_cat.key())
-				
-				# To Check whether this user is using this tag before.
-				tag_AlreadyUsed = False
-				for check_whether_used_tag in CurrentUser.usedtags:
-					item_check_whether_used_tag = db.get(check_whether_used_tag)
-					if item_check_whether_used_tag != None:
-						if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
-							tag_AlreadyUsed = True
-					else:
-						if each_cat.key() == check_whether_used_tag:
-							tag_AlreadyUsed = True
-					
-				if tag_AlreadyUsed == False:
-					CurrentUser.usedtags.append(each_cat.key())		
-
-			tItem.put()
-			CurrentUser.put()
-
-		else:
-			self.write('Sorry, Your session is out of time.')
 
 class ViewItem(tarsusaRequestHandler):
 	def get(self):
@@ -881,7 +661,6 @@ class UserSettingPage(tarsusaRequestHandler):
 			 #sendmsg(self, 'fill in the form!')  
 			 self.write('please write')
 
-
 class UserMainPage(tarsusaRequestHandler):
 	def get(self):
 
@@ -1049,7 +828,6 @@ class UserMainPage(tarsusaRequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'pages/usermainpage.html')
 		self.response.out.write(template.render(path, template_values))
 
-
 class Image (webapp.RequestHandler):
 	def get(self):
 		#Add memcached here to improve the performence.
@@ -1071,11 +849,6 @@ class Image (webapp.RequestHandler):
 					logging.error("Memcache set failed: When Loading avatar_image")
 			else:
 				self.error(404)
-
-	
-
-		
-
 
 class DoneLogPage(tarsusaRequestHandler):
 	def get(self):
@@ -1172,10 +945,6 @@ class DoneLogPage(tarsusaRequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
 		self.response.out.write(template.render(path, template_values))
 
-
-
-
-
 class StatsticsPage(tarsusaRequestHandler):
 	def get(self):
 	
@@ -1239,11 +1008,6 @@ class StatsticsPage(tarsusaRequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
 
-class DashboardPage(tarsusaRequestHandler):
-	def get(self):
-		print 'dashboard page'
-
-
 class NotFoundPage(tarsusaRequestHandler):
 	def get(self):
 		
@@ -1251,8 +1015,6 @@ class NotFoundPage(tarsusaRequestHandler):
 
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
-								       ('/additem',AddItemProcess),
-									   ('/edititem/\\d+', EditItemProcess), 
 									   ('/i/\\d+',ViewItem),
 									   ('/user/.+/setting',UserSettingPage),
 									   ('/user/.+/todo',UserToDoPage),
@@ -1263,10 +1025,8 @@ def main():
 									   ('/Logout.+',SignOutPage),
 								       ('/donelog/.+',DoneLogPage),
 								       ('/statstics',StatsticsPage),
-									   ('/dashboard', DashboardPage),
 									   ('.*',NotFoundPage)],
                                        debug=True)
-
 
 	wsgiref.handlers.CGIHandler().run(application)
 

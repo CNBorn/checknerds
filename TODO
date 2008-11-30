@@ -371,3 +371,21 @@
 	In 08.11.25
 		Serperate tarsusaItemCore
 		Seems Fixed undone routineItem in yesterday BUG.
+	IN 08.11.26
+		Testing & adding memcache code just like I supposed it.
+		One Problem:
+			How shall I notice the update of memcache content, now I use delete/set method.
+		It keeps popup 'set failed' but I think It set up because I can delete it later.
+	IN 08.11.27
+		Solved 'set failed' problem with set proper return value in new memcache.set function
+		Starting to implement the whole new memecache system.
+	IN 08.11.28
+		Added New memcache code in tarsusaItemCore.py
+		Fixed WelcomePageItem's BUG
+		FOUND A NEW BUG: 405 During ajax/Bottomcontents
+		NEWly added item can not be shown!
+	IN 08.11.30
+		FIXED Newly Added Item BUG.
+		Basically Implemented the New Memcache Architecture
+		Proper code separation, especially in tarsusaItemCore
+

@@ -84,13 +84,15 @@
 	function ajax_undoneItem(strLink){
 			$.ajax({type: "GET", url: strLink ,success: function(msg){}}); 
 			$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+			$('#div_itemstats').load('/ajax/frontpage_getitemstats');
 			return false;
 		}
 
-		function ajax_doneItem(strLink){
-				$.ajax({type: "GET", url: strLink ,success: function(msg){} }); 
-				$('#latestcodes').load('/ajax/frontpage_bottomcontents');
-				return false;
+	function ajax_doneItem(strLink){
+			$.ajax({type: "GET", url: strLink ,success: function(msg){} }); 
+			$('#latestcodes').load('/ajax/frontpage_bottomcontents');
+			$('#div_itemstats').load('/ajax/frontpage_getitemstats');
+			return false;
 		}
 </script>
 
