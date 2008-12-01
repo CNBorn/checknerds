@@ -88,7 +88,7 @@ table{width:100%;}
 #tagcloud-bot{background-image:url(./div-left-bottom.png);height:6px;width:686px;}
 #rightside{margin-left:693px;width:241px;}
 #googlead{width:242px;margin-top:10px;}
-#googlead-mid{background-color:#FEFEF1;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;height:203px;text-align:center;}
+#googlead-mid{background-color:#FEFEF1;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;min-height:165px;text-align:left;padding: 10px;}
 #codelist{margin-top:10px;}
 #codelist-mid{border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;width:220px;padding:10px;}
 #codelist-mid ul li{margin-left:-15px;line-height:18px;}

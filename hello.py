@@ -26,15 +26,11 @@ import logging
 
 class MainPage(tarsusaRequestHandler):
 	def get(self):
-		
-		#if self.chk_login() == True:
+	
 		if users.get_current_user() != None:
-
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()
+			CurrentUser = self.get_user_db()
 			
-			if not CurrentUser:
+			if CurrentUser == None:
 				# Create a User
 				# Actully I thought this would be useless when I have an signin page.
 				

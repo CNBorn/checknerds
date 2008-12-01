@@ -388,4 +388,7 @@
 		FIXED Newly Added Item BUG.
 		Basically Implemented the New Memcache Architecture
 		Proper code separation, especially in tarsusaItemCore
+		--- Rev. 72 --- 
+	IN 08.12.01
+		Added RecentRegisteredUsers in WelcomePage
 

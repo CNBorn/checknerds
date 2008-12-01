@@ -15,12 +15,6 @@ import re
 
 #Learnt from Plog.
 refresh_roles = {
-		'.+:page:.+' : ('comment', 'post', 'config', 'blogroll', 'upload'),
-		'(guest|login|admin):widget:recentcomments.*' : ('comment', 'config'),
-		'(guest|login|admin):widget:recentposts.*' : ('post', 'config'),
-		'(guest|login|admin):widget:blogroll.*' : ('blogroll', 'config'),
-		'(guest|login|admin):widget:.*' : ('comment', 'post', 'blogroll', 'config'),
-		'feed:tag:.*' : ('post', 'config'),
 		'additem' : ('itemstats', 'itemlist', 'tag'),
 		'addroutineitem_daily' : ('itemstats', 'dailyroutine_today', 'dailyroutine_yesterday', 'tag'),
 		'edititem' :  ('itemstats', 'itemlist', 'tag'),
@@ -36,18 +30,6 @@ refresh_roles = {
 		'addfriend' : ('friendstats', ''),
 		'removefriend' : ('friendstats', ''),
 		}
-
-def check_expire(strkey):
-	for role in refresh_roles:
-		if re.match(role, strkey):
-			for obj in refresh_roles[role]:
-				#if memcache_item.timestamp < obj_last_modify[obj]:
-				return True
-					
-
-			return False
-	#logging.warning('No refresh role for %s' % key)
-	return True
 
 def event(key, CurrentUserid):
 
@@ -66,7 +48,6 @@ def event(key, CurrentUserid):
 	
 	#return "%s_%s" % (CurrentUserid, obj)
 	return True
-
 
 
 def get(key):
@@ -96,7 +77,6 @@ def set(key, value, time=0):
 
 
 def get_item(key, CurrentUserID):
-	#key = key[:250]
 	itemoperate = ("%s_%s" % (str(CurrentUserID), key))
 	item = memcache.get(itemoperate)
 	if item == None:
@@ -107,7 +87,9 @@ def get_item(key, CurrentUserID):
 		return item
 
 def set_item(key, value, CurrentUserID, time=0):
-	#key = key[:250]
+	if str(CurrentUserID) == 'global':
+		time += 300
+	
 	itemoperate = ("%s_%s" % (str(CurrentUserID), key))
 	if memcache.set(itemoperate, value, time):
 		logging.debug('SET Memcache item %s' % itemoperate)

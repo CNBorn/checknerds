@@ -28,7 +28,7 @@
 						</div>
 					</div>
 					<div id="featuredcode3-bot"></div>
-					<div style="margin: 10px 10px 5px 10px;">		
+					<div style="margin: 10px 10px 0px 10px;">		
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('1')";>1</a>
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('2')";>2</a>
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('3')";>3</a>
@@ -42,6 +42,7 @@
 						}
 						window.onload = function() {							
 							$('#latestcodes').load('/ajax/frontpage_introbottomcontentsforanonymous');			
+							$('#googlead-mid').load('/ajax/frontpage_recentregistereduserforanonymous');
 							$('#welcome_ajaxcontent1 style').display='none';
 							$('#welcome_ajaxcontent2 style').display='none';
 							$('#welcome_ajaxcontent3 style').display='none';
@@ -80,7 +81,13 @@
                     </div>
                 	<div id="codelist-bot"></div>
                 </div>
-				
+				<div id="googlead">
+                	<div id="googlead-top"></div>
+                    <div id="googlead-mid">
+                    	<!--Remove the next few lines to place an ad-->
+                    </div>
+                    <div id="googlead-bot"></div>
+                </div>
             </div>
         {% endblock content-holder %}
 

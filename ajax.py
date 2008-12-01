@@ -578,15 +578,13 @@ class ajax_error(tarsusaRequestHandler):
 class get_fp_IntroductionBottomForAnonymous(tarsusaRequestHandler):
 	
 	def get(self):
-		
 		## Homepage for Non-Registered Users.
-
 		## Since this page will be shown often to the anonymous visitors, and the information can be shown in not actully real-time.
 		## Therefore Memcache implemented.
 		## I can't figure out how to use get_multi so I just cache the whole ajaxpage output. 
 		
 		## Thinking of to have an implementation of such Global memcache items
-		IsCachedAnonymousWelcomePage = memcache.get('strCachedAnonymousWelcomePage')
+		IsCachedAnonymousWelcomePage = memcache.get_item('strCachedAnonymousWelcomePage', 'global')
 		
 		if IsCachedAnonymousWelcomePage:
 			
@@ -608,12 +606,48 @@ class get_fp_IntroductionBottomForAnonymous(tarsusaRequestHandler):
 			#Manupilating Templates 
 			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_anonymousbottomcontents.html')	
 			strCachedAnonymousWelcomePage = template.render(path, template_values)
-			if not memcache.set('strCachedAnonymousWelcomePage',strCachedAnonymousWelcomePage, 300):
-				logging.error('Memcache set failed: ajax_AnonymousIntroBottomInfo')
+			
+			memcache.set_item("strCachedAnonymousWelcomePage", strCachedAnonymousWelcomePage, 'global')
 
 		self.response.out.write(strCachedAnonymousWelcomePage)
 		
+class get_fp_RecentRegisteredUserForAnonymous(tarsusaRequestHandler):
+	
+	def get(self):
+		IsCachedRecentRegisteredUsers = memcache.get_item('strCachedRecentRegisteredUsers', 'global')
+		
+		if IsCachedRecentRegisteredUsers:
+			strCachedRecentRegisteredUsers = IsCachedRecentRegisteredUsers
+		else:
 
+			tarsusaUserCollection = db.GqlQuery("SELECT * FROM tarsusaUser ORDER BY datejoinin DESC LIMIT 6")
+			strRecentUsers = ''
+			if tarsusaUserCollection: 
+				for each_RecentUser in tarsusaUserCollection:
+					if each_RecentUser.avatar:
+						strRecentUsers += '<li>' + '<a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '"><img src=/img?img_user=' + str(each_RecentUser.key()) + " width=32 height=32>"
+					else:
+						## Show Default Avatar
+						strRecentUsers += '<li>' + '<a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>"
+
+					strRecentUsers += cgi.escape(each_RecentUser.user.nickname()) + '</a>'
+					#Complicatied TimeStamp needs to be done.
+					#UserFriends += str(datetime.datetime.now() - each_Friend.datejoinin) 
+					strRecentUsers += '<br /></li>'
+
+
+			template_values = {
+				'UserNickName': '访客',
+				'tarsusaUser_RecentRegistered': strRecentUsers,
+ 		     }
+			
+			#Manupilating Templates 
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_anonymousrecentregisteredusers.html')	
+			strCachedRecentRegisteredUsers = template.render(path, template_values)
+			
+			memcache.set_item("strCachedRecentRegisteredUsers", strCachedRecentRegisteredUsers, 'global')
+
+		self.response.out.write(strCachedRecentRegisteredUsers)
 
 def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
@@ -622,6 +656,7 @@ def main():
 										('/ajax/frontpage_getfriendstats', get_fp_friendstats),
 										('/ajax/frontpage_getitemstats', get_fp_itemstats),
 										('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
+										('/ajax/frontpage_recentregistereduserforanonymous',get_fp_RecentRegisteredUserForAnonymous),
 										(r'/ajax/allpage_additem.+', additem),
 										(r'/ajax/allpage_edititem.+', edititem),
 										('/ajax/getjson_usertodoitems', getjson_usertodoitems),
