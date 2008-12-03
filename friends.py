@@ -28,6 +28,7 @@ from modules import *
 from base import *
 import logging
 
+import memcache
 class FindFriendPage(tarsusaRequestHandler):
 	def get(self):
 	
@@ -109,9 +110,11 @@ class AddFriendProcess(tarsusaRequestHandler):
 		ToBeAddedUser = tarsusaUser.get_by_id(int(ToBeAddedUserId))
 
 		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login:
+			CurrentUser = self.get_user_db()
+		else:
+			self.redirect('/')
 
 		AlreadyAddedAsFriend = False
 		for eachFriend in CurrentUser.friends:
@@ -127,6 +130,7 @@ class AddFriendProcess(tarsusaRequestHandler):
 			## You can't add your self! and You can add a person twice!
 			pass
 		
+		memcache.event('addfriend', CurrentUser.key().id())
 		self.redirect('/FindFriend')
 
 

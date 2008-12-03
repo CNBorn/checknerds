@@ -16,19 +16,26 @@ import re
 #Learnt from Plog.
 refresh_roles = {
 		'additem' : ('itemstats', 'itemlist', 'tag'),
+		'addpublicitem' : ('itemstats', 'itemlist', 'tag', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony'),
 		'addroutineitem_daily' : ('itemstats', 'dailyroutine_today', 'dailyroutine_yesterday', 'tag'),
 		'edititem' :  ('itemstats', 'itemlist', 'tag'),
+		'editpublicitem' : ('itemstats', 'itemlist', 'tag', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony'),
 		'editroutineitem_daily' : ('itemstats', 'dailyroutine_today', 'dailyroutine_yesterday', 'itemlist', 'tag'),
+		
+		
 		'deleteitem' : ('itemstatus', 'itemlist' ,'tag'),
+		'deletepublicitem' : ('itemstats', 'itemlist', 'tag', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony'),
 		'deleteroutineitem_daily' : ('itemstats', 'dailyroutine_today','dailyroutine_yesterday', 'tag'),
 		'doneitem' : ('itemstats', 'itemlist'),
+		'donepublicitem' : ('itemstats', 'itemlist', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony'),
 		'doneroutineitem_daily_today' : ('dailyroutine_today'),
 		'doneroutineitem_daily_yesterday' : ('dailytouine_yesterday'),
 		'undoneitem' : ('itemstats', 'itemlist'),
+		'undonepublicitem' : ('itemstats', 'itemlist', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony'),
 		'undoneroutineitem_daily_today' : ('dailyroutine_today'),
 		'undoneroutineitem_daily_yesterday' : ('dailytouine_yesterday'),
-		'addfriend' : ('friendstats', ''),
-		'removefriend' : ('friendstats', ''),
+		'addfriend' : ('friendstats', 'mainpage_friends'),
+		'removefriend' : ('friendstats', 'mainpage_friends'),
 		}
 
 def event(key, CurrentUserid):

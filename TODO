@@ -391,4 +391,20 @@
 		--- Rev. 72 --- 
 	IN 08.12.01
 		Added RecentRegisteredUsers in WelcomePage
+	IN 08.12.02
+		Fixed a bug in tarsusaItemCore (forget to import time)
+		
+		Provisions for Next Phase Rev.
+			Memcache to be done in: ViewItem, FindFriend, UserMainPage
+			DisplayName setting in UserSettingPage
+			Seperation of css files.
 
+		Provisions for future Rev.
+			Proper error/debug/info messages.
+			Better Donglog Page.
+			ETC.
+		--------------------------------------------------------
+		Headache Adding Memcache in UserMainPage
+	IN 08.12.03
+		Solved! Implemented Memcache in UserMainPage!
+	

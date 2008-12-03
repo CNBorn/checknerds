@@ -16,6 +16,7 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 
+import time
 import datetime
 import string
 
@@ -170,6 +171,8 @@ class RemoveItem(tarsusaRequestHandler):
 
 		if tItem.user == users.get_current_user():
 			## Check User Permission to done this Item
+			if tItem.public != 'none':
+				memcache.event('deletepublicitem', CurrentUser.key().id())
 
 			if tItem.routine == 'none':
 				## if this item is not a routine item.
@@ -277,7 +280,9 @@ class AddItemProcess(tarsusaRequestHandler):
 				memcache.event('addroutineitem_daily', CurrentUser.key().id())
 			else:
 				memcache.event('additem', CurrentUser.key().id())
-
+			
+			if cgi.escape(self.request.get('public')) != 'none':
+				memcache.event('addpublicitem', CurrentUser.key().id())
 		
 			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
 				
@@ -356,6 +361,9 @@ class EditItemProcess(tarsusaRequestHandler):
 				memcache.event('editroutineitem_daily', CurrentUser.key().id())
 			else:
 				memcache.event('editroutineitem', CurrentUser.key().id())
+			
+			if cgi.escape(self.request.get('public')) != 'none':
+				memcache.event('editpublicitem', CurrentUser.key().id())
 	
 			## Deal with Tags.			
 			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")

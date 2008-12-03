@@ -17,7 +17,7 @@ import datetime
 import string
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
-from google.appengine.api import memcache
+import memcache
 
 from modules import *
 from base import *
@@ -686,39 +686,58 @@ class UserMainPage(tarsusaRequestHandler):
 		outputStringUserAvatar = ''
 
 		if ViewUser != None:
-				
-			#self.write(ViewUser.avatar)
-			#self.response.headers['Content-Type'] = 'image/'  #str(avatar.url_mime) 
+		
+			## Preparation
+			## Will be useed
 			if ViewUser.avatar:
 				outputStringUserAvatar = "<img src='/img?img_user=" + str(ViewUser.key()) + "' width=64 height=64>"
 			else:
-				#self.write('none image')
-				#self.response.out.write(' %s</div>' % cgi.escape(greeting.content))
-				#tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND public = True ORDER BY date DESC LIMIT 15", ViewUser)
 				outputStringUserAvatar = "<img src='/img/default_avatar.jpg' width=64 height=64>"
-			
+				
 			outputStringUserMainPageTitle = ViewUser.user.nickname() + "公开的项目".decode("utf-8")
 
-				
-				
-
-			tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
 			outputStringRoutineLog = ""
-			
+
+			#-------------------------------------
 			if users.get_current_user() == None:
+				
 				UserNickName = "访客"
 				logictag_OneoftheFriendsViewThisPage = False
 				CurrentUserIsOneofViewUsersFriends = False
 				UserFriends = '请登录查看此用户的朋友信息'
-			else:
+				ViewedUserIsOneofCurrentUsersFriends = False
+
+				#Check Whether there is usermainPage_publicitems_anony
+				cachedUserMainPagePublicItemsAnony = memcache.get_item("mainpage_publicitems_anony", ViewUser.key().id())
+				if cachedUserMainPagePublicItemsAnony is not None:
+					outputStringRoutineLog = cachedUserMainPagePublicItemsAnony
+				else:
+					#no cache public_items_anony, get them
+					tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
+					# TODO
+					#the code block below is a little bit duplicated, will find a way to make it simple in future. TODO
+					for each_Item in tarsusaItemCollection_UserRecentPublicItems:
+						## Added Item public permission check.
+				
+						if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
+							if each_Item.done == True:
+								outputStringRoutineLog += "<img src='/img/accept16.png'>" 
+							outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+						elif each_Item.public == 'public':
+							if each_Item.done == True:
+								outputStringRoutineLog += "<img src='/img/accept16.png'>" 
+							outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+						else:
+							pass
+
+
+			else:				
+				
+				#Check Whether CurrerentUser is one of ViewUser's friends
+
 				UserNickName = ViewUser.user.nickname()
-
-				## Check whether the currentuser is a friend of this User.
-				## Made preparation for the following public permission check.
-
-				# code below are comming from GAE example
-				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-				CurrentUser = q.get()
+				
+				CurrentUser = self.get_user_db()
 
 				CurrentUserIsOneofViewUsersFriends = False
 
@@ -727,7 +746,6 @@ class UserMainPage(tarsusaRequestHandler):
 						CurrentUserIsOneofViewUsersFriends = True
 						logictag_OneoftheFriendsViewThisPage = True
 
-
 				## Check whether the ViewedUser is a friend of CurrentUser.
 				## For AddUserAsFriend button.
 				ViewedUserIsOneofCurrentUsersFriends = False
@@ -735,77 +753,124 @@ class UserMainPage(tarsusaRequestHandler):
 				for each_Friend_key in CurrentUser.friends:
 					if each_Friend_key == ViewUser.key():
 						ViewedUserIsOneofCurrentUsersFriends = True
-
 			
-			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
-				## Added Item public permission check.
-		
-				if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
-					if each_Item.done == True:
-						outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-					outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-				elif each_Item.public == 'public':
-					if each_Item.done == True:
-						outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-					outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+				# Get user friend list
+				cachedUserMainPageFriends = memcache.get_item("mainpage_friends", ViewUser.key().id())
+				if cachedUserMainPageFriends is not None:
+					UserFriends = cachedUserMainPageFriends
 				else:
-					pass
+					# This is shown to all logged in users.
+					#Check This Users Friends.
+					tarsusaUserFriendCollection = ViewUser.friends
+					UserFriends = ''
+					if tarsusaUserFriendCollection: 
+						for each_FriendKey in tarsusaUserFriendCollection:
+							UsersFriend =  db.get(each_FriendKey)
+							if UsersFriend.avatar:
+								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=32 height=32>" + '</dt>'
+							else:
+								## Show Default Avatar
+								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
 
-
-			#Check This Users Friends.
-			tarsusaUserFriendCollection = ViewUser.friends
-			UserFriends = ''
-			if tarsusaUserFriendCollection: 
-				for each_FriendKey in tarsusaUserFriendCollection:
-					UsersFriend =  db.get(each_FriendKey)
-					if UsersFriend.avatar:
-						UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=32 height=32>" + '</dt>'
+							UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd></dl>'
 					else:
-						## Show Default Avatar
-						UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
-
-					UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd></dl>'
-
-
-
-			else:
-				UserFriends = '当前没有添加朋友'
+						UserFriends = '当前没有添加朋友'
+					
+					#set cache item
+					memcache.set_item("mainpage_friends", UserFriends, ViewUser.key().id())
+					
 
 
+				#----------------------------------------				
+				if ViewedUserIsOneofCurrentUsersFriends == True:
+					#Check Whether there is usermainpage_publicitems
+					cachedUserMainPagePublicItems = memcache.get_item("mainpage_publicitems", ViewUser.key().id())
+					if cachedUserMainPagePublicItems is not None:
+						outputStringRoutineLog = cachedUserMainPagePublicItems
+					else:
+						#no cache public items, get them
+						#Show ViewUser's public items
+						tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
 
+						for each_Item in tarsusaItemCollection_UserRecentPublicItems:
+							## Added Item public permission check.
+					
+							if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
+								if each_Item.done == True:
+									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
+								outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+							elif each_Item.public == 'public':
+								if each_Item.done == True:
+									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
+								outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+							else:
+								pass
+						
+						#set cache item
+						memcache.set_item("mainpage_publicitems", outputStringRoutineLog, ViewUser.key().id())
+
+
+				else:
+					#CurrentUser is not one of ViewUser's friends.
+
+					#Check Whether there is usermainPage_publicitems_anony
+					cachedUserMainPagePublicItemsAnony = memcache.get_item("mainpage_publicitems_anony", ViewUser.key().id())
+					if cachedUserMainPagePublicItemsAnony is not None:
+						outputStringRoutineLog = cachedUserMainPagePublicItemsAnony
+					else:
+						#no cache public_items_anony, get them
+						
+						tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)						
+						#Show ViewUser's public items
+						for each_Item in tarsusaItemCollection_UserRecentPublicItems:
+							## Added Item public permission check.
+					
+							if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
+								if each_Item.done == True:
+									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
+								outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+							elif each_Item.public == 'public':
+								if each_Item.done == True:
+									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
+								outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+							else:
+								pass
+
+						#set cache item
+						memcache.set_item("mainpage_publicitems_anony", outputStringRoutineLog, ViewUser.key().id())
 
 		else:
 			#self.write('not found this user and any items')
 			outputStringUserMainPageTitle = 'not found this user and any items'
 			outputStringRoutineLog = 'None'
 			self.error(404)
+			
 
-		if UserNickName != "访客":
+		if users.get_current_user() != None:
 			template_values = {
-					'PrefixCSSdir': "../",
-					
-					'UserLoggedIn': 'Logged In',
-
-					'UserID': CurrentUser.key().id(), #This indicates the UserSettingPage Link on the topright of the Page, so it should be CurrentUser
-
-					'ViewedUserNickName': UserNickName,
-					'UserNickName': CurrentUser.user.nickname(),
-					'ViewedUser': ViewUser,
-
-					'ViewedUserFriends': UserFriends,	
-
-					'UserAvatarImage': outputStringUserAvatar,
-					
-					'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
-					'UserWebsite': ViewUser.website,
-					'UserMainPageUserTitle': outputStringUserMainPageTitle,
+				'PrefixCSSdir': "../",
 				
-					'ViewedUserIsOneofCurrentUsersFriends': ViewedUserIsOneofCurrentUsersFriends,
-					'StringRoutineLog': outputStringRoutineLog,
-			}
+				'UserLoggedIn': 'Logged In',
 
+				'UserID': CurrentUser.key().id(), #This indicates the UserSettingPage Link on the topright of the Page, so it should be CurrentUser
+
+				'ViewedUserNickName': UserNickName,
+				'UserNickName': CurrentUser.user.nickname(),
+				'ViewedUser': ViewUser,
+
+				'ViewedUserFriends': UserFriends,	
+
+				'UserAvatarImage': outputStringUserAvatar,
+				
+				'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
+				'UserWebsite': ViewUser.website,
+				'UserMainPageUserTitle': outputStringUserMainPageTitle,
+			
+				'ViewedUserIsOneofCurrentUsersFriends': ViewedUserIsOneofCurrentUsersFriends,
+				'StringRoutineLog': outputStringRoutineLog,
+			}
 		else:
-				template_values = {
+			template_values = {
 					'PrefixCSSdir': "../",
 					
 					'ViewedUserNickName': ViewUser.user.nickname(),
@@ -817,11 +882,13 @@ class UserMainPage(tarsusaRequestHandler):
 					'UserWebsite': ViewUser.website,
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
 					'StringRoutineLog': outputStringRoutineLog,
-			}
-
-
-
+				}
+		
+			
 		path = os.path.join(os.path.dirname(__file__), 'pages/usermainpage.html')
+		
+		##Memcache this page.
+		
 		self.response.out.write(template.render(path, template_values))
 
 class Image (webapp.RequestHandler):
