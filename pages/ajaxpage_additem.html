@@ -1,9 +1,9 @@
 		<html>
 		<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
-		<link href="/img/style.css" rel="stylesheet" type="text/css" />
+		<link href="/css/style.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="/js/jquery.form.js"></script>
-		<link rel="stylesheet" media="screen" type="text/css" href="/img/datepicker.css" />
+		<link rel="stylesheet" media="screen" type="text/css" href="/css/datepicker.css" />
 		<script type="text/javascript" src="/js/datepicker.js"></script>
 		</head>
 		<script type="text/javascript"> 
@@ -27,6 +27,9 @@
 					</tr>
 					<tr colspan="2">
 					<td align="right">内容</td> <td><textarea name="comment" rows="6" cols="33" wrap="PHYSICAL" class="ml"></textarea></td>
+					</tr>
+					<tr colspan="2"><td></td>
+					<td><small>不超过500个字符，多余部分会被删除</small></td>
 					</tr>
 					<tr colspan="2">
 					<td align="right">类别</td> <td><input type="text" name="tags" size="35" value="{{addItemCatName}}" class="sl">

@@ -407,4 +407,15 @@
 		Headache Adding Memcache in UserMainPage
 	IN 08.12.03
 		Solved! Implemented Memcache in UserMainPage!
-	
+	IN 08.12.04
+		Done CSS file seperation.
+		UserDisplayName issue: I can't make the modification in template level, for them are not processing with CurrentUser Model directly.
+			I have made some changes( in ajax_doneroutine_both and index page in hello.py), but then I canceled dispname setting in setting page.
+			Therefore this issue is not TBD.
+	IN 08.12.07
+		Fixed AddItem error when comment length ovew 500 characters.
+		TODO: JS can not catch error with in the program.
+	IN 08.12.08
+		Currently Solution for too long field: Cut them into 500 characters.
+		Aim to make better UE
+

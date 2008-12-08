@@ -105,7 +105,7 @@ class MainPage(tarsusaRequestHandler):
 			template_values = {
 				'UserLoggedIn': 'Logged In',
 				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
 				
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
@@ -493,16 +493,16 @@ class UserSettingPage(tarsusaRequestHandler):
 					## http://groups.google.com/group/google-appengine/browse_thread/thread/d3673d0ec7ead0e2
 					
 					#category = forms.CharField(widget=forms.HiddenInput())
-					#description =	forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
-					mail = 	forms.CharField(label='您的邮箱',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.user.email()})) 
+					#description =forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
+					#mail =	forms.CharField(label='您的邮箱',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.user.email()})) 
 					#urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
-					dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname}))
+					#dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname}))
 					website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website}))	
 					##Please reference more from the URL
 
 					class Meta:
 						model = tarsusaUser
-						exclude =['user','userid','usedtags','urlname','friends','datejoinin']
+						exclude =['mail','user','userid','usedtags','dispname','urlname','friends','datejoinin']
 
 
 				
@@ -604,6 +604,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				
 				CurrentUser.mail = mail
 				CurrentUser.dispname = dispname
+				CurrentUser.user.nickname = dispname
 				try:
 					CurrentUser.website = website
 				except:

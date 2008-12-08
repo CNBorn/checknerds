@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
-# CheckNerds 
+
+# **************************************************************** 
+# CheckNerds - www.checknerds.com
+# version 0.7, codename Nevada
 # - memcache.py
-# Cpoyright (C) CNBorn, 2008
+# Copyright (C) CNBorn, 2008
 # http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+#
+# **************************************************************** 
 
 import datetime
 import string
@@ -21,9 +26,7 @@ refresh_roles = {
 		'edititem' :  ('itemstats', 'itemlist', 'tag'),
 		'editpublicitem' : ('itemstats', 'itemlist', 'tag', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony'),
 		'editroutineitem_daily' : ('itemstats', 'dailyroutine_today', 'dailyroutine_yesterday', 'itemlist', 'tag'),
-		
-		
-		'deleteitem' : ('itemstatus', 'itemlist' ,'tag'),
+		'deleteitem' : ('itemstats', 'itemlist' ,'tag'),
 		'deletepublicitem' : ('itemstats', 'itemlist', 'tag', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony'),
 		'deleteroutineitem_daily' : ('itemstats', 'dailyroutine_today','dailyroutine_yesterday', 'tag'),
 		'doneitem' : ('itemstats', 'itemlist'),
@@ -46,42 +49,29 @@ def event(key, CurrentUserid):
 		if re.match(role, key):
 			for obj in refresh_roles[role]:
 				if memcache.delete("%s_%s" % (CurrentUserid, obj)) != 2:
-					logging.info('not delete' + ("%s_%s" % (CurrentUserid, obj)) + str(memcache.delete("%s_%s" % (CurrentUserid, obj))))
+					logging.info('not delete' + ("%s_%s" % (CurrentUserid, obj)))
 				else:
-					logging.info("delted: %s_%s" % (CurrentUserid, obj))
-					
-				#return "%s_%s" % (CurrentUserid, obj)
-				#return True
+					logging.info("deleted: %s_%s" % (CurrentUserid, obj))
 	
-	#return "%s_%s" % (CurrentUserid, obj)
 	return True
 
-
 def get(key):
-	#key = key[:250]
-
+	
 	item = memcache.get(key)
 	if item == None:
 		logging.debug('NONE Memcache item %s' % key)
 		return None
 	else:
 		return item
-		#return item.value
-		#if check_expire(item):
-		#	logging.info('NEED REFRESH Memcache item %s' % key)
-		#	return None
-		#else:
-		#	logging.debug('HIT Memcache item %s' % key)
-		#	return item.value
+
 def set(key, value, time=0):
-	#key = key[:250]
+	
 	if memcache.set(key, value, time):
 		logging.debug('SET Memcache item %s' % key)
 		return True
 	else:
 		logging.error('SET Memcache item %s FAILED!' % key)
 		return False
-
 
 def get_item(key, CurrentUserID):
 	itemoperate = ("%s_%s" % (str(CurrentUserID), key))

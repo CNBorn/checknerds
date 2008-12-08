@@ -119,7 +119,7 @@ class getdailyroutine(tarsusaRequestHandler):
 
 			template_values = {
 			'UserLoggedIn': 'Logged In',				
-			'UserNickName': cgi.escape(self.login_user.nickname()),
+			'UserNickName': cgi.escape(CurrentUser.dispname),
 			'UserID': CurrentUser.key().id(),					
 			'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 			'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
@@ -220,7 +220,7 @@ class getdailyroutine_yesterday(tarsusaRequestHandler):
 
 			template_values = {
 			'UserLoggedIn': 'Logged In',
-			'UserNickName': cgi.escape(self.login_user.nickname()),
+			'UserNickName': cgi.escape(CurrentUser.dispname()),
 			'UserID': CurrentUser.key().id(),
 			'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 			'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
@@ -255,7 +255,7 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 
 			template_values = {
 				'UserLoggedIn': 'Logged In',
-				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
@@ -366,10 +366,10 @@ class get_fp_friendstats(tarsusaRequestHandler):
 									## Check whether this item had done.
 									if tarsusaItem_UserFriendsRecentItems.done == True:
 										
-										UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' +  UsersFriend.user.nickname() + '</a> 完成了 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+										UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' +  UsersFriend.dispname + '</a> 完成了 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
 			 
 									else:
-										UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' + UsersFriend.user.nickname() + '</a> 要做 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
+										UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' + UsersFriend.dispname + '</a> 要做 <a href="/i/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
 						if UserFriendsActivities == '':
 							UserFriendsActivities = '<li>暂无友邻公开项目</li>'
 					else:
@@ -551,7 +551,7 @@ class jsonpage(tarsusaRequestHandler):
 
 				'UserLoggedIn': 'Logged In',
 				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserNickName': cgi.escape(CurrentUser.dispname()),
 				'UserID': CurrentUser.key().id(),
 				
 				#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
@@ -630,7 +630,7 @@ class get_fp_RecentRegisteredUserForAnonymous(tarsusaRequestHandler):
 						## Show Default Avatar
 						strRecentUsers += '<li>' + '<a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>"
 
-					strRecentUsers += cgi.escape(each_RecentUser.user.nickname()) + '</a>'
+					strRecentUsers += cgi.escape(each_RecentUser.dispname) + '</a>'
 					#Complicatied TimeStamp needs to be done.
 					#UserFriends += str(datetime.datetime.now() - each_Friend.datejoinin) 
 					strRecentUsers += '<br /></li>'

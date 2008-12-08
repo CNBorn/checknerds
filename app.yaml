@@ -13,9 +13,12 @@ handlers:
 - url: /files
   static_dir: files
 
+- url: /css
+  static_dir: css
+
 - url: /(.*)\.css
-  static_files: /\1
-  upload: /
+  static_files: /css/(.*)\.css
+  upload: /css/(.*)\.css
 
 - url: /
   script: hello.py

@@ -207,7 +207,13 @@ class AddItemProcess(tarsusaRequestHandler):
 	def post(self):
 		
 		if self.request.get('cancel') != "取消":
-		
+			
+			#Check if comment property's length is exceed 500
+			if len(self.request.get('comment'))>500:
+				item_comment = self.request.get('comment')[:500]
+			else:
+				item_comment = self.request.get('comment')
+
 			# Permission check is very important.
 			# New CheckLogin code built in tarsusaRequestHandler 
 			if self.chk_login:
@@ -219,11 +225,7 @@ class AddItemProcess(tarsusaRequestHandler):
 			try:
 				# The following code works on GAE platform.
 				# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
-				first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(self.request.get('comment')),routine=cgi.escape(self.request.get('routine')))
-				
-				# for changed tags from String to List:
-				#first_tarsusa_item.tags = cgi.escape(self.request.get('tags')).split(",")
-
+				first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(item_comment),routine=cgi.escape(self.request.get('routine')))
 				tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
 				first_tarsusa_item.public = self.request.get('public')
 				first_tarsusa_item.done = False
@@ -254,7 +256,7 @@ class AddItemProcess(tarsusaRequestHandler):
 			except:
 				## the following code works on the localhost GAE runtimes.
 				try:
-					first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(self.request.get('comment').decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+					first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(item_comment.decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
 					tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
 					first_tarsusa_item.public = self.request.get('public').decode('utf-8')
 									
@@ -269,10 +271,14 @@ class AddItemProcess(tarsusaRequestHandler):
 					
 					first_tarsusa_item.done = False
 					first_tarsusa_item.put()
+					
+					tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
 
 				except:
 					## SOMETHING WRONG
 						self.write('something is wrong.') 
+						return False
+						# TODO JS can not catch this!
 
 			
 			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
@@ -319,8 +325,13 @@ class AddItemProcess(tarsusaRequestHandler):
 					
 				if tag_AlreadyUsed == False:
 					CurrentUser.usedtags.append(each_cat.key())		
-
-			first_tarsusa_item.put()
+			
+			try:
+				first_tarsusa_item.put()
+			except:
+				self.write('BadValueError')
+				return False
+			
 			CurrentUser.put()
 
 class EditItemProcess(tarsusaRequestHandler):
@@ -329,6 +340,12 @@ class EditItemProcess(tarsusaRequestHandler):
 		tItemId = self.request.path[10:]
 		## Please be awared that tItemId here is a string!
 		tItem = tarsusaItem.get_by_id(int(tItemId))
+
+		#Check if comment property's length is exceed 500
+		if len(self.request.get('comment'))>500:
+			item_comment = self.request.get('comment')[:500]
+		else:
+			item_comment = self.request.get('comment')
 
 		# Permission check is very important.
 		# New CheckLogin code built in tarsusaRequestHandler 
@@ -350,7 +367,7 @@ class EditItemProcess(tarsusaRequestHandler):
 			tItem.expectdate =  expectdatetime
 
 			tItem.name = cgi.escape(self.request.get('name'))
-			tItem.comment = cgi.escape(self.request.get('comment'))
+			tItem.comment = cgi.escape(item_comment)
 			tItem.routine = cgi.escape(self.request.get('routine'))
 			tItem.public = cgi.escape(self.request.get('public'))
 			
