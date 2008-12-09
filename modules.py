@@ -1,17 +1,6 @@
 from google.appengine.ext import db
 
-class tarsusaItem(db.Expando):
-    user = db.UserProperty()
-    name = db.StringProperty()
-    comment = db.StringProperty(multiline=True)
-    tags = db.ListProperty(db.Key)
-    #tags = db.StringListProperty()
-    date = db.DateTimeProperty(auto_now_add=True)
-    expectdate = db.DateTimeProperty()
-    donedate = db.DateTimeProperty()
-    done = db.BooleanProperty()
-    routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
-    public = db.StringProperty(choices=set(["private", "public", "publicOnlyforFriends"]))
+
 
 class tarsusaRoutineLogItem(db.Model):
 	
@@ -19,7 +8,6 @@ class tarsusaRoutineLogItem(db.Model):
 	routineid = db.IntegerProperty()
 	routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
 	donedate = db.DateTimeProperty(auto_now_add=True)
-
 
 class tarsusaUser(db.Model):
 	user = db.UserProperty()
@@ -31,10 +19,11 @@ class tarsusaUser(db.Model):
 	website = db.LinkProperty()
 	usedtags = db.ListProperty(db.Key)
 	friends = db.ListProperty(db.Key)
-
+	
 	datejoinin = db.DateTimeProperty(auto_now_add=True)
-
-
+	# fields to be appended:
+	#	Twitter, 	
+	
 	def __unicode__(self):
 		if self.dispname:
 			return self.dispname
@@ -44,6 +33,21 @@ class tarsusaUser(db.Model):
 	def __str__(self):
 		return self.__unicode__().encode('utf-8')
 
+
+class tarsusaItem(db.Expando):
+	# if user is a referenceProperty of tarsusaUser, that would be make more sense.
+	# therefore a lot of the functions can be implemented.
+	usermodel = db.ReferenceProperty(tarsusaUser) # Added since Rev.75
+	user = db.UserProperty()
+	name = db.StringProperty()
+	comment = db.StringProperty(multiline=True)
+	tags = db.ListProperty(db.Key)
+	date = db.DateTimeProperty(auto_now_add=True)
+	expectdate = db.DateTimeProperty()
+	donedate = db.DateTimeProperty()
+	done = db.BooleanProperty()
+	routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
+	public = db.StringProperty(choices=set(["private", "public", "publicOnlyforFriends"]))
 
 
 class Tag(db.Model):

@@ -69,13 +69,13 @@ class FindFriendPage(tarsusaRequestHandler):
 				for each_FriendKey in tarsusaUserFriendCollection:
 					UsersFriend =  db.get(each_FriendKey)
 					if UsersFriend.avatar:
-						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?img_user=' + str(UsersFriend.key()) + " width=32 height=32></dt>"
+						UserFriends += '<dl class="obu"><dt>' + '<a href="/uid/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?img_user=' + str(UsersFriend.key()) + " width=32 height=32></dt>"
 
 					else:
 						## Show Default Avatar
-						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
+						UserFriends += '<dl class="obu"><dt>' + '<a href="/uid/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
 
-					UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a><br /><a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dd></dl>'
+					UserFriends += '<dd>' + cgi.escape(UsersFriend.dispname) + '</a><br /><a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dd></dl>'
 
 
 
@@ -86,7 +86,7 @@ class FindFriendPage(tarsusaRequestHandler):
 			template_values = {
 					'UserLoggedIn': 'Logged In',
 					
-					'UserNickName': cgi.escape(self.login_user.nickname()),
+					'UserNickName': cgi.escape(CurrentUser.dispname),
 					'UserID': CurrentUser.key().id(),
 					'UserFriends': UserFriends,	
 					'singlePageTitle': "查找朋友.",

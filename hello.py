@@ -23,6 +23,7 @@ from modules import *
 from base import *
 import logging
 
+import utilities
 
 class MainPage(tarsusaRequestHandler):
 	def get(self):
@@ -42,7 +43,7 @@ class MainPage(tarsusaRequestHandler):
 
 
 				CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=users.get_current_user().nickname())
-				#self.write(CurrentUser.user.nickname())
+				#self.write(CurrentUser.dispname)
 
 
 				## Should automatically give the user a proper urlname
@@ -53,14 +54,22 @@ class MainPage(tarsusaRequestHandler):
 
 				## Added userid property.
 				CurrentUser.userid = CurrentUser.key().id()
-				CurrentUser.dispname = CurrentUser.user.nickname()
+				CurrentUser.dispname = CurrentUser.dispname
 				CurrentUser.put()
 			
 			else:
+				## DB Model Patch
 				## These code for registered user whose information are not fitted into the new model setting.
+				##
+				
 				## Added them here.
 				if CurrentUser.userid == None:
 					CurrentUser.userid = CurrentUser.key().id()
+
+				#Run DB Model Patch	when User Logged in.
+				utilities.chk_dbmodel_update(CurrentUser)
+
+
 
 
 			
@@ -377,15 +386,12 @@ class ViewItem(tarsusaRequestHandler):
 
 class UserToDoPage(tarsusaRequestHandler):
 	def get(self):
-		
-		if users.get_current_user() != None:
-
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()	
+		# Permission check is very important.
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login:
+			CurrentUser = self.get_user_db()
 
 			CountTotalItems = 0
-
 
 			## SPEED KILLER!
 			## MULTIPLE DB QUERIES!
@@ -397,27 +403,13 @@ class UserToDoPage(tarsusaRequestHandler):
 
 			template_values = {
 				'PrefixCSSdir': "/",
-
 				'UserLoggedIn': 'Logged In',
-				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
-				
-				#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-				#'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
-
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 				'TodoStatus': strTodoStatus,
-				#'UserTags': UserTags,
-
 				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
-
-				#'UserTotalItems': UserTotalItems,
-				#'UserToDoItems': UserToDoItems,
-				#'UserDoneItems': UserDoneItems,
-				#'UserDonePercentage': UserDonePercentage,
 			}
-
 
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/usertodopage.html')
@@ -425,18 +417,17 @@ class UserToDoPage(tarsusaRequestHandler):
 
 class UserDonePage(tarsusaRequestHandler):
 	def get(self):
-		if users.get_current_user() != None:
-
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()	
+		# Permission check is very important.
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login:
+			CurrentUser = self.get_user_db()
 
 			template_values = {
 				'PrefixCSSdir': "/",
 
 				'UserLoggedIn': 'Logged In',
 				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
 			}
 
@@ -456,29 +447,10 @@ class SignOutPage(tarsusaRequestHandler):
 
 class UserSettingPage(tarsusaRequestHandler):
 	def get(self):
-		username = urllib.unquote(cgi.escape(self.request.path[6:-8])) ## Get the username in the middle of /user/CNBorn/setting
+		userid = urllib.unquote(cgi.escape(self.request.path[5:-8])) ## Get the username in the middle of /uid/1234/setting
 
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1", username)
-		EditedUser = q.get()
-
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-
-		if EditedUser == None:
-			## try another way
-			## Get this user.
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
-			EditedUser = q.get()
-		
-		if EditedUser == None:
-			## try another way
-			## Get this user.
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE dispname = :1 LIMIT 1", username)
-			EditedUser = q.get()
-
-
+		EditedUser = tarsusaUser.get_by_id(int(userid))
+		CurrentUser = self.get_user_db()
 
 		if EditedUser is not None and CurrentUser is not None:			
 			
@@ -494,33 +466,27 @@ class UserSettingPage(tarsusaRequestHandler):
 					
 					#category = forms.CharField(widget=forms.HiddenInput())
 					#description =forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
-					#mail =	forms.CharField(label='您的邮箱',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.user.email()})) 
+					mail =	forms.CharField(label='您的邮箱(暂无法更改)',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.user.email()})) 
 					#urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
-					#dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname}))
+					dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname}))
 					website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website}))	
 					##Please reference more from the URL
 
 					class Meta:
 						model = tarsusaUser
-						exclude =['mail','user','userid','usedtags','dispname','urlname','friends','datejoinin']
-
-
+						exclude =['user','userid','usedtags','urlname','friends','datejoinin']
 				
 				outputStringUserSettingForms = ItemForm().as_p() #also got as_table(), as_ul()
-
-				
 
 				## The Avatar part is inspired by 
 				## http://blog.liangent.cn/2008/07/google-app-engine_28.html
 
-			
-
 				outputStringUserAvatarSetting = ""
 				
 				if EditedUser.avatar:
-					outputStringUserAvatarImage = "<img src=/img?img_user=" + str(EditedUser.key()) + " width=64 height=64><br />" + cgi.escape(EditedUser.user.nickname()) + '&nbsp;<br />'
+					outputStringUserAvatarImage = "<img src=/img?img_user=" + str(EditedUser.key()) + " width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
 				else:
-					outputStringUserAvatarImage = "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(EditedUser.user.nickname()) + '&nbsp;<br />'
+					outputStringUserAvatarImage = "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
 
 				
 				outputStringUserAvatarSetting += '''
@@ -530,15 +496,13 @@ class UserSettingPage(tarsusaRequestHandler):
 
 
 
-
-
 				template_values = {
 						'PrefixCSSdir': "/",
 						
 						'UserLoggedIn': 'Logged In',
 
-						'EditedUserNickName': EditedUser.user.nickname(), 
-						'UserNickName': CurrentUser.user.nickname(), #used for base template. Actully right here, shoudl be the same.
+						'EditedUserNickName': EditedUser.dispname, 
+						'UserNickName': CurrentUser.dispname, #used for base template. Actully right here, shoudl be the same.
 						
 						'UserID': CurrentUser.key().id(), #This one used for base.html to identified setting URL.
 						'EditedUserID': EditedUser.key().id(),
@@ -593,7 +557,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				if not memcache.set(str(CurrentUser.key()), db.Blob(avatar_image), 1800):
 					logging.error("Memcache set failed: When uploading avatar_image")
 
-				self.redirect("/user/" + CurrentUser.user.nickname() + "/setting")
+				self.redirect("/uid/" + CurrentUser.dispname + "/setting")
 
 
 			else:  
@@ -612,7 +576,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				CurrentUser.put()
 
 
-				self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
+				self.redirect("/uid/" + str(CurrentUser.key().id()) + "/setting")
 
 
 
@@ -652,7 +616,7 @@ class UserSettingPage(tarsusaRequestHandler):
 
 					except:
 						pass
-						self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
+						self.redirect("/uid/" + str(CurrentUser.key().id()) + "/setting")
 					#sendmsg(self, 'added')  
 		else:
 			 #sendmsg(self, 'fill in the form!')  
@@ -661,27 +625,15 @@ class UserSettingPage(tarsusaRequestHandler):
 class UserMainPage(tarsusaRequestHandler):
 	def get(self):
 
-		username = urllib.unquote(cgi.escape(self.request.path[6:]))  ## Get the username in the middle of /user/CNBorn/
+		username = urllib.unquote(cgi.escape(self.request.path[5:]))  ## Get the username in the URL string such as /uid/1234
 
 		## Get this user.
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1 LIMIT 1", username)
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
 		ViewUser = q.get()
 
 		if ViewUser == None:
-			try:
-				## try another way
-				## Get this user.
-				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
-				ViewUser = q.get()
-			except:
-				pass		
-				
-		if ViewUser == None:
-			## try another way
-			## Get this user.
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE dispname = :1 LIMIT 1", username)
-			ViewUser = q.get()
-
+			q = tarsusaUser.get_by_id(int(username))
+			ViewUser = q
 
 		UserNickName = '访客'
 		outputStringUserAvatar = ''
@@ -695,7 +647,7 @@ class UserMainPage(tarsusaRequestHandler):
 			else:
 				outputStringUserAvatar = "<img src='/img/default_avatar.jpg' width=64 height=64>"
 				
-			outputStringUserMainPageTitle = ViewUser.user.nickname() + "公开的项目".decode("utf-8")
+			outputStringUserMainPageTitle = ViewUser.dispname + "公开的项目".decode("utf-8")
 
 			outputStringRoutineLog = ""
 
@@ -736,7 +688,7 @@ class UserMainPage(tarsusaRequestHandler):
 				
 				#Check Whether CurrerentUser is one of ViewUser's friends
 
-				UserNickName = ViewUser.user.nickname()
+				UserNickName = ViewUser.dispname
 				
 				CurrentUser = self.get_user_db()
 
@@ -773,7 +725,7 @@ class UserMainPage(tarsusaRequestHandler):
 								## Show Default Avatar
 								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
 
-							UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd></dl>'
+							UserFriends += '<dd>' + cgi.escape(UsersFriend.usermodel.dispname) + '</a></dd></dl>'
 					else:
 						UserFriends = '当前没有添加朋友'
 					
@@ -856,7 +808,7 @@ class UserMainPage(tarsusaRequestHandler):
 				'UserID': CurrentUser.key().id(), #This indicates the UserSettingPage Link on the topright of the Page, so it should be CurrentUser
 
 				'ViewedUserNickName': UserNickName,
-				'UserNickName': CurrentUser.user.nickname(),
+				'UserNickName': CurrentUser.dispname,
 				'ViewedUser': ViewUser,
 
 				'ViewedUserFriends': UserFriends,	
@@ -874,7 +826,7 @@ class UserMainPage(tarsusaRequestHandler):
 			template_values = {
 					'PrefixCSSdir': "../",
 					
-					'ViewedUserNickName': ViewUser.user.nickname(),
+					'ViewedUserNickName': ViewUser.dispname,
 
 					'UserAvatarImage': outputStringUserAvatar,
 					
@@ -923,19 +875,16 @@ class DoneLogPage(tarsusaRequestHandler):
 		
 		#Donelog page shows User Done's Log.
 		
-		username = urllib.unquote(cgi.escape(self.request.path[9:])) ## Get the username in the middle of /donelog/CNBorn
+		userid = urllib.unquote(cgi.escape(self.request.path[5:-8])) ## Get the username in the middle of /uid/1234/donelog
 		
-		if username == "": ## if the url are not directed to specific user.
+		if userid == "": ## if the url are not directed to specific user.
 
 			# code below are comming from GAE example
 			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 			CurrentUser = q.get()
 
 		else:
-			
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE urlname = :1", username)
-			CurrentUser = q.get()
+			CurrentUser = tarsusaUser.get_by_id(int(userid))
 			if CurrentUser == None:
 				## Can not find this user.
 				self.redirect("/")
@@ -995,11 +944,11 @@ class DoneLogPage(tarsusaRequestHandler):
 		#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE done = 1 ORDER BY date DESC")
 
 		template_values = {
-				'PrefixCSSdir': "../",
+				'PrefixCSSdir': "/",
 				
 				'UserLoggedIn': 'Logged In',
 				'UserID': CurrentUser.key().id(),
-				'UserNickName': CurrentUser.user.nickname(), 
+				'UserNickName': CurrentUser.dispname, 
 				'singlePageTitle': "",
 				
 				'StringRoutineLog': outputStringRoutineLog,
@@ -1072,6 +1021,10 @@ class StatsticsPage(tarsusaRequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
 
+class DashboardPage(tarsusaRequestHandler):
+	def get(self):
+		self.write('ok')
+	
 class NotFoundPage(tarsusaRequestHandler):
 	def get(self):
 		
@@ -1080,15 +1033,16 @@ class NotFoundPage(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 									   ('/i/\\d+',ViewItem),
-									   ('/user/.+/setting',UserSettingPage),
-									   ('/user/.+/todo',UserToDoPage),
-									   ('/user/.+/done',UserDonePage),
-									   ('/user/.+', UserMainPage),
+								       ('/uid/.+/donelog',DoneLogPage),
+									   ('/uid/.+/setting',UserSettingPage),
+									   ('/uid/.+/todo',UserToDoPage),
+									   ('/uid/.+/done',UserDonePage),
+									   ('/uid/.+', UserMainPage),
 									   ('/img', Image),
 									   ('/Login.+',LoginPage),
 									   ('/Logout.+',SignOutPage),
-								       ('/donelog/.+',DoneLogPage),
 								       ('/statstics',StatsticsPage),
+									   ('/dashboard', DashboardPage),
 									   ('.*',NotFoundPage)],
                                        debug=True)
 

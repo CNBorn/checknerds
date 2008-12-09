@@ -418,4 +418,40 @@
 	IN 08.12.08
 		Currently Solution for too long field: Cut them into 500 characters.
 		Aim to make better UE
+		--- Rev. 75 ---	
+
+		Not Done in previous Rev.:
+			Memcache in FindFriend, ViewItem.
+			DisplayName setting in UserSettingPage
+
+		Provisions for Next Phase Rev.
+			Better UE, including:
+				Better Donelog Page.
+				(opt) FindFriend Page show only random friends.
+				Proper Error handler (limitation) in ajax_Add/EditItemPage.
+				Proper Comment Header in Code.			
+				Unified /uid/ URL style.
+			STOP to improve memcache in this Rev!
+		
+		Provisions for the coming time period, I should do:
+			Reply all the feedbacks in Google Doc, gathered from Checknerds Guestbook
+			Put introduction post on JavaEye.com after this Rev.
+			(opt). Contact people who may contribute to this project or a branch of it.
+
+	In 08.12.09
+		New BUG (Error Messages) found on appspot dashboard.
+			donelog/Chinese Characters will occur an error ---> URL Unified
+			When Submitting in setting page, Prompt that URL is empty.
+		
+		CHANGED DB MODEL:
+			Added usermodel field in tarsusaItem
+			
+		Implemented a new Patch System, which can apply the setting when DB model changed.
+
+		Therefore I found the solution of previous dispname issue and URL unified issue.
+
+		Solved dispname setting in the SettingPage.
+		
+		Seems to have URL unified work and dispname things DONE.
+		Need to check& test it tomorrow.
 

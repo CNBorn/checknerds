@@ -71,13 +71,10 @@ handlers:
 - url: /FindFriend
   script: friends.py
 
-- url: /donelog
+- url: /dashboard
   script: hello.py
 
-- url: /donelog/.*
-  script: hello.py
-
-- url: /user/.*
+- url: /uid/.*
   script: hello.py
 
 - url: /tag/.*

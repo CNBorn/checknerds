@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
-# CheckNerds 
+
+# **************************************************************** 
+# CheckNerds - www.checknerds.com
+# version 0.7, codename Nevada
 # - tarsusaItemCore.py
-# Cpoyright (C) CNBorn, 2008
+# Copyright (C) CNBorn, 2008
 # http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+#
+# **************************************************************** 
 
 #from django.conf import settings
 #settings._target = None
