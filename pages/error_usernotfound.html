@@ -1,13 +1,7 @@
 {% extends "base.html" %}
-{% block title %} CheckNerds - {{ UserNickName }}的朋友 {% endblock title %}
+{% block title %} CheckNerds - 没有找到该用户 {% endblock title %}
 
         	{% block content-holder %}
-			<script type="text/javascript">
-				window.onload = function() {
-					$('#div_friendstats').load('/ajax/frontpage_getfriendstats');
-				}
-			</script>
-			
 			
 			<div id="leftside">
             	<div id="featuredcode2">
@@ -16,7 +10,8 @@
 
 						<div id="singleleft">
 							<h2 class="posttitle">朋友动态</h2>
-								<div id="div_friendstats" style="padding-top:10px; padding-left: 10px;">正在载入……</div>
+								Oops! 您要查找的用户没有找到！<br />
+								2008.12.10 起CheckNerds对URL进行了一些变更，可能导致您通过之前的一些外部连接无法找到您想要查找的用户<br />
 						</div>
 
 						<div id="singleleft">
@@ -27,7 +22,7 @@
 							<h2 class="posttitle" style="font-weight:normal;">Checknerds用户</h2>
 								{% for tarsusaPeople in tarsusaPeopleCollection %}
 									<dl class="obu">
-									<dt><a href="/user/{{tarsusaPeople.key.id}}">
+									<dt><a href="/uid/{{tarsusaPeople.key.id}}">
 									{% if tarsusaPeople.avatar %}
 										<img src='/img?img_user={{tarsusaPeople.key}}' width=32 height=32 alt="{{tarsusaPeople.dispname|escape }}">
 									{% else %}
@@ -36,7 +31,7 @@
 									</a></dt>
 
 
-									<dd><a href="/user/{{tarsusaPeople.key.id|escape}}">{{ tarsusaPeople.dispname|escape }}</a>
+									<dd><a href="/uid/{{tarsusaPeople.key.id|escape}}">{{ tarsusaPeople.dispname|escape }}</a>
 									</dd>
 							
 									</dl>

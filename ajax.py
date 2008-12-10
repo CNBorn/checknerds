@@ -629,10 +629,10 @@ class get_fp_RecentRegisteredUserForAnonymous(tarsusaRequestHandler):
 			if tarsusaUserCollection: 
 				for each_RecentUser in tarsusaUserCollection:
 					if each_RecentUser.avatar:
-						strRecentUsers += '<li>' + '<a href="/uid/' + cgi.escape(str(each_RecentUser.key().id())) +  '"><img src=/img?img_user=' + str(each_RecentUser.key()) + " width=32 height=32>"
+						strRecentUsers += '<li>' + '<a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '"><img src=/img?img_user=' + str(each_RecentUser.key()) + " width=32 height=32>"
 					else:
 						## Show Default Avatar
-						strRecentUsers += '<li>' + '<a href="/uid/' + cgi.escape(str(each_RecentUser.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>"
+						strRecentUsers += '<li>' + '<a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>"
 
 					strRecentUsers += cgi.escape(each_RecentUser.dispname) + '</a>'
 					#Complicatied TimeStamp needs to be done.

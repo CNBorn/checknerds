@@ -32,7 +32,7 @@
 							<th colspan="2" class="viewitem_tags"><span class="date">分类：{{tarsusaItemTags}}</span></th>
 						</tr>
 						<tr> 
-							<td colspan="2" class="viewitem_creator">创建者：<a href="/user/{{tarsusaItem.user|escape}}">{{tarsusaItem.user}}</a>
+							<td colspan="2" class="viewitem_creator">创建者：<a href="/user/{{tarsusaItem.usermodel.key.id|escape}}">{{tarsusaItem.usermodel.dispname}}</a>
 							&nbsp;&nbsp;
 							{% ifequal tarsusaItem.public "private" %}
 								不公开

@@ -5,7 +5,7 @@
                             	<h2 class="posttitle">人们尚未完成……</h2>
 							  <p>
 							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
-									<a href="/uid/{{tarsusaItem_UserToDoItem.usermodel.key.id|escape}}">{{ tarsusaItem_UserToDoItem.usermodel.dispname }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><br />
+									<a href="/user/{{tarsusaItem_UserToDoItem.usermodel.key.id|escape}}">{{ tarsusaItem_UserToDoItem.usermodel.dispname }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><br />
 								{% endfor %}
 							    
 							  </p>

@@ -23,7 +23,6 @@ from modules import *
 from base import *
 import logging
 
-import utilities
 
 class MainPage(tarsusaRequestHandler):
 	def get(self):
@@ -54,20 +53,21 @@ class MainPage(tarsusaRequestHandler):
 
 				## Added userid property.
 				CurrentUser.userid = CurrentUser.key().id()
-				CurrentUser.dispname = CurrentUser.dispname
+				CurrentUser.dispname = CurrentUser.urlname
 				CurrentUser.put()
 			
 			else:
 				## DB Model Patch
 				## These code for registered user whose information are not fitted into the new model setting.
-				##
+				
+				import DBPatcher
 				
 				## Added them here.
 				if CurrentUser.userid == None:
 					CurrentUser.userid = CurrentUser.key().id()
 
 				#Run DB Model Patch	when User Logged in.
-				utilities.chk_dbmodel_update(CurrentUser)
+				DBPatcher.chk_dbmodel_update(CurrentUser)
 
 
 
@@ -447,7 +447,7 @@ class SignOutPage(tarsusaRequestHandler):
 
 class UserSettingPage(tarsusaRequestHandler):
 	def get(self):
-		userid = urllib.unquote(cgi.escape(self.request.path[5:-8])) ## Get the username in the middle of /uid/1234/setting
+		userid = urllib.unquote(cgi.escape(self.request.path[6:-8])) ## Get the username in the middle of /user/1234/setting
 
 		EditedUser = tarsusaUser.get_by_id(int(userid))
 		CurrentUser = self.get_user_db()
@@ -557,7 +557,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				if not memcache.set(str(CurrentUser.key()), db.Blob(avatar_image), 1800):
 					logging.error("Memcache set failed: When uploading avatar_image")
 
-				self.redirect("/uid/" + CurrentUser.dispname + "/setting")
+				self.redirect("/user/" + CurrentUser.dispname + "/setting")
 
 
 			else:  
@@ -576,7 +576,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				CurrentUser.put()
 
 
-				self.redirect("/uid/" + str(CurrentUser.key().id()) + "/setting")
+				self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
 
 
 
@@ -616,7 +616,7 @@ class UserSettingPage(tarsusaRequestHandler):
 
 					except:
 						pass
-						self.redirect("/uid/" + str(CurrentUser.key().id()) + "/setting")
+						self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
 					#sendmsg(self, 'added')  
 		else:
 			 #sendmsg(self, 'fill in the form!')  
@@ -625,15 +625,21 @@ class UserSettingPage(tarsusaRequestHandler):
 class UserMainPage(tarsusaRequestHandler):
 	def get(self):
 
-		username = urllib.unquote(cgi.escape(self.request.path[5:]))  ## Get the username in the URL string such as /uid/1234
+		username = urllib.unquote(cgi.escape(self.request.path[6:]))  ## Get the username in the URL string such as /user/1234
+		ViewUser = None
+		
+		try:
+			## After URL style changed, Now won't allow username in URL, only accept id in URL.
+			
+			## Get this user.
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
+			ViewUser = q.get()
 
-		## Get this user.
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
-		ViewUser = q.get()
-
-		if ViewUser == None:
-			q = tarsusaUser.get_by_id(int(username))
-			ViewUser = q
+			if ViewUser == None:
+				q = tarsusaUser.get_by_id(int(username))
+				ViewUser = q
+		except:
+			self.redirect('/')
 
 		UserNickName = '访客'
 		outputStringUserAvatar = ''
@@ -725,7 +731,12 @@ class UserMainPage(tarsusaRequestHandler):
 								## Show Default Avatar
 								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
 
-							UserFriends += '<dd>' + cgi.escape(UsersFriend.usermodel.dispname) + '</a></dd></dl>'
+							#These code is here due to DB Model change since Rev.76
+							try:								
+								UserFriends += '<dd>' + cgi.escape(UsersFriend.usermodel.dispname) + '</a></dd></dl>'
+							except:
+								UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd></dl>'
+								
 					else:
 						UserFriends = '当前没有添加朋友'
 					
@@ -792,57 +803,61 @@ class UserMainPage(tarsusaRequestHandler):
 						#set cache item
 						memcache.set_item("mainpage_publicitems_anony", outputStringRoutineLog, ViewUser.key().id())
 
-		else:
-			#self.write('not found this user and any items')
-			outputStringUserMainPageTitle = 'not found this user and any items'
-			outputStringRoutineLog = 'None'
-			self.error(404)
-			
-
-		if users.get_current_user() != None:
-			template_values = {
-				'PrefixCSSdir': "../",
-				
-				'UserLoggedIn': 'Logged In',
-
-				'UserID': CurrentUser.key().id(), #This indicates the UserSettingPage Link on the topright of the Page, so it should be CurrentUser
-
-				'ViewedUserNickName': UserNickName,
-				'UserNickName': CurrentUser.dispname,
-				'ViewedUser': ViewUser,
-
-				'ViewedUserFriends': UserFriends,	
-
-				'UserAvatarImage': outputStringUserAvatar,
-				
-				'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
-				'UserWebsite': ViewUser.website,
-				'UserMainPageUserTitle': outputStringUserMainPageTitle,
-			
-				'ViewedUserIsOneofCurrentUsersFriends': ViewedUserIsOneofCurrentUsersFriends,
-				'StringRoutineLog': outputStringRoutineLog,
-			}
-		else:
-			template_values = {
+			if users.get_current_user() != None:
+				template_values = {
 					'PrefixCSSdir': "../",
 					
-					'ViewedUserNickName': ViewUser.dispname,
+					'UserLoggedIn': 'Logged In',
+
+					'UserID': CurrentUser.key().id(), #This indicates the UserSettingPage Link on the topright of the Page, so it should be CurrentUser
+
+					'ViewedUserNickName': UserNickName,
+					'UserNickName': CurrentUser.dispname,
+					'ViewedUser': ViewUser,
+
+					'ViewedUserFriends': UserFriends,	
 
 					'UserAvatarImage': outputStringUserAvatar,
 					
-					'ViewedUserFriends': UserFriends,	
 					'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
 					'UserWebsite': ViewUser.website,
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
+				
+					'ViewedUserIsOneofCurrentUsersFriends': ViewedUserIsOneofCurrentUsersFriends,
 					'StringRoutineLog': outputStringRoutineLog,
 				}
-		
+			else:
+				template_values = {
+						'PrefixCSSdir': "../",
+						
+						'ViewedUserNickName': ViewUser.dispname,
+
+						'UserAvatarImage': outputStringUserAvatar,
+						
+						'ViewedUserFriends': UserFriends,	
+						'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
+						'UserWebsite': ViewUser.website,
+						'UserMainPageUserTitle': outputStringUserMainPageTitle,
+						'StringRoutineLog': outputStringRoutineLog,
+					}
 			
-		path = os.path.join(os.path.dirname(__file__), 'pages/usermainpage.html')
-		
-		##Memcache this page.
-		
-		self.response.out.write(template.render(path, template_values))
+				
+			path = os.path.join(os.path.dirname(__file__), 'pages/usermainpage.html')
+			
+			self.response.out.write(template.render(path, template_values))
+
+		else:
+			#self.write('not found this user and any items')
+			
+			# Prompt 'Can not found this user, URL style have been changed since Dec.X 2008, Some of the old external links are invalid now.
+			# But We offer you another options, You may check whether these Users, may be one of them is whom you are looking for.
+			# Better UE idea!
+
+			outputStringUserMainPageTitle = 'not found this user and any items'
+			outputStringRoutineLog = 'None'
+			self.error(404)
+			self.redirect('/')	
+
 
 class Image (webapp.RequestHandler):
 	def get(self):
@@ -875,7 +890,7 @@ class DoneLogPage(tarsusaRequestHandler):
 		
 		#Donelog page shows User Done's Log.
 		
-		userid = urllib.unquote(cgi.escape(self.request.path[5:-8])) ## Get the username in the middle of /uid/1234/donelog
+		userid = urllib.unquote(cgi.escape(self.request.path[6:-8])) ## Get the username in the middle of /user/1234/donelog
 		
 		if userid == "": ## if the url are not directed to specific user.
 
@@ -1033,11 +1048,11 @@ class NotFoundPage(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 									   ('/i/\\d+',ViewItem),
-								       ('/uid/.+/donelog',DoneLogPage),
-									   ('/uid/.+/setting',UserSettingPage),
-									   ('/uid/.+/todo',UserToDoPage),
-									   ('/uid/.+/done',UserDonePage),
-									   ('/uid/.+', UserMainPage),
+								       ('/user/.+/donelog',DoneLogPage),
+									   ('/user/.+/setting',UserSettingPage),
+									   ('/user/.+/todo',UserToDoPage),
+									   ('/user/.+/done',UserDonePage),
+									   ('/user/.+', UserMainPage),
 									   ('/img', Image),
 									   ('/Login.+',LoginPage),
 									   ('/Logout.+',SignOutPage),

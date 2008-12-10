@@ -74,7 +74,7 @@ handlers:
 - url: /dashboard
   script: hello.py
 
-- url: /uid/.*
+- url: /user/.*
   script: hello.py
 
 - url: /tag/.*
