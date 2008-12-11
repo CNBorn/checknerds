@@ -25,21 +25,24 @@ def chk_dbmodel_update(ThisUser):
 	#	
 	# This update needs to browse all the tarsusaItem and add this field to them.
 	# Besure that the total item is under 1000.
+	#NewestItem =  db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ThisUser.user).get()
+	#OldestItem =  db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date", ThisUser.user).get()
+	#NewestItem = 
+
+	#try:
+	#Both NewestItem and OldestItem will be None when User do not have any items!
 	
-	#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem")	
-	#for each_tarsusaItem in tarsusaItemCollection:
-	#	if each_tarsusaItem.usermodel == None:
-	#		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", each_tarsusaItem.user)
-	#		itemUser = q.get()
-	#		each_tarsusaItem.usermodel = itemUser
-	#		each_tarsusaItem.put()
-	#		#print 'changed' + each_tarsusaItem.name
-	
-	tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE userid = :1", ThisUser.key().id())	
+	#if NewestItem.usermodel == None or OldestItem.usermodel == None:
+	tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1", ThisUser.user)	
 	for each_tarsusaItem in tarsusaItemCollection:
 		if each_tarsusaItem.usermodel == None:
 			each_tarsusaItem.usermodel == ThisUser
 			each_tarsusaItem.put()
+	#else:
+	#	pass
+	
+	#except:
+	#	pass
 	
 	#####################################################
 

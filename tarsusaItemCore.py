@@ -251,7 +251,8 @@ class AddItemProcess(tarsusaRequestHandler):
 					expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
 				first_tarsusa_item.expectdate =  expectdatetime
 
-				## the creation date will be added automatically by GAE datastore
+				## the creation date will be added automatically by GAE datastore				
+				first_tarsusa_item.usermodel = CurrentUser				
 				first_tarsusa_item.put()
 				
 				# http://blog.ericsk.org/archives/1009
@@ -275,6 +276,7 @@ class AddItemProcess(tarsusaRequestHandler):
 					first_tarsusa_item.expectdate =  expectdatetime
 					
 					first_tarsusa_item.done = False
+					first_tarsusa_item.usermodel = CurrentUser
 					first_tarsusa_item.put()
 					
 					tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
@@ -376,6 +378,7 @@ class EditItemProcess(tarsusaRequestHandler):
 			tItem.routine = cgi.escape(self.request.get('routine'))
 			tItem.public = cgi.escape(self.request.get('public'))
 			
+			tItem.usermodel = CurrentUser
 			tItem.put()
 
 			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item

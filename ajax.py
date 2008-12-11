@@ -224,7 +224,7 @@ class getdailyroutine_yesterday(tarsusaRequestHandler):
 
 			template_values = {
 			'UserLoggedIn': 'Logged In',
-			'UserNickName': cgi.escape(CurrentUser.dispname()),
+			'UserNickName': cgi.escape(CurrentUser.dispname),
 			'UserID': CurrentUser.key().id(),
 			'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 			'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
@@ -555,7 +555,7 @@ class jsonpage(tarsusaRequestHandler):
 
 				'UserLoggedIn': 'Logged In',
 				
-				'UserNickName': cgi.escape(CurrentUser.dispname()),
+				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
 				
 				#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
@@ -653,6 +653,21 @@ class get_fp_RecentRegisteredUserForAnonymous(tarsusaRequestHandler):
 
 		self.response.out.write(strCachedRecentRegisteredUsers)
 
+class admin_runpatch(tarsusaRequestHandler):
+	def get(self):
+		urllen = len('/ajax/admin_runpatch/')
+		RequestUserID = urllib.unquote(self.request.path[urllen:])
+		AppliedUser	= tarsusaUser.get_by_id(int(RequestUserID))
+		self.write('dispname: ' +  AppliedUser.dispname)
+		import DBPatcher
+		#Run DB Model Patch	when User Logged in.
+		DBPatcher.chk_dbmodel_update(AppliedUser)
+		self.write('DONE with USERID' + RequestUserID)
+		#self.redirect('/')
+
+	
+
+
 def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
 										('/ajax/frontpage_getdailyroutine_yesterday', getdailyroutine_yesterday),
@@ -665,6 +680,7 @@ def main():
 										(r'/ajax/allpage_edititem.+', edititem),
 										('/ajax/getjson_usertodoitems', getjson_usertodoitems),
 										('/ajax/getjson_userdoneitems', getjson_userdoneitems),
+										('/ajax/admin_runpatch/.+', admin_runpatch),
 										('/ajax/jsonpage', jsonpage),
 									   ('/ajax/.+',ajax_error)],
                                        debug=True)

@@ -459,3 +459,8 @@
 		Changed /uid/ link back to /user/ style for consistency
 
 		Beginning with an idea that CheckNerds can offer better errorPages
+	IN 08.12.11
+		Fixed a BUG in ajaxDailyRoutine_Yesterday
+
+		Moved DBPatch event in ViewItem
+

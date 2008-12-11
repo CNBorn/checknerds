@@ -53,7 +53,7 @@ class MainPage(tarsusaRequestHandler):
 
 				## Added userid property.
 				CurrentUser.userid = CurrentUser.key().id()
-				CurrentUser.dispname = CurrentUser.urlname
+				CurrentUser.dispname = users.get_current_user().nickname()
 				CurrentUser.put()
 			
 			else:
@@ -65,9 +65,11 @@ class MainPage(tarsusaRequestHandler):
 				## Added them here.
 				if CurrentUser.userid == None:
 					CurrentUser.userid = CurrentUser.key().id()
-
+					CurrentUser.put()
+					
 				#Run DB Model Patch	when User Logged in.
-				DBPatcher.chk_dbmodel_update(CurrentUser)
+				#DBPatcher.chk_dbmodel_update(CurrentUser)
+				#Run this at every ViewItem event
 
 
 
@@ -155,6 +157,21 @@ class ViewItem(tarsusaRequestHandler):
 		tItem = tarsusaItem.get_by_id(int(postid))
 
 		if tItem != None:  ## If this Item existed in Database.
+
+			# code below are comming from GAE example
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", tItem.user)
+			ItemAuthorUser = q.get()
+
+			#Patch since Rev.76
+			try:
+				if tItem.usermodel == None:
+					tItem.usermodel = ItemAuthorUser
+					tItem.put()
+			except:
+				tItem.usermodel = ItemAuthorUser
+				tItem.put()
+			#-------------------
+
 
 			## Unregistered Guest may ViewItem too,
 			## Check Their nickname here.
@@ -733,7 +750,7 @@ class UserMainPage(tarsusaRequestHandler):
 
 							#These code is here due to DB Model change since Rev.76
 							try:								
-								UserFriends += '<dd>' + cgi.escape(UsersFriend.usermodel.dispname) + '</a></dd></dl>'
+								UserFriends += '<dd>' + cgi.escape(UsersFriend.dispname) + '</a></dd></dl>'
 							except:
 								UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd></dl>'
 								

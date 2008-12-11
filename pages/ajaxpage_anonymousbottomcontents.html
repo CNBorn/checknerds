@@ -5,7 +5,7 @@
                             	<h2 class="posttitle">人们尚未完成……</h2>
 							  <p>
 							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
-									<a href="/user/{{tarsusaItem_UserToDoItem.usermodel.key.id|escape}}">{{ tarsusaItem_UserToDoItem.usermodel.dispname }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><br />
+									<a href="/user/{{tarsusaItem_UserToDoItem.usermodel.key.id|escape}}">{{ tarsusaItem_UserToDoItem.usermodel.dispname|escape }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a><br />
 								{% endfor %}
 							    
 							  </p>
@@ -18,7 +18,7 @@
                             	<h2 class="posttitle">人们已经完成……</h2>
 								<p>
 							    {% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-									<a href="/user/{{tarsusaItem_UserDoneItem.usermodel.key.id|escape}}">{{ tarsusaItem_UserDoneItem.usermodel.dispname }}</a> 做完了 <a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a><br />
+									<a href="/user/{{tarsusaItem_UserDoneItem.usermodel.key.id|escape}}">{{ tarsusaItem_UserDoneItem.usermodel.dispname|escape }}</a> 做完了 <a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a><br />
 								{% endfor %}
 													</p>
                             </div>
