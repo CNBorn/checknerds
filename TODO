@@ -463,4 +463,7 @@
 		Fixed a BUG in ajaxDailyRoutine_Yesterday
 
 		Moved DBPatch event in ViewItem
-
+	IN 08.12.14
+		Fixed a BUG with UserSettingPage URL
+		LoginRedirect will cause UserNoneRegistration problem since register code are located in rootpage.
+			Disabled LoginRedirect codes for a while. Looking forward to have a solution here.

@@ -456,7 +456,12 @@ class UserDonePage(tarsusaRequestHandler):
 
 class LoginPage(tarsusaRequestHandler):
 	def get(self):
-		self.redirect(self.get_login_url(True))
+		#self.redirect(self.get_login_url(True))
+		#Only / have user registration code right now, but here will lead user to different pages.
+		# disabled these code temporily
+
+		self.redirect(users.create_login_url('/'))
+
 
 class SignOutPage(tarsusaRequestHandler):
 	def get(self):
@@ -574,7 +579,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				if not memcache.set(str(CurrentUser.key()), db.Blob(avatar_image), 1800):
 					logging.error("Memcache set failed: When uploading avatar_image")
 
-				self.redirect("/user/" + CurrentUser.dispname + "/setting")
+				self.redirect("/user/" + CurrentUser.key().id() + "/setting")
 
 
 			else:  
