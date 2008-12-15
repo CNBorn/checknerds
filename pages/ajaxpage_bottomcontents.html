@@ -5,13 +5,6 @@
                             	<h2 class="posttitle"><a href="/">尚未完成</a></h2>
 							  <p>
 							  <ul>
-							    {% if AnonymousVisitor %}
-							    	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
-									<li><a href="/user/{{tarsusaItem_UserToDoItem.user|escape}}">{{ tarsusaItem_UserToDoItem.user }}</a> 要做 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a></li>
-								{% endfor %}
-							    
-							    {% else %}
-							   
 							   	<div id="todoitems">
 							    {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
 									<li><input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_UserToDoItem.key.id}}')">
@@ -19,11 +12,9 @@
 									<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_UserToDoItem.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_UserToDoItem.key.id}}';}" class="x">x</a></li>
 							    {% endfor %}
 								</div>
-							    {% endif %}
-								
 							   </ul>
 
-							  <br /><a href="/user/{{UserNickName|escape}}/todo">查看更多</a></p>
+							  <br /><a href="/user/{{UserID|escape}}/todo">查看更多</a></p>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
@@ -33,52 +24,17 @@
                             <div class="latestcode-mid">
                             	<h2 class="posttitle"><a href="/">已经完成</a></h2>
 								<ul>
-								{% if AnonymousVisitor %}
-							    	{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-									<li><a href="/user/{{tarsusaItem_UserDoneItem.user|escape}}">{{ tarsusaItem_UserDoneItem.user }}</a> 做完了 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a></li>
-								{% endfor %}
-							    
-							    	{% else %}
-								
 								{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
 											<li><img src="/img/accept16.png">
 											<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
 											<a href="#;" onclick="ajax_undoneItem('/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}')" class="x">撤销</a></li>
 								{% endfor %}
-								{% endif %}
 								</ul>
-								<br /><a href="/user/{{UserNickName}}/done">查看更多</a>
+								<br /><a href="/user/{{UserID}}/done">查看更多</a>
                             </div>
                             <div class="latestcode-bot"></div>
                         </td>
                     </tr>                            
-                    {% comment %} <tr>
-                        <td class="latestcode">
-                            <div class="latestcode-top"></div>
-                            <div class="latestcode-mid">
-                            	<h2 class="posttitle"><a href="/">朋友动态</a></h2>
-								<p>
-								{{ UserFriendsActivities }}
-								
-								</p>
-                            </div>
-                            <div class="latestcode-bot"></div>
-                        </td>
-                        <td class="latestcode">
-                            <div class="latestcode-top"></div>
-                            <div class="latestcode-mid">
-                            	<h2 class="posttitle"><a href="index.html">统计信息</a></h2>
-								<p>
-								总事项：{{ UserTotalItems }} <br />
-								已完成事项：{{ UserDoneItems }} <br />
-								待完成事项：{{ UserToDoItems }} <br />
-								完成百分比：{{ UserDonePercentage }} % <br />
-								
-								</p>
-                            </div>
-                            <div class="latestcode-bot"></div>
-                        </td>
-                    </tr> {% endcomment %}
 
 <script type="text/javascript">
 	function ajax_undoneItem(strLink){

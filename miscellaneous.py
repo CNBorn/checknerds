@@ -28,7 +28,7 @@ from google.appengine.api import images
 from modules import *
 from base import *
 
-
+from google.appengine.api import memcache
 
 class GuestbookPage(tarsusaRequestHandler):
 	def get(self):
@@ -189,10 +189,81 @@ class AboutPage(tarsusaRequestHandler):
 		self.response.out.write(template.render(path, template_values))
 
 
+class StatsticsPage(tarsusaRequestHandler):
+	def get(self):
+		
+		# Show statstics information.
+
+		# code below are comming from GAE example
+		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
+		CurrentUser = q.get()
+		
+		TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
+		TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
+		
+		htmltag = ''
+		htmltag += 'Uptime: ' + str(datetime.datetime.now() - datetime.datetime(2008,8,26,20,0,0))
+		htmltag += '<br />Project Started Since: ' + str(datetime.date.today() - datetime.date(2008, 7, 19)) + ' ago.'
+		htmltag += '<br />User Account: ' + str(TotalUserCount)
+		htmltag += '<br />Total Items: ' + str(TotaltarsusaItem)
+
+		try:
+			htmltag += '<br /><br /><b>memcached stats:</b>'
+			stats = memcache.get_stats()    
+			htmltag += "<br /><b>Cache Hits:</b>" + str(stats['hits'])
+			htmltag += "<br /><b>Cache Misses:</b>" +str(stats['misses'])
+					
+			htmltag += "<br /><b>Total Requested Cache bytes:</b>" +str(stats['byte_hits'])
+			htmltag += "<br /><b>Total Cache items:</b>" +str(stats['items'])
+			htmltag += "<br /><b>Total Cache bytes:</b>" +str(stats['bytes'])
+			htmltag += "<br /><b>Oldest Cache items:</b>" +str(stats['oldest_item_age'])
+		except:
+			pass
+
+		if users.get_current_user() != None:
+
+			template_values = {
+				'UserLoggedIn': 'Logged In',				
+				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserID': CurrentUser.key().id(),	
+				
+				'singlePageTitle': 'Statstics',
+				'singlePageContent': htmltag,
+
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+				'htmltag_TotalUser': TotalUserCount,
+				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
+
+			}
+		else:
+			template_values = {				
+				'UserNickName': "访客",
+				'AnonymousVisitor': "Yes",
+
+				'SinglePageTitle': 'Statstics',
+				'SinglePageContent': htmltag,
+
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+				'htmltag_TotalUser': TotalUserCount,
+				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
+			}
+
+		#Manupilating Templates	
+		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
+		self.response.out.write(template.render(path, template_values))
+
+
+class FlushCache(tarsusaRequestHandler):
+	def get(self):
+		memcache.flush_all()
+		self.redirect('/')
+		
 
 def main():
 	application = webapp.WSGIApplication([('/about',AboutPage),
 								       ('/blog',BlogPage),
+								       ('/statstics',StatsticsPage),
+									   ('/flushcache', FlushCache),
 									   ('/guestbook', GuestbookPage)],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)

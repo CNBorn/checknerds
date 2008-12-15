@@ -25,13 +25,13 @@
 			<form id="myForm" action="/edititem/{{tItemId}}" method="post">
 				<table>
 					<tr colspan="2">
-					<td align="right">标题</td> <td><input type="text" name="name" size="35" class="sl" value="{{tItemName}}"></td>
+					<td align="right">标题</td> <td><input type="text" name="name" size="35" class="sl" value="{{tItemName|escape}}"></td>
 					</tr>
 					<tr colspan="2">
-					<td align="right">内容</td> <td><textarea name="comment" rows="6" cols="33" wrap="PHYSICAL" class="ml">{{tItemComment}}</textarea></td>
+					<td align="right">内容</td> <td><textarea name="comment" rows="6" cols="33" wrap="PHYSICAL" class="ml">{{tItemComment|escape}}</textarea></td>
 					</tr>
 					<tr colspan="2">
-					<td align="right">类别</td> <td><input type="text" name="tags" size="35" value="{{tItemTag}}" class="sl">
+					<td align="right">类别</td> <td><input type="text" name="tags" size="35" value="{{tItemTag|escape}}" class="sl">
 					</td>
 					</tr>
 					<tr colspan="2">

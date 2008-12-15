@@ -33,7 +33,7 @@ handlers:
   script: miscellaneous.py
 
 - url: /statstics
-  script: hello.py
+  script: miscellaneous.py
 
 - url: /Login.+
   script: hello.py
@@ -85,6 +85,9 @@ handlers:
 
 - url: /img
   script: hello.py
+
+- url: /flushcache
+  script: miscellaneous.py
 
 - url: /m/.+
   script: mobile.py

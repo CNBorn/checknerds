@@ -461,8 +461,8 @@ class edititem(tarsusaRequestHandler):
 
 				template_values = {
 					'tItemId': tItem.key().id(),
-					'tItemName': tItem.name,
-					'tItemComment': tItem.comment,
+					'tItemName': cgi.escape(tItem.name),
+					'tItemComment': cgi.escape(tItem.comment),
 					'tItemTag': tItemTags,
 					'tItemRoutine': tItem.routine,
 					'tItemExpectdate': tItemExpectdate, 
@@ -477,8 +477,8 @@ class edititem(tarsusaRequestHandler):
 				## GAE Localhost Environment
 				template_values = {
 					'tItemId': tItem.key().id(),
-					'tItemName': tItem.name.encode('utf-8'),
-					'tItemComment': tItem.comment.encode('utf-8'),
+					'tItemName': cgi.escape(tItem.name.encode('utf-8')),
+					'tItemComment': cgi.escape(tItem.comment.encode('utf-8')),
 					'tItemTag': tItemTags.encode('utf-8'),
 					'tItemRoutine': tItem.routine,
 					'tItemExpectdate': tItemExpectdate,
@@ -624,20 +624,20 @@ class get_fp_RecentRegisteredUserForAnonymous(tarsusaRequestHandler):
 			strCachedRecentRegisteredUsers = IsCachedRecentRegisteredUsers
 		else:
 
-			tarsusaUserCollection = db.GqlQuery("SELECT * FROM tarsusaUser ORDER BY datejoinin DESC LIMIT 6")
+			tarsusaUserCollection = db.GqlQuery("SELECT * FROM tarsusaUser ORDER BY datejoinin DESC LIMIT 9")
 			strRecentUsers = ''
 			if tarsusaUserCollection: 
 				for each_RecentUser in tarsusaUserCollection:
 					if each_RecentUser.avatar:
-						strRecentUsers += '<li>' + '<a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '"><img src=/img?img_user=' + str(each_RecentUser.key()) + " width=32 height=32>"
+						strRecentUsers += '<span ' + 'style="line-height: 2em;"><a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '"><img src=/img?img_user=' + str(each_RecentUser.key()) + " width=32 height=32>"
 					else:
 						## Show Default Avatar
-						strRecentUsers += '<li>' + '<a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>"
+						strRecentUsers += '<span ' + 'style="line-height: 2em;"><a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>"
 
-					strRecentUsers += cgi.escape(each_RecentUser.dispname) + '</a>'
+					strRecentUsers += cgi.escape(each_RecentUser.dispname) + '</a></span>'
 					#Complicatied TimeStamp needs to be done.
 					#UserFriends += str(datetime.datetime.now() - each_Friend.datejoinin) 
-					strRecentUsers += '<br /></li>'
+					strRecentUsers += '<br />'
 
 
 			template_values = {

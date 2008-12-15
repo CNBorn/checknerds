@@ -467,3 +467,11 @@
 		Fixed a BUG with UserSettingPage URL
 		LoginRedirect will cause UserNoneRegistration problem since register code are located in rootpage.
 			Disabled LoginRedirect codes for a while. Looking forward to have a solution here.
+
+		Moved statsticsPage from hello.py to miscellaneous.py in order to show memcache information.
+	IN 08.12.15
+		Fixed a BUG with 'ViewMore' URL in ajaxBottomContents
+		Fixed a BUG with leaking cgi.escape in EditItemAjaxPage
+		Fixed a Bug with Adding permission check in User/userid/[todo|done|donelog] Page.
+		Added Memcache_Flush_all function at /flushcache
+

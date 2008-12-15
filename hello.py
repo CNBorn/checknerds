@@ -405,7 +405,7 @@ class UserToDoPage(tarsusaRequestHandler):
 	def get(self):
 		# Permission check is very important.
 		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 
 			CountTotalItems = 0
@@ -413,7 +413,7 @@ class UserToDoPage(tarsusaRequestHandler):
 			## SPEED KILLER!
 			## MULTIPLE DB QUERIES!
 			## CAUTION! MODIFY THESE LATER!
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 50", users.get_current_user())
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 50", CurrentUser.user)
 
 			CountTotalItems = tarsusaItemCollection_UserToDoItems.count()
 			strTodoStatus = "共有" + str(CountTotalItems) + "个未完成项目"
@@ -431,12 +431,14 @@ class UserToDoPage(tarsusaRequestHandler):
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/usertodopage.html')
 			self.response.out.write(template.render(path, template_values))
+		else:
+			self.redirect('/')
 
 class UserDonePage(tarsusaRequestHandler):
 	def get(self):
 		# Permission check is very important.
 		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 
 			template_values = {
@@ -579,7 +581,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				if not memcache.set(str(CurrentUser.key()), db.Blob(avatar_image), 1800):
 					logging.error("Memcache set failed: When uploading avatar_image")
 
-				self.redirect("/user/" + CurrentUser.key().id() + "/setting")
+				self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
 
 
 			else:  
@@ -906,6 +908,9 @@ class Image (webapp.RequestHandler):
 class DoneLogPage(tarsusaRequestHandler):
 	def get(self):
 		
+		if not self.chk_login():
+			self.redirect('/')
+
 		## TODO added permission check, anonymous user should not see any private donelog 
 		
 		#Donelog should shows User's Done Routine Log
@@ -975,9 +980,6 @@ class DoneLogPage(tarsusaRequestHandler):
 		## Thus made this thing more difficult.
 
 
-
-
-
 		#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE done = 1 ORDER BY date DESC")
 
 		template_values = {
@@ -993,69 +995,6 @@ class DoneLogPage(tarsusaRequestHandler):
 
 	
 		path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
-		self.response.out.write(template.render(path, template_values))
-
-class StatsticsPage(tarsusaRequestHandler):
-	def get(self):
-	
-		# Show statstics information.
-
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-		
-		TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
-		TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
-		
-		htmltag = ''
-		htmltag += 'Uptime: ' + str(datetime.datetime.now() - datetime.datetime(2008,8,26,20,0,0))
-		htmltag += '<br />Project Started Since: ' + str(datetime.date.today() - datetime.date(2008, 7, 19)) + ' ago.'
-		htmltag += '<br />User Account: ' + str(TotalUserCount)
-		htmltag += '<br />Total Items: ' + str(TotaltarsusaItem)
-
-		try:
-			htmltag += '<br /><br /><b>memcached stats:</b>'
-			stats = memcache.get_stats()    
-			htmltag += "<br /><b>Cache Hits:</b>" + str(stats['hits'])
-			htmltag += "<br /><b>Cache Misses:</b>" +str(stats['misses'])
-					
-			htmltag += "<br /><b>Total Requested Cache bytes:</b>" +str(stats['byte_hits'])
-			htmltag += "<br /><b>Total Cache items:</b>" +str(stats['items'])
-			htmltag += "<br /><b>Total Cache bytes:</b>" +str(stats['bytes'])
-			htmltag += "<br /><b>Oldest Cache items:</b>" +str(stats['oldest_item_age'])
-		except:
-			pass
-
-		if users.get_current_user() != None:
-
-			template_values = {
-				'UserLoggedIn': 'Logged In',				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
-				'UserID': CurrentUser.key().id(),	
-				
-				'singlePageTitle': 'Statstics',
-				'singlePageContent': htmltag,
-
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				'htmltag_TotalUser': TotalUserCount,
-				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-
-			}
-		else:
-			template_values = {				
-				'UserNickName': "访客",
-				'AnonymousVisitor': "Yes",
-
-				'SinglePageTitle': 'Statstics',
-				'SinglePageContent': htmltag,
-
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				'htmltag_TotalUser': TotalUserCount,
-				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-			}
-
-		#Manupilating Templates	
-		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
 
 class DashboardPage(tarsusaRequestHandler):
@@ -1078,7 +1017,6 @@ def main():
 									   ('/img', Image),
 									   ('/Login.+',LoginPage),
 									   ('/Logout.+',SignOutPage),
-								       ('/statstics',StatsticsPage),
 									   ('/dashboard', DashboardPage),
 									   ('.*',NotFoundPage)],
                                        debug=True)

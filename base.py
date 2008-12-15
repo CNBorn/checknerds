@@ -52,7 +52,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 		self.login_user = users.get_current_user()
 		self.is_login = (self.login_user != None)
 
-		if self.is_login:			
+		if self.is_login:
 			return True
 		else:
 			#self.redirect(redirect_url)
