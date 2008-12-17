@@ -247,7 +247,7 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
 		return self.get(*args)
 		
 	def get(self):
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 		
 		cachedUserItemlist = memcache.get_item("itemlist", CurrentUser.key().id())
@@ -634,7 +634,11 @@ class get_fp_RecentRegisteredUserForAnonymous(tarsusaRequestHandler):
 						## Show Default Avatar
 						strRecentUsers += '<span ' + 'style="line-height: 2em;"><a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>"
 
-					strRecentUsers += cgi.escape(each_RecentUser.dispname) + '</a></span>'
+					try:
+						strRecentUsers += cgi.escape(each_RecentUser.dispname) + '</a></span>'
+					except:
+						strRecentUsers += cgi.escape(each_RecentUser.user.nickname()) + '</a></span>'
+
 					#Complicatied TimeStamp needs to be done.
 					#UserFriends += str(datetime.datetime.now() - each_Friend.datejoinin) 
 					strRecentUsers += '<br />'

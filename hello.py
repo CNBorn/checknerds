@@ -60,8 +60,6 @@ class MainPage(tarsusaRequestHandler):
 				## DB Model Patch
 				## These code for registered user whose information are not fitted into the new model setting.
 				
-				import DBPatcher
-				
 				## Added them here.
 				if CurrentUser.userid == None:
 					CurrentUser.userid = CurrentUser.key().id()
@@ -132,22 +130,32 @@ class MainPage(tarsusaRequestHandler):
 			self.response.out.write(template.render(path, template_values))
 			
 		else:
-		
-			TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
-			TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
+			#WelcomePage for Non-registered Users.
+			IsCachedWelcomePage = memcache.get_item('strCachedWelcomePage', 'global')
+			
+			if IsCachedWelcomePage:
+				strCachedWelcomePage = IsCachedWelcomePage
+			else:
 
-			## Homepage for Non-Registered Users.
+				TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
+				TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
 
-			template_values = {
-				'UserNickName': "访客",
-				'AnonymousVisitor': "Yes",
-				'htmltag_TotalUser': TotalUserCount,
-				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-			}
+				## Homepage for Non-Registered Users.
 
-			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/welcome.html')
-			self.response.out.write(template.render(path, template_values))
+				template_values = {
+					'UserNickName': "访客",
+					'AnonymousVisitor': "Yes",
+					'htmltag_TotalUser': TotalUserCount,
+					'htmltag_TotaltarsusaItem': TotaltarsusaItem,
+				}
+
+				#Manupilating Templates	
+				path = os.path.join(os.path.dirname(__file__), 'pages/welcome.html')
+				strCachedWelcomePage = template.render(path, template_values)
+				memcache.set_item("strCachedWelcomePage", strCachedWelcomePage, 'global')
+
+			self.response.out.write(strCachedWelcomePage)
+
 
 
 class ViewItem(tarsusaRequestHandler):

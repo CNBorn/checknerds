@@ -474,4 +474,8 @@
 		Fixed a BUG with leaking cgi.escape in EditItemAjaxPage
 		Fixed a Bug with Adding permission check in User/userid/[todo|done|donelog] Page.
 		Added Memcache_Flush_all function at /flushcache
-
+	IN 08.12.16
+		Added Memcache in WelcomePage
+	IN 08.12.17
+		Encountered a bug with a user's dispname is None
+		Modified Patcher as a special function for unexpected errors and Patchy solution

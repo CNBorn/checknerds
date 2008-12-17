@@ -194,9 +194,10 @@ class StatsticsPage(tarsusaRequestHandler):
 		
 		# Show statstics information.
 
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
+		else:
+			self.redirect('/')
 		
 		TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
 		TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
@@ -211,8 +212,7 @@ class StatsticsPage(tarsusaRequestHandler):
 			htmltag += '<br /><br /><b>memcached stats:</b>'
 			stats = memcache.get_stats()    
 			htmltag += "<br /><b>Cache Hits:</b>" + str(stats['hits'])
-			htmltag += "<br /><b>Cache Misses:</b>" +str(stats['misses'])
-					
+			htmltag += "<br /><b>Cache Misses:</b>" +str(stats['misses'])					
 			htmltag += "<br /><b>Total Requested Cache bytes:</b>" +str(stats['byte_hits'])
 			htmltag += "<br /><b>Total Cache items:</b>" +str(stats['items'])
 			htmltag += "<br /><b>Total Cache bytes:</b>" +str(stats['bytes'])
@@ -220,34 +220,20 @@ class StatsticsPage(tarsusaRequestHandler):
 		except:
 			pass
 
-		if users.get_current_user() != None:
+		template_values = {
+			'UserLoggedIn': 'Logged In',				
+			'UserNickName': cgi.escape(self.login_user.nickname()),
+			'UserID': CurrentUser.key().id(),	
+			
+			'singlePageTitle': 'Statstics',
+			'singlePageContent': htmltag,
 
-			template_values = {
-				'UserLoggedIn': 'Logged In',				
-				'UserNickName': cgi.escape(self.login_user.nickname()),
-				'UserID': CurrentUser.key().id(),	
-				
-				'singlePageTitle': 'Statstics',
-				'singlePageContent': htmltag,
+			'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+			'htmltag_TotalUser': TotalUserCount,
+			'htmltag_TotaltarsusaItem': TotaltarsusaItem,
 
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				'htmltag_TotalUser': TotalUserCount,
-				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-
-			}
-		else:
-			template_values = {				
-				'UserNickName': "访客",
-				'AnonymousVisitor': "Yes",
-
-				'SinglePageTitle': 'Statstics',
-				'SinglePageContent': htmltag,
-
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				'htmltag_TotalUser': TotalUserCount,
-				'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-			}
-
+		}
+		
 		#Manupilating Templates	
 		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
