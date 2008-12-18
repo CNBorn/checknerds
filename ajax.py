@@ -40,7 +40,7 @@ import memcache
 class getdailyroutine(tarsusaRequestHandler):
 
 	def post(self):
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 		else:
 			self.redirect('/')
@@ -143,7 +143,7 @@ class getdailyroutine(tarsusaRequestHandler):
 class getdailyroutine_yesterday(tarsusaRequestHandler):
 	def post(self):
 		
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 		else:
 			self.redirect('/')
@@ -278,7 +278,7 @@ class get_fp_itemstats(tarsusaRequestHandler):
 	def get(self):
 		
 		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 
 			cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())
@@ -329,7 +329,7 @@ class get_fp_friendstats(tarsusaRequestHandler):
 	def get(self):
 
 		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 		#else:
 			#self.redirect('/')		

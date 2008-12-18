@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-
-# CheckNerds 
+# **************************************************************** 
+# CheckNerds - www.checknerds.com
+# version 0.7, codename Nevada
 # - friends.py
-# Cpoyright (C) CNBorn, 2008
+# Copyright (C) CNBorn, 2008
 # http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+#
+# **************************************************************** 
 
-
-#from django.conf import settings
-#settings._target = None
 import os
 import sys
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 import cgi
 import wsgiref.handlers
@@ -32,10 +31,9 @@ import memcache
 class FindFriendPage(tarsusaRequestHandler):
 	def get(self):
 	
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
 		
 		##if users.get_current_user() is None 
 		if CurrentUser == None:
@@ -58,9 +56,7 @@ class FindFriendPage(tarsusaRequestHandler):
 			## Prompt them to register!
 
 		else:
-
-
-			tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser LIMIT 500")
+			tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser")
 
 			tarsusaUserFriendCollection = CurrentUser.friends
 
@@ -94,7 +90,6 @@ class FindFriendPage(tarsusaRequestHandler):
 
 					'tarsusaPeopleCollection': tarsusaPeopleCollection,
 			}
-
 		
 			path = os.path.join(os.path.dirname(__file__), 'pages/addfriend.html')
 			self.response.out.write(template.render(path, template_values))
@@ -143,10 +138,10 @@ class RemoveFriendProcess(tarsusaRequestHandler):
 			## Please be awared that ItemId here is a string!
 		ToBeRemovedUser = tarsusaUser.get_by_id(int(ToBeRemovedUserId))
 
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
+
 
 		AlreadyAddedAsFriend = False
 		for eachFriend in CurrentUser.friends:

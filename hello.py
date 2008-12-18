@@ -32,23 +32,7 @@ class MainPage(tarsusaRequestHandler):
 			
 			if CurrentUser == None:
 				# Create a User
-				# Actully I thought this would be useless when I have an signin page.
-				
-				#Give vreated user a default avatar image.
-				#avatar_image = images.resize('/img/default_avatar.jpg',64,64)
-				#do not support read from file 
-				#CurrentUser.avatar=db.Blob(avatar_image)
-				#CurrentUser.put()  	
-
-
-				CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=users.get_current_user().nickname())
-				#self.write(CurrentUser.dispname)
-
-
-				## Should automatically give the user a proper urlname
-				## otherwise a lot of user's name will be their email address.
-				## the email address's urlname will cause seriouse problems when 
-				## the people are entering their own Mainpage or UserSetting page.
+				CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=cgi.escape(users.get_current_user().nickname()))
 				CurrentUser.put()
 
 				## Added userid property.
@@ -60,22 +44,19 @@ class MainPage(tarsusaRequestHandler):
 				## DB Model Patch
 				## These code for registered user whose information are not fitted into the new model setting.
 				
-				## Added them here.
-				if CurrentUser.userid == None:
-					CurrentUser.userid = CurrentUser.key().id()
-					CurrentUser.put()
-					
 				#Run DB Model Patch	when User Logged in.
 				#DBPatcher.chk_dbmodel_update(CurrentUser)
 				#Run this at every ViewItem event
 
-
-
+				## Added userid here.
+				if CurrentUser.userid == None:
+					CurrentUser.userid = CurrentUser.key().id()
+					CurrentUser.put()
+					
 
 			
 			## Check usedtags as the evaluation for Tags Model
 			## TEMP CODE!
-			##UserTags = cgi.escape('<a href=/tag/>未分类项目</a>&nbsp;')
 			UserTags = '<a href=/tag/>未分类项目</a>&nbsp;'.decode('utf-8')
 
 			if CurrentUser.usedtags:
@@ -160,7 +141,6 @@ class MainPage(tarsusaRequestHandler):
 
 class ViewItem(tarsusaRequestHandler):
 	def get(self):
-		#self.current_page = "home"
 		postid = self.request.path[3:]
 		tItem = tarsusaItem.get_by_id(int(postid))
 
@@ -207,9 +187,9 @@ class ViewItem(tarsusaRequestHandler):
 
 			
 
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()
+			# New CheckLogin code built in tarsusaRequestHandler 
+			if self.chk_login():
+				CurrentUser = self.get_user_db()
 
 
 			logictag_OtherpeopleViewThisItem = None
@@ -472,7 +452,6 @@ class LoginPage(tarsusaRequestHandler):
 
 		self.redirect(users.create_login_url('/'))
 
-
 class SignOutPage(tarsusaRequestHandler):
 	def get(self):
 		self.redirect(self.get_logout_url(True))
@@ -496,9 +475,7 @@ class UserSettingPage(tarsusaRequestHandler):
 					## Custom djangoforms.ModelForm,
 					## http://groups.google.com/group/google-appengine/browse_thread/thread/d3673d0ec7ead0e2
 					
-					#category = forms.CharField(widget=forms.HiddenInput())
-					#description =forms.CharField(widget=forms.Textarea(attrs={'rows':'10','cols':'70'})) 
-					mail =	forms.CharField(label='您的邮箱(暂无法更改)',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.user.email()})) 
+					mail =	forms.CharField(label='您的邮箱(不会公开，无法更改)',widget=forms.TextInput(attrs={'readonly':'','size':'30','maxlength':'30','value':EditedUser.user.email()})) 
 					#urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
 					dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname}))
 					website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website}))	
@@ -544,11 +521,7 @@ class UserSettingPage(tarsusaRequestHandler):
 						'UserSettingForms': outputStringUserSettingForms,
 						'UserAvatarImage': outputStringUserAvatarImage,
 						'UserAvatarSetting': outputStringUserAvatarSetting,
-
-
-						
 				}
-
 			
 				path = os.path.join(os.path.dirname(__file__), 'pages/usersettingpage.html')
 				self.response.out.write(template.render(path, template_values))
@@ -556,7 +529,6 @@ class UserSettingPage(tarsusaRequestHandler):
 			else:
 				# the editedUser is not CurrentUser.
 				self.redirect("/")
-
 
 		else:
 			## can not find this user.
@@ -577,9 +549,9 @@ class UserSettingPage(tarsusaRequestHandler):
 		if url_mime:  
 			if avatar:
 				
-				# code below are comming from GAE example
-				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-				CurrentUser = q.get()
+				# New CheckLogin code built in tarsusaRequestHandler 
+				if self.chk_login():
+					CurrentUser = self.get_user_db()
 
 				avatar_image = images.resize(avatar,128,128)
 
@@ -594,9 +566,9 @@ class UserSettingPage(tarsusaRequestHandler):
 
 			else:  
 				
-				# code below are comming from GAE example
-				q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-				CurrentUser = q.get()	
+				# New CheckLogin code built in tarsusaRequestHandler 
+				if self.chk_login():
+					CurrentUser = self.get_user_db()
 				
 				CurrentUser.mail = mail
 				CurrentUser.dispname = dispname
@@ -621,8 +593,9 @@ class UserSettingPage(tarsusaRequestHandler):
 				 			if 'Content-Type' in fc.headers:  
 								url_mime = fc.headers['Content-Type']  
 							
-								q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-								CurrentUser = q.get()
+								# New CheckLogin code built in tarsusaRequestHandler 
+								if self.chk_login():
+									CurrentUser = self.get_user_db()
 					
 								
 								self.write('noneok')
@@ -916,22 +889,21 @@ class Image (webapp.RequestHandler):
 class DoneLogPage(tarsusaRequestHandler):
 	def get(self):
 		
+		#Have to add this limit for GAE's CPU limitation.
+		MaxDisplayedDonelogDays = 7
+		DisplayedDonelogDays = 1 
+
+		# New CheckLogin code built in tarsusaRequestHandler 
 		if not self.chk_login():
 			self.redirect('/')
 
-		## TODO added permission check, anonymous user should not see any private donelog 
-		
-		#Donelog should shows User's Done Routine Log
-		
-		#Donelog page shows User Done's Log.
-		
 		userid = urllib.unquote(cgi.escape(self.request.path[6:-8])) ## Get the username in the middle of /user/1234/donelog
 		
 		if userid == "": ## if the url are not directed to specific user.
 
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()
+			# New CheckLogin code built in tarsusaRequestHandler 
+			if self.chk_login():
+				CurrentUser = self.get_user_db()
 
 		else:
 			CurrentUser = tarsusaUser.get_by_id(int(userid))
@@ -939,71 +911,78 @@ class DoneLogPage(tarsusaRequestHandler):
 				## Can not find this user.
 				self.redirect("/")
 
+		#Memcached Donelog page for better performance.
+		IsCachedDonelogPage = memcache.get_item('donelog', CurrentUser.key().id())
+		if IsCachedDonelogPage:
+			strCachedDonelogPage = IsCachedDonelogPage
+		else:
+			tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 ORDER BY donedate DESC", CurrentUser.user)
+			
+			outputStringRoutineLog = "目前由于GAE的限制，只能显示7天内的完成记录<br />".decode('utf-8')
+			Donedate_of_previousRoutineLogItem = None  ## To display the routine item log by Daily.
 
-		tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 ORDER BY donedate DESC", CurrentUser.user)
+			for each_RoutineLogItem in tarsusaRoutineLogItemCollection:
+				
+				DoneDateOfThisItem = datetime.datetime.date(each_RoutineLogItem.donedate)
+				if DisplayedDonelogDays > MaxDisplayedDonelogDays:
+					break
+
+				if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
+					outputStringRoutineLog += ('<br /><h2 class="posttitle" style="font-weight:normal;">' + str(DoneDateOfThisItem) + '完成</h2><br />').decode('utf-8')
+					DisplayedDonelogDays += 1
+				
+				## Get what the name of this RoutinetarsusaItem is.
+				ThisRoutineBelongingstarsusaItem = tarsusaItem.get_by_id(each_RoutineLogItem.routineid)
+				
+				if each_RoutineLogItem.routine != 'none':
+					strRoutineLogItemPrompt = ''
+					if each_RoutineLogItem.routine == 'daily':
+						strRoutineLogItemPrompt = '每日'
+					elif each_RoutineLogItem.routine == 'weekly':
+						strRoutineLogItemPrompt = '每周'
+					elif each_RoutineLogItem.routine == 'monthly':
+						strRoutineLogItemPrompt = '每月'
+					elif each_RoutineLogItem.routine == 'seasonly':
+						strRoutineLogItemPrompt = '每季'
+					elif each_RoutineLogItem.routine == 'yearly':
+						strRoutineLogItemPrompt = '每年'
+
+				outputStringRoutineLog += ('<img src="/img/accept16.png">')
+				outputStringRoutineLog += '<a href=/i/' + str(ThisRoutineBelongingstarsusaItem.key().id()) + '>' + ThisRoutineBelongingstarsusaItem.name + "</a> - <strong>" + (strRoutineLogItemPrompt + '任务</strong>').decode('utf-8') + "<br/>"
+
+				
+				#Show ordinary items that are created in that day
+				TheDay = DoneDateOfThisItem
+				one_day = datetime.timedelta(days=1)
+				#yesterday_ofTheDay = TheDay - one_day						
+				yesterday_ofTheDay = datetime.datetime.combine(TheDay - one_day,datetime.time(0))
+				#nextday_ofTheDay = TheDay + one_day
+				nextday_ofTheDay = datetime.datetime.combine(TheDay + one_day, datetime.time(0))
+
+				tarsusaItemCollection_ThisDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND donedate > :2 AND donedate <:3 AND done = True ORDER BY donedate DESC", CurrentUser.user, yesterday_ofTheDay, nextday_ofTheDay)
+				for each_doneItem_withinOneday in tarsusaItemCollection_ThisDayCreated:
+					outputStringRoutineLog += ('<img src="/img/accept16.png">').decode('utf-8')			
+					outputStringRoutineLog += '<a href=/i/' + str(each_doneItem_withinOneday.key().id()) + '>' + each_doneItem_withinOneday.name + "</a><br/>"
+				
+				Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
+
+
+			template_values = {
+					'PrefixCSSdir': "/",
+					
+					'UserLoggedIn': 'Logged In',
+					'UserID': CurrentUser.key().id(),
+					'UserNickName': cgi.escape(CurrentUser.dispname),
+					'singlePageTitle': "",
+					
+					'StringRoutineLog': outputStringRoutineLog,
+			}
 		
-		outputStringRoutineLog = ""
-		Donedate_of_previousRoutineLogItem = None  ## To display the routine item log by Daily.
-
-		for each_RoutineLogItem in tarsusaRoutineLogItemCollection:
-			
-			DoneDateOfThisItem = datetime.datetime.date(each_RoutineLogItem.donedate)
-
-			if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
-				outputStringRoutineLog += ('<br /><h2 class="posttitle" style="font-weight:normal;">' + str(DoneDateOfThisItem) + '完成</h2><br />').decode('utf-8')
-			
-			## TODO
-			## NOTICE! SPEED KILLER!
-			#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND "
-			
-			#tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC ", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id())
-
-			## Get what the name of this tarsusaItem is.
-			ThisRoutineBelongingstarsusaItem = tarsusaItem.get_by_id(each_RoutineLogItem.routineid)
-			
-			if each_RoutineLogItem.routine != 'none':
-				strRoutineLogItemPrompt = ''
-				if each_RoutineLogItem.routine == 'daily':
-					strRoutineLogItemPrompt = '每日'
-				elif each_RoutineLogItem.routine == 'weekly':
-					strRoutineLogItemPrompt = '每周'
-				elif each_RoutineLogItem.routine == 'monthly':
-					strRoutineLogItemPrompt = '每月'
-				elif each_RoutineLogItem.routine == 'seasonly':
-					strRoutineLogItemPrompt = '每季'
-				elif each_RoutineLogItem.routine == 'yearly':
-					strRoutineLogItemPrompt = '每年'
-
-				outputStringRoutineLog += ('<img src="/img/accept16.png">' + strRoutineLogItemPrompt + '任务 - ').decode('utf-8')
-			
-				
-			outputStringRoutineLog += '<a href=/i/' + str(ThisRoutineBelongingstarsusaItem.key().id()) + '>' + ThisRoutineBelongingstarsusaItem.name + "</a><br/>"
-
-			Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
-
-		## AT THIS PAgE
-		## There should be also displaying ordinary items that done.
-		## but since there will be a performance killer when selecting almost all doneitems
-		## and a major con is that the date property in Datastore model can not be queried as a condition.
-		## Thus made this thing more difficult.
-
-
-		#tarsusaItemCollection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE done = 1 ORDER BY date DESC")
-
-		template_values = {
-				'PrefixCSSdir': "/",
-				
-				'UserLoggedIn': 'Logged In',
-				'UserID': CurrentUser.key().id(),
-				'UserNickName': CurrentUser.dispname, 
-				'singlePageTitle': "",
-				
-				'StringRoutineLog': outputStringRoutineLog,
-		}
-
-	
-		path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
-		self.response.out.write(template.render(path, template_values))
+			path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
+			strCachedDonelogPage = template.render(path, template_values)
+			memcache.set_item("donelog", strCachedDonelogPage, CurrentUser.key().id())
+		
+		self.response.out.write(strCachedDonelogPage)
 
 class DashboardPage(tarsusaRequestHandler):
 	def get(self):

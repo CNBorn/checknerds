@@ -479,3 +479,6 @@
 	IN 08.12.17
 		Encountered a bug with a user's dispname is None
 		Modified Patcher as a special function for unexpected errors and Patchy solution
+	IN 08.12.18
+		Improved DoneLog Page, Now can show ordinary items also.
+
