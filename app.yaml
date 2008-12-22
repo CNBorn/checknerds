@@ -75,7 +75,7 @@ handlers:
   script: hello.py
 
 - url: /user/.*
-  script: hello.py
+  script: userpage.py
 
 - url: /tag/.*
   script: tag.py

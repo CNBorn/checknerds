@@ -494,4 +494,9 @@
 			Simple API service
 			Simple functional Mobile page
 		
+		Added userpage.py, code organized a little bit.
 
+		Added Registered code in tarsusaRequestHandler.chk_login()
+			Solved the problem since r79. (After login force to redirect to root)
+			Need to be further tested tomorrow.
+			This is the fundation of MobilePage.

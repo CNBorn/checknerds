@@ -2,7 +2,7 @@ from google.appengine.ext import webapp
 from google.appengine.api import users
 
 from modules import *
-
+import cgi
 
 # {{{ Base class
 class tarsusaRequestHandler(webapp.RequestHandler):
@@ -48,11 +48,36 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 			return users.create_logout_url(self.request.uri)
 	
 	def chk_login(self, redirect_url='/'):
-	
 		self.login_user = users.get_current_user()
 		self.is_login = (self.login_user != None)
 
 		if self.is_login:
+			# added register code here
+			CurrentUser = self.get_user_db()
+			
+			if CurrentUser == None:
+				# Create a User
+				CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=cgi.escape(users.get_current_user().nickname()))
+				CurrentUser.put()
+
+				## Added userid property.
+				CurrentUser.userid = CurrentUser.key().id()
+				CurrentUser.dispname = users.get_current_user().nickname()
+				CurrentUser.put()
+			
+			else:
+				## DB Model Patch
+				## These code for registered user whose information are not fitted into the new model setting.
+				
+				#Run DB Model Patch	when User Logged in.
+				#DBPatcher.chk_dbmodel_update(CurrentUser)
+				#Run this at every ViewItem event
+
+				## Added userid here.
+				if CurrentUser.userid == None:
+					CurrentUser.userid = CurrentUser.key().id()
+					CurrentUser.put()					
+			
 			return True
 		else:
 			#self.redirect(redirect_url)
