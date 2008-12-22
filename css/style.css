@@ -44,7 +44,7 @@ p{font-size:11px;line-height:18px;}
 
 #container-content{background-image:url(../img/container-top.png);background-repeat:no-repeat;background-position:center top;background-color:#F9F9F9;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#E2E3E4;border-left-color:#E2E3E4;margin:0;padding:13px;}
 #header{margin:15px 0 0 20px;}
-#breadcrumbs{margin-bottom:17px;}
+#breadcrumbs{margin-bottom:5px;}
 #breadcrumbs-top,#copy-top{background-image:url(../img/div-green-top.png);background-repeat:no-repeat;background-position:center top;height:4px;}
 #breadcrumbs-mid,#copy-mid{background-color:#EFF8E1;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-left-color:#E3EBD6;border-right-color:#E3EBD6;padding-left:10px;padding-right:10px;}
 table{width:100%;}

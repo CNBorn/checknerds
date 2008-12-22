@@ -89,6 +89,9 @@ handlers:
 - url: /flushcache
   script: miscellaneous.py
 
+- url: /service/.+
+  script: service.py
+
 - url: /m/.+
   script: mobile.py
 
@@ -108,4 +111,4 @@ handlers:
 
 - url: /.*
   static_files: pages/404.html
-  upload: /.*
+  upload: /pages/404.html

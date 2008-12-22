@@ -481,4 +481,17 @@
 		Modified Patcher as a special function for unexpected errors and Patchy solution
 	IN 08.12.18
 		Improved DoneLog Page, Now can show ordinary items also.
+	IN 08.12.19
+		Forgot to add removefriend memcache event in removefriendprocess, fixed it.
+		Made a better About Page.
+	IN 08.12.21
+		Added /Service/ as API
+		Tested js with this API but it seems unsuccessful.
+	IN 08.12.22
+		Goals of previous big Rev seems to be fulfilled.
+		
+		Provisions for Next Phase Rev.
+			Simple API service
+			Simple functional Mobile page
+		
 

@@ -107,7 +107,7 @@ class MainPage(tarsusaRequestHandler):
 
 
 			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'index.html')
+			path = os.path.join(os.path.dirname(__file__), 'pages/index.html')
 			self.response.out.write(template.render(path, template_values))
 			
 		else:

@@ -157,6 +157,7 @@ class RemoveFriendProcess(tarsusaRequestHandler):
 			## You can't remove your self! and You can not remove a person that are not your friend!
 			pass
 		
+		memcache.event('removefriend', CurrentUser.key().id())
 		self.redirect('/FindFriend')
 
 
