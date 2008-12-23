@@ -42,10 +42,11 @@ class DoneItem(tarsusaRequestHandler):
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 		
 		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 		else:
-			self.redirect('/')
+			#self.redirect('/')
+			self.redirect(self.referer)
 		
 		if tItem.user == users.get_current_user():
 			## Check User Permission to done this Item
@@ -77,6 +78,7 @@ class DoneItem(tarsusaRequestHandler):
 					
 		#self.redirect(self.request.uri)
 		#self.redirect('/')
+		self.redirect(self.referer)
 
 class UnDoneItem(tarsusaRequestHandler):
 	def get(self):
@@ -93,10 +95,11 @@ class UnDoneItem(tarsusaRequestHandler):
 		tItem = tarsusaItem.get_by_id(int(ItemId))
 		
 		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 		else:
-			self.redirect('/')
+			#self.redirect('/')
+			self.redirect(self.referer)
 
 		if tItem.user == users.get_current_user():
 			## Check User Permission to undone this Item
@@ -160,6 +163,8 @@ class UnDoneItem(tarsusaRequestHandler):
 								result.delete()
 							else:
 								pass
+		
+		self.redirect(self.referer)
 
 class RemoveItem(tarsusaRequestHandler):
 	def get(self):

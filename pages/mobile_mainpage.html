@@ -1,4 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xml:lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta id="viewport" name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"><title>CheckNerds Mobile</title><link rel="stylesheet" type="text/css" href="{{ PrefixCSSdir }}/img/m_style.css"></head><body><h1>CheckNerds Mobile</h1><div class="content"><small><a href="#">{{UserNickName}}</a> - {{htmltag_today}} - <a href="/SignOut/m/1">登出</a></small></div><div class="content"><ul>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xml:lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta id="viewport" name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"><title>CheckNerds Mobile</title><link rel="stylesheet" type="text/css" href="{{ PrefixCSSdir }}/css/m_style.css"></head><body><h2>CheckNerds Mobile</h2><div class="content"><small><a href="#">{{UserNickName}}</a> - {{htmltag_today}} - <a href="/logout/m/1">登出</a></small></div>
+
+<div class="content"><small><a href="#">每日</a> | <a href="#">未做</a> | <a href="#">已做</a> | <a href="#">添加</a></small></div>
+
+
+
+
+<div class="content"><ul>
 {% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
 <li>
 {% if tarsusaItem_DailyRoutine.donetoday %}

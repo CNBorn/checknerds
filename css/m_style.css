@@ -1,7 +1,7 @@
 body {
 padding: 3px;
 margin: 0px;
-background-color: #FFF;
+background-color: #f0f8e4;
 -webkit-text-size-adjust: none;
 -webkit-user-select: none;
 }
@@ -16,12 +16,12 @@ font-weight: normal;
 }
 
 h2 {
-color: #333;
+color: #96BE57;
 display: block;
 margin: 0px 0px 0px 0px;
 padding: 3px 0px 3px 0px;
 font-size: medium;
-font-weight: normal;
+font-weight: bold;
 }
 
 span.text {
@@ -91,7 +91,7 @@ border-bottom: 2px solid #09F;
 }
 
 ul {
-list-style: square;
+list-style: decimal;
 margin-top: 5px;
 margin-bottom: 5px;
 padding-left: 15px;
@@ -108,12 +108,25 @@ border: 1px solid #CCC;
 
 a, a:visited, a:active {
 text-decoration: none;
-color: #0063DC;
+color: #9C9B50;
+}
+
+a.check, a.check:visited, a.check:active {
+text-decoration: none;
+color: #999;
+font-size: small;
+}
+
+a.check:hover {
+text-decoration: none;
+background-color: #F00;
+color: #FFF;
+font-size: small;
 }
 
 a:hover {
 text-decoration: none;
-background-color: #0063DC;
+background-color: #9C9B50;
 color: #FFF;
 }
 

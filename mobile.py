@@ -25,37 +25,12 @@ from base import *
 class mMainPage(tarsusaRequestHandler):
 	def get(self):
 		
-		#if self.chk_login() == True:
-		if users.get_current_user() != None:
-
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
+		
+			#self.redirect("/m/" + str(CurrentUser.key().id()) + "/todo")
 			
-			if not CurrentUser:
-				# Create a User
-				# Actully I thought this would be useless when I have an signin page.
-				
-				CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=users.get_current_user().nickname())
-
-				## Should automatically give the user a proper urlname
-				## otherwise a lot of user's name will be their email address.
-				## the email address's urlname will cause seriouse problems when 
-				## the people are entering their own Mainpage or UserSetting page.
-				CurrentUser.put()
-
-				## Added userid property.
-				CurrentUser.userid = CurrentUser.key().id()
-				CurrentUser.dispname = CurrentUser.user.nickname()
-				CurrentUser.put()
-			
-			else:
-				## These code for registered user whose information are not fitted into the new model setting.
-				## Added them here.
-				if CurrentUser.userid == None:
-					CurrentUser.userid = CurrentUser.key().id()
-
-
 			# Show His Daily Routine.
 			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
 
@@ -126,22 +101,14 @@ class mMainPage(tarsusaRequestHandler):
 			
 			
 			
-			
-			
-			
-			
-			
-			
-			
 			template_values = {
 				'UserLoggedIn': 'Logged In',
-				'UserNickName': cgi.escape(self.login_user.nickname()),
+				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
 				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
-
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_mainpage.html')
 			self.response.out.write(template.render(path, template_values))
@@ -150,17 +117,47 @@ class mMainPage(tarsusaRequestHandler):
 		else:
 			##Show Mobile Welcome page
 			template_values = {
-				'UserLoggedIn': 'Logged In',
-				'UserNickName': '',#cgi.escape(self.login_user.nickname()),
-				'UserID': '',#CurrentUser.key().id(),
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
-
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_welcomepage.html')
 			self.response.out.write(template.render(path, template_values))
 
 
+class mToDoPage(tarsusaRequestHandler):
+	def get(self):
+			
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
+			
+			## Below begins user todo items. for MOBILE page.
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)					
+			
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				'UserNickName': cgi.escape(CurrentUser.dispname),
+				'UserID': CurrentUser.key().id(),
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+			}
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_todopage.html')
+			self.response.out.write(template.render(path, template_values))
+		
+		else:
+			self.redirect("/m/1")
+
+class mDonePage(tarsusaRequestHandler):
+	def get(self):
+		pass
+
+class mDoneLogPage(tarsusaRequestHandler):
+	def get(self):
+		pass
+class mDailyRoutinePage(tarsusaRequestHandler):
+	def get(self):
+		pass
 class mErrorPage(tarsusaRequestHandler):
 	def get():
 		print 'abc'
@@ -170,7 +167,12 @@ class mErrorPage(tarsusaRequestHandler):
 
 
 def main():
-	application = webapp.WSGIApplication([('/m/1', mMainPage),
+	application = webapp.WSGIApplication([('/m/.+/donelog',mDoneLogPage),
+									   ('/m/.+/dailyroutine',mDailyRoutinePage),
+									   ('/m/.+/todo',mToDoPage),
+									   ('/m/.+/done',mDonePage),
+									   ('/m/.+', mMainPage),
+
 									   ('.*',mErrorPage)],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)

@@ -500,3 +500,5 @@
 			Solved the problem since r79. (After login force to redirect to root)
 			Need to be further tested tomorrow.
 			This is the fundation of MobilePage.
+	IN 08.12.23
+		Modified MobilePages
