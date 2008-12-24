@@ -172,9 +172,7 @@ class UserDonePage(tarsusaRequestHandler):
 
 			template_values = {
 				'PrefixCSSdir': "/",
-
 				'UserLoggedIn': 'Logged In',
-				
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
 			}

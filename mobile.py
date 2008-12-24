@@ -20,7 +20,7 @@ from google.appengine.api import images
 from modules import *
 from base import *
 
-
+import memcache
 
 class mMainPage(tarsusaRequestHandler):
 	def get(self):
@@ -28,8 +28,129 @@ class mMainPage(tarsusaRequestHandler):
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
+	
+			cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())
+			if cachedUserItemStats is not None:
+				strcachedUserItemStats = cachedUserItemStats
+			else:
+				# Count User's Todos and Dones
+				tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
+
+				# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
+				# SO there is implemented a stupid way.
+				UserTotalItems = 0
+				UserToDoItems = 0
+				UserDoneItems = 0
+
+				UserDonePercentage = 0.00
+
+				for eachItem in tarsusaItemCollection_UserItems:
+					UserTotalItems += 1
+					if eachItem.done == True:
+						UserDoneItems += 1
+					else:
+						UserToDoItems += 1
+				
+				if UserTotalItems != 0:
+					UserDonePercentage = UserDoneItems *100 / UserTotalItems 
+				else:
+					UserDonePercentage = 0.00
+
+				template_values = {
+					'UserLoggedIn': 'Logged In',
+					'UserTotalItems': UserTotalItems,
+					'UserToDoItems': UserToDoItems,
+					'UserDoneItems': UserDoneItems,
+					'UserDonePercentage': UserDonePercentage,
+				}
+
+				#Manupilating Templates	
+				path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_itemstats.html')
+				
+				strcachedUserItemStats = template.render(path, template_values)
+				memcache.set_item("itemstats", strcachedUserItemStats, CurrentUser.key().id())
+			
+			#self.response.out.write(strcachedUserItemStats)
+
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				'UserNickName': cgi.escape(CurrentUser.dispname),
+				'UserID': CurrentUser.key().id(),
+				'tarsusaItemCollection_Statstics': strcachedUserItemStats,
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+			}
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_mainpage.html')
+			self.response.out.write(template.render(path, template_values))
+
+
+		else:
+			##Show Mobile Welcome page
+			template_values = {
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+			}
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_welcomepage.html')
+			self.response.out.write(template.render(path, template_values))
+
+class mToDoPage(tarsusaRequestHandler):
+	def get(self):
+			
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
+			
+			## Below begins user todo items. for MOBILE page.
+			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)					
+			
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				'UserNickName': cgi.escape(CurrentUser.dispname),
+				'UserID': CurrentUser.key().id(),
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+			}
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_todopage.html')
+			self.response.out.write(template.render(path, template_values))
 		
-			#self.redirect("/m/" + str(CurrentUser.key().id()) + "/todo")
+		else:
+			self.redirect("/m/")
+
+class mDonePage(tarsusaRequestHandler):
+	def get(self):
+			
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
+			
+			## Below begins user todo items. for MOBILE page.
+			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY donedate DESC LIMIT 9", CurrentUser.user)					
+			
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				'UserNickName': cgi.escape(CurrentUser.dispname),
+				'UserID': CurrentUser.key().id(),
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+			}
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_donepage.html')
+			self.response.out.write(template.render(path, template_values))
+		
+		else:
+			self.redirect("/m/")
+
+class mDoneLogPage(tarsusaRequestHandler):
+	def get(self):
+		pass
+
+class mDailyRoutinePage(tarsusaRequestHandler):
+	def get(self):
+		
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()		
 			
 			# Show His Daily Routine.
 			tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", users.get_current_user())
@@ -52,7 +173,6 @@ class mMainPage(tarsusaRequestHandler):
 				# GAE datastore has a gqlquery.count limitation. So right here solve this manully.
 				#tarsusaItemCollection_DailyRoutine_count
 				# Refer to code above.
-				
 				
 				# LIMIT and OFFSET don't currently support bound parameters.
 				# http://code.google.com/p/googleappengine/issues/detail?id=179
@@ -95,85 +215,39 @@ class mMainPage(tarsusaRequestHandler):
 						except:
 							pass
 
-			
-			## Below begins user todo items. for MOBILE page.
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 5", users.get_current_user())
-			
-			
-			
+			## Output the message for DailyRoutine
+			template_tag_donealldailyroutine = ''				
+			if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
+				template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
+			elif Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) - 1:
+				template_tag_donealldailyroutine = '只差一项，加油！'
+			elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
+				template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'	
 			template_values = {
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
 				'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'template_tag_donealldailyroutine': template_tag_donealldailyroutine,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
 			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_mainpage.html')
+			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_dailyroutinepage.html')
 			self.response.out.write(template.render(path, template_values))
-
-
 		else:
-			##Show Mobile Welcome page
-			template_values = {
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-			}
-			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_welcomepage.html')
-			self.response.out.write(template.render(path, template_values))
-
-
-class mToDoPage(tarsusaRequestHandler):
-	def get(self):
-			
-		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login():
-			CurrentUser = self.get_user_db()
-			
-			## Below begins user todo items. for MOBILE page.
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)					
-			
-			template_values = {
-				'UserLoggedIn': 'Logged In',
-				'UserNickName': cgi.escape(CurrentUser.dispname),
-				'UserID': CurrentUser.key().id(),
-				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-			}
-			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_todopage.html')
-			self.response.out.write(template.render(path, template_values))
+			self.redirect("/m/")
 		
-		else:
-			self.redirect("/m/1")
-
-class mDonePage(tarsusaRequestHandler):
-	def get(self):
-		pass
-
-class mDoneLogPage(tarsusaRequestHandler):
-	def get(self):
-		pass
-class mDailyRoutinePage(tarsusaRequestHandler):
-	def get(self):
-		pass
 class mErrorPage(tarsusaRequestHandler):
 	def get():
 		print 'abc'
 
-
-
-
-
 def main():
-	application = webapp.WSGIApplication([('/m/.+/donelog',mDoneLogPage),
-									   ('/m/.+/dailyroutine',mDailyRoutinePage),
-									   ('/m/.+/todo',mToDoPage),
-									   ('/m/.+/done',mDonePage),
-									   ('/m/.+', mMainPage),
-
-									   ('.*',mErrorPage)],
+	application = webapp.WSGIApplication([('/m/donelog',mDoneLogPage),
+									   ('/m/dailyroutine',mDailyRoutinePage),
+									   ('/m/todo',mToDoPage),
+									   ('/m/done',mDonePage),
+									   ('/m/', mMainPage),
+									   ('/m.*',mErrorPage)],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)
 if __name__ == "__main__":

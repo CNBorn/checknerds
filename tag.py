@@ -34,7 +34,7 @@ class Showtag(tarsusaRequestHandler):
 		catlll = db.GqlQuery("SELECT * FROM Tag WHERE name = :1", RequestCatName.decode('utf-8'))
 
 		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 		else:
 			self.redirect('/')
