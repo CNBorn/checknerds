@@ -94,7 +94,7 @@ class DoneLogPage(tarsusaRequestHandler):
 						strRoutineLogItemPrompt = '每年'
 
 				outputStringRoutineLog += ('<img src="/img/accept16.png">')
-				outputStringRoutineLog += '<a href=/i/' + str(ThisRoutineBelongingstarsusaItem.key().id()) + '>' + ThisRoutineBelongingstarsusaItem.name + "</a> - <strong>" + (strRoutineLogItemPrompt + '任务</strong>').decode('utf-8') + "<br/>"
+				outputStringRoutineLog += '<a href=/item/' + str(ThisRoutineBelongingstarsusaItem.key().id()) + '>' + ThisRoutineBelongingstarsusaItem.name + "</a> - <strong>" + (strRoutineLogItemPrompt + '任务</strong>').decode('utf-8') + "<br/>"
 
 				
 				#Show ordinary items that are created in that day
@@ -108,7 +108,7 @@ class DoneLogPage(tarsusaRequestHandler):
 				tarsusaItemCollection_ThisDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND donedate > :2 AND donedate <:3 AND done = True ORDER BY donedate DESC", CurrentUser.user, yesterday_ofTheDay, nextday_ofTheDay)
 				for each_doneItem_withinOneday in tarsusaItemCollection_ThisDayCreated:
 					outputStringRoutineLog += ('<img src="/img/accept16.png">').decode('utf-8')			
-					outputStringRoutineLog += '<a href=/i/' + str(each_doneItem_withinOneday.key().id()) + '>' + each_doneItem_withinOneday.name + "</a><br/>"
+					outputStringRoutineLog += '<a href=/item/' + str(each_doneItem_withinOneday.key().id()) + '>' + each_doneItem_withinOneday.name + "</a><br/>"
 				
 				Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
 
@@ -414,11 +414,11 @@ class UserMainPage(tarsusaRequestHandler):
 						if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
 							if each_Item.done == True:
 								outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-							outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+							outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 						elif each_Item.public == 'public':
 							if each_Item.done == True:
 								outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-							outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+							outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 						else:
 							pass
 
@@ -495,11 +495,11 @@ class UserMainPage(tarsusaRequestHandler):
 							if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
 								if each_Item.done == True:
 									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-								outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+								outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 							elif each_Item.public == 'public':
 								if each_Item.done == True:
 									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-								outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+								outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 							else:
 								pass
 						
@@ -525,11 +525,11 @@ class UserMainPage(tarsusaRequestHandler):
 							if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
 								if each_Item.done == True:
 									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-								outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+								outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 							elif each_Item.public == 'public':
 								if each_Item.done == True:
 									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-								outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+								outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 							else:
 								pass
 

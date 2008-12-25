@@ -506,3 +506,7 @@
 		MobilePages begins to function.
 			Phase Pre-alpha 1.
 		Christmas Eve Commit, Merry Christmas!
+	IN 08.12.25
+		Start to replace /i/.* url with /item/.* url
+						/i/.* url will be used in mobile version
+		Added Mobile ViewItempage and MobileAddPage	

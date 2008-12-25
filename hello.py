@@ -139,7 +139,7 @@ class MainPage(tarsusaRequestHandler):
 
 class ViewItem(tarsusaRequestHandler):
 	def get(self):
-		postid = self.request.path[3:]
+		postid = self.request.path[6:]
 		tItem = tarsusaItem.get_by_id(int(postid))
 
 		if tItem != None:  ## If this Item existed in Database.
@@ -311,11 +311,11 @@ class ViewItem(tarsusaRequestHandler):
 					if each_Item.public == 'publicOnlyforFriends':
 						if each_Item.done == True:
 							outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-						outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+						outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 					elif each_Item.public == 'public':
 						if each_Item.done == True:
 							outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-						outputStringRoutineLog += '<a href="/i/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
+						outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
 					else:
 						pass
 
@@ -432,7 +432,7 @@ class NotFoundPage(tarsusaRequestHandler):
 
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
-									   ('/i/\\d+',ViewItem),
+									   ('/item/\\d+',ViewItem),
 									   ('/img', Image),
 									   ('/Login.+',LoginPage),
 									   ('/Logout.+',SignOutPage),

@@ -122,9 +122,9 @@
 						{% for tarsusaItem_SameDayCreated in tarsusaItemCollection_SameDayCreated %}
 							{% ifnotequal tarsusaItem_SameDayCreated.public "public" %}
 								{% if tarsusaItem_SameDayCreated.done %}
-									<img src='/img/accept16.png'><a href="/i/{{ tarsusaItem_SameDayCreated.key.id }}">>{{ tarsusaItem_SameDayCreated.name|escape }}</a></br>
+									<img src='/img/accept16.png'><a href="/item/{{ tarsusaItem_SameDayCreated.key.id }}">>{{ tarsusaItem_SameDayCreated.name|escape }}</a></br>
 								{% else %}
-									<a href="/i/{{ tarsusaItem_SameDayCreated.key.id }}">>{{ tarsusaItem_SameDayCreated.name|escape }}</a></br>
+									<a href="/item/{{ tarsusaItem_SameDayCreated.key.id }}">>{{ tarsusaItem_SameDayCreated.name|escape }}</a></br>
 								{% endif %}
 							{% endifnotequal %}
 						{% endfor %}
@@ -142,7 +142,7 @@
 							{% else %}
 								<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_SameDayCreated.key.id}}')">
 							{% endif %}
-							<a href="/i/{{ tarsusaItem_SameDayCreated.key.id }}">{{ tarsusaItem_SameDayCreated.name|escape }}</a>
+							<a href="/item/{{ tarsusaItem_SameDayCreated.key.id }}">{{ tarsusaItem_SameDayCreated.name|escape }}</a>
 							<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_SameDayCreated.name|escape}}')) {ajax_deleteItem('/removeItem/{{tarsusaItem_SameDayCreated.key.id}}');}" class="x">x</a></li>
 						{% endfor %}
 					</div>

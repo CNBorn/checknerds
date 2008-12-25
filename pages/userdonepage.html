@@ -33,7 +33,7 @@
 						{
 							try
 							{
-								var dispstr = '<tr colspan="2"><td class="viewitem_creator"><img src="/img/accept16.png">' + '<a href="/i/' + json_userdoneitems[i].id + '">' + json_userdoneitems[i].name + '</a>&nbsp;';
+								var dispstr = '<tr colspan="2"><td class="viewitem_creator"><img src="/img/accept16.png">' + '<a href="/item/' + json_userdoneitems[i].id + '">' + json_userdoneitems[i].name + '</a>&nbsp;';
 								dispstr = dispstr + '<a onclick="ajax_undoneItem(' + "'/undoneItem/" + json_userdoneitems[i].id + "');" + '" href="#;" class="x">撤销</a>'; 
 								dispstr = dispstr + '<br />' + json_userdoneitems[i].comment + '</td><td>' + json_userdoneitems[i].date + '</td></tr>';
 								

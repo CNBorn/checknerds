@@ -1,0 +1,35 @@
+{% extends "mobile_base.html" %}
+{% block content-holder %}
+<div class="content"><ul>
+			<small>
+			<form id="myForm" action="/additem" method="post">
+			标题<input type="text" name="name" size="30" class="textbox"><br />
+			内容<textarea name="comment" rows="2" cols="25" wrap="PHYSICAL" class="textbox"></textarea><br />
+			<small>不超过500个字符，多余部分会被删除</small><br />
+			类别<input type="text" name="tags" size="25" value="{{addItemCatName}}" class="textbox"><br />
+			<small>请使半角,分隔</small><br />
+			
+			预计完成于
+			<input class="textbox" name="inputDate" id="inputDate" size="9" value="{{addItemToday}}"><br />
+			<small>与当前日期相同即为无限制</small><br />
+	
+			性质<select name="routine">
+						<option value="none" selected="selected" >非坚持性任务</option>
+						<option value="daily">每天</option>
+						<option value="weekly">每周</option>
+						<option value="monthly">每月</option>
+						<option value="seasonly">每季度</option>
+						<option value="yearly">每年</option>
+						</select>
+
+						公开项目<select name="public">
+						<option value="private" selected="selected">不公开</option>
+						<option value="public">完全公开</option>
+						<option value="publicOnlyforFriends">仅对朋友公开</option>
+						</select>
+
+					<input type="submit" name="submit" style="height: 18px; width: 75px;" value="添加项目">
+			</form>
+</small>
+</ul><small>&nbsp;&nbsp;<a href="{{RefererURL}}">返回</a></small></div>
+{% endblock content-holder %}

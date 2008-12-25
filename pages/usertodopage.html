@@ -33,7 +33,7 @@
 						{
 							try
 							{
-								var dispstr = '<tr colspan="2"><td class="viewitem_creator">' + '<input type="checkbox" name="checkboxname" onclick="ajax_doneItem(' + "'/doneItem/" + json_usertodoitems[i].id + "');" + '">' + '<a href="/i/' + json_usertodoitems[i].id + '">' + json_usertodoitems[i].name + '</a>&nbsp;';
+								var dispstr = '<tr colspan="2"><td class="viewitem_creator">' + '<input type="checkbox" name="checkboxname" onclick="ajax_doneItem(' + "'/doneItem/" + json_usertodoitems[i].id + "');" + '">' + '<a href="/item/' + json_usertodoitems[i].id + '">' + json_usertodoitems[i].name + '</a>&nbsp;';
 								
 								dispstr = dispstr + '<a href="#;" onclick="if (confirm(' + "'确认删除？" + json_usertodoitems[i].name + "')) {ajax_deleteItem('/removeItem/" + json_usertodoitems[i].id + "');}" + '" class="x">x</a>';
 

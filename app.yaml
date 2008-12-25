@@ -57,6 +57,9 @@ handlers:
   script: friends.py
 
 - url: /i/.*
+  script: mobile.py
+
+- url: /item/.*
   script: hello.py
 
 - url: /doneItem/.*
@@ -92,7 +95,7 @@ handlers:
 - url: /service/.+
   script: service.py
 
-- url: /m.+
+- url: /m.*
   script: mobile.py
 
 - url: /ajax/.+

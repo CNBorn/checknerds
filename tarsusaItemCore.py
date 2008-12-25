@@ -346,6 +346,10 @@ class AddItemProcess(tarsusaRequestHandler):
 			
 			CurrentUser.put()
 
+			#Added mobile redirect
+			if self.referer[-6:] == "/m/add":
+				self.redirect("/m/todo")
+
 class EditItemProcess(tarsusaRequestHandler):
 	def post(self):	
 

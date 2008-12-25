@@ -67,9 +67,9 @@ class Showtag(tarsusaRequestHandler):
 								#self.write(eachItem.name)
 								#html_tag_ItemList += eachItem.name + "<br />"
 								if eachItem.done == False:
-									html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+									html_tag_ItemList += '<a href=/item/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
 								else:
-									html_tag_ItemList += '<img src="/img/accept16.png"><a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+									html_tag_ItemList += '<img src="/img/accept16.png"><a href=/item/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
 									CountDoneItems += 1
 								
 						except:
@@ -121,9 +121,9 @@ class Showtag(tarsusaRequestHandler):
 					if len(eachItem.tags) == 0:
 						CountTotalItems += 1
 						if eachItem.done == False:
-							html_tag_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+							html_tag_ItemList += '<a href=/item/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
 						else:
-							html_tag_ItemList += '<img src="/img/accept16.png"><a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
+							html_tag_ItemList += '<img src="/img/accept16.png"><a href=/item/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
 							CountDoneItems += 1
 				
 				strTagStatus = "共有项目" + str(CountTotalItems) + "&nbsp;完成项目" + str(CountDoneItems) + "&nbsp;未完成项目" + str(CountTotalItems - CountDoneItems)
