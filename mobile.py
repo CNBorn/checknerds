@@ -459,11 +459,13 @@ class mAddItemPage(tarsusaRequestHandler):
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
+			strAddItemToday = str(datetime.datetime.date(datetime.datetime.now()))
 			
 			template_values = {'RefererURL': self.referer,
 							'UserNickName': cgi.escape(CurrentUser.dispname),
 							'UserID': CurrentUser.key().id(),
 							'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+							'addItemToday': strAddItemToday.decode("utf-8"),
 							}
 			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_additempage.html')
 			self.response.out.write(template.render(path, template_values))

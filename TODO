@@ -509,4 +509,9 @@
 	IN 08.12.25
 		Start to replace /i/.* url with /item/.* url
 						/i/.* url will be used in mobile version
-		Added Mobile ViewItempage and MobileAddPage	
+		Added Mobile ViewItempage and MobileAddPage
+	IN 08.12.27
+		Fixed userpage URL bug.
+	In 08.12.30
+		Tweaked Mobile AddItemPage.
+		Fixed Mobile ViewItemPage

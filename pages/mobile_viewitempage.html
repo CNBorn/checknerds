@@ -10,8 +10,7 @@
 					{% endif %}
 
 					{% if tarsusaItem %}
-						<h2>{{ tarsusaItem.name|escape }}</h2><br />
-							
+						<h2>{{ tarsusaItem.name|escape }}</h2>							
 							{% if tarsusaItemDone %}
 								已经完成于{{ tarsusaItem.donedate }} &nbsp;							
 								{% if not logictag_OtherpeopleViewThisItem %}
@@ -21,7 +20,7 @@
 								{% if not tarsusaRoutineItem %}
 									当前状态：未完成
 									{% if tarsusaItem.expired %}
-										<span style="color: #F00000">注意：此任务已过期！</span>
+										<span style="color: #F00000">已过期</span>
 									{% endif %}
 								{% else %}
 									{% ifequal tarsusaItem.routine "daily" %}
@@ -59,11 +58,13 @@
 							{% endif %}
 							<br />
 							
-							
+							{% comment %}	
 							{% if not logictag_OtherpeopleViewThisItem %}
 								<!--<a href="/ajax/allpage_edititem/{{tarsusaItem.key.id}}?TB_iframe=true&height=400&width=400" class="thickbox" title="编辑项目"><img src="/img/page_edit.png" alt="编辑项目"></a>
 								<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem.name|escape}}')) {ajax_deleteItem('/removeItem/{{tarsusaItem.key.id}}');}"><img src="/img/delete.png" alt="删除项目"></a>--!>
 							{% endif %}
+							{% endcomment %}
+
 							分类：{{tarsusaItemTags}}<br />
 							创建者：{{tarsusaItem.usermodel.dispname|escape}}<br />
 							&nbsp;&nbsp;
@@ -78,12 +79,12 @@
 							{% endifequal %}
 							<br />
 							说明:&nbsp; {{ tarsusaItem.comment }}<br />
-						创建时间： &nbsp; {{tarsusaItem.date }}
-						&nbsp;|&nbsp;
+						创建时间： &nbsp; {{tarsusaItem.date }}<br />
+						预期完成： &nbsp; 
 							{% if not tarsusaItem.expectdate %}
 								没有完成期限限制
 							{% else %}
-								预期完成： &nbsp; {{tarsusaItem.expectdate}}
+								{{tarsusaItem.expectdate}}
 							{% endif %}
 						<br />
 

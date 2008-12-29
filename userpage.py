@@ -592,11 +592,13 @@ class UserMainPage(tarsusaRequestHandler):
 			self.redirect('/')	
 
 def main():
-	application = webapp.WSGIApplication([('/user/.+', UserMainPage),
+	application = webapp.WSGIApplication([
 								       ('/user/.+/donelog',DoneLogPage),
 									   ('/user/.+/setting',UserSettingPage),
 									   ('/user/.+/todo',UserToDoPage),
-									   ('/user/.+/done',UserDonePage)],
+									   ('/user/.+/done',UserDonePage),
+									   ('/user/.+', UserMainPage),
+									   ],
                                        debug=True)
 
 	wsgiref.handlers.CGIHandler().run(application)
