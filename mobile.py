@@ -11,7 +11,7 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 
-import datetime
+import datetime,time
 import string
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
@@ -98,18 +98,61 @@ class mToDoPage(tarsusaRequestHandler):
 			
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
-			CurrentUser = self.get_user_db()
+			CurrentUser = self.get_user_db()					
+					
+			try:
+				pageid = self.request.path[len('/m/todo/'):]
+				if pageid[:2] == 'p/':
+					tag_ViewPreviousPage = True
+					pageid = pageid[2:]
+				else:
+					tag_ViewPreviousPage = False
+			except:
+				pass
+
+			if pageid != None and len(self.request.path) > 8:
+				this_timestamp = datetime.datetime.fromtimestamp(int(pageid))
+				
+				if tag_ViewPreviousPage == True:
+					tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date > :2 ORDER BY date DESC LIMIT 9", CurrentUser.user, this_timestamp)
+				else:
+					tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date <= :2 ORDER BY date DESC LIMIT 9", CurrentUser.user, this_timestamp)
+
+
+			else:
+				## Below begins user todo items. for MOBILE page.
+				tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)
 			
-			## Below begins user todo items. for MOBILE page.
-			tarsusaItemCollection_UserToDoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)					
+			#Determine next page			
+			Find_Last_Index = 0
+			previous_timestamp = 0
+			next_timestamp = 0
+			for each_item in tarsusaItemCollection_UserTodoItems:
+				if Find_Last_Index == 0:
+					previous_timestamp = int(time.mktime(each_item.date.timetuple()))
+				next_timestamp = int(time.mktime(each_item.date.timetuple()))
+				Find_Last_Index += 1	
 			
+			if Find_Last_Index == 1 and tag_ViewPreviousPage == True:
+				self.redirect("/m/todo")
+				
+			if next_timestamp == 0 and previous_timestamp == 0:
+				self.redirect("/m/todo")
+
 			template_values = {
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
-				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserToDoItems,
+				'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserTodoItems,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
+			
+			if previous_timestamp != 0:
+				template_values['previouspagestamp'] = previous_timestamp
+			
+			if next_timestamp != 0:
+				template_values['nextpagestamp'] = next_timestamp
+		
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_todopage.html')
 			self.response.out.write(template.render(path, template_values))
@@ -124,16 +167,61 @@ class mDonePage(tarsusaRequestHandler):
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
 			
-			## Below begins user todo items. for MOBILE page.
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY donedate DESC LIMIT 9", CurrentUser.user)					
+			try:
+				pageid = self.request.path[len('/m/done/'):]
+				if pageid[:2] == 'p/':
+					tag_ViewPreviousPage = True
+					pageid = pageid[2:]
+				else:
+					tag_ViewPreviousPage = False
+			except:
+				pass
+
+			if pageid != None and len(self.request.path) > 8:
+				this_timestamp = datetime.datetime.fromtimestamp(int(pageid))
+				if tag_ViewPreviousPage == True:
+					tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True and donedate > :2 ORDER BY donedate DESC LIMIT 9", CurrentUser.user, this_timestamp)
+				else:
+					tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True and donedate <= :2 ORDER BY donedate DESC LIMIT 9", CurrentUser.user, this_timestamp)
+
+
+			else:
+				## Below begins user todo items. for MOBILE page.
+				tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY donedate DESC LIMIT 9", CurrentUser.user)					
+					
+			#Determine next page			
+			Find_Last_Index = 0
+			previous_timestamp = 0
+			next_timestamp = 0
+			for each_item in tarsusaItemCollection_UserDoneItems:
+				if Find_Last_Index == 0:
+					previous_timestamp = int(time.mktime(each_item.donedate.timetuple()))
+				next_timestamp = int(time.mktime(each_item.donedate.timetuple()))
+				Find_Last_Index += 1	
+			
+			if Find_Last_Index == 1 and tag_ViewPreviousPage == True:
+				self.redirect("/m/done")
+			
+			
 			
 			template_values = {
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
 				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()),
 			}
+			
+			if previous_timestamp != 0:
+				template_values['previouspagestamp'] = previous_timestamp
+			
+			if next_timestamp != 0:
+				template_values['nextpagestamp'] = next_timestamp
+		
+			if next_timestamp == 0 and previous_timestamp == 0:
+				self.redirect("/m/done")
+
+
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_donepage.html')
 			self.response.out.write(template.render(path, template_values))
@@ -334,7 +422,9 @@ class mViewItemPage(tarsusaRequestHandler):
 						ItemTags += cgi.escape(each_tag.name) + '&nbsp;'
 				else:
 					for each_tag in db.get(tItem.tags):
-						ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+						#Will be implemented a better way to show tag in Mobile Page.
+						#ItemTags += '<a href=/tag/' + cgi.escape(each_tag.name) +  '>' + cgi.escape(each_tag.name) + '</a>&nbsp;'
+						ItemTags += cgi.escape(each_tag.name) + '&nbsp;'
 			except:
 				# There is some chances that ThisItem do not have any tags.
 				pass
@@ -353,56 +443,9 @@ class mViewItemPage(tarsusaRequestHandler):
 				tarsusaItemCollection_DoneDailyRoutine = None
 				html_tag_tarsusaRoutineItem = None
 
-
-			#---
-			'''
-			TheDay = tItem.date
-				
-			one_day = datetime.timedelta(days=1)
-			yesterday_ofTheDay = TheDay - one_day
-			nextday_ofTheDay = TheDay + one_day
-
-			#if the viewedUser is not the currentuser, first have to determine whether he is or is not a friend of currentuser.
-			# and then display the sameday items of that user.
-			outputStringRoutineLog = ""
-
-			if logictag_OtherpeopleViewThisItem == True and CurrentUserIsOneofAuthorsFriends == True:
-				## Display public items and friendvisible items.
-				## BUG HERE! Because of the stupid GAE != issue, friends can only see friendpublic items. :(
-				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 ORDER BY date DESC LIMIT 20", tItem.user, yesterday_ofTheDay, nextday_ofTheDay)
-				
-				## Code from UserMainPage class.
-				for each_Item in tarsusaItemCollection_SameDayCreated:
-				## Added Item public permission check.
-		
-					if each_Item.public == 'publicOnlyforFriends':
-						if each_Item.done == True:
-							outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-						outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-					elif each_Item.public == 'public':
-						if each_Item.done == True:
-							outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-						outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-					else:
-						pass
-
-
-			elif logictag_OtherpeopleViewThisItem == True and CurrentUserIsOneofAuthorsFriends == False:
-				## Display on public items.
-				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 AND public = 'public' ORDER BY date DESC LIMIT 10", tItem.user, yesterday_ofTheDay, nextday_ofTheDay)
-
-			elif logictag_OtherpeopleViewThisItem == False:
-				## if the viewedUser is the currentuser, just display the sameday items of currentuser.
-							
-				# SOME how bug is here, there is no way to determine the same date within the gql query.
-				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 ORDER BY date DESC LIMIT 10", users.get_current_user(), yesterday_ofTheDay, nextday_ofTheDay)
-				# filter current viewing Item from the related items!
-				'''
-
-
+			
 			if UserNickName != "访客":
-				UserNickName = users.get_current_user().nickname()
-				## or dispname?
+				UserNickName = CurrentUser.dispname 
 
 				template_values = {
 						'UserLoggedIn': 'Logged In',
@@ -425,11 +468,6 @@ class mViewItemPage(tarsusaRequestHandler):
 						'UserNickName': cgi.escape(CurrentUser.dispname),
 						'UserID': CurrentUser.key().id(),
 						'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-						#'tarsusaItemCollection_SameCategoryUndone': tarsusaItemCollection_SameCategoryUndone,
-
-						#'TheDayCreated': TheDay,
-						#'tarsusaItemCollection_SameDayCreated': tarsusaItemCollection_SameDayCreated,
-						#'htmlstring_outputStringRoutineLog': outputStringRoutineLog,
 						'RefererURL': self.referer,
 				}
 			else:
@@ -479,8 +517,8 @@ class mErrorPage(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/m/donelog',mDoneLogPage),
 									   ('/m/dailyroutine',mDailyRoutinePage),
-									   ('/m/todo',mToDoPage),
-									   ('/m/done',mDonePage),
+									   ('/m/todo.*',mToDoPage),
+									   ('/m/done.*',mDonePage),
 									   ('/m/add',mAddItemPage),
 									   ('/m/', mMainPage),
 									   ('/m', mMainPage),

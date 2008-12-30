@@ -174,7 +174,7 @@ class RemoveItem(tarsusaRequestHandler):
 			
 		# Permission check is very important.
 		# New CheckLogin code built in tarsusaRequestHandler 
-		if self.chk_login:
+		if self.chk_login():
 			CurrentUser = self.get_user_db()
 		else:
 			self.redirect('/')
@@ -210,7 +210,10 @@ class RemoveItem(tarsusaRequestHandler):
 				
 				memcache.event('deleteroutineitem_daily', CurrentUser.key().id())
 
-		self.redirect('/')
+		#if self.referer[:2] == '/m':
+		self.redirect(self.referer)
+		#else:
+		#	self.redirect('/')
 
 
 class AddItemProcess(tarsusaRequestHandler):

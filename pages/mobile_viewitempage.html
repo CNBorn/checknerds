@@ -57,13 +57,6 @@
 								{% endif %}
 							{% endif %}
 							<br />
-							
-							{% comment %}	
-							{% if not logictag_OtherpeopleViewThisItem %}
-								<!--<a href="/ajax/allpage_edititem/{{tarsusaItem.key.id}}?TB_iframe=true&height=400&width=400" class="thickbox" title="编辑项目"><img src="/img/page_edit.png" alt="编辑项目"></a>
-								<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem.name|escape}}')) {ajax_deleteItem('/removeItem/{{tarsusaItem.key.id}}');}"><img src="/img/delete.png" alt="删除项目"></a>--!>
-							{% endif %}
-							{% endcomment %}
 
 							分类：{{tarsusaItemTags}}<br />
 							创建者：{{tarsusaItem.usermodel.dispname|escape}}<br />
@@ -87,46 +80,6 @@
 								{{tarsusaItem.expectdate}}
 							{% endif %}
 						<br />
-
-
-
-
 					{% endif %}
-
-				{% comment %}	
-				<br />
-			 	{% if logictag_OtherpeopleViewThisItem %}
-				{{ItemBelongsToUser}}在同一天还创建了<br />
-					{% if not logictag_CurrentUserIsOneofAuthorsFriends %}					
-						{% for tarsusaItem_SameDayCreated in tarsusaItemCollection_SameDayCreated %}
-							{% ifnotequal tarsusaItem_SameDayCreated.public "public" %}
-								{% if tarsusaItem_SameDayCreated.done %}
-									<img src='/img/accept16.png'><a href="/item/{{ tarsusaItem_SameDayCreated.key.id }}">>{{ tarsusaItem_SameDayCreated.name|escape }}</a></br>
-								{% else %}
-									<a href="/item/{{ tarsusaItem_SameDayCreated.key.id }}">>{{ tarsusaItem_SameDayCreated.name|escape }}</a></br>
-								{% endif %}
-							{% endifnotequal %}
-						{% endfor %}
-					{% else %}
-						{{htmlstring_outputStringRoutineLog}}
-					{% endif %}
-							    
-				{% else %}							   
-				同一天还创建了<br />
-					<div id="todoitems">
-						{% for tarsusaItem_SameDayCreated in tarsusaItemCollection_SameDayCreated %}
-							<li>
-							{% if tarsusaItem_SameDayCreated.done %}
-								已完成
-							{% else %}
-							{% endif %}
-							<a href="/item/{{ tarsusaItem_SameDayCreated.key.id }}">{{ tarsusaItem_SameDayCreated.name|escape }}</a>
-							<a href="#;" onclick="if (confirm('确认删除？{{tarsusaItem_SameDayCreated.name|escape}}')) {ajax_deleteItem('/removeItem/{{tarsusaItem_SameDayCreated.key.id}}');}" class="x">x</a></li>
-						{% endfor %}
-					</div>
-				{% endif %}
-				{% endcomment %}	
-</small>
-</ul><small>&nbsp;&nbsp;<a href="{{RefererURL}}">返回</a></small></div>
-{% endblock content-holder %}
+</small></ul><small>&nbsp;&nbsp;<a href="{{RefererURL}}">返回</a></small></div>{% endblock content-holder %}
 

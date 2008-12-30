@@ -513,5 +513,14 @@
 	IN 08.12.27
 		Fixed userpage URL bug.
 	In 08.12.30
+		Morning:
 		Tweaked Mobile AddItemPage.
 		Fixed Mobile ViewItemPage
+		---
+		Densed Some of the Mobile Pages.
+		Implemented Pagnation in MobileDonePage.
+		Implemented Pagnation in MobileTodoPage.
+		Fixed RedirectBug in tarsusaItemCore/RemoveItem
+
+
+	
