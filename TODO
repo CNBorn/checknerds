@@ -521,6 +521,15 @@
 		Implemented Pagnation in MobileDonePage.
 		Implemented Pagnation in MobileTodoPage.
 		Fixed RedirectBug in tarsusaItemCore/RemoveItem
+	IN 09.01.01
+		Happy New Year!
+		Found a serious problem: Redirect to / page during Login or Logout in mobile phone.
+			Suspiction: Opera Mini may not have the self.referer 
+			Temporaily solution: changed both get_login/out_url function, when they are not detecting self.referer, redirect to /m/
+		Found another serious problem, CheckNerds can not be logged in with Opera Desktop.
+			Still looking for the cause.
+		---
+	IN 09.01.02
+		Modified FindFriends page show only random tarsusaUsers.
+		Added Analytics Code in MobilePage.
 
-
-	

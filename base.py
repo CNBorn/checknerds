@@ -34,7 +34,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 	def get_login_url(self, from_referer=False):
 		if from_referer:
 			dst = self.referer
-			if not dst : dst = '/'
+			if not dst : dst = '/m'
 			return users.create_login_url(dst)
 		else:
 			return users.create_login_url(self.request.uri)
@@ -42,7 +42,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 	def get_logout_url(self, from_referer=False):
 		if from_referer:
 			dst = self.referer
-			if not dst : dst = '/'
+			if not dst : dst = '/m'
 			return users.create_logout_url(dst)
 		else:
 			return users.create_logout_url(self.request.uri)

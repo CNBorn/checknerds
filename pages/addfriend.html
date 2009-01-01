@@ -15,7 +15,7 @@
                    	<div id="featuredcode2-mid">
 
 						<div id="singleleft">
-							<h2 class="posttitle">朋友动态</h2>
+							<h2 class="posttitle">{{ UserNickName }}的朋友动态</h2>
 								<div id="div_friendstats" style="padding-top:10px; padding-left: 10px;">正在载入……</div>
 						</div>
 
@@ -24,7 +24,7 @@
 							<div id="tablem" style="clear:both;">
 							<div id="in_tablem" style="clear:both;">
 
-							<h2 class="posttitle" style="font-weight:normal;">Checknerds用户</h2>
+							<h2 class="posttitle" style="font-weight:normal;padding-bottom: 5px;">Checknerds用户随机展示</h2>
 								{% for tarsusaPeople in tarsusaPeopleCollection %}
 									<dl class="obu">
 									<dt><a href="/user/{{tarsusaPeople.key.id}}">

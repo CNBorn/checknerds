@@ -18,7 +18,8 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 
-import datetime
+import datetime,time
+import random
 import string
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
@@ -56,7 +57,19 @@ class FindFriendPage(tarsusaRequestHandler):
 			## Prompt them to register!
 
 		else:
-			tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser")
+			#Changed from Displaying all tarsusaUser (Very Slow performance)
+			#	to display just random users.
+			#tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser")
+			LastestTime = int(time.mktime(datetime.datetime.now().timetuple()))
+			BeginningTime = int(time.mktime(datetime.datetime(2008,10,22).timetuple()))
+
+			ChoosenTime = datetime.datetime.fromtimestamp(random.randint(BeginningTime, LastestTime))
+			#ChoosenTime = datetime.datetime(2008,9,15) # For Test in Localhost
+			ChoosenTimeMax = ChoosenTime + datetime.timedelta(days=random.randint(1,15)) 
+			#self.write(ChoosenTime)
+			#self.write(ChoosenTimeMax)
+			
+			tarssuaLastestPeople = db.GqlQuery("SELECT * FROM tarsusaUser WHERE datejoinin > :1 and datejoinin < :2 ORDER by datejoinin DESC LIMIT 8", ChoosenTime, ChoosenTimeMax)
 
 			tarsusaUserFriendCollection = CurrentUser.friends
 
@@ -73,8 +86,6 @@ class FindFriendPage(tarsusaRequestHandler):
 
 					UserFriends += '<dd>' + cgi.escape(UsersFriend.dispname) + '</a><br /><a href="#;" onclick="if (confirm(' + "'Are you sure to remove " + cgi.escape(UsersFriend.user.nickname()) + "')) {location.href = '/RemoveFriend/" + str(UsersFriend.key().id()) + "';}" + '" class="x">x</a></dd></dl>'
 
-
-
 			else:
 				UserFriends = '当前没有添加朋友'
 
@@ -88,7 +99,7 @@ class FindFriendPage(tarsusaRequestHandler):
 					'singlePageTitle': "查找朋友.",
 					'singlePageContent': "",
 
-					'tarsusaPeopleCollection': tarsusaPeopleCollection,
+					'tarsusaPeopleCollection': tarssuaLastestPeople,
 			}
 		
 			path = os.path.join(os.path.dirname(__file__), 'pages/addfriend.html')
