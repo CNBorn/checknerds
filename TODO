@@ -532,4 +532,13 @@
 	IN 09.01.02
 		Modified FindFriends page show only random tarsusaUsers.
 		Added Analytics Code in MobilePage.
+	IN 09.01.04
+		Added MobilePage section in WelcomePage.
+		---
+		Since Rev.90, I have completed previous big rev. plan (12.22 Mobile Version)
+		Next Revision will be API!
+		---
+	IN 09.01.07
+		ajax_FriendStats page is now can sort items by date and donedate.
+
 

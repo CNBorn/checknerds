@@ -27,7 +27,7 @@ import time, datetime
 class badge(tarsusaRequestHandler):
 	def get(self):
 		
-		#userid = urllib.unquote(self.request.path[len('/service/badge/'):])
+		#http://localhost:8080/service/badge/?userid=42&callback=miniblog
 		userid = urllib.unquote(self.request.get('userid'))
 		callbackfuncname = urllib.unquote(self.request.get('callback'))
 		ThisUser = tarsusaUser.get_by_id(int(userid))
@@ -67,8 +67,9 @@ class badge(tarsusaRequestHandler):
 		self.response.headers['Content-Type'] = 'application/json'
 		self.response.headers['Content-Disposition'] = str('attachment; filename=' + callbackfuncname)
 		self.write(callbackfuncname + '(')
-		self.write(str(test_list)[1:-1])
-		self.write(');')
+		#self.write(str(test_list)[1:-1])
+		self.write(str(test_list))
+		self.write(')')
 
 		#for each in CreatedItem_List:
 			#self.write(each['date'])

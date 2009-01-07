@@ -21,7 +21,7 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 
-import datetime
+import datetime, time
 import string
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
@@ -343,44 +343,80 @@ class get_fp_friendstats(tarsusaRequestHandler):
 			else:
 				
 				## SHOW YOUR FRIENDs Recent Activities
-				## Currently the IN function is not supported, it is an headache.
 				
 				# there once happens an error the CurrentUser can not be found.
 				# I think that is due to the loginout, and non-refreshed index page.
-				try:
-					tarsusaUserFriendCollection = CurrentUser.friends
-					
-					## Add shuffle in tarsusaUserFriendCollection, therefore the result in page will be in better looking.
-					random.shuffle(tarsusaUserFriendCollection)
+				#try:
 
-					UserFriendsActivities = ''
-					if tarsusaUserFriendCollection: 
-						for each_FriendKey in tarsusaUserFriendCollection:
-							UsersFriend =  db.get(each_FriendKey)
-							## THE BELOW LINE IS UN SUPPORTED!
-							#tarsusaItemCollection_UserFriendsRecentItems += db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 15", UsersFriend)
-							## THERE are too many limits in GAE now...
-							tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 50", UsersFriend.user)
-							## the LIMIT number above line will indicate how frequently CurrentUser will receive Other users public item information.
+				tarsusaUserFriendCollection = CurrentUser.friends
 
-							for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
-								## Check whether should show this item.
-								if tarsusaItem_UserFriendsRecentItems.public != 'private':
+				UserFriendsActivities = ''
+				UserFriendsItem_List = []
+
+				if tarsusaUserFriendCollection:
+					#first of all, CurrentUser should have some friends
+
+					for each_FriendKey in tarsusaUserFriendCollection:
+						UsersFriend =  db.get(each_FriendKey)						
+						
+						#Due to usermodel and other are applied in a later patch, some tarsusaItem may not have that property.
+						#There maybe need to extend if we need more property from tarsusaItem.usermodel
+						UsersFriendid = UsersFriend.key().id()
+						try:
+							UsersFriendDispname = UsersFriend.dispname
+						except:
+							UsersFriendDispname = UsersFriend.user.nickname()
+
+
+						tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 50", UsersFriend.user)
+
+						for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
+							## Check whether should show this item.
+							if tarsusaItem_UserFriendsRecentItems.public != 'private':						
 								
-									## Check whether this item had done.
-									if tarsusaItem_UserFriendsRecentItems.done == True:
-										
-										UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' +  UsersFriend.dispname + '</a> 完成了 <a href="/item/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
-			 
-									else:
-										UserFriendsActivities += '<li><a href="/user/' + str(UsersFriend.key().id()) + '">' + UsersFriend.dispname + '</a> 要做 <a href="/item/'.decode('utf-8') + str(tarsusaItem_UserFriendsRecentItems.key().id()) + '">' + tarsusaItem_UserFriendsRecentItems.name + '</a></li>'
-						if UserFriendsActivities == '':
-							UserFriendsActivities = '<li>暂无友邻公开项目</li>'
-					else:
-						UserFriendsActivities = '<li>当前没有添加朋友</li>'
+								## Check whether this item had done.
+								if tarsusaItem_UserFriendsRecentItems.done == True:
+									friend_Item = {'id' : str(tarsusaItem_UserFriendsRecentItems.key().id()), 'name' : tarsusaItem_UserFriendsRecentItems.name, 'date' : str(tarsusaItem_UserFriendsRecentItems.donedate), 'comment' : tarsusaItem_UserFriendsRecentItems.comment, 'category' : 'done', 'userdispname': UsersFriendDispname, 'userid': UsersFriendid}
+								else:
+									friend_Item = {'id' : str(tarsusaItem_UserFriendsRecentItems.key().id()), 'name' : tarsusaItem_UserFriendsRecentItems.name, 'date' : str(tarsusaItem_UserFriendsRecentItems.date), 'comment' : tarsusaItem_UserFriendsRecentItems.comment, 'category' : 'todo', 'userdispname': UsersFriendDispname, 'userid': UsersFriendid}
 
-				except:
+								UserFriendsItem_List.append(friend_Item)
+
+					#sort the results:
+					#Sort Algorithms from
+					#http://www.lixiaodou.cn/?p=12
+					length = len(UserFriendsItem_List)
+					for i in range(0,length):
+						for j in range(length-1,i,-1):
+								#Convert string to datetime.date
+								#http://mail.python.org/pipermail/tutor/2006-March/045729.html	
+								time_format = "%Y-%m-%d %H:%M:%S"
+								if datetime.datetime.fromtimestamp(time.mktime(time.strptime(UserFriendsItem_List[j]['date'][:-7], time_format))) > datetime.datetime.fromtimestamp(time.mktime(time.strptime(UserFriendsItem_List[j-1]['date'][:-7], time_format))):
+									temp = UserFriendsItem_List[j]
+									UserFriendsItem_List[j]=UserFriendsItem_List[j-1]
+									UserFriendsItem_List[j-1]=temp
+					#---
+					
+					#Output raw html
+					for each_friend_item in UserFriendsItem_List:
+						if each_friend_item['category'] == 'done':
+							
+							#Due to usermodel is applied in a later patch, some tarsusaItem may not have that property.
+							#Otherwise I would like to user ['user'].key().id()
+							UserFriendsActivities += '<li><a href="/user/' + str(each_friend_item['userid']) + '">' +  each_friend_item['userdispname'] + '</a> 完成了 <a href="/item/'.decode('utf-8') + str(each_friend_item['id']) + '">' + each_friend_item['name'] + '</a></li>'
+						else:
+							UserFriendsActivities += '<li><a href="/user/' + str(each_friend_item['userid']) + '">' +  each_friend_item['userdispname'] + '</a> 要做 <a href="/item/'.decode('utf-8') + str(each_friend_item['id']) + '">' + each_friend_item['name'] + '</a></li>'
+
+
+					if len(UserFriendsItem_List) == 0:
+						UserFriendsActivities = '<li>暂无友邻公开项目</li>'							
+				
+				else:
+					#CurrentUser does not have any friends.
 					UserFriendsActivities = '<li>当前没有添加朋友</li>'
+
+				#except:
+				#	UserFriendsActivities = '<li>当前没有添加朋友</li>'
 
 				template_values = {
 					'UserLoggedIn': 'Logged In',

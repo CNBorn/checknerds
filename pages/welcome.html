@@ -26,18 +26,27 @@
 			人的一生中真正有意义、可以自由支配的时间只有10000天左右，如何更好地利用它们？我们不能让时间停止，而我们能做的，就是努力过好每一分钟，并且在时间流逝后，还可发掘出自己使用时间的记录。或许可从中改进自己的一些习惯。<BR><BR>
 									</ul>
 						</div>
+						<div id="welcome_ajaxcontent4" style="display:none;">
+                        <ul><div name="fl" style="float:right; margin-left: 10px;"><img src="/img/intro4.jpg"></div>
+			随时记录，随时管理<BR><BR>			
+			CheckNerds具有适合移动设备访问的版本，您可以在日常生活进行中随时管理和查看信息，建立或完成相关事项并不再只是坐在电脑前才能够完成的事情。 拿起手机即可查看需要完成的项目，并在完成的时刻及时记录下来！<BR><BR>		
+			访问移动版本请使用移动设备上的浏览器进行访问，网址为 http://www.checknerds.com/m<BR><BR>
+									</ul>
+						</div>
 					</div>
 					<div id="featuredcode3-bot"></div>
 					<div style="margin: 10px 10px 0px 10px;">		
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('1')";>1</a>
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('2')";>2</a>
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('3')";>3</a>
+							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('4')";><span style="color:#F00">4</span></a>
 					</div>
 					<script type="text/javascript">
 						function ajax_WelcomeAjaxHTMLContent(strPageNum){						
 							$('#welcome_ajaxcontent1').hide();
 							$('#welcome_ajaxcontent2').hide();
 							$('#welcome_ajaxcontent3').hide();
+							$('#welcome_ajaxcontent4').hide();
 							$('#welcome_ajaxcontent' + strPageNum).fadeIn('slow');
 						}
 						window.onload = function() {							
@@ -46,6 +55,7 @@
 							$('#welcome_ajaxcontent1 style').display='none';
 							$('#welcome_ajaxcontent2 style').display='none';
 							$('#welcome_ajaxcontent3 style').display='none';
+							$('#welcome_ajaxcontent4 style').display='none';
 						}
 					</script>
                 </div>
