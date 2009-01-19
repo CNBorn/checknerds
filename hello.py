@@ -402,21 +402,22 @@ class SignOutPage(tarsusaRequestHandler):
 class Image(webapp.RequestHandler):
 	def get(self):
 		#Add memcached here to improve the performence.
-		usravatardata = memcache.get(self.request.get("img_user")[:250])
+		usravatardata = memcache.get('img_useravatar' + self.request.get("avatar"))
   		
 		if usravatardata is not None:
-			self.response.headers['Content-Type'] = "image/"
+			self.response.headers['Content-Type'] = "image/png"
 			self.response.out.write(usravatardata)
   		else:
 			
 			# Request it from BigTable
-			greeting = db.get(self.request.get("img_user"))
+			#greeting = db.get(self.request.get("img_user"))
+			AvatarUser = tarsusaUser.get_by_id(int(self.request.get("avatar")))			 
 			
-			if greeting.avatar:
-				self.response.headers['Content-Type'] = "image/"
-				self.response.out.write(greeting.avatar)
+			if AvatarUser.avatar:
+				self.response.headers['Content-Type'] = "image/png"
+				self.response.out.write(AvatarUser.avatar)
 				
-				if not memcache.set(self.request.get("img_user")[:250], greeting.avatar, 7200):
+				if not memcache.set('img_useravatar' + self.request.get("avatar"), AvatarUser.avatar, 7200):
 					logging.error("Memcache set failed: When Loading avatar_image")
 			else:
 				self.error(404)

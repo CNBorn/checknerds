@@ -220,7 +220,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				outputStringUserAvatarSetting = ""
 				
 				if EditedUser.avatar:
-					outputStringUserAvatarImage = "<img src=/img?img_user=" + str(EditedUser.key()) + " width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
+					outputStringUserAvatarImage = "<img src=/img?avatar=" + str(EditedUser.key().id()) + " width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
 				else:
 					outputStringUserAvatarImage = "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
 
@@ -285,7 +285,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				CurrentUser.avatar=db.Blob(avatar_image)
 				CurrentUser.put()  
 				
-				if not memcache.set(str(CurrentUser.key()), db.Blob(avatar_image), 1800):
+				if not memcache.set('img_useravatar' + str(CurrentUser.key().id()), db.Blob(avatar_image), 7200):
 					logging.error("Memcache set failed: When uploading avatar_image")
 
 				self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
@@ -340,11 +340,8 @@ class UserSettingPage(tarsusaRequestHandler):
 					try:
 						avatar = Avatar(url_mime=url_mime)  
 						avatar.put() 
-						if not memcache.set(str(CurrentUser.key()), db.Blob(avatar_image), 1800):
+						if not memcache.set('img_useravatar' + str(CurrentUser.key().id()), db.Blob(avatar_image), 7200):
 							logging.error("Memcache set failed: When uploading(2) avatar_image")
-						##if not memcache.add(self.request.get("img_user"), greeting.avatar, 1800):
-						##	logging.error("Memcache set failed: When Loading avatar_image")
-
 
 					except:
 						pass
@@ -381,7 +378,7 @@ class UserMainPage(tarsusaRequestHandler):
 			## Preparation
 			## Will be useed
 			if ViewUser.avatar:
-				outputStringUserAvatar = "<img src='/img?img_user=" + str(ViewUser.key()) + "' width=64 height=64>"
+				outputStringUserAvatar = "<img src='/img?avatar=" + str(ViewUser.key().id()) + "' width=64 height=64>"
 			else:
 				outputStringUserAvatar = "<img src='/img/default_avatar.jpg' width=64 height=64>"
 				
@@ -459,7 +456,7 @@ class UserMainPage(tarsusaRequestHandler):
 						for each_FriendKey in tarsusaUserFriendCollection:
 							UsersFriend =  db.get(each_FriendKey)
 							if UsersFriend.avatar:
-								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src=/img?img_user=" + str(UsersFriend.key()) + " width=32 height=32>" + '</dt>'
+								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src=/img?avatar=" + str(UsersFriend.key().id()) + " width=32 height=32>" + '</dt>'
 							else:
 								## Show Default Avatar
 								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'

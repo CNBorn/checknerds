@@ -541,4 +541,14 @@
 	IN 09.01.07
 		ajax_FriendStats page is now can sort items by date and donedate.
 
+	IN 09.01.19
+		Changed link style of UserAvatar (from key to userid)
+		
+		TODO:
+			UnitTesting in Code
+			Built-in core functions which can output dictionaries of datastore (like Plog style function defination)
+				New FindFriend page and url
+
+			
+
 

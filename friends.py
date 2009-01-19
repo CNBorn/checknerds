@@ -35,28 +35,7 @@ class FindFriendPage(tarsusaRequestHandler):
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
-		
-		##if users.get_current_user() is None 
-		if CurrentUser == None:
-			#TODO	
-			template_values = {
-					'UserLoggedIn': 'Logged In',
-					
-					'UserNickName': '', #cgi.escape(self.login_user.nickname()),
-					'UserID': '', #CurrentUser.key().id(),
-					'UserFriends': '', #UserFriends,	
-					'singlePageTitle': "查找朋友.",
-					'singlePageContent': "",
 
-					'tarsusaPeopleCollection': '', #tarsusaPeopleCollection,
-			}	
-			path = os.path.join(os.path.dirname(__file__), 'pages/welcome_friends.html')
-			self.response.out.write(template.render(path, template_values))
-			
-			
-			## Prompt them to register!
-
-		else:
 			#Changed from Displaying all tarsusaUser (Very Slow performance)
 			#	to display just random users.
 			#tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser")
@@ -78,7 +57,7 @@ class FindFriendPage(tarsusaRequestHandler):
 				for each_FriendKey in tarsusaUserFriendCollection:
 					UsersFriend =  db.get(each_FriendKey)
 					if UsersFriend.avatar:
-						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?img_user=' + str(UsersFriend.key()) + " width=32 height=32></dt>"
+						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?avatar=' + str(UsersFriend.key().id()) + " width=32 height=32></dt>"
 
 					else:
 						## Show Default Avatar
@@ -104,6 +83,25 @@ class FindFriendPage(tarsusaRequestHandler):
 		
 			path = os.path.join(os.path.dirname(__file__), 'pages/addfriend.html')
 			self.response.out.write(template.render(path, template_values))
+
+		else:
+			##if users.get_current_user() is None 
+			#TODO	
+			template_values = {
+					'UserLoggedIn': 'Logged In',
+					
+					'UserNickName': '', #cgi.escape(self.login_user.nickname()),
+					'UserID': '', #CurrentUser.key().id(),
+					'UserFriends': '', #UserFriends,	
+					'singlePageTitle': "查找朋友.",
+					'singlePageContent': "",
+
+					'tarsusaPeopleCollection': '', #tarsusaPeopleCollection,
+			}	
+			path = os.path.join(os.path.dirname(__file__), 'pages/welcome_friends.html')
+			self.response.out.write(template.render(path, template_values))
+			
+			## Prompt them to register!
 
 
 class AddFriendProcess(tarsusaRequestHandler):
