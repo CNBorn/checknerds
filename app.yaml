@@ -35,6 +35,9 @@ handlers:
 - url: /statstics
   script: miscellaneous.py
 
+- url: /docs.+
+  script: miscellaneous.py
+
 - url: /Login.+
   script: hello.py
 

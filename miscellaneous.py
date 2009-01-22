@@ -96,14 +96,8 @@ class BlogPage(tarsusaRequestHandler):
 
 		strAboutPageTitle = "CheckNerds - Recent Updates (powered by Twitter)"
 		
-		## Get Current User.
-		# code below are comming from GAE example
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-	
-
-		try:
-
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
 			template_values = {
 					'UserLoggedIn': 'Logged In',
 					'UserNickName': cgi.escape(users.get_current_user().nickname()),
@@ -111,31 +105,22 @@ class BlogPage(tarsusaRequestHandler):
 					'singlePageTitle': strAboutPageTitle,
 					'singlePageContent': strAboutPageContent,
 			}
-		
-		except:
-
-			
-			template_values = {
-				
+		else:
+			template_values = {				
 				'UserNickName': "访客",
 				'AnonymousVisitor': "Yes",
 				'singlePageTitle': strAboutPageTitle,
 				'singlePageContent': strAboutPageContent,
-
 			}
-
 
 	
 		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
 
-
-
 class AboutPage(tarsusaRequestHandler):
 	def get(self):
-		import os
-
 		
+		import os
 		strdevVersion = os.environ['CURRENT_VERSION_ID']
 
 		# New CheckLogin code built in tarsusaRequestHandler 
@@ -154,12 +139,9 @@ class AboutPage(tarsusaRequestHandler):
 				'AnonymousVisitor': "Yes",
 				'devVersion': strdevVersion,
 			}
-
-
 	
 		path = os.path.join(os.path.dirname(__file__), 'pages/about.html')
 		self.response.out.write(template.render(path, template_values))
-
 
 class StatsticsPage(tarsusaRequestHandler):
 	def get(self):
@@ -210,6 +192,28 @@ class StatsticsPage(tarsusaRequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
 		self.response.out.write(template.render(path, template_values))
 
+class DocsPage(tarsusaRequestHandler):
+	def get(self):
+
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()		
+			template_values = {
+					'PrefixCSSdir': "/",
+					'UserLoggedIn': 'Logged In',
+					'UserNickName': cgi.escape(CurrentUser.dispname),
+					'UserID': CurrentUser.key().id(),
+			}
+		
+		else:			
+			template_values = {
+				'PrefixCSSdir': "/",
+				'UserNickName': "访客",
+				'AnonymousVisitor': "Yes",
+			}
+	
+		path = os.path.join(os.path.dirname(__file__), 'pages/docs_why_google_account.html')
+		self.response.out.write(template.render(path, template_values))
 
 class FlushCache(tarsusaRequestHandler):
 	def get(self):
@@ -220,6 +224,7 @@ class FlushCache(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/about',AboutPage),
 								       ('/blog',BlogPage),
+									   ('/docs.+', DocsPage),
 								       ('/statstics',StatsticsPage),
 									   ('/flushcache', FlushCache),
 									   ('/guestbook', GuestbookPage)],

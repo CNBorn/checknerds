@@ -40,21 +40,19 @@
                 	<tr>
                     	<td>
                             <a href="/">首页</a>&nbsp;
-			    {% if UserLoggedIn %}
-				 <a href="/user/{{UserID|escape}}">我的页面</a>&nbsp;
-				 <a href="/user/{{UserID|escape}}/todo">待完成项目</a>&nbsp;
-				 <a href="/user/{{UserID|escape}}/done">已完成项目</a>&nbsp;
-				 <a href="/FindFriend">我的朋友</a>
-				 <a href="/user/{{UserID|escape}}/donelog">完成日志</a>
-		            {% endif %}
-
+							{% if UserLoggedIn %}
+							 <a href="/user/{{UserID|escape}}">我的页面</a>&nbsp;
+							 <a href="/user/{{UserID|escape}}/todo">待完成项目</a>&nbsp;
+							 <a href="/user/{{UserID|escape}}/done">已完成项目</a>&nbsp;
+							 <a href="/FindFriend">我的朋友</a>
+							 <a href="/user/{{UserID|escape}}/donelog">完成日志</a>
+							{% endif %}
 			</td>
 
                     	<td class="textalign-right">
                             {% if not UserLoggedIn %}
-							<img src="/img/favb16.png">&nbsp;<a href="/Login/">使用Google帐户登录</a></a>
-							{% endif %}
-							{% if UserLoggedIn %}
+							<img src="/img/favb16.png">&nbsp;<a href="/Login/">使用Google帐户登录</a>&nbsp;<small><a href="/docs/why_google_account">(?)</a></small>
+							{% else %}
 							<a href="/user/{{UserID}}/setting">{{UserNickName}}的设置</a>
 							<a href="/Logout/">登出</a>
 							{% endif %}							
