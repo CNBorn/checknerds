@@ -118,8 +118,20 @@ class MainPage(tarsusaRequestHandler):
 				strCachedWelcomePage = IsCachedWelcomePage
 			else:
 
-				TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
-				TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
+				#To handle results more than 1000.
+				UserCount1kMilestones = [] # has to be userid, int
+				tarsusaItem1kMilestones = [] # has to be create date of an item, str, like '2008-09-02'
+
+				if len(UserCount1kMilestones) == 0:
+					TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
+				else:
+					TotalUserCount = 1000 * len(UserCount1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid > :1", UserCount1kMilestones[len(UserCount1kMilestones) - 1]).count()
+				
+				if len(tarsusaItem1kMilestones) == 0:
+					TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
+				else:
+					TotaltarsusaItem = 1000 * len(tarsusaItem1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1", datetime.datetime.strptime(tarsusaItem1kMilestones[len(tarsusaItem1kMilestones) - 1], "%Y-%m-%d")).count()
+
 
 				## Homepage for Non-Registered Users.
 
