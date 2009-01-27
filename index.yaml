@@ -23,7 +23,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 313 times in query history.
+# Used 319 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -32,7 +32,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 301 times in query history.
+# Used 307 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -50,7 +50,7 @@ indexes:
   - name: donedate
     direction: desc
 
-# Used 2786 times in query history.
+# Used 2795 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -59,7 +59,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 922 times in query history.
+# Used 927 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -76,7 +76,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 123 times in query history.
+# Used 147 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -115,7 +115,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 6191 times in query history.
+# Used 6217 times in query history.
 - kind: tarsusaItem
   properties:
   - name: routine
@@ -129,7 +129,7 @@ indexes:
   - name: user
   - name: date
 
-# Used 2831 times in query history.
+# Used 2852 times in query history.
 - kind: tarsusaItem
   properties:
   - name: user
@@ -170,7 +170,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 2360 times in query history.
+# Used 2381 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: routine
@@ -193,7 +193,7 @@ indexes:
   - name: routineid
   - name: donedate
 
-# Used 117 times in query history.
+# Used 118 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: routineid
@@ -208,7 +208,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 88 times in query history.
+# Used 104 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: user
@@ -221,7 +221,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 106 times in query history.
+# Used 112 times in query history.
 - kind: tarsusaUser
   properties:
   - name: datejoinin

@@ -552,4 +552,15 @@
 		Added Docs/why_google_account Document.
 	IN 09.01.26
 		More than 1000 User and Items will be calculated and displayed at front page.
+		---
+		Creating a new donelog page with url: /donelog/
+			This is different with /user/userid/donlog -> This is opened for other visitors. (Some security issue must be solved)
+				and /user/donelog page will only show 7 days donelog.
+		/donelog will only opened for CurrentLogin user.
+		
+		Fixed UserID and UserNickName confusion in /user/xxx/donelog page.
+		---
+		There is a fatal issue in both donelog page: a day with no routine item done won't displayed!
+	IN 09.01.27
+		Done Part 1 of inner API. Now can output UserDoneLog items info via tarsusaCore.py!
 

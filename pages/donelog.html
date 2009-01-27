@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}CheckNerds - {{ UserNickName }}的完成日志 {% endblock title %}
+{% block title %}CheckNerds - {{ UserLoginNickName }}的完成日志 {% endblock title %}
 		{% block content-holder %}
  			<div id="leftside">
             	<div id="featuredcode2">
                 	<div id="featuredcode2-top"></div>
                    	<div id="featuredcode2-mid">
-
+						<strong>{{ UserLoginNickName }}的完成日志</strong><br />
                         <p>{{ StringRoutineLog }}
 					
 						</p>
