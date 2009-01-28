@@ -195,71 +195,118 @@ class UserDonePage(tarsusaRequestHandler):
 
 class UserDoneLogPage(tarsusaRequestHandler):
 	def get(self):
+		
 		# Permission check is very important.
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
 
 			#self.write(tarsusaCore.get_UserDonelog(CurrentUser.key().id()))
-			
+			try:
+				pageid = self.request.path[len('/donelog/'):]
+				if pageid[:2] == 'p/':
+					tag_ViewPreviousPage = True
+					pageid = pageid[2:]
+				else:
+					tag_ViewPreviousPage = False
+			except:
+				pass
+
+			if pageid != None and len(self.request.path) > len('/donelog/'):
+				this_timestamp = datetime.datetime.fromtimestamp(int(pageid))
+				if tag_ViewPreviousPage == True:
+					##the defination of 'previous' and 'next' here is different as other pages.
+					
+					tarsusaItemCollection = tarsusaCore.get_UserDonelog(CurrentUser.key().id(), this_timestamp, 'next')
+					#tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True and donedate > :2 ORDER BY donedate DESC LIMIT 9", CurrentUser.user, this_timestamp)
+
+				else:
+					tarsusaItemCollection = tarsusaCore.get_UserDonelog(CurrentUser.key().id(), this_timestamp, 'previous')
+					#tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True and donedate <= :2 ORDER BY donedate DESC LIMIT 9", CurrentUser.user, this_timestamp)
+
 			#Memcached Donelog page for better performance.
-			IsCachedDonelogPage = memcache.get_item('userdonelog', CurrentUser.key().id())
-			if IsCachedDonelogPage:
-				strCachedDonelogPage = IsCachedDonelogPage
-			else:
+			#IsCachedDonelogPage = memcache.get_item('userdonelog', CurrentUser.key().id())
+			#if IsCachedDonelogPage:
+			#	strCachedDonelogPage = IsCachedDonelogPage
+			#else:
 				
+			else:
 				tarsusaItemCollection = tarsusaCore.get_UserDonelog(CurrentUser.key().id())
 				#returned as dictionary, please refer to tarsusaCore.py
 
-				outputStringRoutineLog = "本页面只显示7天内的完成记录<br />".decode('utf-8')
-				Donedate_of_previousRoutineLogItem = None  ## To display the routine item log by Daily.
+			outputStringRoutineLog = '' #"本页面只显示7天内的完成记录<br />".decode('utf-8')
+			Donedate_of_previousRoutineLogItem = None  ## To display the routine item log by Daily.
+			DaysInDonelog = 0 #How many days are scaled in all data collection.
 
-				for each_Item in tarsusaItemCollection:
+			for each_Item in tarsusaItemCollection:
+				
+				DoneDateOfThisItem = datetime.datetime.date(each_Item['donedate'])
+
+				if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
+					DaysInDonelog += 1
+					outputStringRoutineLog += ('<br /><h2 class="posttitle" style="font-weight:normal;">' + str(DoneDateOfThisItem) + '完成</h2><br />').decode('utf-8')
+				
+				if each_Item['routine'] != 'none':
+					#FOR DONE_ROUTINE item.
+					strRoutineLogItemPrompt = ''
+					if each_Item['routine'] == 'daily':
+						strRoutineLogItemPrompt = '每日'
+					elif each_Item['routine'] == 'weekly':
+						strRoutineLogItemPrompt = '每周'
+					elif each_Item['routine'] == 'monthly':
+						strRoutineLogItemPrompt = '每月'
+					elif each_Item['routine'] == 'seasonly':
+						strRoutineLogItemPrompt = '每季'
+					elif each_Item['routine'] == 'yearly':
+						strRoutineLogItemPrompt = '每年'
+
+					outputStringRoutineLog += ('&nbsp;&nbsp;<img src="/img/accept16.png">')
+					outputStringRoutineLog += '<a href=/item/' + str(each_Item['id']) + '>' + each_Item['name'] + "</a> - <strong>" + (strRoutineLogItemPrompt + '任务</strong>').decode('utf-8') + "<br/>"
 					
-					DoneDateOfThisItem = datetime.datetime.date(each_Item['donedate'])
-
-					if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
-						outputStringRoutineLog += ('<br /><h2 class="posttitle" style="font-weight:normal;">' + str(DoneDateOfThisItem) + '完成</h2><br />').decode('utf-8')
+				else:
+					#FOR ORDINARY DONE ITEM
+					outputStringRoutineLog += ('&nbsp;&nbsp;<img src="/img/accept16.png">').decode('utf-8')			
+					outputStringRoutineLog += '<a href=/item/' + str(each_Item['id']) + '>' + each_Item['name'] + "</a><br/>"
 					
-					if each_Item['routine'] != 'none':
-						#FOR DONE_ROUTINE item.
-						strRoutineLogItemPrompt = ''
-						if each_Item['routine'] == 'daily':
-							strRoutineLogItemPrompt = '每日'
-						elif each_Item['routine'] == 'weekly':
-							strRoutineLogItemPrompt = '每周'
-						elif each_Item['routine'] == 'monthly':
-							strRoutineLogItemPrompt = '每月'
-						elif each_Item['routine'] == 'seasonly':
-							strRoutineLogItemPrompt = '每季'
-						elif each_Item['routine'] == 'yearly':
-							strRoutineLogItemPrompt = '每年'
+				Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
 
-						outputStringRoutineLog += ('&nbsp;&nbsp;<img src="/img/accept16.png">')
-						outputStringRoutineLog += '<a href=/item/' + str(each_Item['id']) + '>' + each_Item['name'] + "</a> - <strong>" + (strRoutineLogItemPrompt + '任务</strong>').decode('utf-8') + "<br/>"
-						
-					else:
-						#FOR ORDINARY DONE ITEM
-						outputStringRoutineLog += ('&nbsp;&nbsp;<img src="/img/accept16.png">').decode('utf-8')			
-						outputStringRoutineLog += '<a href=/item/' + str(each_Item['id']) + '>' + each_Item['name'] + "</a><br/>"
-						
-					Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
-
-				template_values = {
-						'PrefixCSSdir': "/",
-						
-						'UserLoggedIn': 'Logged In',
-						'UserID': CurrentUser.key().id(),
-						'UserNickName': cgi.escape(CurrentUser.dispname),
-						'UserLoginNickName': cgi.escape(CurrentUser.dispname),
-						'singlePageTitle': "",
-						
-						'StringRoutineLog': outputStringRoutineLog,
-				}
 			
-				path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
-				strCachedDonelogPage = template.render(path, template_values)
-				memcache.set_item("userdonelog", strCachedDonelogPage, CurrentUser.key().id())
+			
+			
+
+				
+			template_values = {
+					'PrefixCSSdir': "/",
+					
+					'UserLoggedIn': 'Logged In',
+					'UserID': CurrentUser.key().id(),
+					'UserNickName': cgi.escape(CurrentUser.dispname),
+					'UserLoginNickName': cgi.escape(CurrentUser.dispname),
+					'singlePageTitle': "",
+					
+					'StringRoutineLog': outputStringRoutineLog,
+			}
+			
+			#Determine next page
+			#if there is an error here, there would be not found any records.
+			try:
+				previous_timestamp = int(time.mktime(tarsusaItemCollection[0]['donedate'].timetuple()))
+				next_timestamp = int(time.mktime(tarsusaItemCollection[len(tarsusaItemCollection) - 1]['donedate'].timetuple()))
+				if previous_timestamp != 0:
+					template_values['previouspagestamp'] = previous_timestamp		
+				if next_timestamp != 0:
+					template_values['nextpagestamp'] = next_timestamp			
+				if next_timestamp == 0 and previous_timestamp == 0:
+					self.redirect("/donelog/")			
+				#to be improved, if all these records are created in the same day
+				if DaysInDonelog == 1 and tag_ViewPreviousPage == True:
+					self.redirect("/donelog/")				
+			except:
+				self.redirect('/donelog/')
+	
+			path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
+			strCachedDonelogPage = template.render(path, template_values)
+			#memcache.set_item("userdonelog", strCachedDonelogPage, CurrentUser.key().id())
 			self.response.out.write(strCachedDonelogPage)
 		else:
 			self.redirect('/')

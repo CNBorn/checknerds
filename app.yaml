@@ -80,7 +80,7 @@ handlers:
 - url: /dashboard
   script: hello.py
 
-- url: /donelog.*
+- url: /donelog.+
   script: userpage.py
 
 - url: /user/.*

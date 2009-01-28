@@ -26,7 +26,13 @@ import time, datetime
 ## Caution!
 ## These funtions here won't check permission for login!
 
-def get_UserDonelog(userid, startdate='', maxdisplaydonelogdays=7):
+def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
+
+	#Get user's donelog
+	#lookingfor = 'next' to get the records > startdate
+	#			  'previous' to get the records <= startdate
+
+
 
 	#Have to add this limit for GAE's CPU limitation.
 	MaxDisplayedDonelogDays = maxdisplaydonelogdays
@@ -39,7 +45,11 @@ def get_UserDonelog(userid, startdate='', maxdisplaydonelogdays=7):
 	userid = ThisUser.key().id()
 	
 	if startdate != '':
-		tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 AND donedate > :2 ORDER BY donedate DESC", ThisUser.user, startdate)
+		if lookingfor == 'next':
+			tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 AND donedate > :2 ORDER BY donedate DESC", ThisUser.user, startdate)
+		else:
+			tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 AND donedate <= :2 ORDER BY donedate DESC", ThisUser.user, startdate)
+
 	else:
 		tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 ORDER BY donedate DESC", ThisUser.user)
 			
@@ -81,4 +91,10 @@ def get_UserDonelog(userid, startdate='', maxdisplaydonelogdays=7):
 	#tobeadded shuffled as donedate
 
 	return Item_List
+	
+	#TODO
+	# to make it desc by donedate!
+
+	# to make it unique!
+	# some tarsusaItem will be selected duplicatly because it selects item by the date scale.
 

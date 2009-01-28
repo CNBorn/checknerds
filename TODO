@@ -563,4 +563,11 @@
 		There is a fatal issue in both donelog page: a day with no routine item done won't displayed!
 	IN 09.01.27
 		Done Part 1 of inner API. Now can output UserDoneLog items info via tarsusaCore.py!
+	IN 09.01.28
+		Implemented Pagination in brand new Donelog page.
+
+		There are some bug in tarsusaCore, needs to be solved.
+			Unique these items
+			Order them by donedate desc
+
 
