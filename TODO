@@ -569,5 +569,8 @@
 		There are some bug in tarsusaCore, needs to be solved.
 			Unique these items
 			Order them by donedate desc
-
+	IN 09.01.29
+		Finished Donelog function in tarsusaCore. Now It can unique items and order them by donedate.
+		Added Prevention for not to add duplicate tarsusaRoutineLogItem.
+		#TODO: Make friendstats like donelog.
 

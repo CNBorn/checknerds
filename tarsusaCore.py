@@ -77,18 +77,35 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
 		#Show ordinary items that are created in that day
 		TheDay = DoneDateOfThisItem
 		one_day = datetime.timedelta(days=1)
-		yesterday_ofTheDay = datetime.datetime.combine(TheDay - one_day,datetime.time(0))
+		yesterday_ofTheDay = datetime.datetime.combine(TheDay - one_day, datetime.time(0))
 		nextday_ofTheDay = datetime.datetime.combine(TheDay + one_day, datetime.time(0))
 
 		tarsusaItemCollection_ThisDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND donedate > :2 AND donedate <:3 AND done = True ORDER BY donedate DESC", ThisUser.user, yesterday_ofTheDay, nextday_ofTheDay)
 		for each_doneItem_withinOneday in tarsusaItemCollection_ThisDayCreated:
 			
 			this_item = {'id' : str(each_doneItem_withinOneday.key().id()), 'name' : each_doneItem_withinOneday.name, 'date' : str(each_doneItem_withinOneday.date), 'donedate': each_doneItem_withinOneday.donedate, 'comment' : each_doneItem_withinOneday.comment, 'routine' : each_doneItem_withinOneday.routine, 'category' : 'done'}
-			Item_List.append(this_item)
+			
+			#Prevent to add duplicated tarsusaItem here.
+			Duplicated_tarsusaItem_Inlist = False
+			for check_for_duplicated_tarsusaItem in Item_List:
+				if check_for_duplicated_tarsusaItem['id'] == this_item['id'] and check_for_duplicated_tarsusaItem['donedate'] == this_item['donedate']:
+					Duplicated_tarsusaItem_Inlist = True
+			if Duplicated_tarsusaItem_Inlist == False:
+				Item_List.append(this_item)
 
 		Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
 
-	#tobeadded shuffled as donedate
+	#sort the results order by donedate:
+	#Sort Algorithms from
+	#http://www.lixiaodou.cn/?p=12
+	length = len(Item_List)
+	for i in range(0,length):
+		for j in range(length-1,i,-1):
+				if Item_List[j]['donedate'] > Item_List[j-1]['donedate']:
+					temp = Item_List[j]
+					Item_List[j]=Item_List[j-1]
+					Item_List[j-1]=temp
+	#---
 
 	return Item_List
 	

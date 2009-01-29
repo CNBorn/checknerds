@@ -74,11 +74,23 @@ class DoneItem(tarsusaRequestHandler):
 				#NewlyDoneRoutineItem.routine = tItem.routine
 				# The done date will be automatically added by GAE datastore.			
 				
-				NewlyDoneRoutineItem.put()
-					
+				#To Check whether this routine item was done today.
+				#Prevention to add duplicate tarsusaRoutineLogItem.
+				one_day = datetime.timedelta(days=1)
+				yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
+				if DoneYesterdaysDailyRoutine == False:
+					tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday + one_day ,datetime.datetime.now())
+				else:
+					tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
+
+				if not tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count() >= 1:
+					NewlyDoneRoutineItem.put()
+				
+				self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())			
+		
 		#self.redirect(self.request.uri)
 		#self.redirect('/')
-		self.redirect(self.referer)
+		#self.redirect(self.referer)
 
 class UnDoneItem(tarsusaRequestHandler):
 	def get(self):
