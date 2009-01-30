@@ -2,11 +2,7 @@
 {% block title %} CheckNerds - {{ UserNickName }}的朋友 {% endblock title %}
 
         	{% block content-holder %}
-			<script type="text/javascript">
-				window.onload = function() {
-					$('#div_friendstats').load('/ajax/frontpage_getfriendstats');
-				}
-			</script>
+
 			
 			
 			<div id="leftside">
@@ -16,7 +12,10 @@
 
 						<div id="singleleft">
 							<h2 class="posttitle">{{ UserNickName }}的朋友动态</h2>
-								<div id="div_friendstats" style="padding-top:10px; padding-left: 10px;">正在载入……</div>
+								<div id="div_friendstats" style="padding-top:10px; padding-left: 10px;">
+								{{UserFriendsActivities}}
+								</div>
+								
 						</div>
 
 						<div id="singleleft">

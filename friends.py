@@ -29,12 +29,47 @@ from base import *
 import logging
 
 import memcache
+import tarsusaCore
+
 class FindFriendPage(tarsusaRequestHandler):
 	def get(self):
 	
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
+
+			#---
+			## SHOW YOUR FRIENDs Recent Activities
+			UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id())
+			#---
+			UserFriendsActivities = '<ul class="mbt">'
+				
+			if len(UserFriendsItem_List) > 0:
+				#Output raw html
+				for each_friend_item in UserFriendsItem_List:
+					if each_friend_item['category'] == 'done':
+						
+						#Due to usermodel is applied in a later patch, some tarsusaItem may not have that property.
+						#Otherwise I would like to user ['user'].key().id()
+						#UserFriendsActivities += '<li><a href="/user/' + str(each_friend_item['userid']) + '">' +  each_friend_item['userdispname'] + '<img src="' +each_friend_item['avatar'] + '" width=32 height=32>' + '</a> 完成了 <a href="/item/'.decode('utf-8') + str(each_friend_item['id']) + '">' + each_friend_item['name'] + '</a></li>'
+						UserFriendsActivities += '<li class="mbtl"><a href="/user/' + str(each_friend_item['userid']) + '">' + '<img src="' + each_friend_item['avatar'] + '" width=48 height=48>' + '</a></li>'
+						UserFriendsActivities += '<li class="mbtr"><span class="starb">' + '<a href="/user/' + str(each_friend_item['userid']) + '">' + each_friend_item['userdispname'] + '</a>' + '<span class="pl"> 完成了 <a href="/item/'.decode('utf-8') + str(each_friend_item['id']) + '">' + each_friend_item['name'] + '</a></span>' + 	'</span></li>'					
+
+					else:
+						#UserFriendsActivities += '<li><a href="/user/' + str(each_friend_item['userid']) + '">' +  each_friend_item['userdispname'] + '<img src="' +each_friend_item['avatar'] + '" width=32 height=32>' + '</a> 要做 <a href="/item/'.decode('utf-8') + str(each_friend_item['id']) + '">' + each_friend_item['name'] + '</a></li>'
+						UserFriendsActivities += '<li class="mbtl"><a href="/user/' + str(each_friend_item['userid']) + '">' + '<img src="' + each_friend_item['avatar'] + '" width=48 height=48>' + '</a></li>'
+						UserFriendsActivities += '<li class="mbtr"><span class="starb">' + '<a href="/user/' + str(each_friend_item['userid']) + '">' + each_friend_item['userdispname'] + '</a>' + '<span class="pl"> 要做 <a href="/item/'.decode('utf-8') + str(each_friend_item['id']) + '">' + each_friend_item['name'] + '</a></span>' + 	'</span></li>'					
+
+
+				if len(UserFriendsItem_List) == 0:
+					UserFriendsActivities = '<li>暂无友邻公开项目</li>'							
+			
+			else:
+				#CurrentUser does not have any friends.
+				UserFriendsActivities = '<li>当前没有添加朋友</li>'
+
+
+			#---
 
 			#Changed from Displaying all tarsusaUser (Very Slow performance)
 			#	to display just random users.
@@ -77,7 +112,8 @@ class FindFriendPage(tarsusaRequestHandler):
 					'UserFriends': UserFriends,	
 					'singlePageTitle': "查找朋友.",
 					'singlePageContent': "",
-
+					
+					'UserFriendsActivities': UserFriendsActivities,
 					'tarsusaPeopleCollection': tarssuaLastestPeople,
 			}
 		

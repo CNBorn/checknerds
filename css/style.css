@@ -156,6 +156,24 @@ a.g, a.g:active, a.g:visited {
 	padding-top: 2px;
 }
 
+/* Friend Stats style, from douban */
+/*broadcast items*/
+.notify input {margin-top:9px}
+.mbt{ padding: 0; margin: 0; clear: both; }
+.mbt tr{  vertical-align: top; }
+.mbtl { float: left; width: 55px; margin: 8px 7px 0 0; padding: 0; }
+.mbtr { border-bottom:1px solid #eee; padding: 5px 0;  min-height: 55px;  overflow: hidden;margin:5px 0 5px 0; }
+ .mbtr2 {margin-bottom:20px;overflow: hidden;}
+ul .mbtr2 { border-bottom:1px solid #ddd; }
+{ border-bottom:1px solid #ddd; min-height: 55px;  overflow: hidden;}
+.mbtrdot {border-bottom:1px solid #eee; padding: 4px 0;  min-height: 55px;  overflow: hidden;}
+.mbtrmini{border-bottom:1px dashed #ddd; padding: 4px 0 4px 12px;background:url(../pics/listdot.gif) 0 8px no-repeat;}
+* html .mbtr{ word-break:break-all; height: 55px; overflow: visible; }
+* html .mbtrdot{  word-wrap: break-word;word-break:break-all; height: 55px; overflow: visible; }
+* html .mbtrmini{ word-break:break-all; overflow: visible; }
+.mbdiv { padding-top: 10px 0 6px 0; border-top:1px dashed #DDDDDD; }
+
+
 
 /* input box style, from tarsusa, originally from V2EX. */
 input.sl

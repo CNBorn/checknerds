@@ -2,10 +2,12 @@
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 0.7, codename Nevada
+# version 1.0, codename Nevada
 # - ajax.py
-# Copyright (C) CNBorn, 2008
+# Author: CNBorn, 2008-2009
 # http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+#
+# Ajax Pages & Functions Complex
 #
 # **************************************************************** 
 
@@ -35,6 +37,7 @@ import urllib
 import random
 from django.utils import simplejson
 
+import tarsusaCore
 import memcache
 
 class getdailyroutine(tarsusaRequestHandler):
@@ -343,60 +346,11 @@ class get_fp_friendstats(tarsusaRequestHandler):
 			else:
 				
 				## SHOW YOUR FRIENDs Recent Activities
-				
-				# there once happens an error the CurrentUser can not be found.
-				# I think that is due to the loginout, and non-refreshed index page.
-				#try:
-
-				tarsusaUserFriendCollection = CurrentUser.friends
-
+				UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id())
+				#---
 				UserFriendsActivities = ''
-				UserFriendsItem_List = []
-
-				if tarsusaUserFriendCollection:
-					#first of all, CurrentUser should have some friends
-
-					for each_FriendKey in tarsusaUserFriendCollection:
-						UsersFriend =  db.get(each_FriendKey)						
-						
-						#Due to usermodel and other are applied in a later patch, some tarsusaItem may not have that property.
-						#There maybe need to extend if we need more property from tarsusaItem.usermodel
-						UsersFriendid = UsersFriend.key().id()
-						try:
-							UsersFriendDispname = UsersFriend.dispname
-						except:
-							UsersFriendDispname = UsersFriend.user.nickname()
-
-
-						tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 50", UsersFriend.user)
-
-						for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
-							## Check whether should show this item.
-							if tarsusaItem_UserFriendsRecentItems.public != 'private':						
-								
-								## Check whether this item had done.
-								if tarsusaItem_UserFriendsRecentItems.done == True:
-									friend_Item = {'id' : str(tarsusaItem_UserFriendsRecentItems.key().id()), 'name' : tarsusaItem_UserFriendsRecentItems.name, 'date' : str(tarsusaItem_UserFriendsRecentItems.donedate), 'comment' : tarsusaItem_UserFriendsRecentItems.comment, 'category' : 'done', 'userdispname': UsersFriendDispname, 'userid': UsersFriendid}
-								else:
-									friend_Item = {'id' : str(tarsusaItem_UserFriendsRecentItems.key().id()), 'name' : tarsusaItem_UserFriendsRecentItems.name, 'date' : str(tarsusaItem_UserFriendsRecentItems.date), 'comment' : tarsusaItem_UserFriendsRecentItems.comment, 'category' : 'todo', 'userdispname': UsersFriendDispname, 'userid': UsersFriendid}
-
-								UserFriendsItem_List.append(friend_Item)
-
-					#sort the results:
-					#Sort Algorithms from
-					#http://www.lixiaodou.cn/?p=12
-					length = len(UserFriendsItem_List)
-					for i in range(0,length):
-						for j in range(length-1,i,-1):
-								#Convert string to datetime.date
-								#http://mail.python.org/pipermail/tutor/2006-March/045729.html	
-								time_format = "%Y-%m-%d %H:%M:%S"
-								if datetime.datetime.fromtimestamp(time.mktime(time.strptime(UserFriendsItem_List[j]['date'][:-7], time_format))) > datetime.datetime.fromtimestamp(time.mktime(time.strptime(UserFriendsItem_List[j-1]['date'][:-7], time_format))):
-									temp = UserFriendsItem_List[j]
-									UserFriendsItem_List[j]=UserFriendsItem_List[j-1]
-									UserFriendsItem_List[j-1]=temp
-					#---
 					
+				if len(UserFriendsItem_List) > 0:
 					#Output raw html
 					for each_friend_item in UserFriendsItem_List:
 						if each_friend_item['category'] == 'done':
@@ -414,9 +368,6 @@ class get_fp_friendstats(tarsusaRequestHandler):
 				else:
 					#CurrentUser does not have any friends.
 					UserFriendsActivities = '<li>当前没有添加朋友</li>'
-
-				#except:
-				#	UserFriendsActivities = '<li>当前没有添加朋友</li>'
 
 				template_values = {
 					'UserLoggedIn': 'Logged In',

@@ -2,9 +2,9 @@
 
 # ****************************************************************
 # CheckNerds - www.checknerds.com
-# version 0.7, codename Nevada
+# version 1.0, codename Nevada
 # - tarsusaCore.py
-# Copyright (C) CNBorn, 2008
+# Author: CNBorn, 2008-2009
 # http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
 #
 # Provides inner-API functions
@@ -109,9 +109,76 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
 
 	return Item_List
 	
-	#TODO
-	# to make it desc by donedate!
+def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems=15):
+	
+	#Get user's FriendStats
+	#SHOW YOUR FRIENDs Recent Activities
+	
+	#lookingfor = 'next' to get the records > startdate
+	#			  'previous' to get the records <= startdate
+	#actully you can not decide how many items will be displayed here. 15 will be a fixed number, maybe less than 15 will be displayed.
 
-	# to make it unique!
-	# some tarsusaItem will be selected duplicatly because it selects item by the date scale.
+	#Have to add this limit for GAE's CPU limitation.
+	MaxDisplayedItems = maxdisplayitems
+	ThisUser = tarsusaUser.get_by_id(int(userid))
+	
+	#---
+	userid = ThisUser.key().id()
 
+	tarsusaUserFriendCollection = ThisUser.friends
+	DisplayedDonelogDays = 1 
+
+	UserFriendsItem_List = []
+
+	if tarsusaUserFriendCollection:
+		#first of all, CurrentUser should have some friends
+
+		for each_FriendKey in tarsusaUserFriendCollection:
+			UsersFriend =  db.get(each_FriendKey)						
+			
+			#Due to usermodel and other are applied in a later patch, some tarsusaItem may not have that property.
+			#There maybe need to extend if we need more property from tarsusaItem.usermodel
+			UsersFriendid = UsersFriend.key().id()
+			try:
+				UsersFriendDispname = UsersFriend.dispname
+			except:
+				UsersFriendDispname = UsersFriend.user.nickname()
+
+
+			tarsusaItemCollection_UserFriendsRecentItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC LIMIT 50", UsersFriend.user)
+
+			for tarsusaItem_UserFriendsRecentItems in tarsusaItemCollection_UserFriendsRecentItems:
+				## Check whether should show this item.
+				if tarsusaItem_UserFriendsRecentItems.public != 'private':						
+					#Output Avatar Information
+					UserAvatar = '/img/default_avatar.jpg'
+					#Some of the older items may not have the usermodel property
+					try:
+						if tarsusaItem_UserFriendsRecentItems.usermodel.avatar:
+							UserAvatar = '/img?avatar=' + str(tarsusaItem_UserFriendsRecentItems.usermodel.key().id())
+					except:
+						UserAvatar = '/img/default_avatar.jpg'
+
+					## Check whether this item had done.
+					if tarsusaItem_UserFriendsRecentItems.done == True:
+							friend_Item = {'id' : str(tarsusaItem_UserFriendsRecentItems.key().id()), 'name' : tarsusaItem_UserFriendsRecentItems.name, 'date' : str(tarsusaItem_UserFriendsRecentItems.donedate), 'comment' : tarsusaItem_UserFriendsRecentItems.comment, 'category' : 'done', 'userdispname': UsersFriendDispname, 'userid': UsersFriendid, 'avatar': UserAvatar}
+					else:
+						friend_Item = {'id' : str(tarsusaItem_UserFriendsRecentItems.key().id()), 'name' : tarsusaItem_UserFriendsRecentItems.name, 'date' : str(tarsusaItem_UserFriendsRecentItems.date), 'comment' : tarsusaItem_UserFriendsRecentItems.comment, 'category' : 'todo', 'userdispname': UsersFriendDispname, 'userid': UsersFriendid, 'avatar': UserAvatar}
+
+					UserFriendsItem_List.append(friend_Item)
+
+		#sort the results:
+		#Sort Algorithms from
+		#http://www.lixiaodou.cn/?p=12
+		length = len(UserFriendsItem_List)
+		for i in range(0,length):
+			for j in range(length-1,i,-1):
+					#Convert string to datetime.date
+					#http://mail.python.org/pipermail/tutor/2006-March/045729.html	
+					time_format = "%Y-%m-%d %H:%M:%S"
+					if datetime.datetime.fromtimestamp(time.mktime(time.strptime(UserFriendsItem_List[j]['date'][:-7], time_format))) > datetime.datetime.fromtimestamp(time.mktime(time.strptime(UserFriendsItem_List[j-1]['date'][:-7], time_format))):
+						temp = UserFriendsItem_List[j]
+						UserFriendsItem_List[j]=UserFriendsItem_List[j-1]
+						UserFriendsItem_List[j-1]=temp
+		#---
+		return UserFriendsItem_List 

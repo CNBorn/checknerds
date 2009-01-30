@@ -573,4 +573,7 @@
 		Finished Donelog function in tarsusaCore. Now It can unique items and order them by donedate.
 		Added Prevention for not to add duplicate tarsusaRoutineLogItem.
 		#TODO: Make friendstats like donelog.
-
+	IN 09.01.30
+		Finished FriendStats function in tarsusaCore.
+		Done a Better FriendStats page! CSS is copied from douban, needs further tweak!
+		#TODO: make FriendStats page's messy HTML core into template.
