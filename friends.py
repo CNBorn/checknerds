@@ -2,7 +2,7 @@
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 0.7, codename Nevada
+# version 1.0, codename Nevada
 # - friends.py
 # Copyright (C) CNBorn, 2008
 # http://blog.donews.com/CNBorn, http://twitter.com/CNBorn

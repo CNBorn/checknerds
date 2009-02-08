@@ -22,6 +22,8 @@ from base import *
 
 import memcache
 
+import utilities
+
 class mMainPage(tarsusaRequestHandler):
 	def get(self):
 		
@@ -79,9 +81,14 @@ class mMainPage(tarsusaRequestHandler):
 				'tarsusaItemCollection_Statstics': strcachedUserItemStats,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
+		
 			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_mainpage.html')
-			self.response.out.write(template.render(path, template_values))
+			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_imainpage.html')
+				self.response.out.write(template.render(path, template_values))
+			else:			
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_mainpage.html')
+				self.response.out.write(template.render(path, template_values))
 
 
 		else:
@@ -89,9 +96,14 @@ class mMainPage(tarsusaRequestHandler):
 			template_values = {
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
+			
 			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_welcomepage.html')
-			self.response.out.write(template.render(path, template_values))
+			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_iwelcomepage.html')
+				self.response.out.write(template.render(path, template_values))
+			else:
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_welcomepage.html')
+				self.response.out.write(template.render(path, template_values))
 
 class mToDoPage(tarsusaRequestHandler):
 	def get(self):
@@ -320,8 +332,12 @@ class mDailyRoutinePage(tarsusaRequestHandler):
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
 			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_dailyroutinepage.html')
-			self.response.out.write(template.render(path, template_values))
+			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_idailyroutinepage.html')
+				self.response.out.write(template.render(path, template_values))
+			else:
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_dailyroutinepage.html')
+				self.response.out.write(template.render(path, template_values))
 		else:
 			self.redirect("/m/")
 

@@ -181,4 +181,29 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
 						UserFriendsItem_List[j]=UserFriendsItem_List[j-1]
 						UserFriendsItem_List[j-1]=temp
 		#---
-		return UserFriendsItem_List 
+		return UserFriendsItem_List
+
+def get_count_tarsusaUser():
+	#Due to the limitation of GAE.
+	#To handle results more than 1000.	
+	UserCount1kMilestones = [] # has to be userid, int
+
+	if len(UserCount1kMilestones) == 0:
+		TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
+	else:
+		TotalUserCount = 1000 * len(UserCount1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid > :1", UserCount1kMilestones[len(UserCount1kMilestones) - 1]).count()
+	
+	return TotalUserCount
+
+
+def get_count_tarsusaItem():
+	#Due to the limitation of GAE.
+	#To handle results more than 1000.
+	tarsusaItem1kMilestones = [] # has to be create date of an item, str, like '2008-09-02'
+	
+	if len(tarsusaItem1kMilestones) == 0:
+		TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
+	else:
+		TotaltarsusaItem = 1000 * len(tarsusaItem1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1", datetime.datetime.strptime(tarsusaItem1kMilestones[len(tarsusaItem1kMilestones) - 1], "%Y-%m-%d")).count()
+	
+	return TotaltarsusaItem

@@ -577,3 +577,9 @@
 		Finished FriendStats function in tarsusaCore.
 		Done a Better FriendStats page! CSS is copied from douban, needs further tweak!
 		#TODO: make FriendStats page's messy HTML core into template.
+	IN 09.02.08
+		Moved tarsusaUser&tarsusaItem count part in Frontpage to tarsusaCore.
+		Made the HTTP_AGENT determination in some of Mobile Pages.
+		TODO: Rewrite Livid's AGENT determine function.
+		Modified some mobile pages to fit in iPod's Safari.
+

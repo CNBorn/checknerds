@@ -17,7 +17,9 @@ import datetime
 import string
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
+
 import memcache
+import tarsusaCore
 
 from modules import *
 from base import *
@@ -105,7 +107,6 @@ class MainPage(tarsusaRequestHandler):
 
 			}
 
-
 			#Manupilating Templates	
 			path = os.path.join(os.path.dirname(__file__), 'pages/index.html')
 			self.response.out.write(template.render(path, template_values))
@@ -117,21 +118,9 @@ class MainPage(tarsusaRequestHandler):
 			if IsCachedWelcomePage:
 				strCachedWelcomePage = IsCachedWelcomePage
 			else:
-
-				#To handle results more than 1000.
-				UserCount1kMilestones = [] # has to be userid, int
-				tarsusaItem1kMilestones = [] # has to be create date of an item, str, like '2008-09-02'
-
-				if len(UserCount1kMilestones) == 0:
-					TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
-				else:
-					TotalUserCount = 1000 * len(UserCount1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid > :1", UserCount1kMilestones[len(UserCount1kMilestones) - 1]).count()
 				
-				if len(tarsusaItem1kMilestones) == 0:
-					TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
-				else:
-					TotaltarsusaItem = 1000 * len(tarsusaItem1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1", datetime.datetime.strptime(tarsusaItem1kMilestones[len(tarsusaItem1kMilestones) - 1], "%Y-%m-%d")).count()
-
+				TotalUserCount = tarsusaCore.get_count_tarsusaUser()
+				TotaltarsusaItem = tarsusaCore.get_count_tarsusaItem()
 
 				## Homepage for Non-Registered Users.
 

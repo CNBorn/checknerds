@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-
-# CheckNerds 
+# **************************************************************** 
+# CheckNerds - www.checknerds.com
+# version 1.0, codename Nevada
 # - miscellaneous.py
-# Cpoyright (C) CNBorn, 2008
+# Copyright (C) CNBorn, 2008
 # http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+#
+# **************************************************************** 
 
-
-#from django.conf import settings
-#settings._target = None
 import os
 import sys
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 import cgi
 import wsgiref.handlers
