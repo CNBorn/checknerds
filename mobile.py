@@ -21,6 +21,7 @@ from modules import *
 from base import *
 
 import memcache
+import tarsusaCore
 
 import utilities
 
@@ -31,54 +32,17 @@ class mMainPage(tarsusaRequestHandler):
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
 	
-			cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())
-			if cachedUserItemStats is not None:
-				strcachedUserItemStats = cachedUserItemStats
-			else:
-				# Count User's Todos and Dones
-				tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
+			cachedUserItemStats = tarsusaCore.get_count_UserItemStats()
+			#tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
+			#'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
 
-				# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
-				# SO there is implemented a stupid way.
-				UserTotalItems = 0
-				UserToDoItems = 0
-				UserDoneItems = 0
-
-				UserDonePercentage = 0.00
-
-				for eachItem in tarsusaItemCollection_UserItems:
-					UserTotalItems += 1
-					if eachItem.done == True:
-						UserDoneItems += 1
-					else:
-						UserToDoItems += 1
-				
-				if UserTotalItems != 0:
-					UserDonePercentage = UserDoneItems *100 / UserTotalItems 
-				else:
-					UserDonePercentage = 0.00
-
-				template_values = {
-					'UserLoggedIn': 'Logged In',
-					'UserTotalItems': UserTotalItems,
-					'UserToDoItems': UserToDoItems,
-					'UserDoneItems': UserDoneItems,
-					'UserDonePercentage': UserDonePercentage,
-				}
-
-				#Manupilating Templates	
-				path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_itemstats.html')
-				
-				strcachedUserItemStats = template.render(path, template_values)
-				memcache.set_item("itemstats", strcachedUserItemStats, CurrentUser.key().id())
-			
-			#self.response.out.write(strcachedUserItemStats)
+			#self.response.out.write(cachedUserItemStats)
 
 			template_values = {
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
-				'tarsusaItemCollection_Statstics': strcachedUserItemStats,
+				'tarsusaItemCollection_Statstics': cachedUserItemStats,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
 		
@@ -165,9 +129,13 @@ class mToDoPage(tarsusaRequestHandler):
 			if next_timestamp != 0:
 				template_values['nextpagestamp'] = next_timestamp
 		
-			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_todopage.html')
-			self.response.out.write(template.render(path, template_values))
+			#Manupilating Templates
+			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_itodopage.html')
+				self.response.out.write(template.render(path, template_values))
+			else:
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_todopage.html')
+				self.response.out.write(template.render(path, template_values))
 		
 		else:
 			self.redirect("/m/")

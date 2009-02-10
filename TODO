@@ -582,4 +582,7 @@
 		Made the HTTP_AGENT determination in some of Mobile Pages.
 		TODO: Rewrite Livid's AGENT determine function.
 		Modified some mobile pages to fit in iPod's Safari.
-
+	IN 09.02.10
+		Fixed tarsusaCore.get_friend_stats returned value, there won't be anymore 'no len()' error.
+		Make Mobile_ItemStats page now calling function from tarsusaCore.
+		Tweaked Some mobile pages: Todo(iPod_Page)

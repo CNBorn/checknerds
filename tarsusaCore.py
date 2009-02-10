@@ -180,8 +180,44 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
 						temp = UserFriendsItem_List[j]
 						UserFriendsItem_List[j]=UserFriendsItem_List[j-1]
 						UserFriendsItem_List[j-1]=temp
-		#---
-		return UserFriendsItem_List
+	#---
+	return UserFriendsItem_List
+
+def get_count_UserItemStats():	
+	#tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
+	#'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
+
+	# Count User's Todos and Dones
+	tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
+
+	# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
+	# SO there is implemented a stupid way.
+	UserTotalItems = 0
+	UserToDoItems = 0
+	UserDoneItems = 0
+
+	UserDonePercentage = 0.00
+
+	for eachItem in tarsusaItemCollection_UserItems:
+		UserTotalItems += 1
+		if eachItem.done == True:
+			UserDoneItems += 1
+		else:
+			UserToDoItems += 1
+	
+	if UserTotalItems != 0:
+		UserDonePercentage = UserDoneItems *100 / UserTotalItems 
+	else:
+		UserDonePercentage = 0.00
+
+	template_values = {
+		'UserTotalItems': UserTotalItems,
+		'UserToDoItems': UserToDoItems,
+		'UserDoneItems': UserDoneItems,
+		'UserDonePercentage': UserDonePercentage,
+	}
+
+	return template_values 
 
 def get_count_tarsusaUser():
 	#Due to the limitation of GAE.
