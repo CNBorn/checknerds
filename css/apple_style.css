@@ -92,6 +92,18 @@ div.item{
 	clear:both;
 	padding:5px;
 }
+
+a.control:link, a.control:visited {
+display:block;
+padding: 5px;
+background-color: #D1DEBD;
+}
+a.control:hover {
+text-decoration: none;
+background-color: #9C9B50;
+color: #FFF;
+}
+
 .imgcheck {
 float:left;
 height:32px;

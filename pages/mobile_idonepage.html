@@ -1,0 +1,32 @@
+{% extends "mobile_ibase.html" %}{% block content-holder %}
+<div class="content">
+{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
+<div class="item">
+<a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="check">
+<img class="imgcheck" border="0" align="left" src="/img/remove32.png">
+</a>
+<span class="itemtitle">
+<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
+<small><a href="#;" class="check" onclick="if(confirm('确认删除？{{tarsusaItem_UserDoneItem.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_UserDoneItem.key.id}}';}">x</a></small>
+</span><span class="desc">&nbsp;</span>
+</div>
+{% endfor %}
+
+
+
+
+
+&nbsp;&nbsp;
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tbody><tr><td width="50%" align="center">
+{% if previouspagestamp %}
+<a class="control" href="/m/todo/p/{{previouspagestamp}}">上一页</a>&nbsp;
+{% endif %}
+</td><td width="50%" align="center">
+{% if nextpagestamp %}
+<a class="control" href="/m/todo/{{nextpagestamp}}">下一页</a>
+{% endif %}
+</td>
+</tr></tbody><table>
+</div></div>
+{% endblock content-holder %}

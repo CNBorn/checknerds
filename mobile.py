@@ -202,9 +202,13 @@ class mDonePage(tarsusaRequestHandler):
 				self.redirect("/m/done")
 
 
-			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_donepage.html')
-			self.response.out.write(template.render(path, template_values))
+			#Manupilating Templates
+			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_idonepage.html')
+				self.response.out.write(template.render(path, template_values))
+			else:
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_donepage.html')
+				self.response.out.write(template.render(path, template_values))
 		
 		else:
 			self.redirect("/m/")
@@ -489,8 +493,13 @@ class mAddItemPage(tarsusaRequestHandler):
 							'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 							'addItemToday': strAddItemToday.decode("utf-8"),
 							}
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_additempage.html')
-			self.response.out.write(template.render(path, template_values))
+			
+			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_iadditempage.html')
+				self.response.out.write(template.render(path, template_values))
+			else:
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_additempage.html')
+				self.response.out.write(template.render(path, template_values))
 		else:
 			self.redirect("/m")
 

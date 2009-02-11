@@ -115,7 +115,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 6433 times in query history.
+# Used 6434 times in query history.
 - kind: tarsusaItem
   properties:
   - name: routine

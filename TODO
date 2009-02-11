@@ -586,3 +586,6 @@
 		Fixed tarsusaCore.get_friend_stats returned value, there won't be anymore 'no len()' error.
 		Make Mobile_ItemStats page now calling function from tarsusaCore.
 		Tweaked Some mobile pages: Todo(iPod_Page)
+	IN 09.02.11
+		Modified Some mobile pages: Add, DoneItems (iPod_Page)
+		Todo: ViewItem page.
