@@ -473,8 +473,12 @@ class mViewItemPage(tarsusaRequestHandler):
 						'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 						'RefererURL': self.referer,
 				}
-			path = os.path.join(os.path.dirname(__file__), 'pages/mobile_viewitempage.html')
-			self.response.out.write(template.render(path, template_values))
+			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_iviewitempage.html')
+				self.response.out.write(template.render(path, template_values))
+			else:			
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_viewitempage.html')
+				self.response.out.write(template.render(path, template_values))
 
 		else:
 			## Can't find this Item by this id.

@@ -1,0 +1,105 @@
+{% extends "mobile_ibase.html" %}
+{% block content-holder %}
+<div class="content">
+					<div class="item">
+					{% if DonelogItemCollection %}
+						{% for DonelogItem in DonelogItemCollection %}
+							{{ DonelogItem.donedate }}<br />
+							Name: {{ DonelogItem.name|escape }}<br />
+						{% endfor %}
+					{% endif %}
+					</div>
+
+					{% if tarsusaItem %}
+						<div class="item">
+						<h2>{{ tarsusaItem.name|escape }}</h2>							
+							{% if tarsusaItemDone %}
+								已经完成于{{ tarsusaItem.donedate }} &nbsp;							
+								{% if not logictag_OtherpeopleViewThisItem %}
+									<a href="#;" onclick="if (confirm('确认撤销完成？{{tarsusaItem.name|escape}}')) {ajax_undoneItem('/undoneItem/{{tarsusaItem.key.id}}');}" class="x">撤销完成</a>
+								{% endif %}
+							{% else %}
+								{% if not tarsusaRoutineItem %}
+									当前状态：未完成
+									{% if tarsusaItem.expired %}
+										<span style="color: #F00000">已过期</span>
+									{% endif %}
+								{% else %}
+									{% ifequal tarsusaItem.routine "daily" %}
+										每日任务
+									{% endifequal %}
+									{% ifequal tarsusaItem.routine "weekly" %}
+										每周任务
+									{% endifequal %}
+									{% ifequal tarsusaItem.routine "monthly" %}
+										每月任务
+									{% endifequal %}
+									{% ifequal tarsusaItem.routine "seasonly" %}
+										每季度任务
+									{% endifequal %}
+									{% ifequal tarsusaItem.routine "yearly" %}
+										每年任务
+									{% endifequal %}	
+								</div>
+								<div class="item">								
+								最近完成
+								{% for eachRoutineLogItem in tarsusaRoutineLogItem %}
+									{{ eachRoutineLogItem.donedate}} &nbsp; <br />
+								{% endfor %}
+								</div>
+								{% endif %}
+
+							{% endif %}	
+							
+							{% if not logictag_OtherpeopleViewThisItem %}
+								{% if not tarsusaRoutineItem %}
+									{% if not tarsusaItemDone %}
+										<a href="/doneItem/{{tarsusaItem.key.id}}" class="check">-->完成</a>
+									{% endif %}
+									&nbsp; | <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="check">x</a>
+								{% endif %}
+							{% endif %}
+							<br />
+
+							<div class="item">
+							分类：{{tarsusaItemTags}}</div>
+
+							<div class="item">
+							创建者：{{tarsusaItem.usermodel.dispname|escape}}</div>
+
+							<div class="item">
+							{% ifequal tarsusaItem.public "private" %}
+								不公开
+							{% endifequal %}
+							{% ifequal tarsusaItem.public "publicOnlyforFriends" %}
+								仅对朋友公开
+							{% endifequal %}
+							{% ifequal tarsusaItem.public "public" %}
+								完全公开
+							{% endifequal %}
+							</div>
+							<div class="item">
+							说明:&nbsp; {{ tarsusaItem.comment }}</div>
+							<div class="item">
+							创建时间： &nbsp; {{tarsusaItem.date }}</div>
+							<div class="item">
+							预期完成： &nbsp; 
+							{% if not tarsusaItem.expectdate %}
+								没有完成期限限制
+							{% else %}
+								{{tarsusaItem.expectdate}}
+							{% endif %}
+							</div>
+					{% endif %}
+
+<table width="100%"><tbody>
+<tr>
+<td align="center">
+<a class="control" href="{{RefererURL}}">返回</a>
+</td>
+</tr>
+
+</tbody>
+</table>
+</div>{% endblock content-holder %}
+
