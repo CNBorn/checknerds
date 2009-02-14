@@ -12,7 +12,9 @@
 
 					{% if tarsusaItem %}
 						<div class="item">
-						<h2>{{ tarsusaItem.name|escape }}</h2>							
+						<h2>{{ tarsusaItem.name|escape }}</h2>
+						</div>
+						<div class="item">
 							{% if tarsusaItemDone %}
 								已经完成于{{ tarsusaItem.donedate }} &nbsp;							
 								{% if not logictag_OtherpeopleViewThisItem %}
@@ -40,7 +42,7 @@
 									{% ifequal tarsusaItem.routine "yearly" %}
 										每年任务
 									{% endifequal %}	
-								</div>
+						</div>
 								<div class="item">								
 								最近完成
 								{% for eachRoutineLogItem in tarsusaRoutineLogItem %}

@@ -590,4 +590,11 @@
 		Modified Some mobile pages: Add, DoneItems (iPod_Page)
 		Todo: ViewItem page.
 	IN 09.02.12
-		Modified Some mobile page: ViewItem (iPod_Page)	
+		Modified Some mobile page: ViewItem (iPod_Page)
+	IN 09.02.14
+		Fixed a Bug: Displaying raw data in Mobile_Mainpage(Mobile_Page)
+	IN 09.02.15
+		Removed Delete link in Mobile_iDone/iTodo Page, Now you can only delete item at ViewItem page.
+		Fixed a Bug: Wrong pagination link in Mobile_iDonePage(iPod_Page)
+		Fixed a Bug: Redirect to referer in DoneItem in tarsusaItemCore, caused blank page in MobilePage.
+

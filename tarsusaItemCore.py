@@ -90,7 +90,7 @@ class DoneItem(tarsusaRequestHandler):
 		
 		#self.redirect(self.request.uri)
 		#self.redirect('/')
-		#self.redirect(self.referer)
+		self.redirect(self.referer)
 
 class UnDoneItem(tarsusaRequestHandler):
 	def get(self):

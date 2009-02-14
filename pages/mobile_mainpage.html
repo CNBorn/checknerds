@@ -1,6 +1,10 @@
 {% extends "mobile_base.html" %}
 {% block content-holder %}
 <div class="content"><ul>
-{{tarsusaItemCollection_Statstics}}
+<h2 class="posttitle">统计信息</h2>
+<li>总事项：{{ tarsusaItemCollection_Statstics.UserTotalItems|escape }}</li>
+<li>待完成事项：{{ tarsusaItemCollection_Statstics.UserToDoItems|escape }}</li>
+<li>已完成事项：{{ tarsusaItemCollection_Statstics.UserDoneItems|escape }}</li>
+<li>完成百分比：{{ tarsusaItemCollection_Statstics.UserDonePercentage|escape }}</li>
 </ul></div>
 {% endblock content-holder %}

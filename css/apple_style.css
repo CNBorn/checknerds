@@ -1,9 +1,10 @@
 body {
-padding: 3px;
+padding: 3px 0px 3px 0px;
 margin: 0px;
 background-color: #f0f8e4;
 -webkit-text-size-adjust: none;
 -webkit-user-select: none;
+overflow: hidden;
 }
 
 h1 {
@@ -20,8 +21,10 @@ color: #96BE57;
 display: block;
 margin: 0px 0px 0px 0px;
 padding: 3px 0px 3px 0px;
-font-size: x-large;
+font-size: large;
 font-weight: bold;
+text-align: center;
+font-family:Arial,Helvetica,sans-serif;
 }
 
 span.text {
@@ -37,35 +40,39 @@ max-width: 600px;
 div.status {
 display: block;
 padding: 3px;
-margin: 1px;
+margin: 1px 0px 0px 0px;
 border-bottom: 1px solid #CCC;
 color: #333;
-max-width: 600px;
 height: 20px;
 font-size: medium;
+text-align: center;
+overflow: hidden;
 }
 
 div.status a:link, div.status a:visited {
 /*display:block;
 line-height:17px;
 padding:2px 5px 2px 9px;*/
+overflow: hidden;
 }
 
 div.nav {
 background-color:#D1DEBD;
 display: block;
 padding: 3px;
-margin: 1px;
+margin: 0px 0px 5px 0px;
 color: #333;
-max-width: 600px;
+border-top: 1px solid #E0E0E0;
 border-bottom:1px solid #CCCCCC;
 font-size: large;
+overflow: hidden;
 }
 
 div.nav a:link, div.nav a:visited {
 display:block;
 /*line-height:17px;*/
 padding:5px 0px 5px 0px;
+overflow: hidden;
 }
 
 div.author {
@@ -83,7 +90,7 @@ padding: 3px;
 margin: 1px;
 border-bottom: 1px solid #CCC;
 color: #333;
-max-width: 600px;
+max-width: 100%;
 }
 
 div.item{
@@ -91,6 +98,7 @@ div.item{
 	border-top:1px solid #333333;*/
 	clear:both;
 	padding:5px;
+	overflow: hidden;
 }
 
 a.control:link, a.control:visited {
@@ -161,14 +169,32 @@ border-bottom: 2px solid #09F;
 }
 
 ul {
-list-style: decimal;
-margin-top: 5px;
-margin-bottom: 5px;
-padding-left: 15px;
+-x-system-font:none;
+background:#FFFFFF none repeat scroll 0 0;
+border:1px solid #B4B4B4;
+color:black;
+font-family:Helvetica;
+font-size:17px;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:bold;
+line-height:normal;
+margin:15px 10px 17px 0;
+padding:0;
 }
 
+ul.form li:hover {
+background:#FFFFFF none repeat scroll 0 0;
+}
+ul.form li {
+	padding:7px 10px;
+}
 ul li {
-	/*padding: 2px;*/
+border-top:1px solid #B4B4B4;
+color:#666666;
+list-style-type:none;
 }
 
 img.p {
@@ -239,4 +265,55 @@ border-right: 1px solid #88A;
 border-bottom: 1px solid #88A;
 background-color: #577DE4;
 color: #FFF;
+}
+
+/* Derived from This iPhone UI Framework kit */
+ul li input[type="text"], ul li input[type="password"], ul li textarea, ul li select {iphone.css (第 611 行)
+-x-system-font:none;
+background:#FFFFFF url(../.png) repeat scroll 0 0;
+border:0 none;
+color:#777777;
+display:inline-block;
+font-family:Helvetica;
+font-size:17px;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:normal;
+line-height:normal;
+margin-left:0;
+padding:0;
+width:100%;
+}
+ul li textarea {
+height:120px;
+padding:0;
+text-indent:-2px;
+}
+ul li select {
+background:transparent url(../images/chevron.png) no-repeat scroll 103% 3px;
+margin-left:-6px;
+text-indent:0;
+width:104%;
+}
+ul li input[type="checkbox"], ul li input[type="radio"] {
+color:#324F85;
+margin:0;
+padding:10px;
+}
+ul li input[type="checkbox"]:after, ul li input[type="radio"]:after {
+-x-system-font:none;
+content:attr(title);
+display:block;
+font-family:Helvetica;
+font-size:17px;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:normal;
+line-height:normal;
+margin:-12px 0 0 17px;
+width:246px;
 }
