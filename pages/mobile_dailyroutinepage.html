@@ -1,9 +1,11 @@
-{% extends "mobile_base.html" %}{% block content-holder %}<div class="content"><ul>
+{% extends "mobile_base.html" %}{% block content-holder %}<div class="content">
+<h2>每天要做的</h2>
+<ul>
 {% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
 <li>{% if tarsusaItem_DailyRoutine.donetoday %}
 已完成&nbsp;{{ tarsusaItem_DailyRoutine.name|escape }}<small>&nbsp;<a href='/undoneItem/{{tarsusaItem_DailyRoutine.key.id}}' class="check">撤销</a></small>
 {% else %}
-<small><a href="/doneItem/{{tarsusaItem_DailyRoutine.key.id}}" class="check">完成</a></small><a href="/i/{{tarsusaItem_DailyRoutine.key.id}}">{{ tarsusaItem_DailyRoutine.name|escape }}</a>
+<small><a href="/doneItem/{{tarsusaItem_DailyRoutine.key.id}}" class="check">完成</a></small>&nbsp;<a href="/i/{{tarsusaItem_DailyRoutine.key.id}}">{{ tarsusaItem_DailyRoutine.name|escape }}</a>
 {% endif %}
 </li>{% endfor %}<small>{{template_tag_donealldailyroutine}}</small></ul></div>{% endblock content-holder %}
 

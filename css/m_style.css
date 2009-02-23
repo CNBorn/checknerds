@@ -20,7 +20,7 @@ color: #96BE57;
 display: block;
 margin: 0px 0px 0px 0px;
 padding: 3px 0px 3px 0px;
-font-size: medium;
+font-size: small;
 font-weight: bold;
 }
 
@@ -91,13 +91,15 @@ border-bottom: 2px solid #09F;
 }
 
 ul {
-list-style: decimal;
+list-style: none;
 margin-top: 5px;
 margin-bottom: 5px;
 padding-left: 15px;
 }
 
 ul li {
+	/*border-bottom: 1px solid #F0F0F0;*/
+	line-height: 1.2em;
 }
 
 img.p {

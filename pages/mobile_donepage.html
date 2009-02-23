@@ -1,15 +1,16 @@
 {% extends "mobile_base.html" %}{% block content-holder %}
-<div class="content"><ul>
+<div class="content">
+<h2>已完成项目</h2>
+<ul>
 {% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
 <li><small><a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="check">撤销</a></small>
-<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
-<small><a href="#;" class="check" onclick="if(confirm('确认删除？{{tarsusaItem_UserDoneItem.name|escape}}')) {location.href = '/removeItem/{{tarsusaItem_UserDoneItem.key.id}}';}">x</a></small></li>
+<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a></li>
 {% endfor %}</ul><small>&nbsp;&nbsp;
-{% if previouspagestamp %}
-<a href="/m/done/p/{{previouspagestamp}}">上一页</a>&nbsp;
-{% endif %}
 {% if nextpagestamp %}
-<a href="/m/done/{{nextpagestamp}}">下一页</a>
+<a href="/m/done/{{nextpagestamp}}">下一页</a>&nbsp;
+{% endif %}
+{% if previouspagestamp %}
+<a href="/m/done/p/{{previouspagestamp}}">上一页</a>
 {% endif %}
 </small></div>
 {% endblock content-holder %}

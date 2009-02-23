@@ -138,7 +138,7 @@ class mToDoPage(tarsusaRequestHandler):
 				self.response.out.write(template.render(path, template_values))
 		
 		else:
-			self.redirect("/m/")
+			self.redirect("/m/todo")
 
 class mDonePage(tarsusaRequestHandler):
 	def get(self):
@@ -211,7 +211,7 @@ class mDonePage(tarsusaRequestHandler):
 				self.response.out.write(template.render(path, template_values))
 		
 		else:
-			self.redirect("/m/")
+			self.redirect("/m/todo")
 
 class mDoneLogPage(tarsusaRequestHandler):
 	def get(self):
@@ -311,7 +311,7 @@ class mDailyRoutinePage(tarsusaRequestHandler):
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_dailyroutinepage.html')
 				self.response.out.write(template.render(path, template_values))
 		else:
-			self.redirect("/m/")
+			self.redirect("/m/todo")
 
 class mViewItemPage(tarsusaRequestHandler):
 	def get(self):
@@ -394,7 +394,7 @@ class mViewItemPage(tarsusaRequestHandler):
 					logictag_OtherpeopleViewThisItem = True
 					
 				else:
-					self.redirect('/')
+					self.redirect('/m/todo')
 			else:
 				## Viewing User is the Owner of this Item.
 				UserNickName = users.get_current_user().nickname()
@@ -482,7 +482,7 @@ class mViewItemPage(tarsusaRequestHandler):
 
 		else:
 			## Can't find this Item by this id.
-			self.redirect('/m')
+			self.redirect('/m/todo')
 
 class mAddItemPage(tarsusaRequestHandler):
 	def get(self):
@@ -505,7 +505,7 @@ class mAddItemPage(tarsusaRequestHandler):
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_additempage.html')
 				self.response.out.write(template.render(path, template_values))
 		else:
-			self.redirect("/m")
+			self.redirect("/m/todo")
 
 class mErrorPage(tarsusaRequestHandler):
 	def get(self):
