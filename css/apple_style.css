@@ -62,17 +62,32 @@ display: block;
 padding: 3px;
 margin: 0px 0px 5px 0px;
 color: #333;
-border-top: 1px solid #E0E0E0;
+border-top: 1px solid #F0F0F0;
 border-bottom:1px solid #CCCCCC;
 font-size: large;
 overflow: hidden;
 }
 
 div.nav a:link, div.nav a:visited {
+-moz-border-radius-bottomleft:5px;
+-moz-border-radius-bottomright:5px;
+-moz-border-radius-topleft:5px;
+-moz-border-radius-topright:5px;
 display:block;
 /*line-height:17px;*/
 padding:5px 0px 5px 0px;
 overflow: hidden;
+}
+
+div.nav a.navcurrent:link, a.navcurrent:visited {
+display:block;
+/*border: 1px solid #000;*/
+margin: 0px 5px 0px 5px;
+padding:5px 0px 5px 0px;
+overflow: hidden;
+text-decoration: none;
+background-color: #9C9B50;
+color: #FFF;
 }
 
 div.author {
@@ -102,6 +117,12 @@ div.item{
 }
 
 a.control:link, a.control:visited {
+border-bottom:1px solid #9F9F9F;
+border-top:1px solid #F0F0F0;
+border-left: 1px solid #CFCFCF;
+border-right: 1px solid #9C9C9C;
+
+text-align: center;
 display:block;
 padding: 5px;
 background-color: #D1DEBD;

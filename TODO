@@ -597,4 +597,9 @@
 		Removed Delete link in Mobile_iDone/iTodo Page, Now you can only delete item at ViewItem page.
 		Fixed a Bug: Wrong pagination link in Mobile_iDonePage(iPod_Page)
 		Fixed a Bug: Redirect to referer in DoneItem in tarsusaItemCore, caused blank page in MobilePage.
+		Tweaking all pages about iPod/iPhone
+	IN 09.02.23
+		Mobile Page Usability tweak(mainly iPod Page).
+		----
+		Received a very detailed UI improvment suggestion from Leechael.
 
