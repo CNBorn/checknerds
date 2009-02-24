@@ -606,6 +606,6 @@
 			Navbar now is in the bottom
 			UL LI tweak
 			Mobile main page now is /m/todo -- TBD
-
-			
+	IN 09.02.24
+		Fixed: Mobile Todo/Done page now will not show pagination when users items are not so many.
 

@@ -123,10 +123,11 @@ class mToDoPage(tarsusaRequestHandler):
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
 			
-			if previous_timestamp != 0:
+			# if users items are not so many, do not display the pagination
+			if previous_timestamp != 0 and Find_Last_Index >= 9 and pageid != None:
 				template_values['previouspagestamp'] = previous_timestamp
 			
-			if next_timestamp != 0:
+			if next_timestamp != 0 and Find_Last_Index >= 9 and pageid != None:
 				template_values['nextpagestamp'] = next_timestamp
 		
 			#Manupilating Templates
@@ -192,12 +193,13 @@ class mDonePage(tarsusaRequestHandler):
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()),
 			}
 			
-			if previous_timestamp != 0:
+			# if users items are not so many, do not display the pagination
+			if previous_timestamp != 0 and Find_Last_Index >= 9 and pageid != None:
 				template_values['previouspagestamp'] = previous_timestamp
 			
-			if next_timestamp != 0:
+			if next_timestamp != 0 and Find_Last_Index >= 9 and pageid != None:
 				template_values['nextpagestamp'] = next_timestamp
-		
+	
 			if next_timestamp == 0 and previous_timestamp == 0:
 				self.redirect("/m/done")
 

@@ -231,7 +231,6 @@ def get_count_tarsusaUser():
 	
 	return TotalUserCount
 
-
 def get_count_tarsusaItem():
 	#Due to the limitation of GAE.
 	#To handle results more than 1000.
