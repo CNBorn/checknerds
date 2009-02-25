@@ -29,6 +29,8 @@ from google.appengine.api import images
 import memcache
 import tarsusaCore
 
+import PyRSS2Gen
+
 from modules import *
 from base import *
 import logging
@@ -716,9 +718,80 @@ class UserMainPage(tarsusaRequestHandler):
 			self.error(404)
 			self.redirect('/')	
 
+class UserFeedPage(tarsusaRequestHandler):
+	def get(self):
+		
+		#RSS Feed Code, leart from Plog, using PyRSS2Gen Module.
+
+		username = urllib.unquote(cgi.escape(self.request.path[6:-5]))  ## Get the username in the URL string such as /user/1234/feed
+		ViewUser = None
+		
+		try:
+			## After URL style changed, Now won't allow username in URL, only accept id in URL.
+			
+			## Get this user.
+			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
+			ViewUser = q.get()
+
+			if ViewUser == None:
+				q = tarsusaUser.get_by_id(int(username))
+				ViewUser = q
+		except:
+			self.redirect('/')
+			
+
+		UserNickName = '访客'
+		outputStringUserAvatar = ''
+
+		if ViewUser != None:
+		
+			userfeed_publicitems = []
+			
+			#There is a force 15 limits for RSS feed.
+			#Plog is setting this as an option in setting.
+			tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public = 'public' ORDER BY date DESC LIMIT 15", ViewUser.user)
+			#the code block below is a little bit duplicated, will find a way to make it simple in future. TODO
+			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
+				
+				try:
+					# some very old items may not have usermodel property 
+					str_author = each_Item.usermodel.dispname
+				except:
+					str_author = each_Item.user.nickname()
+
+				if each_Item.done == True:
+					str_title = ViewUser.dispname + " 完成了 ".decode('utf-8') + each_Item.name
+				else:
+					str_title = ViewUser.dispname + " 要做 ".decode('utf-8') + each_Item.name
+								
+				item_url = '%s/item/%d' % (self.request.host_url, each_Item.key().id())
+
+				userfeed_publicitems.append(PyRSS2Gen.RSSItem(
+					title = str_title,
+					author = str_author,
+					link = item_url,
+					description = each_Item.comment,
+					pubDate = each_Item.date,
+					guid = PyRSS2Gen.Guid(item_url)
+					#categories
+					)
+				)
+			rss = PyRSS2Gen.RSS2(
+				title = "CheckNerds - " + ViewUser.dispname,
+				link = self.request.host_url + '/user/' + str(ViewUser.key().id()),
+				description = ViewUser.dispname + '最新的15条公开事项，在线个人事项管理——欢迎访问http://www.checknerds.com'.decode('utf-8'),
+				lastBuildDate = datetime.datetime.utcnow(),
+				items = userfeed_publicitems
+				)
+
+			self.response.headers['Content-Type'] = 'application/rss+xml; charset=utf-8'
+			rss_xml = rss.to_xml(encoding='utf-8')
+			self.write(rss_xml)
+
+
 def main():
 	application = webapp.WSGIApplication([
-								       ('/donelog.+',UserDoneLogPage),
+									   ('/user/.+/feed',UserFeedPage),
 								       ('/user/.+/donelog',DoneLogPage),
 									   ('/user/.+/setting',UserSettingPage),
 									   ('/user/.+/todo',UserToDoPage),

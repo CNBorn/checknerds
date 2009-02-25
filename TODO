@@ -608,4 +608,6 @@
 			Mobile main page now is /m/todo -- TBD
 	IN 09.02.24
 		Fixed: Mobile Todo/Done page now will not show pagination when users items are not so many.
-
+	IN 09.02.25
+		Make User's public items Feed output. (Thanks for Plog)
+		TODO: Make this feed visible on UserMainPage
