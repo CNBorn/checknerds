@@ -611,3 +611,7 @@
 	IN 09.02.25
 		Make User's public items Feed output. (Thanks for Plog)
 		TODO: Make this feed visible on UserMainPage
+	IN 09.02.26
+		Made User's public feed on UserMainPage.
+		Fixed Height overflow bug on Ajax_FriendStats in frontpage. Now It displays only 9 items.
+		added js disable in ajax_additem page to prevent duplicative created items.

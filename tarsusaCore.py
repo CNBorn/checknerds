@@ -181,7 +181,7 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
 						UserFriendsItem_List[j]=UserFriendsItem_List[j-1]
 						UserFriendsItem_List[j-1]=temp
 	#---
-	return UserFriendsItem_List
+	return UserFriendsItem_List[:maxdisplayitems]
 
 def get_count_UserItemStats():	
 	#tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):

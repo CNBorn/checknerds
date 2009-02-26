@@ -346,7 +346,8 @@ class get_fp_friendstats(tarsusaRequestHandler):
 			else:
 				
 				## SHOW YOUR FRIENDs Recent Activities
-				UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id())
+				## Show only 9 items because we don't want to see a very long frontpage.
+				UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id(),"","",9)
 				#---
 				UserFriendsActivities = ''
 					

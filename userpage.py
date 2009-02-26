@@ -685,6 +685,10 @@ class UserMainPage(tarsusaRequestHandler):
 				
 					'ViewedUserIsOneofCurrentUsersFriends': ViewedUserIsOneofCurrentUsersFriends,
 					'StringRoutineLog': outputStringRoutineLog,
+
+					'outputFeed': True,
+					'outputFeedTitle': ViewUser.dispname,
+					'outputFeedURL': "/user/" + str(ViewUser.key().id()) + "/feed",
 				}
 			else:
 				template_values = {
@@ -699,6 +703,10 @@ class UserMainPage(tarsusaRequestHandler):
 						'UserWebsite': ViewUser.website,
 						'UserMainPageUserTitle': outputStringUserMainPageTitle,
 						'StringRoutineLog': outputStringRoutineLog,
+						
+						'outputFeed': True,
+						'outputFeedTitle': ViewUser.dispname,
+						'outputFeedURL': "/user/" + str(ViewUser.key().id()) + "/feed",
 					}
 			
 				
