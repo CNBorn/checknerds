@@ -2,9 +2,9 @@
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 0.7, codename Nevada
+# version 1.0, codename Nevada
 # - tarsusaItemCore.py
-# Copyright (C) CNBorn, 2008
+# Copyright (C) CNBorn, 2008-2009
 # http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
 #
 # **************************************************************** 
@@ -281,11 +281,29 @@ class AddItemProcess(tarsusaRequestHandler):
 
 			except:
 				## the following code works on the localhost GAE runtimes.
+				
+				##try:
+				item2beadd_name = cgi.escape(self.request.get('name').decode('utf-8'))				
+				#For this routine field do not response well when i add a varible here.
+				# I made it a hidden as default 'none' in mobile_addpage_lite.
+				# therefore this field can be considered as always appears.
+				item2beadd_routine = cgi.escape(self.request.get('routine').decode('utf-8'))
+
+				#Error handler to be suit in the lite mobile add page.
 				try:
-					first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name').decode('utf-8')), comment=cgi.escape(item_comment.decode('utf-8')),routine=cgi.escape(self.request.get('routine').decode('utf-8')))
-					tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
-					first_tarsusa_item.public = self.request.get('public').decode('utf-8')
+					item2beadd_comment = cgi.escape(item_comment.decode('utf-8'))
+				except:
+					item2beadd_comment = ''
 									
+				try:
+					tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
+				except:
+					tarsusaItem_Tags = ''
+
+				first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+				first_tarsusa_item.public = self.request.get('public').decode('utf-8')
+				
+				try:
 					expectdatetime = None
 					expectdate = datetime.date(*time.strptime(self.request.get('inputDate').decode('utf-8'),"%Y-%m-%d")[:3])
 					if expectdate == datetime.datetime.date(datetime.datetime.today()):
@@ -294,27 +312,32 @@ class AddItemProcess(tarsusaRequestHandler):
 						currenttime = datetime.datetime.time(datetime.datetime.now())
 						expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
 					first_tarsusa_item.expectdate =  expectdatetime
-					
-					first_tarsusa_item.done = False
-					first_tarsusa_item.usermodel = CurrentUser
-					first_tarsusa_item.put()
-					
-					tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-
 				except:
+					expectdatetime == None
+					
+				first_tarsusa_item.done = False
+				first_tarsusa_item.usermodel = CurrentUser
+				first_tarsusa_item.put()
+				
+				try:
+					tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+				except:
+					tarsusaItem_Tags = None
+
+				#except:
 					## SOMETHING WRONG
-						self.write('something is wrong.') 
-						return False
+				#		self.write('something is wrong.') 
+				#		return False
 						# TODO JS can not catch this!
 
 			
 			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-			if cgi.escape(self.request.get('routine')) == 'daily':
+			if item2beadd_routine == 'daily':
 				memcache.event('addroutineitem_daily', CurrentUser.key().id())
 			else:
 				memcache.event('additem', CurrentUser.key().id())
 			
-			if cgi.escape(self.request.get('public')) != 'none':
+			if cgi.escape(self.request.get('public')) != 'private':
 				memcache.event('addpublicitem', CurrentUser.key().id())
 		
 			for each_tag_in_tarsusaitem in tarsusaItem_Tags:

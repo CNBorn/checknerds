@@ -14,7 +14,7 @@
 							{% if tarsusaItemDone %}
 								已经完成于{{ tarsusaItem.donedate }} &nbsp;							
 								{% if not logictag_OtherpeopleViewThisItem %}
-									<a href="#;" onclick="if (confirm('确认撤销完成？{{tarsusaItem.name|escape}}')) {ajax_undoneItem('/undoneItem/{{tarsusaItem.key.id}}');}" class="x">撤销完成</a>
+									<a href="/undoneItem/{{tarsusaItem.key.id}}" class="x">撤销完成</a>
 								{% endif %}
 							{% else %}
 								{% if not tarsusaRoutineItem %}

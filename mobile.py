@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 
-#from django.conf import settings
-#settings._target = None
+# ****************************************************************
+# CheckNerds - www.checknerds.com
+# version 1.0, codename Nevada
+# - mobile.py
+# Author: CNBorn, 2008-2009
+# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+#
+# Mobile version, mainframe
+#
+# ****************************************************************
 import os
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 import cgi
 import wsgiref.handlers

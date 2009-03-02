@@ -615,3 +615,14 @@
 		Made User's public feed on UserMainPage.
 		Fixed Height overflow bug on Ajax_FriendStats in frontpage. Now It displays only 9 items.
 		added js disable in ajax_additem page to prevent duplicative created items.
+	IN 09.03.02
+		Made MobilePage_Add a lite version now.
+		Made part 1 of this work.
+			Should complete the GAE part (compared to localhost part) tomorrow.
+			Should test in various pages. Especially in Web AddItem Page.
+		-----
+		Today Planning to make Nevada a future upgrade.
+			The Web interface will be changed in the future.
+			and Nevada will be evolved into ... California
+
+
