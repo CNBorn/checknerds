@@ -234,10 +234,13 @@ class AddItemProcess(tarsusaRequestHandler):
 		if self.request.get('cancel') != "取消":
 			
 			#Check if comment property's length is exceed 500
-			if len(self.request.get('comment'))>500:
-				item_comment = self.request.get('comment')[:500]
-			else:
-				item_comment = self.request.get('comment')
+			try:
+				if len(self.request.get('comment'))>500:
+					item_comment = self.request.get('comment')[:500]
+				else:
+					item_comment = self.request.get('comment')
+			except:
+				item_comment = ''
 
 			# Permission check is very important.
 			# New CheckLogin code built in tarsusaRequestHandler 
@@ -250,11 +253,29 @@ class AddItemProcess(tarsusaRequestHandler):
 			try:
 				# The following code works on GAE platform.
 				# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
-				first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(item_comment),routine=cgi.escape(self.request.get('routine')))
-				tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+				item2beadd_name = cgi.escape(self.request.get('name'))				
+				#Error handler to be suit in the lite mobile add page.
+
+				try:
+					item2beadd_comment = cgi.escape(item_comment)
+				except:
+					item2beadd_comment = ''
+									
+				try:
+					tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+				except:
+					tarsusaItem_Tags = ''
+
+				#routine is a must provided in template, by type=hidden
+				item2beadd_routine = cgi.escape(self.request.get('routine'))
+
+				first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=cgi.escape(self.request.get('routine')))
+				#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(item_comment),routine=cgi.escape(self.request.get('routine')))
+				#tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
 				first_tarsusa_item.public = self.request.get('public')
 				first_tarsusa_item.done = False
 		
+
 				# DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
 				# The easiest way to convert this to a datetime seems to be;
 				#datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
@@ -262,13 +283,16 @@ class AddItemProcess(tarsusaRequestHandler):
 				# also learned sth from: http://bytes.com/forum/thread603681.html
 
 				# Logic: If the expectdate is the same day as today, It is none.
-				expectdatetime = None
-				expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
-				if expectdate == datetime.datetime.date(datetime.datetime.today()):
-					expectdatetime == None
-				else:
-					currenttime = datetime.datetime.time(datetime.datetime.now())
-					expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+				try:
+					expectdatetime = None
+					expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
+					if expectdate == datetime.datetime.date(datetime.datetime.today()):
+						expectdatetime == None
+					else:
+						currenttime = datetime.datetime.time(datetime.datetime.now())
+						expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+				except:
+					expectdatetime = None
 				first_tarsusa_item.expectdate =  expectdatetime
 
 				## the creation date will be added automatically by GAE datastore				
@@ -282,52 +306,52 @@ class AddItemProcess(tarsusaRequestHandler):
 			except:
 				## the following code works on the localhost GAE runtimes.
 				
-				##try:
-				item2beadd_name = cgi.escape(self.request.get('name').decode('utf-8'))				
-				#For this routine field do not response well when i add a varible here.
-				# I made it a hidden as default 'none' in mobile_addpage_lite.
-				# therefore this field can be considered as always appears.
-				item2beadd_routine = cgi.escape(self.request.get('routine').decode('utf-8'))
+				try:
+					item2beadd_name = cgi.escape(self.request.get('name').decode('utf-8'))				
+					#For this routine field do not response well when i add a varible here.
+					# I made it a hidden as default 'none' in mobile_addpage_lite.
+					# therefore this field can be considered as always appears.
+					item2beadd_routine = cgi.escape(self.request.get('routine').decode('utf-8'))
 
-				#Error handler to be suit in the lite mobile add page.
-				try:
-					item2beadd_comment = cgi.escape(item_comment.decode('utf-8'))
-				except:
-					item2beadd_comment = ''
-									
-				try:
-					tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
-				except:
-					tarsusaItem_Tags = ''
+					#Error handler to be suit in the lite mobile add page.
+					try:
+						item2beadd_comment = cgi.escape(item_comment.decode('utf-8'))
+					except:
+						item2beadd_comment = ''
+										
+					try:
+						tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
+					except:
+						tarsusaItem_Tags = ''
 
-				first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=cgi.escape(self.request.get('routine').decode('utf-8')))
-				first_tarsusa_item.public = self.request.get('public').decode('utf-8')
-				
-				try:
-					expectdatetime = None
-					expectdate = datetime.date(*time.strptime(self.request.get('inputDate').decode('utf-8'),"%Y-%m-%d")[:3])
-					if expectdate == datetime.datetime.date(datetime.datetime.today()):
-						expectdatetime == None
-					else:
-						currenttime = datetime.datetime.time(datetime.datetime.now())
-						expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
-					first_tarsusa_item.expectdate =  expectdatetime
-				except:
-					expectdatetime == None
+					first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=cgi.escape(self.request.get('routine').decode('utf-8')))
+					first_tarsusa_item.public = self.request.get('public').decode('utf-8')
 					
-				first_tarsusa_item.done = False
-				first_tarsusa_item.usermodel = CurrentUser
-				first_tarsusa_item.put()
-				
-				try:
-					tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-				except:
-					tarsusaItem_Tags = None
+					try:
+						expectdatetime = None
+						expectdate = datetime.date(*time.strptime(self.request.get('inputDate').decode('utf-8'),"%Y-%m-%d")[:3])
+						if expectdate == datetime.datetime.date(datetime.datetime.today()):
+							expectdatetime == None
+						else:
+							currenttime = datetime.datetime.time(datetime.datetime.now())
+							expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+						first_tarsusa_item.expectdate =  expectdatetime
+					except:
+						expectdatetime == None
+						
+					first_tarsusa_item.done = False
+					first_tarsusa_item.usermodel = CurrentUser
+					first_tarsusa_item.put()
+					
+					try:
+						tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+					except:
+						tarsusaItem_Tags = None
 
-				#except:
+				except:
 					## SOMETHING WRONG
-				#		self.write('something is wrong.') 
-				#		return False
+						self.write('something is wrong.') 
+						return False
 						# TODO JS can not catch this!
 
 			

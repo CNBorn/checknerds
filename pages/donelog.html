@@ -11,8 +11,12 @@
 						<br />
 						<div id="Pagination" class="pagination" style="clear: both; padding-top: 10px;">
 							<br />
-							<a class="prev" href="/donelog/p/{{previouspagestamp}}">上一页</a>
-							<a class="next" href="/donelog/{{nextpagestamp}}">下一页</a>
+							{% if previouspagestamp %}
+								<a class="prev" href="/donelog/p/{{previouspagestamp}}">上一页</a>
+							{% endif %}
+							{% if nextpagestamp %}
+								<a class="next" href="/donelog/{{nextpagestamp}}">下一页</a>
+							{% endif %}
 							<br />
 						</div>
 						<br />

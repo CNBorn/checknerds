@@ -624,5 +624,10 @@
 		Today Planning to make Nevada a future upgrade.
 			The Web interface will be changed in the future.
 			and Nevada will be evolved into ... California
+	IN 09.03.03
+		Removed a depricated class 'DoneLogPage' from userpage. Now use UserDoneLogPage at a global course.
+		Havent Fix a bug, Pagination button won't be seen when there is no need to show them in Donelogpage.
+		TODO! Fixed Pagination in Donelog page.
+		Completed Simplified Mobile AddItem Page.
 
 
