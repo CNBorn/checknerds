@@ -629,5 +629,7 @@
 		Havent Fix a bug, Pagination button won't be seen when there is no need to show them in Donelogpage.
 		TODO! Fixed Pagination in Donelog page.
 		Completed Simplified Mobile AddItem Page.
-
-
+	IN 09.03.04
+		Fixed a Bug of MobileMainPage failed when there are too many items.
+			Modified tarsusaCore and AjaxPage itemstats function.
+		

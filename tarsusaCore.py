@@ -23,6 +23,8 @@ from base import *
 
 import time, datetime
 
+import memcache
+
 ## Caution!
 ## These funtions here won't check permission for login!
 
@@ -183,39 +185,46 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
 	#---
 	return UserFriendsItem_List[:maxdisplayitems]
 
-def get_count_UserItemStats():	
+def get_count_UserItemStats(CurrentUser):	
 	#tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
 	#'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
 
 	# Count User's Todos and Dones
-	tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
-
-	# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
-	# SO there is implemented a stupid way.
-	UserTotalItems = 0
-	UserToDoItems = 0
-	UserDoneItems = 0
-
-	UserDonePercentage = 0.00
-
-	for eachItem in tarsusaItemCollection_UserItems:
-		UserTotalItems += 1
-		if eachItem.done == True:
-			UserDoneItems += 1
-		else:
-			UserToDoItems += 1
-	
-	if UserTotalItems != 0:
-		UserDonePercentage = UserDoneItems *100 / UserTotalItems 
+	cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())
+	if cachedUserItemStats is not None:
+		template_values = cachedUserItemStats
 	else:
+		# Count User's Todos and Dones
+		tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())				
+		tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", users.get_current_user())				
+
+		# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
+		# SO there is implemented a stupid way.
+		UserTotalItems = tarsusaItemCollection_UserDoneItems.count() + tarsusaItemCollection_UserTodoItems.count()
+		UserToDoItems = 0
+		UserDoneItems = 0
+
 		UserDonePercentage = 0.00
 
-	template_values = {
-		'UserTotalItems': UserTotalItems,
-		'UserToDoItems': UserToDoItems,
-		'UserDoneItems': UserDoneItems,
-		'UserDonePercentage': UserDonePercentage,
-	}
+		UserDoneItems = tarsusaItemCollection_UserDoneItems.count() 
+		UserToDoItems = tarsusaItemCollection_UserTodoItems.count()
+
+		if UserTotalItems != 0:
+			UserDonePercentage = UserDoneItems *100 / UserTotalItems 
+		else:
+			UserDonePercentage = 0.00
+
+		template_values = {
+			'UserTotalItems': UserTotalItems,
+			'UserToDoItems': UserToDoItems,
+			'UserDoneItems': UserDoneItems,
+			'UserDonePercentage': UserDonePercentage,
+		}
+		
+		#Changed since r111,
+		#Now cache the Results from DB.
+		memcache.set_item("itemstats", template_values, CurrentUser.key().id())
+
 
 	return template_values 
 

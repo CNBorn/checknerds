@@ -283,50 +283,24 @@ class get_fp_itemstats(tarsusaRequestHandler):
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
-
-			cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())
-			if cachedUserItemStats is not None:
-				strcachedUserItemStats = cachedUserItemStats
-			else:
-				# Count User's Todos and Dones
-				tarsusaItemCollection_UserItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' ORDER BY date DESC", users.get_current_user())
-
-				# For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
-				# SO there is implemented a stupid way.
-				UserTotalItems = 0
-				UserToDoItems = 0
-				UserDoneItems = 0
-
-				UserDonePercentage = 0.00
-
-				for eachItem in tarsusaItemCollection_UserItems:
-					UserTotalItems += 1
-					if eachItem.done == True:
-						UserDoneItems += 1
-					else:
-						UserToDoItems += 1
-				
-				if UserTotalItems != 0:
-					UserDonePercentage = UserDoneItems *100 / UserTotalItems 
-				else:
-					UserDonePercentage = 0.00
-
-				template_values = {
-					'UserLoggedIn': 'Logged In',
-					'UserTotalItems': UserTotalItems,
-					'UserToDoItems': UserToDoItems,
-					'UserDoneItems': UserDoneItems,
-					'UserDonePercentage': UserDonePercentage,
-				}
-
-				#Manupilating Templates	
-				path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_itemstats.html')
-				
-				strcachedUserItemStats = template.render(path, template_values)
-				memcache.set_item("itemstats", strcachedUserItemStats, CurrentUser.key().id())
 			
-			self.response.out.write(strcachedUserItemStats)
+			cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser)
+			#tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
+			#'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
 
+			template_values = {
+				'UserLoggedIn': 'Logged In',
+				'UserNickName': cgi.escape(CurrentUser.dispname),
+				'UserID': CurrentUser.key().id(),
+				'tarsusaItemCollection_Statstics': cachedUserItemStats,
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()),
+			}
+		
+			#Manupilating Templates	
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_itemstats.html')
+			self.response.out.write(template.render(path, template_values))
+		else:
+			pass
 
 class get_fp_friendstats(tarsusaRequestHandler):
 	def get(self):

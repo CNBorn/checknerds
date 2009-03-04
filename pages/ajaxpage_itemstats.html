@@ -3,11 +3,10 @@
 						<div id="codelist-mid">
 							<h2 class="posttitle">统计信息</h2>
 							<ul>
-								<li>总事项：{{ UserTotalItems }} </li>
-								<li>已完成事项：{{ UserDoneItems }} </li>
-								<li>待完成事项：{{ UserToDoItems }} </li>
-								<li>完成百分比：{{ UserDonePercentage }} % </li>
-								
+								<li>总事项：{{ tarsusaItemCollection_Statstics.UserTotalItems|escape }} </li>
+								<li>已完成事项：{{ tarsusaItemCollection_Statstics.UserToDoItems|escape }} </li>
+								<li>待完成事项：{{ tarsusaItemCollection_Statstics.UserDoneItems|escape }} </li>
+								<li>完成百分比：{{ tarsusaItemCollection_Statstics.UserDonePercentage|escape }} </li>
 							</ul>
 						</div>
 						<div id="codelist-bot"></div>
