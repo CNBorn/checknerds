@@ -407,6 +407,8 @@ class UserMainPage(tarsusaRequestHandler):
 		UserNickName = '访客'
 		outputStringUserAvatar = ''
 
+		UserNonPrivateItemsList = ''
+
 		if ViewUser != None:
 		
 			## Preparation
@@ -418,12 +420,10 @@ class UserMainPage(tarsusaRequestHandler):
 				
 			outputStringUserMainPageTitle = ViewUser.dispname + "公开的项目".decode("utf-8")
 
-			outputStringRoutineLog = ""
-
 			#-------------------------------------
 			if not self.chk_login():
-			#if users.get_current_user() == None:
-				
+			
+				#Not a login user, show only the public items.
 				UserNickName = "访客"
 				logictag_OneoftheFriendsViewThisPage = False
 				CurrentUserIsOneofViewUsersFriends = False
@@ -433,33 +433,15 @@ class UserMainPage(tarsusaRequestHandler):
 				#Check Whether there is usermainPage_publicitems_anony
 				cachedUserMainPagePublicItemsAnony = memcache.get_item("mainpage_publicitems_anony", ViewUser.key().id())
 				if cachedUserMainPagePublicItemsAnony is not None:
-					outputStringRoutineLog = cachedUserMainPagePublicItemsAnony
+					UserNonPrivateItemsList = cachedUserMainPagePublicItemsAnony
 				else:
-					#no cache public_items_anony, get them
-					tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
-					# TODO
-					#the code block below is a little bit duplicated, will find a way to make it simple in future. TODO
-					for each_Item in tarsusaItemCollection_UserRecentPublicItems:
-						## Added Item public permission check.
-				
-						if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
-							if each_Item.done == True:
-								outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-							outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-						elif each_Item.public == 'public':
-							if each_Item.done == True:
-								outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-							outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-						else:
-							pass
-
-
+					UserNonPrivateItemsList = tarsusaCore.get_UserNonPrivateItems(ViewUser.key().id(), 'public')
+									
+			
 			else:				
 				
 				#Check Whether CurrerentUser is one of ViewUser's friends
-
 				UserNickName = ViewUser.dispname
-				
 				CurrentUser = self.get_user_db()
 
 				CurrentUserIsOneofViewUsersFriends = False
@@ -507,36 +489,18 @@ class UserMainPage(tarsusaRequestHandler):
 					#set cache item
 					memcache.set_item("mainpage_friends", UserFriends, ViewUser.key().id())
 					
-
-
 				#----------------------------------------				
 				if ViewedUserIsOneofCurrentUsersFriends == True:
 					#Check Whether there is usermainpage_publicitems
 					cachedUserMainPagePublicItems = memcache.get_item("mainpage_publicitems", ViewUser.key().id())
 					if cachedUserMainPagePublicItems is not None:
-						outputStringRoutineLog = cachedUserMainPagePublicItems
+						UserNonPrivateItemsList = cachedUserMainPagePublicItems
 					else:
-						#no cache public items, get them
-						#Show ViewUser's public items
-						tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)
-
-						for each_Item in tarsusaItemCollection_UserRecentPublicItems:
-							## Added Item public permission check.
-					
-							if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
-								if each_Item.done == True:
-									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-								outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-							elif each_Item.public == 'public':
-								if each_Item.done == True:
-									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-								outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-							else:
-								pass
+						UserNonPrivateItemsList = tarsusaCore.get_UserNonPrivateItems(ViewUser.key().id(), 'publicOnlyforFriends')
+						#actually it's publicwithPublicforFriends.
 						
 						#set cache item
-						memcache.set_item("mainpage_publicitems", outputStringRoutineLog, ViewUser.key().id())
-
+						memcache.set_item("mainpage_publicitems", UserNonPrivateItemsList, ViewUser.key().id())
 
 				else:
 					#CurrentUser is not one of ViewUser's friends.
@@ -544,28 +508,12 @@ class UserMainPage(tarsusaRequestHandler):
 					#Check Whether there is usermainPage_publicitems_anony
 					cachedUserMainPagePublicItemsAnony = memcache.get_item("mainpage_publicitems_anony", ViewUser.key().id())
 					if cachedUserMainPagePublicItemsAnony is not None:
-						outputStringRoutineLog = cachedUserMainPagePublicItemsAnony
+						UserNonPrivateItemsList = cachedUserMainPagePublicItemsAnony
 					else:
-						#no cache public_items_anony, get them
-						
-						tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY date DESC", ViewUser.user)						
-						#Show ViewUser's public items
-						for each_Item in tarsusaItemCollection_UserRecentPublicItems:
-							## Added Item public permission check.
-					
-							if each_Item.public == 'publicOnlyforFriends' and CurrentUserIsOneofViewUsersFriends == True:
-								if each_Item.done == True:
-									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-								outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-							elif each_Item.public == 'public':
-								if each_Item.done == True:
-									outputStringRoutineLog += "<img src='/img/accept16.png'>" 
-								outputStringRoutineLog += '<a href="/item/' + str(each_Item.key().id()) + '"> ' + each_Item.name + "</a><br />"
-							else:
-								pass
+						UserNonPrivateItemsList = tarsusaCore.get_UserNonPrivateItems(ViewUser.key().id(), 'public')
 
 						#set cache item
-						memcache.set_item("mainpage_publicitems_anony", outputStringRoutineLog, ViewUser.key().id())
+						memcache.set_item("mainpage_publicitems_anony", UserNonPrivateItemsList, ViewUser.key().id())
 
 			if users.get_current_user() != None:
 				template_values = {
@@ -588,7 +536,7 @@ class UserMainPage(tarsusaRequestHandler):
 					'UserMainPageUserTitle': outputStringUserMainPageTitle,
 				
 					'ViewedUserIsOneofCurrentUsersFriends': ViewedUserIsOneofCurrentUsersFriends,
-					'StringRoutineLog': outputStringRoutineLog,
+					'UserNonPrivateItemsList': UserNonPrivateItemsList,
 
 					'outputFeed': True,
 					'outputFeedTitle': ViewUser.dispname,
@@ -606,7 +554,7 @@ class UserMainPage(tarsusaRequestHandler):
 						'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
 						'UserWebsite': ViewUser.website,
 						'UserMainPageUserTitle': outputStringUserMainPageTitle,
-						'StringRoutineLog': outputStringRoutineLog,
+						'UserNonPrivateItemsList': UserNonPrivateItemsList,
 						
 						'outputFeed': True,
 						'outputFeedTitle': ViewUser.dispname,

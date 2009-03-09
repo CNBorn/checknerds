@@ -632,4 +632,8 @@
 	IN 09.03.04
 		Fixed a Bug of MobileMainPage failed when there are too many items.
 			Modified tarsusaCore and AjaxPage itemstats function.
-		
+	IN 09.03.09
+		Fixed High CPU Usage Bug in UserMainPage.
+			Clean it, and Made a Non-Private function in tarsusaCore.
+			TODO: Made a function of friends part of this page in tarsusaCore.
+	

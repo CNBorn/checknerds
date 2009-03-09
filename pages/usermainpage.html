@@ -37,10 +37,16 @@
 
                     <div id="singleleft">
                         <h2 class="posttitle" style="font-weight:normal;">{{ UserMainPageUserTitle }} </h2>
-						<div style="padding-top:10px; padding-left: 10px;">{{ StringRoutineLog }}</div>
+						<div style="padding-top:10px; padding-left: 10px;">
+						{% for each_item in UserNonPrivateItemsList %}
+							{% if each_item.done %}
+								<img src='/img/accept16.png'><a href="/item/{{each_item.id}}">{{each_item.name}}</a><br />
+							{% else %}
+								<a href="/item/{{each_item.id}}">{{each_item.name}}</a><br />
+							{% endif %}
+						{% endfor %}
+						</div>
 					
-						
-
 					</div>
                 </div>
                 <div id="featuredcode2-bot"></div>

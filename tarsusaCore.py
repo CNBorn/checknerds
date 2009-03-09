@@ -110,7 +110,27 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
 	#---
 
 	return Item_List
+
+def get_UserNonPrivateItems(userid, public='public', maxdisplayitems=30):
+	#Get users non-private items.
+	ViewUser = tarsusaUser.get_by_id(int(userid))
 	
+	#---
+	Item_List = []
+	DisplayedItems = 1 
+
+	#Currently I just make the LIMIT number fixed.
+	if public == 'public':
+		tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public = 'public' ORDER BY date DESC LIMIT 30", ViewUser.user)
+	elif public == 'publicOnlyforFriends':
+		tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public != 'private' ORDER BY date DESC LIMIT 30", ViewUser.user)
+
+	for each_Item in tarsusaItemCollection_UserRecentPublicItems:
+		this_item = {'id' : str(each_Item.key().id()), 'name' : each_Item.name, 'date' : str(each_Item.date), 'donedate': each_Item.donedate, 'comment' : each_Item.comment, 'routine' : each_Item.routine, 'done' : each_Item.done}	
+		Item_List.append(this_item)
+	
+	return Item_List
+
 def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems=15):
 	
 	#Get user's FriendStats
