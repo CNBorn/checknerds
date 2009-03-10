@@ -636,4 +636,7 @@
 		Fixed High CPU Usage Bug in UserMainPage.
 			Clean it, and Made a Non-Private function in tarsusaCore.
 			TODO: Made a function of friends part of this page in tarsusaCore.
-	
+	IN 09.03.10
+		Made the friends part of UserMainPage in tarsusaCore.
+			Made a get_UserFriends function in tarsusaCore.
+

@@ -408,6 +408,7 @@ class UserMainPage(tarsusaRequestHandler):
 		outputStringUserAvatar = ''
 
 		UserNonPrivateItemsList = ''
+		UserFriends = []
 
 		if ViewUser != None:
 		
@@ -427,7 +428,8 @@ class UserMainPage(tarsusaRequestHandler):
 				UserNickName = "访客"
 				logictag_OneoftheFriendsViewThisPage = False
 				CurrentUserIsOneofViewUsersFriends = False
-				UserFriends = '请登录查看此用户的朋友信息'
+				statusUserFriends = 'NotLogin'
+				#Above tag will be recognized by template
 				ViewedUserIsOneofCurrentUsersFriends = False
 
 				#Check Whether there is usermainPage_publicitems_anony
@@ -436,9 +438,29 @@ class UserMainPage(tarsusaRequestHandler):
 					UserNonPrivateItemsList = cachedUserMainPagePublicItemsAnony
 				else:
 					UserNonPrivateItemsList = tarsusaCore.get_UserNonPrivateItems(ViewUser.key().id(), 'public')
-									
+				
+
+				template_values = {
+					'PrefixCSSdir': "../",
+					
+					'ViewedUserNickName': ViewUser.dispname,
+
+					'UserAvatarImage': outputStringUserAvatar,
+					
+					'statusViewedUserFriends': statusUserFriends,	
+					'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
+					'UserWebsite': ViewUser.website,
+					'UserMainPageUserTitle': outputStringUserMainPageTitle,
+					'UserNonPrivateItemsList': UserNonPrivateItemsList,
+					
+					'outputFeed': True,
+					'outputFeedTitle': ViewUser.dispname,
+					'outputFeedURL': "/user/" + str(ViewUser.key().id()) + "/feed",
+				}
+
 			
 			else:				
+				#User Login.
 				
 				#Check Whether CurrerentUser is one of ViewUser's friends
 				UserNickName = ViewUser.dispname
@@ -466,25 +488,8 @@ class UserMainPage(tarsusaRequestHandler):
 				else:
 					# This is shown to all logged in users.
 					#Check This Users Friends.
-					tarsusaUserFriendCollection = ViewUser.friends
-					UserFriends = ''
-					if tarsusaUserFriendCollection: 
-						for each_FriendKey in tarsusaUserFriendCollection:
-							UsersFriend =  db.get(each_FriendKey)
-							if UsersFriend.avatar:
-								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src=/img?avatar=" + str(UsersFriend.key().id()) + " width=32 height=32>" + '</dt>'
-							else:
-								## Show Default Avatar
-								UserFriends += '<dl class="obu2"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>" + '</dt>'
-
-							#These code is here due to DB Model change since Rev.76
-							try:								
-								UserFriends += '<dd>' + cgi.escape(UsersFriend.dispname) + '</a></dd></dl>'
-							except:
-								UserFriends += '<dd>' + cgi.escape(UsersFriend.user.nickname()) + '</a></dd></dl>'
-								
-					else:
-						UserFriends = '当前没有添加朋友'
+					
+					UserFriends = tarsusaCore.get_UserFriends(ViewUser.key().id())
 					
 					#set cache item
 					memcache.set_item("mainpage_friends", UserFriends, ViewUser.key().id())
@@ -497,7 +502,7 @@ class UserMainPage(tarsusaRequestHandler):
 						UserNonPrivateItemsList = cachedUserMainPagePublicItems
 					else:
 						UserNonPrivateItemsList = tarsusaCore.get_UserNonPrivateItems(ViewUser.key().id(), 'publicOnlyforFriends')
-						#actually it's publicwithPublicforFriends.
+						#about the property, it pass this one but actually it's going to digg publicwithPublicforFriends.
 						
 						#set cache item
 						memcache.set_item("mainpage_publicitems", UserNonPrivateItemsList, ViewUser.key().id())
@@ -515,7 +520,6 @@ class UserMainPage(tarsusaRequestHandler):
 						#set cache item
 						memcache.set_item("mainpage_publicitems_anony", UserNonPrivateItemsList, ViewUser.key().id())
 
-			if users.get_current_user() != None:
 				template_values = {
 					'PrefixCSSdir': "../",
 					
@@ -542,26 +546,8 @@ class UserMainPage(tarsusaRequestHandler):
 					'outputFeedTitle': ViewUser.dispname,
 					'outputFeedURL': "/user/" + str(ViewUser.key().id()) + "/feed",
 				}
-			else:
-				template_values = {
-						'PrefixCSSdir': "../",
-						
-						'ViewedUserNickName': ViewUser.dispname,
-
-						'UserAvatarImage': outputStringUserAvatar,
-						
-						'ViewedUserFriends': UserFriends,	
-						'UserJoinInDate': datetime.datetime.date(ViewUser.datejoinin),
-						'UserWebsite': ViewUser.website,
-						'UserMainPageUserTitle': outputStringUserMainPageTitle,
-						'UserNonPrivateItemsList': UserNonPrivateItemsList,
-						
-						'outputFeed': True,
-						'outputFeedTitle': ViewUser.dispname,
-						'outputFeedURL': "/user/" + str(ViewUser.key().id()) + "/feed",
-					}
 			
-				
+
 			path = os.path.join(os.path.dirname(__file__), 'pages/usermainpage.html')
 			
 			self.response.out.write(template.render(path, template_values))

@@ -123,13 +123,45 @@ def get_UserNonPrivateItems(userid, public='public', maxdisplayitems=30):
 	if public == 'public':
 		tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public = 'public' ORDER BY date DESC LIMIT 30", ViewUser.user)
 	elif public == 'publicOnlyforFriends':
-		tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public != 'private' ORDER BY date DESC LIMIT 30", ViewUser.user)
+		tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public != 'private' ORDER BY public, date DESC LIMIT 30", ViewUser.user)
 
 	for each_Item in tarsusaItemCollection_UserRecentPublicItems:
 		this_item = {'id' : str(each_Item.key().id()), 'name' : each_Item.name, 'date' : str(each_Item.date), 'donedate': each_Item.donedate, 'comment' : each_Item.comment, 'routine' : each_Item.routine, 'done' : each_Item.done}	
 		Item_List.append(this_item)
 	
 	return Item_List
+
+def get_UserFriends(userid):
+	#Get user's friend list.
+
+	#Output: Dict in which indicates a friend's id, avatarpath, name
+
+	ViewUser = tarsusaUser.get_by_id(int(userid))	
+	tarsusaUserFriendCollection = ViewUser.friends
+	
+	UserFriends = []
+
+	if tarsusaUserFriendCollection: 
+		
+		for each_FriendKey in tarsusaUserFriendCollection:
+			UsersFriend =  db.get(each_FriendKey)
+			Each_UserFriends = {'id': str(UsersFriend.key().id())}
+						
+			if UsersFriend.avatar:
+				Each_UserFriends['avatarpath'] =  '/img?avatar=' + str(UsersFriend.key().id())
+			else:
+				Each_UserFriends['avatarpath'] =  '/img/default_avatar.jpg'
+
+			#These code is here due to DB Model change since Rev.76
+			try:								
+				Each_UserFriends['name'] = cgi.escape(UsersFriend.dispname)
+			except:
+				Each_UserFriends['name'] = cgi.escape(UsersFriend.user.nickname())
+
+			UserFriends.append(Each_UserFriends)
+
+	return UserFriends
+
 
 def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems=15):
 	

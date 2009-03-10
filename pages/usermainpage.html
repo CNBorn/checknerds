@@ -60,7 +60,19 @@
 					<p>
 						<div id="tablem2">
 				    		<div id="in_tablem2">
-								{{ ViewedUserFriends }}
+								{% ifequal statusViewedUserFriends "NotLogin" %}
+									请登录查看此用户的朋友信息
+								{% endifequal %}
+								
+								{% if ViewedUserFriends %}
+									{% for each_friend in ViewedUserFriends %}
+										 <dl class="obu2"><dt><a href="/user/{{each_friend.id}}"><img src="{{each_friend.avatarpath}}" width=32 height=32></dt><dd>{{each_friend.name}}</a></dd></dl>
+									{% endfor %}
+								{% else %}
+									{% ifnotequal statusViewedUserFriends "NotLogin" %}
+										当前没有添加朋友
+									{% endifnotequal %}
+								{% endif %}
 							</div>
 						</div>
 					<br />
