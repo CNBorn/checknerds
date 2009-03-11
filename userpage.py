@@ -569,21 +569,10 @@ class UserFeedPage(tarsusaRequestHandler):
 		
 		#RSS Feed Code, leart from Plog, using PyRSS2Gen Module.
 
-		username = urllib.unquote(cgi.escape(self.request.path[6:-5]))  ## Get the username in the URL string such as /user/1234/feed
-		ViewUser = None
+		userid = urllib.unquote(cgi.escape(self.request.path[6:-5]))  ## Get the username in the URL string such as /user/1234/feed
 		
-		try:
-			## After URL style changed, Now won't allow username in URL, only accept id in URL.
-			
-			## Get this user.
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid = :1 LIMIT 1", int(username))
-			ViewUser = q.get()
-
-			if ViewUser == None:
-				q = tarsusaUser.get_by_id(int(username))
-				ViewUser = q
-		except:
-			self.redirect('/')
+		## Get this user.
+		ViewUser = tarsusaUser.get_by_id(int(userid))
 			
 
 		UserNickName = '访客'
@@ -592,6 +581,33 @@ class UserFeedPage(tarsusaRequestHandler):
 		if ViewUser != None:
 		
 			userfeed_publicitems = []
+			
+			#should look at the routinelog at first.
+			#new feed output supports public daily routine.
+			tarsusaItemCollection_RecentDoneDailyRoutines = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem ORDER by donedate DESC LIMIT 5")
+			for each_DailyRoutineLogItem in tarsusaItemCollection_RecentDoneDailyRoutines:				
+				RoutineItem = tarsusaItem.get_by_id(each_DailyRoutineLogItem.routineid)
+				if RoutineItem.user == ViewUser.user:
+					str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + tarsusaItem.get_by_id(each_DailyRoutineLogItem.routineid).name
+					item_url = '%s/item/%d' % (self.request.host_url, RoutineItem.key().id())
+					
+					str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + RoutineItem.name
+					try:
+						# some very old items may not have usermodel property 
+						str_author = RoutineItem.usermodel.dispname
+					except:
+						str_author = RoutineItem.user.nickname()
+
+					userfeed_publicitems.append({
+									'title': str_title,
+									'author': str_author,
+									'link': item_url,
+									'description': '每日任务'.decode('utf-8'), #Later will be comment for each dailydone. 
+									'pubDate': each_DailyRoutineLogItem.donedate,
+									'guid': PyRSS2Gen.Guid(str_title + str(each_DailyRoutineLogItem.donedate))
+									#categories
+									})		
+
 			
 			#There is a force 15 limits for RSS feed.
 			#Plog is setting this as an option in setting.
@@ -604,35 +620,81 @@ class UserFeedPage(tarsusaRequestHandler):
 					str_author = each_Item.usermodel.dispname
 				except:
 					str_author = each_Item.user.nickname()
-
-				if each_Item.done == True:
-					str_title = ViewUser.dispname + " 完成了 ".decode('utf-8') + each_Item.name
-				else:
-					str_title = ViewUser.dispname + " 要做 ".decode('utf-8') + each_Item.name
-								
+				
 				item_url = '%s/item/%d' % (self.request.host_url, each_Item.key().id())
 
-				userfeed_publicitems.append(PyRSS2Gen.RSSItem(
-					title = str_title,
-					author = str_author,
-					link = item_url,
-					description = each_Item.comment,
-					pubDate = each_Item.date,
-					guid = PyRSS2Gen.Guid(item_url)
-					#categories
-					)
-				)
+				if each_Item.routine == 'daily':
+					#new feed output supports public daily routine.
+					tarsusaItemCollection_RecentDoneDailyRoutines = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 ORDER by donedate DESC LIMIT 5", each_Item.key().id())
+					for each_DailyRoutineLogItem in tarsusaItemCollection_RecentDoneDailyRoutines:
+						str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + each_Item.name
+						userfeed_publicitems.append({
+										'title': str_title,
+										'author': str_author,
+										'link': item_url,
+										'description': '每日任务'.decode('utf-8'), #Later will be comment for each dailydone. 
+										'pubDate': each_DailyRoutineLogItem.donedate,
+										'guid': PyRSS2Gen.Guid(str_title + str(each_DailyRoutineLogItem.donedate))
+										#categories
+										})									
+
+				else:
+					if each_Item.done == True:
+						str_title = ViewUser.dispname + " 完成了 ".decode('utf-8') + each_Item.name
+					else:
+						str_title = ViewUser.dispname + " 要做 ".decode('utf-8') + each_Item.name
+					
+					userfeed_publicitems.append({
+										'title': str_title,
+										'author': str_author,
+										'link': item_url,
+										'description':each_Item.comment,
+										'pubDate': each_Item.date,
+										'guid': PyRSS2Gen.Guid(item_url)
+										#categories
+										})					
+
+			#sort the results:
+			#Sort Algorithms from
+			#http://www.lixiaodou.cn/?p=12
+			length = len(userfeed_publicitems)
+			for i in range(0,length):
+				for j in range(length-1,i,-1):
+					#Convert string to datetime.date
+					#http://mail.python.org/pipermail/tutor/2006-March/045729.html	
+					time_format = "%Y-%m-%d %H:%M:%S"
+					#if datetime.datetime.fromtimestamp(time.mktime(time.strptime(userfeed_publicitems[j]['pubDate'][:-7], time_format))) > datetime.datetime.fromtimestamp(time.mktime(time.strptime(userfeed_publicitems[j-1]['pubDate'][:-7], time_format))):
+					if userfeed_publicitems[j]['pubDate'] > userfeed_publicitems[j-1]['pubDate']:
+						temp = userfeed_publicitems[j]
+						userfeed_publicitems[j]=userfeed_publicitems[j-1]
+						userfeed_publicitems[j-1]=temp
+
+
+			publicItems = []
+			for each in userfeed_publicitems:
+				publicItems.append(PyRSS2Gen.RSSItem(
+								title = each['title'],
+								author = each['author'],
+								link = each['link'],
+								description = each['description'],
+								pubDate = each['pubDate'],
+								guid = each['guid']
+								))
+
+			
 			rss = PyRSS2Gen.RSS2(
 				title = "CheckNerds - " + ViewUser.dispname,
 				link = self.request.host_url + '/user/' + str(ViewUser.key().id()),
-				description = ViewUser.dispname + '最新的15条公开事项，在线个人事项管理——欢迎访问http://www.checknerds.com'.decode('utf-8'),
+				description = ViewUser.dispname + '最新的公开事项，在线个人事项管理——欢迎访问http://www.checknerds.com'.decode('utf-8'),
 				lastBuildDate = datetime.datetime.utcnow(),
-				items = userfeed_publicitems
+				items = publicItems
 				)
 
 			self.response.headers['Content-Type'] = 'application/rss+xml; charset=utf-8'
 			rss_xml = rss.to_xml(encoding='utf-8')
 			self.write(rss_xml)
+
+
 
 
 def main():

@@ -643,3 +643,6 @@
 		Cleaned up get_fp_friendstats in ajax page. It wouldn't output raw html anymore.
 		removed json_test page in ajax.py
 		Added 'AddItem' option on rightside of UserToDoPage/UserDonePage.
+		---
+		Improved Feed with public daily routines.
+
