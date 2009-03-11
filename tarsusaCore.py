@@ -162,7 +162,6 @@ def get_UserFriends(userid):
 
 	return UserFriends
 
-
 def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems=15):
 	
 	#Get user's FriendStats

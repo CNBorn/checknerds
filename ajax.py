@@ -180,6 +180,7 @@ class getdailyroutine_yesterday(tarsusaRequestHandler):
 				# http://code.google.com/p/googleappengine/issues/detail?id=179
 				# if this is realized, the code below next line will be used.
 
+				#TODO: should add a time limitation to easier this query.
 				tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC ", users.get_current_user(), each_tarsusaItemCollection_DailyRoutine.key().id())
 				
 				## traversed RoutineDaily
@@ -308,8 +309,6 @@ class get_fp_friendstats(tarsusaRequestHandler):
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
-		#else:
-			#self.redirect('/')		
 			
 			cachedUserFriendsActivities = memcache.get_item("friendstats", CurrentUser.key().id())
 			if cachedUserFriendsActivities is not None:
@@ -322,34 +321,13 @@ class get_fp_friendstats(tarsusaRequestHandler):
 				## SHOW YOUR FRIENDs Recent Activities
 				## Show only 9 items because we don't want to see a very long frontpage.
 				UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id(),"","",9)
-				#---
-				UserFriendsActivities = ''
-					
-				if len(UserFriendsItem_List) > 0:
-					#Output raw html
-					for each_friend_item in UserFriendsItem_List:
-						if each_friend_item['category'] == 'done':
-							
-							#Due to usermodel is applied in a later patch, some tarsusaItem may not have that property.
-							#Otherwise I would like to user ['user'].key().id()
-							UserFriendsActivities += '<li><a href="/user/' + str(each_friend_item['userid']) + '">' +  each_friend_item['userdispname'] + '</a> 完成了 <a href="/item/'.decode('utf-8') + str(each_friend_item['id']) + '">' + each_friend_item['name'] + '</a></li>'
-						else:
-							UserFriendsActivities += '<li><a href="/user/' + str(each_friend_item['userid']) + '">' +  each_friend_item['userdispname'] + '</a> 要做 <a href="/item/'.decode('utf-8') + str(each_friend_item['id']) + '">' + each_friend_item['name'] + '</a></li>'
-
-
-					if len(UserFriendsItem_List) == 0:
-						UserFriendsActivities = '<li>暂无友邻公开项目</li>'							
 				
-				else:
-					#CurrentUser does not have any friends.
-					UserFriendsActivities = '<li>当前没有添加朋友</li>'
-
 				template_values = {
 					'UserLoggedIn': 'Logged In',
-					'UserFriendsActivities': UserFriendsActivities,
+					'UserFriendsActivities': UserFriendsItem_List,
 				}
 				
-				if not memcache.set_item("friendstats" ,UserFriendsActivities, CurrentUser.key().id()):
+				if not memcache.set_item("friendstats" ,UserFriendsItem_List, CurrentUser.key().id()):
 					logging.error('Cache set failed: Users_FriendStats')
 
 			#Manupilating Templates	
@@ -494,47 +472,6 @@ class getjson_usertodoitems(tarsusaRequestHandler):
 			
 		self.response.out.write(simplejson.dumps(UserTodoItems))
 			
-class jsonpage(tarsusaRequestHandler):
-	def get(self):
-		if users.get_current_user() != None:
-
-			# code below are comming from GAE example
-			q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-			CurrentUser = q.get()	
-
-			CountTotalItems = 0
-			
-			## SPEED KILLER!
-			## MULTIPLE DB QUERIES!
-			## CAUTION! MODIFY THESE LATER!
-			tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
-
-			CountTotalItems = tarsusaItemCollection_UserDoneItems.count()
-			strDoneStatus = "共有" + str(CountTotalItems) + "个已完成项目"
-
-			template_values = {
-				'PrefixCSSdir': "/",
-
-				'UserLoggedIn': 'Logged In',
-				
-				'UserNickName': cgi.escape(CurrentUser.dispname),
-				'UserID': CurrentUser.key().id(),
-				
-				#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-				#'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
-
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-				'DoneStatus': memcache.notify_update('addfriend', self.get_user_db().key().id())
-			}
-
-
-
-			#Manupilating Templates	
-			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_jsontest.html')
-			self.response.out.write(template.render(path, template_values))
-		else:
-			self.redirect('/')
-
 class ajax_error(tarsusaRequestHandler):
 	def post(self):
 		self.write("载入出错，请刷新重试")
@@ -631,8 +568,6 @@ class admin_runpatch(tarsusaRequestHandler):
 		self.write('DONE with USERID' + RequestUserID)
 		#self.redirect('/')
 
-	
-
 
 def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
@@ -647,8 +582,7 @@ def main():
 										('/ajax/getjson_usertodoitems', getjson_usertodoitems),
 										('/ajax/getjson_userdoneitems', getjson_userdoneitems),
 										('/ajax/admin_runpatch/.+', admin_runpatch),
-										('/ajax/jsonpage', jsonpage),
-									   ('/ajax/.+',ajax_error)],
+									  ('/ajax/.+',ajax_error)],
                                        debug=True)
 
 
