@@ -9,7 +9,7 @@
 </a>
 <span class="itemtitle">
 <a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
-</span><span class="desc">&nbsp;</span>
+</span><span class="desc">{{ tarsusaItem_UserToDoItem.comment|escape|truncatewords:3 }}</span>
 </div>
 {% endfor %}
 

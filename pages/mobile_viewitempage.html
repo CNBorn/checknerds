@@ -1,7 +1,6 @@
 {% extends "mobile_base.html" %}
 {% block content-holder %}
 <div class="content"><ul>
-					<small>
 					{% if DonelogItemCollection %}
 						{% for DonelogItem in DonelogItemCollection %}
 							{{ DonelogItem.donedate }}<br />
@@ -13,12 +12,10 @@
 						<h2>{{ tarsusaItem.name|escape }}</h2>							
 							{% if tarsusaItemDone %}
 								已经完成于{{ tarsusaItem.donedate }} &nbsp;							
-								{% if not logictag_OtherpeopleViewThisItem %}
-									<a href="/undoneItem/{{tarsusaItem.key.id}}" class="x">撤销完成</a>
-								{% endif %}
+								
 							{% else %}
 								{% if not tarsusaRoutineItem %}
-									当前状态：未完成
+									尚未完成
 									{% if tarsusaItem.expired %}
 										<span style="color: #F00000">已过期</span>
 									{% endif %}
@@ -38,29 +35,19 @@
 									{% ifequal tarsusaItem.routine "yearly" %}
 										每年任务
 									{% endifequal %}	
-								<br />
-								最近完成<br />
-								{% for eachRoutineLogItem in tarsusaRoutineLogItem %}
-									{{ eachRoutineLogItem.donedate}} &nbsp; <br />
-								{% endfor %}
-								
+									<br />
+									最近完成<br />
+									{% for eachRoutineLogItem in tarsusaRoutineLogItem %}
+										{{ eachRoutineLogItem.donedate}} &nbsp; <br />
+									{% endfor %}
+									
 								{% endif %}
 
 							{% endif %}	
 							
-							{% if not logictag_OtherpeopleViewThisItem %}
-								{% if not tarsusaRoutineItem %}
-									{% if not tarsusaItemDone %}
-										<a href="/doneItem/{{tarsusaItem.key.id}}" class="check">-->完成</a>
-									{% endif %}
-									&nbsp; | <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="check">x</a>
-								{% endif %}
-							{% endif %}
-							<br />
-
-							分类：{{tarsusaItemTags}}<br />
-							创建者：{{tarsusaItem.usermodel.dispname|escape}}<br />
-							&nbsp;&nbsp;
+							
+							<br />分类：{{tarsusaItemTags}}<br />
+							{{tarsusaItem.usermodel.dispname|escape}}创建，
 							{% ifequal tarsusaItem.public "private" %}
 								不公开
 							{% endifequal %}
@@ -79,7 +66,23 @@
 							{% else %}
 								{{tarsusaItem.expectdate}}
 							{% endif %}
-						<br />
-					{% endif %}
-</small></ul><small>&nbsp;&nbsp;<a href="{{RefererURL}}">返回</a></small></div>{% endblock content-holder %}
+							<br />
 
+							{% if not logictag_OtherpeopleViewThisItem %}
+								{% if not tarsusaRoutineItem %}
+									{% if not tarsusaItemDone %}
+										<a href="/doneItem/{{tarsusaItem.key.id}}">完成该项目</a>|
+									{% else %}
+										{% if not logictag_OtherpeopleViewThisItem %}
+											<a href="/undoneItem/{{tarsusaItem.key.id}}">撤销完成</a>|
+										{% endif %}									
+									{% endif %}
+									<a href="#;">编辑</a>
+									|<a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}">删除</a>
+								{% endif %}
+							{% endif %}
+							<br />
+
+
+					{% endif %}
+</ul><small>&nbsp;&nbsp;<a href="{{RefererURL}}">返回</a></small></div>{% endblock content-holder %}

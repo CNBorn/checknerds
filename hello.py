@@ -189,10 +189,10 @@ class ViewItem(tarsusaRequestHandler):
 			# New CheckLogin code built in tarsusaRequestHandler 
 			if self.chk_login():
 				CurrentUser = self.get_user_db()
-
-
+			
 			logictag_OtherpeopleViewThisItem = None
 			CurrentUserIsOneofAuthorsFriends = False
+			
 			if tItem.user != users.get_current_user():
 			
 				## Check if the viewing user is a friend of the ItemAuthor.
@@ -211,7 +211,8 @@ class ViewItem(tarsusaRequestHandler):
 				except:
 					CurrentUserIsOneofAuthorsFriends = False
 
-				if tItem.public == 'publicOnlyforFriends':
+				#Fixed since r116, Now Anonymuse user can't see PublicToFriends items.
+				if tItem.public == 'publicOnlyforFriends' and CurrentUserIsOneofAuthorsFriends == True:
 					logictag_OtherpeopleViewThisItem = True
 
 				elif tItem.public == 'public':
@@ -258,34 +259,7 @@ class ViewItem(tarsusaRequestHandler):
 			
 			#Show Undone items in the same category, just like in tarsusa r6
 			#Since Nevada allows mutiple tags, It finds item that with any one tags of this showing items.
-
-			#/code# tarsusaItemCollection_SameCategoryUndone = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and done = False and id != :2 ORDER BY id DESC LIMIT 5", users.get_current_user(), tItem.key().id())
-
-			# filter current viewing Item from the related items!
-			# GqlQuery doesn't have the filter function!
-			#tarsusaItemCollection_SameCategoryUndone.filter("id=", tItem.id)
-
-			#/code# for eachItem in tarsusaItemCollection_SameCategoryUndone:
-				#THIS IS A LOT CPU CONSUMPTIONS
-				#/code# tfor eachTag in eachItem.tags:
-					#/code# ttry:
-						#/code# tIsSameCategory = False
-						#/code# tfor each_tag in db.get(tItem.tags):
-							#Find any tags are the same:
-							#/code# tif db.get(eachTag).name == each_tag.name:							
-								#/code# tIsSameCategory = True
-						#/code# tif IsSameCategory == True:
-							
-							# GqlQuery doesn't have the filter function! and the filter function also doesn't support !=
-							# TODO SO THERE IS BUG HERE! HERE! HERE!
-							#tarsusaItemCollection_SameCategoryUndone.filter("id=", eachItem.id)					
-							
-							#/code# thtml_tag_SameCategory_ItemList += '<a href=/i/' + str(eachItem.key().id()) + '>' + cgi.escape(eachItem.name) + "</a><br/>"
-							#	CountUndoneItems += 1
-							
-					#/code# texcept:
-						#/code# tpass
-
+			#Deprecated since r116.		
 
 			# -----
 			#Show the items that are created in the same day, just like in tarsusa r6.

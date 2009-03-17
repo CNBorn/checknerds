@@ -212,7 +212,7 @@ class UserDoneLogPage(tarsusaRequestHandler):
 		
 				path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
 				strCachedDonelogPage = template.render(path, template_values)
-				#memcache.set_item("userdonelog", strCachedDonelogPage, CurrentUser.key().id())
+				memcache.set_item("userdonelog", strCachedDonelogPage, CurrentUser.key().id())
 			self.response.out.write(strCachedDonelogPage)
 		else:
 			self.redirect('/')
@@ -579,55 +579,31 @@ class UserFeedPage(tarsusaRequestHandler):
 		outputStringUserAvatar = ''
 
 		if ViewUser != None:
-		
-			userfeed_publicitems = []
 			
-			#should look at the routinelog at first.
-			#new feed output supports public daily routine.
-			tarsusaItemCollection_RecentDoneDailyRoutines = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem ORDER by donedate DESC LIMIT 5")
-			for each_DailyRoutineLogItem in tarsusaItemCollection_RecentDoneDailyRoutines:				
-				RoutineItem = tarsusaItem.get_by_id(each_DailyRoutineLogItem.routineid)
-				if RoutineItem.user == ViewUser.user:
-					str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + tarsusaItem.get_by_id(each_DailyRoutineLogItem.routineid).name
-					item_url = '%s/item/%d' % (self.request.host_url, RoutineItem.key().id())
-					
-					str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + RoutineItem.name
-					try:
-						# some very old items may not have usermodel property 
-						str_author = RoutineItem.usermodel.dispname
-					except:
-						str_author = RoutineItem.user.nickname()
-
-					userfeed_publicitems.append({
-									'title': str_title,
-									'author': str_author,
-									'link': item_url,
-									'description': '每日任务'.decode('utf-8'), #Later will be comment for each dailydone. 
-									'pubDate': each_DailyRoutineLogItem.donedate,
-									'guid': PyRSS2Gen.Guid(str_title + str(each_DailyRoutineLogItem.donedate))
-									#categories
-									})		
-
-			
-			#There is a force 15 limits for RSS feed.
-			#Plog is setting this as an option in setting.
-			tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public = 'public' ORDER BY date DESC LIMIT 15", ViewUser.user)
-			#the code block below is a little bit duplicated, will find a way to make it simple in future. TODO
-			for each_Item in tarsusaItemCollection_UserRecentPublicItems:
+			IsCachedUserFeed = memcache.get_item('UserPublicFeed', ViewUser.key().id())
 				
-				try:
-					# some very old items may not have usermodel property 
-					str_author = each_Item.usermodel.dispname
-				except:
-					str_author = each_Item.user.nickname()
+			if IsCachedUserFeed:
+				userfeed_publicitems = IsCachedUserFeed
+			else:
+	
+				userfeed_publicitems = []
 				
-				item_url = '%s/item/%d' % (self.request.host_url, each_Item.key().id())
+				#should look at the routinelog at first.
+				#new feed output supports public daily routine.
+				tarsusaItemCollection_RecentDoneDailyRoutines = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem ORDER by donedate DESC LIMIT 10")
+				for each_DailyRoutineLogItem in tarsusaItemCollection_RecentDoneDailyRoutines:				
+					RoutineItem = tarsusaItem.get_by_id(each_DailyRoutineLogItem.routineid)
+					if RoutineItem.user == ViewUser.user:
+						str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + tarsusaItem.get_by_id(each_DailyRoutineLogItem.routineid).name
+						item_url = '%s/item/%d' % (self.request.host_url, RoutineItem.key().id())
+						
+						str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + RoutineItem.name
+						try:
+							# some very old items may not have usermodel property 
+							str_author = RoutineItem.usermodel.dispname
+						except:
+							str_author = RoutineItem.user.nickname()
 
-				if each_Item.routine == 'daily':
-					#new feed output supports public daily routine.
-					tarsusaItemCollection_RecentDoneDailyRoutines = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 ORDER by donedate DESC LIMIT 5", each_Item.key().id())
-					for each_DailyRoutineLogItem in tarsusaItemCollection_RecentDoneDailyRoutines:
-						str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + each_Item.name
 						userfeed_publicitems.append({
 										'title': str_title,
 										'author': str_author,
@@ -636,9 +612,23 @@ class UserFeedPage(tarsusaRequestHandler):
 										'pubDate': each_DailyRoutineLogItem.donedate,
 										'guid': PyRSS2Gen.Guid(str_title + str(each_DailyRoutineLogItem.donedate))
 										#categories
-										})									
+										})		
 
-				else:
+				
+				#There is a force 15 limits for RSS feed.
+				#Plog is setting this as an option in setting.
+				tarsusaItemCollection_UserRecentPublicItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public = 'public' ORDER BY date DESC LIMIT 15", ViewUser.user)
+				#the code block below is a little bit duplicated, will find a way to make it simple in future. TODO
+				for each_Item in tarsusaItemCollection_UserRecentPublicItems:
+					
+					try:
+						# some very old items may not have usermodel property 
+						str_author = each_Item.usermodel.dispname
+					except:
+						str_author = each_Item.user.nickname()
+					
+					item_url = '%s/item/%d' % (self.request.host_url, each_Item.key().id())
+
 					if each_Item.done == True:
 						str_title = ViewUser.dispname + " 完成了 ".decode('utf-8') + each_Item.name
 					else:
@@ -654,20 +644,24 @@ class UserFeedPage(tarsusaRequestHandler):
 										#categories
 										})					
 
-			#sort the results:
-			#Sort Algorithms from
-			#http://www.lixiaodou.cn/?p=12
-			length = len(userfeed_publicitems)
-			for i in range(0,length):
-				for j in range(length-1,i,-1):
-					#Convert string to datetime.date
-					#http://mail.python.org/pipermail/tutor/2006-March/045729.html	
-					time_format = "%Y-%m-%d %H:%M:%S"
-					#if datetime.datetime.fromtimestamp(time.mktime(time.strptime(userfeed_publicitems[j]['pubDate'][:-7], time_format))) > datetime.datetime.fromtimestamp(time.mktime(time.strptime(userfeed_publicitems[j-1]['pubDate'][:-7], time_format))):
-					if userfeed_publicitems[j]['pubDate'] > userfeed_publicitems[j-1]['pubDate']:
-						temp = userfeed_publicitems[j]
-						userfeed_publicitems[j]=userfeed_publicitems[j-1]
-						userfeed_publicitems[j-1]=temp
+				#sort the results:
+				#Sort Algorithms from
+				#http://www.lixiaodou.cn/?p=12
+				length = len(userfeed_publicitems)
+				for i in range(0,length):
+					for j in range(length-1,i,-1):
+						#Convert string to datetime.date
+						#http://mail.python.org/pipermail/tutor/2006-March/045729.html	
+						time_format = "%Y-%m-%d %H:%M:%S"
+						#if datetime.datetime.fromtimestamp(time.mktime(time.strptime(userfeed_publicitems[j]['pubDate'][:-7], time_format))) > datetime.datetime.fromtimestamp(time.mktime(time.strptime(userfeed_publicitems[j-1]['pubDate'][:-7], time_format))):
+						if userfeed_publicitems[j]['pubDate'] > userfeed_publicitems[j-1]['pubDate']:
+							temp = userfeed_publicitems[j]
+							userfeed_publicitems[j]=userfeed_publicitems[j-1]
+							userfeed_publicitems[j-1]=temp
+				
+				
+				memcache.set_item("UserPublicFeed", userfeed_publicitems, ViewUser.key().id(), 1800)
+				#cache it for at least half an hour.
 
 
 			publicItems = []

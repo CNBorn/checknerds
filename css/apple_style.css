@@ -147,8 +147,9 @@ text-shadow:1px 1px 5px #F0F8E4;
 span.desc {
 color:#BBBBBB;
 display:block;
-font-weight:bold;
-margin-top:5px;
+font-weight:normal;
+margin-top:3px;
+font-size: small;
 }
 
 div.form {
@@ -202,7 +203,7 @@ font-style:normal;
 font-variant:normal;
 font-weight:bold;
 line-height:normal;
-margin:15px 10px 17px 0;
+margin:15px 10px 17px 10px;
 padding:0;
 }
 

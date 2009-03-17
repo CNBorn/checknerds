@@ -46,6 +46,7 @@ class mMainPage(tarsusaRequestHandler):
 			#self.response.out.write(cachedUserItemStats)
 
 			template_values = {
+				'MobilePageTag': 'Stats',
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
@@ -55,7 +56,7 @@ class mMainPage(tarsusaRequestHandler):
 		
 			#Manupilating Templates	
 			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
-				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_imainpage.html')
+				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_imainpage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:			
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_mainpage.html')
@@ -70,7 +71,7 @@ class mMainPage(tarsusaRequestHandler):
 			
 			#Manupilating Templates	
 			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
-				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_iwelcomepage.html')
+				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_iwelcomepage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_welcomepage.html')
@@ -123,6 +124,7 @@ class mToDoPage(tarsusaRequestHandler):
 				self.redirect("/m/todo")
 
 			template_values = {
+				'MobilePageTag': 'ToDo',
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
@@ -139,7 +141,7 @@ class mToDoPage(tarsusaRequestHandler):
 		
 			#Manupilating Templates
 			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
-				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_itodopage.html')
+				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_itodopage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_todopage.html')
@@ -193,6 +195,7 @@ class mDonePage(tarsusaRequestHandler):
 			
 			
 			template_values = {
+				'MobilePageTag': 'Done',
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
@@ -213,7 +216,7 @@ class mDonePage(tarsusaRequestHandler):
 
 			#Manupilating Templates
 			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
-				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_idonepage.html')
+				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_idonepage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_donepage.html')
@@ -299,12 +302,13 @@ class mDailyRoutinePage(tarsusaRequestHandler):
 			## Output the message for DailyRoutine
 			template_tag_donealldailyroutine = ''				
 			if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
-				template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
+				template_tag_donealldailyroutine = '<img src="/img/favb16.png">恭喜，你完成了今天要做的所有事情！'
 			elif Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) - 1:
 				template_tag_donealldailyroutine = '只差一项，加油！'
 			elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
 				template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'	
 			template_values = {
+				'MobilePageTag': 'Daily',
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
@@ -314,7 +318,7 @@ class mDailyRoutinePage(tarsusaRequestHandler):
 			}
 			#Manupilating Templates	
 			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
-				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_idailyroutinepage.html')
+				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_idailyroutinepage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_dailyroutinepage.html')
@@ -483,7 +487,7 @@ class mViewItemPage(tarsusaRequestHandler):
 						'RefererURL': self.referer,
 				}
 			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
-				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_iviewitempage.html')
+				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_iviewitempage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:			
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_viewitempage.html')
@@ -500,7 +504,9 @@ class mAddItemPage(tarsusaRequestHandler):
 			CurrentUser = self.get_user_db()
 			strAddItemToday = str(datetime.datetime.date(datetime.datetime.now()))
 			
-			template_values = {'RefererURL': self.referer,
+			template_values = {
+							'MobilePageTag': 'Add',
+							'RefererURL': self.referer,
 							'UserNickName': cgi.escape(CurrentUser.dispname),
 							'UserID': CurrentUser.key().id(),
 							'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
@@ -508,7 +514,7 @@ class mAddItemPage(tarsusaRequestHandler):
 							}
 			
 			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
-				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_iadditempage.html')
+				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_iadditempage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
 				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_additempage.html')

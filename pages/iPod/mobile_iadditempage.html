@@ -18,16 +18,16 @@ thisfield.value = defaulttext;
 <ul class="form">
 <li><input id="name" type="text" onblur="clickrecall(this,'标题')" onclick="clickclear(this, '标题')" value="标题" name="name"/></li>
 <li><textarea name="comment" onblur="clickrecall(this,'内容')" onclick="clickclear(this, '内容')">内容</textarea></li>
-<li><input id="name" type="text" onblur="clickrecall(this,'{{addItemCatName}}')" onclick="clickclear(this, '{{addItemCatName}}')" value="{{addItemCatName}}" name="tags"/></li>
-<li><input id="name" type="text" onblur="clickrecall(this,'{{addItemToday}}')" onclick="clickclear(this, '{{addItemToday}}')" value="{{addItemToday}}" name="inputDate"/></li>
+<!--<li><input id="name" type="text" onblur="clickrecall(this,'{{addItemCatName}}')" onclick="clickclear(this, '{{addItemCatName}}')" value="{{addItemCatName}}" name="tags"/></li>
+<li><input id="name" type="text" onblur="clickrecall(this,'{{addItemToday}}')" onclick="clickclear(this, '{{addItemToday}}')" value="{{addItemToday}}" name="inputDate"/></li>!-->
 
 <li>
-<select id="lol">
+<select name="routine">
 <option value="none" selected="selected" >非坚持性任务</option><option value="daily">每天</option><option value="weekly">每周</option><option value="monthly">每月</option><option value="seasonly">每季度</option><option value="yearly">每年</option></select>
 </li>
 
 <li>
-<select id="lol">
+<select name="public">
 <option value="private" selected="selected">不公开</option><option value="public">完全公开</option><option value="publicOnlyforFriends">仅对朋友公开</option></select>
 </li>
 </ul>
@@ -35,10 +35,11 @@ thisfield.value = defaulttext;
 <table width="100%"><tbody>
 <tr>
 <td align="center">
-<a class="control" href="{{RefererURL}}">添加</a>
+<!--<input type="image" alt="添加项目" src=""/>-->
+<input type="submit" name="submit" value="  添   加   项   目   " style="height: 35px; width: 90%;" >
+<!--a class="control" href="{{RefererURL}}">添加</a-->
 </td>
 </tr>
-<input type="submit" name="submit" value="添加项目">
 </form>
 
 <table width="100%" border="0"

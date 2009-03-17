@@ -645,4 +645,11 @@
 		Added 'AddItem' option on rightside of UserToDoPage/UserDonePage.
 		---
 		Improved Feed with public daily routines.
+	IN 09.03.12
+		Import Feed with cache in it. Cache the content for at least half an hour.
+		Improved Mobile_ViewItemPage a little bit.
+	IN 09.03.17
+		Reorganizaed Mobile HTML Templates of iPod version.
+		Fixed a bug for Item Publicity. Now Anonymuse user can't see PublicToFriends items.
+		Tweaking Mobile:iPod Version. Few UI Tweaks and Now it can add items.
 

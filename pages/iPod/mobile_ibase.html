@@ -11,19 +11,19 @@
 <tbody>
 <tr>
 <td width="20%" align="center">
-<a class="navcurrent" href="/m">i统计</a> 
+<a {% ifequal MobilePageTag "Stats" %} class="navcurrent" {% endifequal %} href="/m">统计</a> 
 </td>
 <td width="20%" align="center">
-<a href="/m/dailyroutine">每日</a> 
+<a {% ifequal MobilePageTag "Daily" %} class="navcurrent" {% endifequal %} href="/m/dailyroutine">每日</a> 
 </td>
 <td width="20%" align="center">
-<a href="/m/todo">未做</a>
+<a {% ifequal MobilePageTag "ToDo" %} class="navcurrent" {% endifequal %} href="/m/todo">未做</a>
 </td>
 <td width="20%" align="center">
-<a href="/m/done">已做</a> 
+<a {% ifequal MobilePageTag "Done" %} class="navcurrent" {% endifequal %} href="/m/done">已做</a> 
 </td>
 <td width="20%" align="center">
-<a href="/m/add">添加</a>
+<a {% ifequal MobilePageTag "Add" %} class="navcurrent" {% endifequal %} href="/m/add">添加</a>
 </td>
 </tr>
 </tbody>
