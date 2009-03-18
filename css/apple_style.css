@@ -150,6 +150,7 @@ display:block;
 font-weight:normal;
 margin-top:3px;
 font-size: small;
+overflow: auto;
 }
 
 div.form {
@@ -292,7 +293,7 @@ color: #FFF;
 /* Derived from This iPhone UI Framework kit */
 ul li input[type="text"], ul li input[type="password"], ul li textarea, ul li select {iphone.css (第 611 行)
 -x-system-font:none;
-background:#FFFFFF url(../.png) repeat scroll 0 0;
+background:#FFFFFF repeat scroll 0 0;
 border:0 none;
 color:#777777;
 display:inline-block;
@@ -314,7 +315,7 @@ padding:0;
 text-indent:-2px;
 }
 ul li select {
-background:transparent url(../images/chevron.png) no-repeat scroll 103% 3px;
+background:transparent url(/img/chevron.png) no-repeat scroll 103% 3px;
 margin-left:-6px;
 text-indent:0;
 width:104%;
@@ -339,3 +340,21 @@ line-height:normal;
 margin:-12px 0 0 17px;
 width:246px;
 }
+
+/* Derived from iphone.6.cn */
+div.control {
+font-size: 13px;
+font-weight: bold;
+-webkit-border-radius: 5px;
+border: 2px solid #999;
+}
+
+div.controlBlock {
+padding: 5px 7px 5px 7px;
+}
+
+div.topSep {
+border-top: 1px solid #999;
+}
+
+

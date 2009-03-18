@@ -652,4 +652,6 @@
 		Reorganizaed Mobile HTML Templates of iPod version.
 		Fixed a bug for Item Publicity. Now Anonymuse user can't see PublicToFriends items.
 		Tweaking Mobile:iPod Version. Few UI Tweaks and Now it can add items.
-
+	IN 09.03.18
+		Fixed Bug of displaying non-public RoutineDoneLog in publicFeed.
+		iPod Mobile version usability improved.

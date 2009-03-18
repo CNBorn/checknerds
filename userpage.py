@@ -593,7 +593,7 @@ class UserFeedPage(tarsusaRequestHandler):
 				tarsusaItemCollection_RecentDoneDailyRoutines = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem ORDER by donedate DESC LIMIT 10")
 				for each_DailyRoutineLogItem in tarsusaItemCollection_RecentDoneDailyRoutines:				
 					RoutineItem = tarsusaItem.get_by_id(each_DailyRoutineLogItem.routineid)
-					if RoutineItem.user == ViewUser.user:
+					if RoutineItem.user == ViewUser.user and RoutineItem.public == 'public':
 						str_title = ViewUser.dispname + " 今天完成了 ".decode('utf-8') + tarsusaItem.get_by_id(each_DailyRoutineLogItem.routineid).name
 						item_url = '%s/item/%d' % (self.request.host_url, RoutineItem.key().id())
 						

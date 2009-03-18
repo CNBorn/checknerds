@@ -444,12 +444,18 @@ class mViewItemPage(tarsusaRequestHandler):
 				tarsusaItemCollection_DoneDailyRoutine = None
 				html_tag_tarsusaRoutineItem = None
 
+			if tItem.done == True:
+				strtag_status = 'Done'
+			else:
+				strtag_status = 'ToDo'
 			
+
 			if UserNickName != "访客":
 				UserNickName = CurrentUser.dispname 
 
 				template_values = {
 						'UserLoggedIn': 'Logged In',
+						'MobilePageTag': strtag_status, #done or todo
 
 						'UserID': CurrentUser.key().id(),
 						'UserNickName': UserNickName, 
