@@ -20,16 +20,15 @@ from google.appengine.ext import db
 
 import datetime,time
 import string
+import urllib
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
-
 
 from modules import *
 from base import *
 
 import memcache
 import tarsusaCore
-
 import utilities
 
 class mMainPage(tarsusaRequestHandler):
@@ -528,6 +527,62 @@ class mAddItemPage(tarsusaRequestHandler):
 		else:
 			self.redirect("/m/todo")
 
+class mEditItemPage(tarsusaRequestHandler):
+	def get(self):
+		
+		urllen = len('/m/edit/')
+		RequestItemId = urllib.unquote(self.request.path[urllen:])
+	
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
+		
+		tItem = tarsusaItem.get_by_id(int(RequestItemId))
+	
+		if tItem.user == CurrentUser.user and self.chk_login():
+
+			## Handle Tags
+			# for modified Tags (db.key)
+			tItemTags = ''
+			try:
+				for each_tag in db.get(tItem.tags):
+					if tItemTags == '':
+						tItemTags += cgi.escape(each_tag.name)
+					else:
+						tItemTags += ',' + cgi.escape(each_tag.name)
+			except:
+				# There is some chances that ThisItem do not have any tags.
+				pass	
+					
+			try:
+				tItemExpectdate = datetime.datetime.date(tItem.expectdate)
+			except:
+				tItemExpectdate = None
+
+			template_values = {
+					'MobilePageTag': '',
+					'RefererURL': self.referer,
+					'UserNickName': cgi.escape(CurrentUser.dispname),
+					'UserID': CurrentUser.key().id(),
+					'tItemId': tItem.key().id(),
+					'tItemName': cgi.escape(tItem.name),
+					'tItemComment': cgi.escape(tItem.comment),
+					'tItemRoutine': tItem.routine,
+					'tItemPublic': tItem.public,
+					'tItemTag': tItemTags,
+					'tItemExpectdate': tItemExpectdate, 
+
+			}			
+
+			#Manupilating Templates	
+			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_iedititempage.html')
+				self.response.out.write(template.render(path, template_values))
+			else:
+				path = os.path.join(os.path.dirname(__file__), 'pages/mobile_additempage.html')
+				self.response.out.write(template.render(path, template_values))
+		else:
+			self.redirect(self.referer)
+
 class mErrorPage(tarsusaRequestHandler):
 	def get(self):
 		self.redirect("/m")
@@ -538,6 +593,7 @@ def main():
 									   ('/m/todo.*',mToDoPage),
 									   ('/m/done.*',mDonePage),
 									   ('/m/add',mAddItemPage),
+									   ('/m/edit.*',mEditItemPage),									   
 									   ('/m/', mMainPage),
 									   ('/m', mMainPage),
 									   ('/i/.*', mViewItemPage),

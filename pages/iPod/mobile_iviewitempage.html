@@ -18,14 +18,18 @@
 		
 		{% if not logictag_OtherpeopleViewThisItem %}
 			{% if not tarsusaRoutineItem %}
-				<table width="100%" cellspacing="0" cellpadding="2" border="0"><tbody><tr><td width="80%" align="center">
+				<table width="100%" cellspacing="0" cellpadding="2" border="0"><tbody><tr><td width="60%" align="center">
 				{% if not tarsusaItemDone %}
-					<a href="/doneItem/{{tarsusaItem.key.id}}" class="control">完成此项目</a></td>
-					<td align="center">
+					{% if not logictag_OtherpeopleViewThisItem %}
+						<a href="/doneItem/{{tarsusaItem.key.id}}" class="control">完成此项目</a></td>
+						<td align="center">
+					{% endif %}
 				{% else %}
 					<a href="/undoneItem/{{tarsusaItem.key.id}}" class="control">撤销此项目</a></td>
 					<td align="center">
 				{% endif %}
+				 <a href="/m/edit/{{tarsusaItem.key.id}}" class="control">编辑</a></td>
+				 <td align="center">
 				 <a href="#;" onclick="if (confirm('确认删除项目？{{tarsusaItem.name|escape}}')) { location.href = '/removeItem/{{tarsusaItem.key.id}}';}" class="control">删除</a>
 				 </td></tr></table>
 			{% endif %}
@@ -39,9 +43,6 @@
 			<div class="controlBlock">
 				{% if tarsusaItemDone %}
 					已经完成于{{ tarsusaItem.donedate }} &nbsp;							
-					{% if not logictag_OtherpeopleViewThisItem %}
-						<a href="#;" onclick="if (confirm('确认撤销完成？{{tarsusaItem.name|escape}}')) {ajax_undoneItem('/undoneItem/{{tarsusaItem.key.id}}');}" class="x">撤销完成</a>
-					{% endif %}
 				{% else %}
 					{% if not tarsusaRoutineItem %}
 						当前状态：未完成
@@ -55,21 +56,21 @@
 						{% ifequal tarsusaItem.routine "seasonly" %}每季度任务{% endifequal %}
 						{% ifequal tarsusaItem.routine "yearly" %}每年任务{% endifequal %}	
 					{% endif %}
-
-					&nbsp;| &nbsp;
-					{% ifequal tarsusaItem.public "private" %}
-						不公开
-					{% endifequal %}
-					{% ifequal tarsusaItem.public "publicOnlyforFriends" %}
-						仅对朋友公开
-					{% endifequal %}
-					{% ifequal tarsusaItem.public "public" %}
-						完全公开
-					{% endifequal %}
-					&nbsp;| &nbsp;
-					{{tarsusaItem.usermodel.dispname|escape}}创建
-
 				{% endif %}
+
+				&nbsp;| &nbsp;
+				{% ifequal tarsusaItem.public "private" %}
+					不公开
+				{% endifequal %}
+				{% ifequal tarsusaItem.public "publicOnlyforFriends" %}
+					仅对朋友公开
+				{% endifequal %}
+				{% ifequal tarsusaItem.public "public" %}
+					完全公开
+				{% endifequal %}
+				&nbsp;| &nbsp;
+				{{tarsusaItem.usermodel.dispname|escape}}创建
+
 			</div>
 
 			<div class="controlBlock topSep">分类：&nbsp;&nbsp;<span class="white">{{tarsusaItemTags}}</span>&nbsp;&nbsp;</div>

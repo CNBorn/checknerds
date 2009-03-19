@@ -1,29 +1,25 @@
 {% extends "mobile_ibase.html" %}
 {% block content-holder %}
 <div class="content">
-{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
+	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
+		<div class="item">
+		<a href="/doneItem/{{tarsusaItem_UserToDoItem.key.id}}" class="check"><img class="imgcheck" border="0" align="left" src="/img/accept32.png"></a>
+		<span class="itemtitle">	<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a></span>
+		<span class="desc">{{ tarsusaItem_UserToDoItem.comment|escape|truncatewords:3 }}</span>
+		</div>
+	{% endfor %}
 
-<div class="item">
-<a href="/doneItem/{{tarsusaItem_UserToDoItem.key.id}}" class="check">
-<img class="imgcheck" border="0" align="left" src="/img/accept32.png">
-</a>
-<span class="itemtitle">
-<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
-</span><span class="desc">{{ tarsusaItem_UserToDoItem.comment|escape|truncatewords:3 }}</span>
-</div>
-{% endfor %}
-
-<table width="100%" cellspacing="0" cellpadding="2" border="0">
-<tbody><tr><td width="50%" align="center">
-{% if previouspagestamp %}
-<a class="control" href="/m/todo/p/{{previouspagestamp}}">上一页</a>
-{% endif %}
-</td><td width="50%" align="center">
-{% if nextpagestamp %}
-<a class="control" href="/m/todo/{{nextpagestamp}}">下一页</a>
-{% endif %}
-</td>
-</tr></tbody><table>
+	<table width="100%" cellspacing="0" cellpadding="2" border="0">
+	<tbody><tr><td width="50%" align="center">
+	{% if previouspagestamp %}
+		<a class="control" href="/m/todo/p/{{previouspagestamp}}">上一页</a>
+	{% endif %}
+	</td><td width="50%" align="center">
+	{% if nextpagestamp %}
+		<a class="control" href="/m/todo/{{nextpagestamp}}">下一页</a>
+	{% endif %}
+	</td>
+	</tr></tbody></table>
 </div>
 {% endblock content-holder %}
 

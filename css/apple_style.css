@@ -69,6 +69,7 @@ overflow: hidden;
 }
 
 div.nav a:link, div.nav a:visited {
+-webkit-border-radius: 5px;
 -moz-border-radius-bottomleft:5px;
 -moz-border-radius-bottomright:5px;
 -moz-border-radius-topleft:5px;
@@ -142,6 +143,8 @@ width:32px;
 span.itemtitle {
 font-size:18px;
 text-shadow:1px 1px 5px #F0F8E4;
+height: 1em;
+overflow: hidden;
 }
 
 span.desc {

@@ -655,3 +655,7 @@
 	IN 09.03.18
 		Fixed Bug of displaying non-public RoutineDoneLog in publicFeed.
 		iPod Mobile version usability improved.
+	IN 09.03.19
+		iPod Mobile version usability improved.
+		Added EditItem function in iPod Mobile Version.
+			

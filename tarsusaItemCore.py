@@ -24,6 +24,7 @@ from google.appengine.ext import db
 import time
 import datetime
 import string
+import re
 
 import memcache
 
@@ -496,6 +497,11 @@ class EditItemProcess(tarsusaRequestHandler):
 
 			tItem.put()
 			CurrentUser.put()
+
+			#Redirect specificly for mobile version.
+			if re.search('/m/', self.referer):
+				#self.write(self.referer)
+				self.redirect("/i/" + str(tItem.key().id()))
 
 		else:
 			self.write('Sorry, Your session is out of time.')
