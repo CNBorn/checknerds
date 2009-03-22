@@ -70,10 +70,7 @@ overflow: hidden;
 
 div.nav a:link, div.nav a:visited {
 -webkit-border-radius: 5px;
--moz-border-radius-bottomleft:5px;
--moz-border-radius-bottomright:5px;
--moz-border-radius-topleft:5px;
--moz-border-radius-topright:5px;
+-moz-border-radius:5px;
 display:block;
 /*line-height:17px;*/
 padding:5px 0px 5px 0px;
@@ -127,12 +124,29 @@ text-align: center;
 display:block;
 padding: 5px;
 background-color: #D1DEBD;
+-webkit-border-radius: 5px;
+-moz-border-radius:5px;
 }
 a.control:hover {
 text-decoration: none;
 background-color: #9C9B50;
 color: #FFF;
 }
+
+a.action:link, a.action:visited {
+border:2px solid #a8b296;
+text-align: center;
+display:block;
+padding: 5px;
+-webkit-border-radius: 5px;
+-moz-border-radius:5px;
+}
+a.action:hover {
+text-decoration: none;
+background-color: #9C9B50;
+color: #FFF;
+}
+
 
 .imgcheck {
 float:left;
@@ -211,12 +225,7 @@ margin:15px 10px 17px 10px;
 padding:0;
 }
 
-ul.form li:hover {
-background:#FFFFFF none repeat scroll 0 0;
-}
-ul.form li {
-	padding:7px 10px;
-}
+
 ul li {
 border-top:1px solid #B4B4B4;
 color:#666666;
@@ -265,24 +274,6 @@ small.author {
 color: #BBB;
 }
 
-.r small {
-color: #BBB;
-}
-
-.r small strong {
-color: #666;
-}
-
-.textbox {
-padding: 2px;
-border: 1px solid #CCC;
-}
-
-.textbox:focus {
-padding: 2px;
-border: 1px solid #0C0;
-}
-
 .go {
 border: 1px solid #999;
 border-left: 1px solid #EEF;
@@ -293,8 +284,20 @@ background-color: #577DE4;
 color: #FFF;
 }
 
+
+
+ul.form li:hover {
+background:#FFFFFF none repeat scroll 0 0;
+}
+ul.form li {
+	padding:7px 10px;
+}
+
+
 /* Derived from This iPhone UI Framework kit */
-ul li input[type="text"], ul li input[type="password"], ul li textarea, ul li select {iphone.css (第 611 行)
+ul li input[type="text"], ul li input[type="password"], ul li textarea, ul li select {
+-webkit-border-radius: 5px;
+-moz-border-radius:5px;
 -x-system-font:none;
 background:#FFFFFF repeat scroll 0 0;
 border:0 none;
@@ -349,7 +352,8 @@ div.control {
 font-size: 13px;
 font-weight: bold;
 -webkit-border-radius: 5px;
-border: 2px solid #999;
+-moz-border-radius:5px;
+border: 1px solid #BBB;
 }
 
 div.controlBlock {
@@ -357,7 +361,7 @@ padding: 5px 7px 5px 7px;
 }
 
 div.topSep {
-border-top: 1px solid #999;
+border-top: 1px solid #BBB;
 }
 
 

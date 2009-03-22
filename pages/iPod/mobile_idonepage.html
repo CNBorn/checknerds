@@ -2,12 +2,17 @@
 <div class="content">
 	{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
 		<div class="item">
-			<a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="check">
-				<img class="imgcheck" border="0" align="left" src="/img/remove32.png">
-			</a>
-			<span class="itemtitle">
-			<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
-			</span><span class="desc">&nbsp;</span>
+			<table width="100%" border=0 cellspacing=0 cellpadding=0><tr>
+			<td width=35>
+				<a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="check"><img class="imgcheck" border="0" align="left" src="/img/remove32.png"></a>
+			</td>
+			<td>
+				<span class="itemtitle"><a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a></span>
+			</td>
+			</tr>
+			<tr><td></td>
+			<td><span class="desc">&nbsp;</span></td>
+			</tr></table>
 		</div>
 	{% endfor %}
 

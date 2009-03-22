@@ -28,6 +28,55 @@ import memcache
 ## Caution!
 ## These funtions here won't check permission for login!
 
+def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddate='', startdonedate='', enddonedate='', sort='asc', maxitems=9, omittopbottom=False):
+	
+	ThisUser = tarsusaUser.get_by_id(int(userid))
+	Item_List = []
+	
+	#Get tarsusaItemCollection
+	
+	query = tarsusaItem.all()
+	query.filter('user =', ThisUser.user)
+	query.filter('routine =', routine)
+	query.filter('done =', done)
+
+	if startdate != '':
+		query.filter('date >=', startdate)
+	
+	if enddate != '':
+		query.filter('date <=', enddate)
+	
+	if startdonedate != '':
+		query.filter('donedate >=', startdonedate)
+	
+	if enddonedate != '':
+		query.filter('donedate <=', enddonedate)
+	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
+
+	for each_tarsusaItem in tarsusaItemCollection_queryResults:
+		
+		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : str(each_tarsusaItem.date), 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
+		Item_List.append(this_item)
+
+
+	#Default order by date DESC.
+	
+	#sort the results order by donedate:
+	#Sort Algorithms from
+	#http://www.lixiaodou.cn/?p=12
+	length = len(Item_List)
+	for i in range(0,length):
+		for j in range(length-1,i,-1):
+				if Item_List[j]['date'] > Item_List[j-1]['date']:
+					temp = Item_List[j]
+					Item_List[j]=Item_List[j-1]
+					Item_List[j-1]=temp
+	#---
+
+	return Item_List
+
+
+
 def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
 
 	#Get user's donelog

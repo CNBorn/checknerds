@@ -1,22 +1,39 @@
 {% extends "mobile_ibase.html" %}{% block content-holder %}<div class="content">{% for tarsusaItem_DailyRoutine in tarsusaItemCollection_DailyRoutine %}
 
-<div class="item">{% if tarsusaItem_DailyRoutine.donetoday %}
-<a href='/undoneItem/{{tarsusaItem_DailyRoutine.key.id}}' class="check">
-<img class="imgcheck" border="0" align="left" src="/img/remove32.png">
-</a>
-
-<span class="itemtitle">
-{{ tarsusaItem_DailyRoutine.name|escape }}
-</span><span class="desc">{{ tarsusaItem_DailyRoutine.comment|escape }}
-</span>
-
-
+<div class="item">
+	<table width="100%" border=0 cellspacing=0 cellpadding=0><tr>
+			<td width=35>
+				{% if tarsusaItem_DailyRoutine.donetoday %}
+					<a href='/undoneItem/{{tarsusaItem_DailyRoutine.key.id}}' class="check"><img class="imgcheck" border="0" align="left" src="/img/remove32.png"></a>
+					</td>
+					<td>
+						<span class="itemtitle">
+						{{ tarsusaItem_DailyRoutine.name|escape }}
+						</span>
+					</td>
+					<tr><td></td>
+					<td>
+						<span class="desc">{{ tarsusaItem_DailyRoutine.comment|escape }}</span>
+					</td>
+					</tr></table>
 {% else %}
 
 <a href="/doneItem/{{tarsusaItem_DailyRoutine.key.id}}" class="check">
 <img class="imgcheck" border="0" align="left" src="/img/accept32.png"></a>
+	</td>
+					<td>
 
-<span class="itemtitle"><a href="/i/{{tarsusaItem_DailyRoutine.key.id}}">{{ tarsusaItem_DailyRoutine.name|escape }}</a></span><span class="desc">{{ tarsusaItem_DailyRoutine.comment|escape }}</span>
+<span class="itemtitle"><a href="/i/{{tarsusaItem_DailyRoutine.key.id}}">{{ tarsusaItem_DailyRoutine.name|escape }}</a></span>
+	</td>
+					<tr><td></td>
+					<td>
+
+
+<span class="desc">{{ tarsusaItem_DailyRoutine.comment|escape }}</span>
+	</td>
+					</tr></table>
+
+
 {% endif %}
 
 </div>{% endfor %}

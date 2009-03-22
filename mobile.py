@@ -78,7 +78,9 @@ class mMainPage(tarsusaRequestHandler):
 
 class mToDoPage(tarsusaRequestHandler):
 	def get(self):
-			
+		#Initialize	
+		tag_ViewFirstPage = True
+
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()					
@@ -94,17 +96,29 @@ class mToDoPage(tarsusaRequestHandler):
 				pass
 
 			if pageid != None and len(self.request.path) > 8:
+				tag_ViewFirstPage = False
 				this_timestamp = datetime.datetime.fromtimestamp(int(pageid))
 				
 				if tag_ViewPreviousPage == True:
-					tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date > :2 ORDER BY date DESC LIMIT 9", CurrentUser.user, this_timestamp)
+					#Limitation cut with different login since recent GAE updates.
+					#problem arouses around r118.
+					tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date > :2 ORDER BY date ASC LIMIT 9", CurrentUser.user, this_timestamp)
+					#This is not perfect! A future function is needed in tarsusaCore.
+
+					#Test with new function.
+					self.write(tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, startdate=this_timestamp))
+
 				else:
 					tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date <= :2 ORDER BY date DESC LIMIT 9", CurrentUser.user, this_timestamp)
+					#test with new function.
+					self.write(tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, enddate=this_timestamp))
 
 
 			else:
 				## Below begins user todo items. for MOBILE page.
 				tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)
+				# r120m test with new function in tarsusaCore.
+				#self.write(tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False))
 			
 			#Determine next page			
 			Find_Last_Index = 0
@@ -113,7 +127,11 @@ class mToDoPage(tarsusaRequestHandler):
 			for each_item in tarsusaItemCollection_UserTodoItems:
 				if Find_Last_Index == 0:
 					previous_timestamp = int(time.mktime(each_item.date.timetuple()))
-				next_timestamp = int(time.mktime(each_item.date.timetuple()))
+				#Select 9 items, and the first&last one was initialy for determine next page ...
+				#but the display shows all 9 items.
+				#so if a query reaches the end of datastore with 9 results, it may still displays the 'next' button
+				elif Find_Last_Index == 8:
+					next_timestamp = int(time.mktime(each_item.date.timetuple()))
 				Find_Last_Index += 1	
 			
 			if Find_Last_Index == 1 and tag_ViewPreviousPage == True:
@@ -132,7 +150,7 @@ class mToDoPage(tarsusaRequestHandler):
 			}
 			
 			# if users items are not so many, do not display the pagination
-			if previous_timestamp != 0 and Find_Last_Index >= 9 and pageid != None:
+			if Find_Last_Index >= 1 and tag_ViewFirstPage != True:
 				template_values['previouspagestamp'] = previous_timestamp
 			
 			if next_timestamp != 0 and Find_Last_Index >= 9 and pageid != None:
