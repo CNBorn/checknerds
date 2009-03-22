@@ -663,5 +663,7 @@
 			There is still some problems on previous page issue.
 			Beginning to replace GQlQuery with new function in tarsusaCore.
 			FirstTest went well.
-
+		---
+		Done test well with new get_tarsusaItemCollection function in tarsusaCore.
+			Will finish up both mobile/ipod version of TODO/DONE pages in new revision.
 

@@ -102,43 +102,53 @@ class mToDoPage(tarsusaRequestHandler):
 				if tag_ViewPreviousPage == True:
 					#Limitation cut with different login since recent GAE updates.
 					#problem arouses around r118.
-					tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date > :2 ORDER BY date ASC LIMIT 9", CurrentUser.user, this_timestamp)
+					#tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date > :2 ORDER BY date ASC LIMIT 9", CurrentUser.user, this_timestamp)
 					#This is not perfect! A future function is needed in tarsusaCore.
 
 					#Test with new function.
-					self.write(tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, startdate=this_timestamp))
+					#self.write(tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, startdate=this_timestamp))
+					tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(userid=CurrentUser.key().id(), done=False, startdate=this_timestamp)
 
 				else:
-					tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date <= :2 ORDER BY date DESC LIMIT 9", CurrentUser.user, this_timestamp)
+					#tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date <= :2 ORDER BY date DESC LIMIT 9", CurrentUser.user, this_timestamp)
 					#test with new function.
 					self.write(tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, enddate=this_timestamp))
-
+					tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(userid=CurrentUser.key().id(), done=False, enddate=this_timestamp)
+					self.write(len(tarsusaItemCollection_UserTodoItems))
 
 			else:
 				## Below begins user todo items. for MOBILE page.
-				tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)
+				#tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)
 				# r120m test with new function in tarsusaCore.
 				#self.write(tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False))
+				tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False)
 			
 			#Determine next page			
 			Find_Last_Index = 0
 			previous_timestamp = 0
 			next_timestamp = 0
-			for each_item in tarsusaItemCollection_UserTodoItems:
-				if Find_Last_Index == 0:
-					previous_timestamp = int(time.mktime(each_item.date.timetuple()))
+			
+			#for each_item in tarsusaItemCollection_UserTodoItems:
+			#	if Find_Last_Index == 0:
+			#		previous_timestamp = int(time.mktime(each_item['date'].timetuple()))
 				#Select 9 items, and the first&last one was initialy for determine next page ...
 				#but the display shows all 9 items.
 				#so if a query reaches the end of datastore with 9 results, it may still displays the 'next' button
-				elif Find_Last_Index == 8:
-					next_timestamp = int(time.mktime(each_item.date.timetuple()))
-				Find_Last_Index += 1	
+			#	elif Find_Last_Index == 8:
+			#		next_timestamp = int(time.mktime(each_item['date'].timetuple()))
+			#	Find_Last_Index += 1	
+			
+			Find_Last_Index = len(tarsusaItemCollection_UserTodoItems)
+			self.write(Find_Last_Index)
+
+			previous_timestamp = int(time.mktime(tarsusaItemCollection_UserTodoItems[0]['date'].timetuple()))
+			next_timestamp = int(time.mktime(tarsusaItemCollection_UserTodoItems[Find_Last_Index -1 ]['date'].timetuple()))
 			
 			if Find_Last_Index == 1 and tag_ViewPreviousPage == True:
 				self.redirect("/m/todo")
 				
-			if next_timestamp == 0 and previous_timestamp == 0:
-				self.redirect("/m/todo")
+			#if next_timestamp == 0 and previous_timestamp == 0:
+			#	self.redirect("/m/todo")
 
 			template_values = {
 				'MobilePageTag': 'ToDo',

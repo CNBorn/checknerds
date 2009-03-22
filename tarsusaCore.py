@@ -41,26 +41,30 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	query.filter('done =', done)
 
 	if startdate != '':
-		query.filter('date >=', startdate)
+		query.filter('date >=',startdate)
+		query.order('-date')
 	
 	if enddate != '':
-		query.filter('date <=', enddate)
+		query.filter('date <=',enddate)
+		query.order('-date')
 	
 	if startdonedate != '':
-		query.filter('donedate >=', startdonedate)
+		query.filter('donedate >=', datetime.datetime.fromtimestamp(int(startdonedate)))
 	
 	if enddonedate != '':
-		query.filter('donedate <=', enddonedate)
+		query.filter('donedate <=',datetime.datetime.fromtimestamp(int(enddonedate)))
+	
+	#Default order by date DESC.	
+	query.order('-date')
+
 	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
 
 	for each_tarsusaItem in tarsusaItemCollection_queryResults:
 		
-		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : str(each_tarsusaItem.date), 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
+		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
 		Item_List.append(this_item)
 
 
-	#Default order by date DESC.
-	
 	#sort the results order by donedate:
 	#Sort Algorithms from
 	#http://www.lixiaodou.cn/?p=12
