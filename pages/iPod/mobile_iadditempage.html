@@ -6,11 +6,18 @@ if (thisfield.value == defaulttext) {
 thisfield.value = "";
 }
 }
+
 function clickrecall(thisfield, defaulttext) {
 if (thisfield.value == "") {
+documentElement.getElementById("button").value = defaulttext;
+//documentElement.getElementById("button").disabled = True;
 thisfield.value = defaulttext;
- }
- }
+}
+/*if (thisfield.value  == "标题") {
+document.getElementById("button").disabled = True;
+}*/
+}
+
 </script>
 <div class="content">
 <h2>添加项目</h2>
@@ -18,8 +25,6 @@ thisfield.value = defaulttext;
 <ul class="form">
 <li><input id="name" type="text" onblur="clickrecall(this,'标题')" onclick="clickclear(this, '标题')" value="标题" name="name"/></li>
 <li><textarea name="comment" onblur="clickrecall(this,'内容')" onclick="clickclear(this, '内容')">内容</textarea></li>
-<!--<li><input id="name" type="text" onblur="clickrecall(this,'{{addItemCatName}}')" onclick="clickclear(this, '{{addItemCatName}}')" value="{{addItemCatName}}" name="tags"/></li>
-<li><input id="name" type="text" onblur="clickrecall(this,'{{addItemToday}}')" onclick="clickclear(this, '{{addItemToday}}')" value="{{addItemToday}}" name="inputDate"/></li>!-->
 
 <li>
 <select name="routine">
@@ -35,9 +40,7 @@ thisfield.value = defaulttext;
 <table width="100%"><tbody>
 <tr>
 <td align="center">
-<!--<input type="image" alt="添加项目" src=""/>-->
-<input type="submit" name="submit" value="  添   加   项   目   " style="height: 35px; width: 100%;" >
-<!--a class="control" href="{{RefererURL}}">添加</a-->
+<input type="submit" id="button" name="submit" value="  添   加   项   目   " style="height: 35px; width: 100%;" >
 </td>
 </tr>
 </form>
