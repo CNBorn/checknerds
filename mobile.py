@@ -101,6 +101,9 @@ class mToDoPage(tarsusaRequestHandler):
 				if tag_ViewPreviousPage == True:
 					#Limitation sharding startpoint differed since recent GAE updates.
 					#problem arouses around r118.
+					
+					#print this_timestamp
+
 					#tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date > :2 ORDER BY date ASC LIMIT 9", CurrentUser.user, this_timestamp)
 					tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(userid=CurrentUser.key().id(), done=False, startdate=this_timestamp)
 

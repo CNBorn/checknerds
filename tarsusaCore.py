@@ -44,30 +44,34 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		strOrderSort = 'donedate'
 	else:
 		strOrderSort = 'date'
-		
+
+	#If it doesn't run, run this line
+	#print strOrderSort
 
 	if startdate != '':
+		print startdate
 		query.filter('date >', startdate)
 		query.order('-date')
 		strOrderSort = "date"
 	
 	if enddate != '':
+		print enddate
 		query.filter('date <', enddate)
 		query.order('-date')
 		strOrderSort = "date"
 	
 	#Default order by date DESC.	
-	#query.order('-date')
+	query.order('-date')
 	
-	#if startdonedate != '':
-	#	query.filter('donedate >=', startdonedate)
-	#	query.order('-donedate')
-	#	strOrderSort = "donedate"
+	if startdonedate != '':
+		query.filter('donedate >=', startdonedate)
+		query.order('-donedate')
+		strOrderSort = "donedate"
 	
-	#if enddonedate != '':
-	#	query.filter('donedate <=', enddonedate)
-	#	query.order('-donedate')
-	#	strOrderSort = "donedate"
+	if enddonedate != '':
+		query.filter('donedate <=', enddonedate)
+		query.order('-donedate')
+		strOrderSort = "donedate"
 	
 
 	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
@@ -75,7 +79,7 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		
 		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
 		Item_List.append(this_item)
-	#print Item_List
+	print Item_List
 
 	#sort the results order by donedate:
 	#Sort Algorithms from

@@ -667,4 +667,8 @@
 		Done test well with new get_tarsusaItemCollection function in tarsusaCore.
 			Will finish up both mobile/ipod version of TODO/DONE pages in new revision.
 	IN 09.03.25
-		
+		Testing with new function and failed.
+	IN 09.03.26
+		Testing with new function, and run successfuly by changing almost nothing.
+		therefore commit for a snapshot.
+		Added a new icon for checkbox in iPod version.
