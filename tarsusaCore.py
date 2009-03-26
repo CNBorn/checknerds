@@ -40,10 +40,6 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	query.filter('routine =', routine)
 	query.filter('done =', done)
 
-	if done == True:
-		strOrderSort = 'donedate'
-	else:
-		strOrderSort = 'date'
 	
 	#If it doesn't run, run this line
 	#print strOrderSort
@@ -55,19 +51,24 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	if enddate != '':
 		print enddate
 		query.filter('date <', enddate)
-		query.order('-date')
-
+		#query.order('-date')
 
 	if startdonedate != '':
 		query.filter('donedate >', startdonedate)
 		query.order('donedate')
 	if enddonedate != '':
 		query.filter('donedate <', enddonedate)
-		query.order('-donedate')
+		#query.order('-donedate')
 		
+	if done == True:
+		strOrderSort = 'donedate'
+		#Default order by date DESC.	
+		query.order('-donedate')
+	else:
+		strOrderSort = 'date'
+		#Default order by date DESC.	
+		query.order('-date')
 	
-	#Default order by date DESC.	
-	query.order('-date')
 
 
 	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
