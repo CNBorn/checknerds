@@ -34,7 +34,6 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	Item_List = []
 	
 	#Get tarsusaItemCollection
-	
 	query = tarsusaItem.all()
 	query.filter('user =', ThisUser.user)
 	query.filter('routine =', routine)
@@ -43,13 +42,13 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	
 
 	if startdate != '':
-		print startdate
+		#print startdate
 		query.filter('date >', startdate)
 		query.order('date')
 	if enddate != '':
-		print enddate
+		#print enddate
 		query.filter('date <', enddate)
-		#query.order('-date')
+		query.order('-date')
 
 	if startdonedate != '':
 		query.filter('donedate >', startdonedate)
@@ -57,7 +56,7 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		#Above will cause that weird error.(Got nothing.)
 	if enddonedate != '':
 		query.filter('donedate <', enddonedate)
-		#query.order('-donedate')
+		query.order('-donedate')
 		
 	if done == True:
 		strOrderSort = 'donedate'
@@ -70,7 +69,7 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		query.order('-date')
 	
 	#If it doesn't run, run this line
-	print strOrderSort
+	#print strOrderSort
 
 
 	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
