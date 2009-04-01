@@ -3,8 +3,8 @@
 <h2>已完成项目</h2>
 <ul>
 {% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}
-<li><small><a href="/undoneItem/{{tarsusaItem_UserDoneItem.key.id}}" class="check">撤销</a></small>
-<a href="/i/{{ tarsusaItem_UserDoneItem.key.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a></li>
+<li><small><a href="/undoneItem/{{tarsusaItem_UserDoneItem.id}}" class="check">撤销</a></small>
+<a href="/i/{{ tarsusaItem_UserDoneItem.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a></li>
 {% endfor %}</ul><small>&nbsp;&nbsp;
 {% if nextpagestamp %}
 <a href="/m/done/{{nextpagestamp}}">下一页</a>&nbsp;

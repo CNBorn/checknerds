@@ -673,3 +673,9 @@
 		therefore commit for a snapshot.
 		Added a new icon for checkbox in iPod version.
 		r123 is the snapshot that previous page function seems ok.
+	IN 09.04.01
+		the Title of iPhone/iPod page is tweaking serveal days ago.
+		r126 is a stable function commit for TodoPage_Mobile
+		seems Fixed these bugs of Todo/Done page.
+		Modified MobilePage template to fit in the new functions.
+		so r127 is pretty ok.

@@ -23,6 +23,15 @@ indexes:
   - name: date
     direction: desc
 
+# Used 4 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: done
+  - name: done
+  - name: routine
+  - name: user
+  - name: donedate
+
 # Used 347 times in query history.
 - kind: tarsusaItem
   properties:
@@ -68,7 +77,7 @@ indexes:
   - name: user
   - name: date
 
-# Used 20 times in query history.
+# Used 24 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -78,7 +87,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 3595 times in query history.
+# Used 3597 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -87,7 +96,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 83 times in query history.
+# Used 91 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -98,7 +107,15 @@ indexes:
   - name: date
     direction: desc
 
-# Unused in query history -- copied from input.
+# Used 23 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: done
+  - name: routine
+  - name: user
+  - name: donedate
+
+# Used 10 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -108,7 +125,7 @@ indexes:
   - name: donedate
     direction: desc
 
-# Used 1320 times in query history.
+# Used 1378 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -117,7 +134,7 @@ indexes:
   - name: donedate
     direction: desc
 
-# Used once in query history.
+# Used 3 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -175,12 +192,27 @@ indexes:
   - name: date
     direction: desc
 
-# Used 6937 times in query history.
+# Used 6938 times in query history.
 - kind: tarsusaItem
   properties:
   - name: routine
   - name: user
   - name: date
+    direction: desc
+
+# Used 4 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: routine
+  - name: user
+  - name: donedate
+
+# Used 5 times in query history.
+- kind: tarsusaItem
+  properties:
+  - name: routine
+  - name: user
+  - name: donedate
     direction: desc
 
 # Used 8 times in query history.

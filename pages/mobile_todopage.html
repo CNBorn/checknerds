@@ -5,8 +5,8 @@
 <ul>
 {% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}
 <li>
-<small><a href="/doneItem/{{tarsusaItem_UserToDoItem.key.id}}" class="check">完成</a></small>
-<a href="/i/{{ tarsusaItem_UserToDoItem.key.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a></li>
+<small><a href="/doneItem/{{tarsusaItem_UserToDoItem.id}}" class="check">完成</a></small>
+<a href="/i/{{ tarsusaItem_UserToDoItem.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a></li>
 {% endfor %}</ul><small>&nbsp;&nbsp;{% if nextpagestamp %}
 <a href="/m/todo/{{nextpagestamp}}">下一页</a>&nbsp;
 {% endif %}

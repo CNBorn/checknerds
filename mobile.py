@@ -209,8 +209,8 @@ class mDonePage(tarsusaRequestHandler):
 			Find_Last_Index = len(tarsusaItemCollection_UserDoneItems)
 			#self.write(Find_Last_Index)
 
-			previous_timestamp = int(time.mktime(tarsusaItemCollection_UserDoneItems[0]['date'].timetuple()))
-			next_timestamp = int(time.mktime(tarsusaItemCollection_UserDoneItems[Find_Last_Index -1 ]['date'].timetuple()))
+			previous_timestamp = int(time.mktime(tarsusaItemCollection_UserDoneItems[0]['donedate'].timetuple()))
+			next_timestamp = int(time.mktime(tarsusaItemCollection_UserDoneItems[Find_Last_Index -1 ]['donedate'].timetuple()))
 			
 			#if next_timestamp == 0 and previous_timestamp == 0:
 			#	self.redirect("/m/todo")

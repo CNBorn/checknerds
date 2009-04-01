@@ -16,8 +16,11 @@ def get_UserAgent(str_user_agent):
 	if re.search('iPod', str_user_agent):
 		#iPod detected
 		return 'iPod'
+	elif re.search('iPhone', str_user_agent):
+		#iPhone detected.
+		return 'iPod'
 	else:
-		#Non-iPod detected.
+		#Non-Apple device.
 		return 'Non-iPod'
 
 

@@ -18,6 +18,7 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.ext import search
+import logging
 from modules import *
 from base import *
 
@@ -35,9 +36,11 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	
 	#Get tarsusaItemCollection
 	query = tarsusaItem.all()
+	#It seems that when query gets done=True, it returns nothing!
+	query.filter('done =', done)
+
 	query.filter('user =', ThisUser.user)
 	query.filter('routine =', routine)
-	query.filter('done =', done)
 
 	
 
@@ -51,17 +54,26 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		query.order('-date')
 
 	if startdonedate != '':
+		logging.info('startdonedate')
+		logging.info(startdonedate)
 		query.filter('donedate >', startdonedate)
 		query.order('donedate')
 		#Above will cause that weird error.(Got nothing.)
 	if enddonedate != '':
+		logging.info('enddonedate')
+		logging.info(enddonedate)
 		query.filter('donedate <', enddonedate)
 		query.order('-donedate')
 		
 	if done == True:
 		strOrderSort = 'donedate'
-		if startdate == '':	
+		if startdate == '' and enddonedate == '':	
 			#Default order by date DESC.	
+			#For example: Done first page.
+			logging.info('donefirstpage')
+			#query.filter('done =', True)
+			#query.filter('donedate !=', datetime.datetime.now())
+			#logging.info(query.fetch(limit=9))
 			query.order('-donedate')
 	else:
 		strOrderSort = 'date'
