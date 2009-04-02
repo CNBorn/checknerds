@@ -126,8 +126,11 @@ class mToDoPage(tarsusaRequestHandler):
 			#self.write(Find_Last_Index)
 			#self.write(tarsusaItemCollection_UserTodoItems)
 
-			previous_timestamp = int(time.mktime(tarsusaItemCollection_UserTodoItems[0]['date'].timetuple()))
-			next_timestamp = int(time.mktime(tarsusaItemCollection_UserTodoItems[Find_Last_Index -1 ]['date'].timetuple()))
+			try:
+				previous_timestamp = int(time.mktime(tarsusaItemCollection_UserTodoItems[0]['date'].timetuple()))
+				next_timestamp = int(time.mktime(tarsusaItemCollection_UserTodoItems[Find_Last_Index -1 ]['date'].timetuple()))
+			except:
+				pass
 			
 			if Find_Last_Index == 1 and tag_ViewPreviousPage == True:
 				self.redirect("/m/todo")
@@ -208,9 +211,12 @@ class mDonePage(tarsusaRequestHandler):
 		
 			Find_Last_Index = len(tarsusaItemCollection_UserDoneItems)
 			#self.write(Find_Last_Index)
-
-			previous_timestamp = int(time.mktime(tarsusaItemCollection_UserDoneItems[0]['donedate'].timetuple()))
-			next_timestamp = int(time.mktime(tarsusaItemCollection_UserDoneItems[Find_Last_Index -1 ]['donedate'].timetuple()))
+			
+			try:
+				previous_timestamp = int(time.mktime(tarsusaItemCollection_UserDoneItems[0]['donedate'].timetuple()))
+				next_timestamp = int(time.mktime(tarsusaItemCollection_UserDoneItems[Find_Last_Index -1 ]['donedate'].timetuple()))
+			except:
+				pass
 			
 			#if next_timestamp == 0 and previous_timestamp == 0:
 			#	self.redirect("/m/todo")

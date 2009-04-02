@@ -33,13 +33,24 @@
 			访问移动版本请使用移动设备上的浏览器进行访问，网址为 http://www.checknerds.com/m<BR><BR>
 									</ul>
 						</div>
+						
+						<div id="welcome_ajaxcontent5" style="display:none;">
+                        <ul><div name="fl" style="float:left; margin-right: 10px;"><img src="/img/iphone2.jpg"></div>
+			崭新的移动体验<BR><BR>			
+			CheckNerds移动版本现在支持Apple iPhone/iPod Touch——在大尺寸触摸屏上规划您的事项。<BR><BR>
+			具备特别为移动版Safari浏览器优化的、适合触摸屏操作的界面，<BR><BR>		
+			访问iPhone/iPod Touch移动版本，请使用设备上的Safari浏览器访问网址 http://www.checknerds.com/m<BR><BR>
+						</ul>
+						</div>						
+					
 					</div>
 					<div id="featuredcode3-bot"></div>
 					<div style="margin: 10px 10px 0px 10px;">		
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('1')";>1</a>
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('2')";>2</a>
 							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('3')";>3</a>
-							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('4')";><span style="color:#F00">4</span></a>
+							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('4')";>4</a>
+							<a class="g" href="#;" onclick="ajax_WelcomeAjaxHTMLContent('5')";>5</a>
 					</div>
 					<script type="text/javascript">
 						function ajax_WelcomeAjaxHTMLContent(strPageNum){						
@@ -47,6 +58,7 @@
 							$('#welcome_ajaxcontent2').hide();
 							$('#welcome_ajaxcontent3').hide();
 							$('#welcome_ajaxcontent4').hide();
+							$('#welcome_ajaxcontent5').hide();
 							$('#welcome_ajaxcontent' + strPageNum).fadeIn('slow');
 						}
 						window.onload = function() {							
@@ -56,6 +68,7 @@
 							$('#welcome_ajaxcontent2 style').display='none';
 							$('#welcome_ajaxcontent3 style').display='none';
 							$('#welcome_ajaxcontent4 style').display='none';
+							$('#welcome_ajaxcontent5 style').display='none';
 						}
 					</script>
                 </div>

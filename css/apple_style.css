@@ -30,7 +30,8 @@ font-family:Arial,Helvetica,sans-serif;
 h3 {
 color: #96BE57;
 display: inline;
-font-size: medium;
+padding: 3px 0px 3px 3px;
+font-size: large;
 font-weight: bold;
 font-family:Arial,Helvetica,sans-serif;
 text-align: left;
@@ -52,7 +53,7 @@ padding: 3px;
 margin: 1px 0px 0px 0px;
 border-bottom: 1px solid #CCC;
 color: #333;
-height: 16px;
+height: 23px;
 font-size: small;
 overflow: hidden;
 }
