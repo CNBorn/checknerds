@@ -116,6 +116,54 @@ table{width:100%;}
 #googlead-top,#codelist-top{background-image:url(../img/div-right-ad-top.png);height:9px;width:242px;}
 #googlead-bot,#codelist-bot{background-image:url(../img/div-right-ad-bottom.png);height:7px;width:242px;}
 
+/* Stylesheets needed for California */
+#main-top{background-image:url(/img/div-main-top.png);height:9px;width:602px;}
+#main-bot{background-image:url(/img/div-main-bottom.png);height:9px;width:602px;}
+
+#main{width:600px;margin-left:80px}
+#main-mid{background-color:#FEFEF1;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;min-height:165px;text-align:left; margin-top: 0px; width: 600px;}
+
+#sidebar {float:left; line-height:18pt; width:50px;}
+#menulinks {float:left; width:60px;}
+
+#menulinks a.active, #menulinks a.active:hover {
+background-position:left bottom;
+color: black;
+text-decoration:none;
+font-weight:normal;
+}
+
+#menulinks a.top, #menulinks a.top:hover {
+background-position:left top;
+}
+
+#menulinks a.bottom, #menulinks a.bottom:hover {
+background-image:url(/img/sidebutton_bottom.png);
+background-position:left bottom;
+}
+
+#menulinks a:hover {
+font-weight:bold;
+}
+
+
+#menulinks a {
+background-image:url(/img/sidebutton_top.png);
+background-position:0px -6px;
+background-repeat:no-repeat;
+color:#9C9B50;
+display:block;
+font-size:14px;
+font-weight:normal;
+height:26px;
+padding-right:10px;
+padding-top:3px;
+text-align:right;
+text-decoration:none;
+width:70px;
+}
+
+
 /* button style of a, from mac.6.cn */
 a.g, a.g:active, a.g:visited {
 	-moz-border-radius: 5px;

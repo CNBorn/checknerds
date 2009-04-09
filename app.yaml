@@ -98,6 +98,9 @@ handlers:
 - url: /flushcache
   script: miscellaneous.py
 
+- url: /california
+  script: miscellaneous.py
+
 - url: /service/.+
   script: service.py
 

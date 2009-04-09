@@ -684,3 +684,6 @@
 		Fixed a bug when Todo/Done mobile gets nothing, it won't go wrong.
 		Tweaks in iPhone/iPod Mobile page.
 		iPhone/iPod Touch Mobile version release!
+	IN 09.04.10
+		Integrated the initial California page layout into Nevada.
+		Add a 'Browser Compatibility' section in AboutPage.
