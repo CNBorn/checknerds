@@ -224,12 +224,16 @@ class CaliforniaPage(tarsusaRequestHandler):
 
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
-			CurrentUser = self.get_user_db()		
+			CurrentUser = self.get_user_db()
+			import tarsusaCore
+			tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False)
+			
 			template_values = {
 					'PrefixCSSdir': "/",
 					'UserLoggedIn': 'Logged In',
 					'UserNickName': cgi.escape(CurrentUser.dispname),
 					'UserID': CurrentUser.key().id(),
+					'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserTodoItems,
 			}
 		
 		else:			

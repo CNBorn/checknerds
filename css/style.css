@@ -121,7 +121,19 @@ table{width:100%;}
 #main-bot{background-image:url(/img/div-main-bottom.png);height:9px;width:602px;}
 
 #main{width:600px;margin-left:80px}
-#main-mid{background-color:#FEFEF1;border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;min-height:165px;text-align:left; margin-top: 0px; width: 600px;}
+#main-mid{border-right-width:1px;border-left-width:1px;border-right-style:solid;border-left-style:solid;border-right-color:#DDEBC6;border-left-color:#DDEBC6;min-height:165px;text-align:left; margin-top: 0px; width: 600px;}
+
+#main ul{padding-top:10px;}
+#main ul li{
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	list-style-type: none;
+	font-size: 15px;
+	margin: 5px;
+	padding: 5px;
+	line-height: 20px;
+	background-color: #FFFEF1;
+}
 
 #sidebar {float:left; line-height:18pt; width:50px;}
 #menulinks {float:left; width:60px;}

@@ -11,15 +11,54 @@
 						<a class="bottom" href="#">已做</a>
 					</div>
 				</div>			
-			
+
+					<script type="text/javascript">
+						function ajax_Fold(strPageNum){						
+							$('#r_' + strPageNum).hide();
+							$('#r_' + strPageNum).fadeOut('slow');
+						}
+
+						function(o){
+							$(o).click(function(){
+								var rid = $(o).attr('id').split('_')[1];
+								var url = '/j/review/'+rid+'/fullinfo';
+								$.getJSON(url, function(r) {
+									$('#r_'+rid).hide();
+									//$('#review_'+rid).html(r.html);
+									$('#r_'+rid).show();
+									//load_event_monitor($('#review_'+rid+'_full'));
+        						});
+							return false;
+							}).hover_fold('unfolder');
+						}
+
+						</script>
+
+
+
 				<div id="main">
 					<div id="main-top"></div>
 					<div id="main-mid">
-						<!--Remove the next few lines to place an ad-->
-						<br />
-						<div style="margin-top:370px;">
-							Main	
-						</div>
+						<ul>
+							<li><img class="imgcheck" border="0" align="left" src="/img/accept16.png">&nbsp;
+							<input type="text">
+							</li>
+
+						{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}						
+							<li><a href="/doneItem/{{tarsusaItem_UserToDoItem.id}}" class="check"><img class="imgcheck" border="0" align="left" src="/img/checkbox16.png"></a>&nbsp;<span class="itemtitle"><a href="/i/{{ tarsusaItem_UserToDoItem.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a></span>
+							<!--div id="tb-{{tarsusaItem_UserToDoItem.id}}" style="float: right" class="rr"--!>
+							<a style="background: transparent none repeat scroll 0% 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;" href="#;" onclick="ajax_Fold('{{tarsusaItem_UserToDoItem.id}})'";>
+							<img title="展开全文" alt=">" src="http://www.douban.com/pics/arrow2.gif"/></a>	
+							
+							<!--/div--!>
+							</li>
+
+							<div id="r_{{tarsusaItem_UserToDoItem.id}}" style="padding: 5px;margin: 10px;">我的证据是应该还是星星堆满天适合你你唱的电视机开始下沙尘暴你懂吗 ...... <br/><br/><span class="pl">2009-04-10     2/2人推荐</span></div>
+
+
+						{% endfor %}
+						</ul>
+					
 					</div>
 					<div id="main-bot"></div>
 				</div>

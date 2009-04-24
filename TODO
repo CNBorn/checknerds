@@ -687,3 +687,5 @@
 	IN 09.04.10
 		Integrated the initial California page layout into Nevada.
 		Add a 'Browser Compatibility' section in AboutPage.
+	IN 09.04.24
+		Commit r130, branched to joybook.
