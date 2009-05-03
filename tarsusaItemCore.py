@@ -508,8 +508,8 @@ class EditItemProcess(tarsusaRequestHandler):
 
 
 def main():
-	application = webapp.WSGIApplication([('/doneItem/\\d+.+',DoneItem),
-									   ('/undoneItem/\\d+.+',UnDoneItem),
+	application = webapp.WSGIApplication([('/doneItem/\\d+',DoneItem),
+									   ('/undoneItem/\\d+',UnDoneItem),
 									   ('/removeItem/\\d+', RemoveItem),
 								       ('/additem',AddItemProcess),
 									   ('/edititem/\\d+', EditItemProcess), 

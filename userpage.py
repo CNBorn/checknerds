@@ -119,15 +119,24 @@ class UserDoneLogPage(tarsusaRequestHandler):
 					tarsusaItemCollection = tarsusaCore.get_UserDonelog(CurrentUser.key().id(), this_timestamp, 'next')
 				else:
 					tarsusaItemCollection = tarsusaCore.get_UserDonelog(CurrentUser.key().id(), this_timestamp, 'previous')
+			else: 
+				#If there is no parameter in the url, displays the default items.
+				tarsusaItemCollection = tarsusaCore.get_UserDonelog(CurrentUser.key().id())
+				#returned as dictionary, please refer to tarsusaCore.py
+			
+			if len(tarsusaItemCollection) == 0:
+				#If there is no parameter in the url, displays the default items.
+				#If there is no results of certain timestamp, displays the default items.
+				tarsusaItemCollection = tarsusaCore.get_UserDonelog(CurrentUser.key().id())
+				if len(tarsusaItemCollection) != 0: #just in case for the loop redireting(when user have done nothing).
+					#Or should try redirect.
+					self.redirect("/donelog")
 
 			#Memcached Donelog page for better performance.
 			IsCachedDonelogPage = memcache.get_item('userdonelog', CurrentUser.key().id())
 			if IsCachedDonelogPage:
 				strCachedDonelogPage = IsCachedDonelogPage
 			else:
-				tarsusaItemCollection = tarsusaCore.get_UserDonelog(CurrentUser.key().id())
-				#returned as dictionary, please refer to tarsusaCore.py
-
 				outputStringRoutineLog = '' #"本页面只显示7天内的完成记录<br />".decode('utf-8')
 				Donedate_of_previousRoutineLogItem = None  ## To display the routine item log by Daily.
 				DaysInDonelog = 0 #How many days are scaled in all data collection.
@@ -188,7 +197,7 @@ class UserDoneLogPage(tarsusaRequestHandler):
 						template_values['previouspagestamp'] = previous_timestamp		
 						#THIS ALWAYS APPEARS! CHECK!
 						#TODO!
-					if next_timestamp != 0 and next_timestampe != '':
+					if next_timestamp != 0:
 						template_values['nextpagestamp'] = next_timestamp			
 					if next_timestamp == 0 and previous_timestamp == 0 and pageid != None and donelog_withoutpage != True:
 						#Easy to cause 302!
@@ -212,7 +221,7 @@ class UserDoneLogPage(tarsusaRequestHandler):
 		
 				path = os.path.join(os.path.dirname(__file__), 'pages/donelog.html')
 				strCachedDonelogPage = template.render(path, template_values)
-				memcache.set_item("userdonelog", strCachedDonelogPage, CurrentUser.key().id())
+				#memcache.set_item("userdonelog", strCachedDonelogPage, CurrentUser.key().id())
 			self.response.out.write(strCachedDonelogPage)
 		else:
 			self.redirect('/')
@@ -238,8 +247,8 @@ class UserSettingPage(tarsusaRequestHandler):
 					
 					mail =	forms.CharField(label='您的邮箱(不会公开，无法更改)',widget=forms.TextInput(attrs={'readonly':'','size':'30','maxlength':'30','value':EditedUser.user.email()})) 
 					#urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
-					dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname}))
-					website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website}))	
+					dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname,'class':'sl'}))
+					website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website,'class':'sl'}))	
 					##Please reference more from the URL
 
 					class Meta:

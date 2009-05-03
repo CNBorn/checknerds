@@ -689,3 +689,7 @@
 		Add a 'Browser Compatibility' section in AboutPage.
 	IN 09.04.24
 		Commit r130, branched to joybook.
+	IN 09.05.03
+		Fixed Pagination problem for the donelog page. (Still testing.)
+		Styled UserSettingPage a little bit.
+		Changed URL setting in tarsusaItemCore.py, Solved a problem on Ubuntu Jaunty.
