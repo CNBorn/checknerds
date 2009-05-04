@@ -40,8 +40,18 @@
 					<div id="main-top"></div>
 					<div id="main-mid">
 						<ul>
-							<li><img class="imgcheck" border="0" align="left" src="/img/accept16.png">&nbsp;
-							<input type="text">
+							<li>
+							<form id="myForm" method="post" action="/additem">
+							<img class="imgcheck" border="0" align="left" src="/img/accept16.png">&nbsp;
+							<input type="text" name="name" class="textbox" />
+							<select name="public">
+							<option selected="selected" value="private">不公开</option>
+							<option value="public">完全公开</option>
+							<option value="publicOnlyforFriends">仅对朋友公开</option>
+							</select>
+							<input name="routine" type="hidden" value="none">
+							<input type="submit" value="Add" class="sl"/>
+							</form>
 							</li>
 
 						{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}						
@@ -52,10 +62,6 @@
 							
 							<!--/div--!>
 							</li>
-
-							<div id="r_{{tarsusaItem_UserToDoItem.id}}" style="padding: 5px;margin: 10px;">我的证据是应该还是星星堆满天适合你你唱的电视机开始下沙尘暴你懂吗 ...... <br/><br/><span class="pl">2009-04-10     2/2人推荐</span></div>
-
-
 						{% endfor %}
 						</ul>
 					

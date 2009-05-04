@@ -312,7 +312,9 @@ class AddItemProcess(tarsusaRequestHandler):
 					#For this routine field do not response well when i add a varible here.
 					# I made it a hidden as default 'none' in mobile_addpage_lite.
 					# therefore this field can be considered as always appears.
-					item2beadd_routine = cgi.escape(self.request.get('routine').decode('utf-8'))
+					
+					#item2beadd_routine = cgi.escape(self.request.get('routine').decode('utf-8'))
+					#Routine is also optional for the simple add process.
 
 					#Error handler to be suit in the lite mobile add page.
 					try:
@@ -324,6 +326,8 @@ class AddItemProcess(tarsusaRequestHandler):
 						tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
 					except:
 						tarsusaItem_Tags = ''
+
+					first_tarsusa_item.public = self.request.get('public')
 
 					first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=cgi.escape(self.request.get('routine').decode('utf-8')))
 					first_tarsusa_item.public = self.request.get('public').decode('utf-8')

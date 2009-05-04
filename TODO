@@ -693,3 +693,5 @@
 		Fixed Pagination problem for the donelog page. (Still testing.)
 		Styled UserSettingPage a little bit.
 		Changed URL setting in tarsusaItemCore.py, Solved a problem on Ubuntu Jaunty.
+	IN 09.05.04
+		Done California page Add Item Test.	
