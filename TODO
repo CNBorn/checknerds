@@ -694,4 +694,7 @@
 		Styled UserSettingPage a little bit.
 		Changed URL setting in tarsusaItemCore.py, Solved a problem on Ubuntu Jaunty.
 	IN 09.05.04
-		Done California page Add Item Test.	
+		Done California page Add Item Test.
+	IN 09.05.06
+		Kinda Fixed RoutineDonelogItem displays in the ViewItemPage. But there is still some unexpected issues with 'ViewPermission' should be confirmed from both of the users. Actully this could be a useful function. Just have to figure it out which part of code will be in charge of this. :)
+	

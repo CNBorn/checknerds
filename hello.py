@@ -248,8 +248,8 @@ class ViewItem(tarsusaRequestHandler):
 
 				## If this routine Item's public == public or showntoFriends,
 				## All these done routine log will be shown!
-	
-				tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routineid = :2 ORDER BY donedate DESC LIMIT 10", users.get_current_user(), tItem.key().id())
+				if tItem.public == 'publicOnlyforFriends' and CurrentUserIsOneofAuthorsFriends == True or tItem.public == 'public':
+					tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routineid = :2 ORDER BY donedate DESC LIMIT 10", tItem.user, tItem.key().id())
 			else:
 				tarsusaItemCollection_DoneDailyRoutine = None
 				html_tag_tarsusaRoutineItem = None
@@ -277,8 +277,17 @@ class ViewItem(tarsusaRequestHandler):
 			if logictag_OtherpeopleViewThisItem == True and CurrentUserIsOneofAuthorsFriends == True:
 				## Display public items and friendvisible items.
 				## BUG HERE! Because of the stupid GAE != issue, friends can only see friendpublic items. :(
-				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 ORDER BY date DESC LIMIT 20", tItem.user, yesterday_ofTheDay, nextday_ofTheDay)
-				
+				## Fixed, 09.05.06
+				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 ORDER and public != 'none' BY date DESC LIMIT 20", tItem.user, yesterday_ofTheDay, nextday_ofTheDay)
+
+				##TODO I found there is an issue with the permission settings.
+				## When the ItemAuthor added CurrentUser as a friend, CurrentUser still can't see Author's friendpublic items
+				## After the CurrentUser added AUthor as a friend, the FriendPub item appears.
+				## Suspection as a wrong detection of Friends.
+				## But later I found this could be useful. Both users should confirm their relationship before sharing the info.
+				## Just have to figure out which part of code will cause this. :)
+				## 09.05.06
+	
 				## Code from UserMainPage class.
 				for each_Item in tarsusaItemCollection_SameDayCreated:
 				## Added Item public permission check.
@@ -296,7 +305,7 @@ class ViewItem(tarsusaRequestHandler):
 
 
 			elif logictag_OtherpeopleViewThisItem == True and CurrentUserIsOneofAuthorsFriends == False:
-				## Display on public items.
+				## Display only public items.
 				tarsusaItemCollection_SameDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND date > :2 AND date <:3 AND public = 'public' ORDER BY date DESC LIMIT 10", tItem.user, yesterday_ofTheDay, nextday_ofTheDay)
 
 			elif logictag_OtherpeopleViewThisItem == False:
