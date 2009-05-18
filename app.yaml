@@ -117,6 +117,9 @@ handlers:
   static_files: img/favicon.ico
   upload: /
 
+- url: /cronmail
+  script: cronmail.py
+
 - url: /robots.txt
   static_files: files/robots.txt
   upload: /

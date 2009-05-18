@@ -697,4 +697,7 @@
 		Done California page Add Item Test.
 	IN 09.05.06
 		Kinda Fixed RoutineDonelogItem displays in the ViewItemPage. But there is still some unexpected issues with 'ViewPermission' should be confirmed from both of the users. Actully this could be a useful function. Just have to figure it out which part of code will be in charge of this. :)
-	
+	In 09.05.19
+		Adding tarsusaUserDailyRoutine function into tarsusaCore
+		Going to add Email reminder for users.
+			

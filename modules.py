@@ -21,6 +21,13 @@ class tarsusaUser(db.Model):
 	friends = db.ListProperty(db.Key)
 	
 	datejoinin = db.DateTimeProperty(auto_now_add=True)
+
+	apikey = db.StringProperty()
+	
+	notification = db.StringProperty()
+	
+	
+
 	# fields to be appended:
 	#	Twitter, 	
 	
@@ -48,7 +55,7 @@ class tarsusaItem(db.Expando):
 	done = db.BooleanProperty()
 	routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
 	public = db.StringProperty(choices=set(["private", "public", "publicOnlyforFriends"]))
-
+	
 
 class Tag(db.Model):
 	name = db.StringProperty()
