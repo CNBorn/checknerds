@@ -700,4 +700,7 @@
 	In 09.05.19
 		Adding tarsusaUserDailyRoutine function into tarsusaCore
 		Going to add Email reminder for users.
-			
+		Forget to mention that Models is a little bit changed (draft) in r134!!!!! CAUTION!!!!
+		---
+		Fixed a Bug concerning to display a routine item without done record properly.	
+		Created a get_ItemsDueToday function in tarsusaCore for incoming ReminderMail.

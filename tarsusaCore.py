@@ -178,7 +178,34 @@ def get_dailyroutine(userid):
 		#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
 		return tarsusaItemCollection_DailyRoutine	
 
+def get_ItemsDueToday(userid):
+	#Get User's Items that are due today.
+	
+	#This is designed to be a inner-callfunction.
+	#Not intended as a API for other users.
+	
+	ThisUser = tarsusaUser.get_by_id(int(userid))
+	Item_List = []
 
+	one_day = datetime.timedelta(days=1)
+	#yesterday = datetime.date.today() - one_day
+	yesterday = datetime.datetime.combine(datetime.date.today() - one_day,datetime.time(0))
+	endday = datetime.datetime.combine(datetime.date.today()+ one_day+ one_day, datetime.time(0))
+
+	tarsusaItemCollection_DueToday = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate >=:2 and expectdate <=:3 ORDER BY expectdate DESC", ThisUser.user, yesterday, endday)
+
+	try:
+		for each_tarsusaItem in tarsusaItemCollection_DueToday:
+			if each_tarsusaItem.date != each_tarsusaItem.expectdate:
+				this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'expectdate': each_tarsusaItem.expectdate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
+				Item_List.append(this_item)
+
+		#print Item_List
+		return Item_List
+	except NameError:
+		logging.info("tarsusaCore.get_ItemsDueToday got nothing.")
+		return None
+	
 def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
 
 	#Get user's donelog

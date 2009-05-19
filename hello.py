@@ -250,6 +250,8 @@ class ViewItem(tarsusaRequestHandler):
 				## All these done routine log will be shown!
 				if tItem.public == 'publicOnlyforFriends' and CurrentUserIsOneofAuthorsFriends == True or tItem.public == 'public':
 					tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routineid = :2 ORDER BY donedate DESC LIMIT 10", tItem.user, tItem.key().id())
+				else:
+					tarsusaItemCollection_DoneDailyRoutine = None
 			else:
 				tarsusaItemCollection_DoneDailyRoutine = None
 				html_tag_tarsusaRoutineItem = None

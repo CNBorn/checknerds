@@ -46,14 +46,16 @@ class ConfirmUserSignup(tarsusaRequestHandler):
 			CurrentUser = self.get_user_db()
 
 		tarsusaItemCollection = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
-	
+		tarsusaItem_DueToday = tarsusaCore.get_ItemsDueToday(CurrentUser.key().id())
+		
 		strABC = ''
-		for eachItem in tarsusaItemCollection:
-			strABC += eachItem.name
+		for eachItem in tarsusaItem_DueToday:
+			strABC += eachItem['name']
+			logging.info(strABC)
 
 		confirmation_url  = "url"
 		sender_address = "cnborn@gmail.com"
-		subject = strABC# + " registration"
+		subject = strABC + " registration"
 		body = """
 Thank you for creating an account!  Please confirm your email address by
 clicking on the link below:
