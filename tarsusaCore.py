@@ -174,9 +174,14 @@ def get_dailyroutine(userid):
 			template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
 		elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
 			template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
-				
+		
+		Item_List = []		
 		#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-		return tarsusaItemCollection_DailyRoutine	
+		for each_tarsusaItem in tarsusaItemCollection_DailyRoutine:
+			this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'expectdate': each_tarsusaItem.expectdate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
+			Item_List.append(this_item)
+
+		return Item_List
 
 def get_ItemsDueToday(userid):
 	#Get User's Items that are due today.

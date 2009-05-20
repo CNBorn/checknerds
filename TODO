@@ -704,3 +704,5 @@
 		---
 		Fixed a Bug concerning to display a routine item without done record properly.	
 		Created a get_ItemsDueToday function in tarsusaCore for incoming ReminderMail.
+	IN 09.05.20
+		Sending HTML daily briefing mails.
