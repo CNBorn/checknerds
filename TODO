@@ -706,3 +706,20 @@
 		Created a get_ItemsDueToday function in tarsusaCore for incoming ReminderMail.
 	IN 09.05.20
 		Sending HTML daily briefing mails.
+	IN 09.05.21
+		CAUTION, I have changed all Dynamic avatars URL. Need to Change them all acrossing the whole project.
+			Why: In App.yaml, I found that /img have been set twice, one for static, the other redirects to hello.py
+				Maybe that is the cause of slow avatar proformance.
+		Done a very simple DailyBriefing mail template
+		
+		Updated Patcher.py for updating the User data model.
+
+		UserSettingPage is now can display these newly added properties.
+		They need to be processed.
+
+		TODO: Setting a Reminder mailbox to admin.
+		      Process the post events for the newly added properties.
+			  updating all /image urls
+			  CronMail to modified as a real CronMailer client.
+
+		

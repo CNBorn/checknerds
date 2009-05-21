@@ -92,7 +92,7 @@ handlers:
 - url: /tag/
   script: tag.py
 
-- url: /img
+- url: /image
   script: hello.py
 
 - url: /flushcache

@@ -420,7 +420,7 @@ class NotFoundPage(tarsusaRequestHandler):
 def main():
 	application = webapp.WSGIApplication([('/', MainPage),
 									   ('/item/\\d+',ViewItem),
-									   ('/img', Image),
+									   ('/image', Image),
 									   ('/Login.+',LoginPage),
 									   ('/Logout.+',SignOutPage),
 									   ('/dashboard', DashboardPage),

@@ -59,20 +59,16 @@ class DailyBriefReport(tarsusaRequestHandler):
 		message.subject = "CheckNerds每日提醒 - " + str(datetime.date.today()) + " - " + str(DueTodayTotal) + "项事项"
 
 
-		
-		#CheckNerds 每日提醒，今日() 共有 项事项等待完成
-		emailfooter = u"""
-		---
-		CheckNerds 在线个人事项管理，欢迎访问 <a href="http://www.checknerds.com">http://www.checknerds.com</a>
-
-		"""
-
+	
 		template_values = {
 				'PrefixCSSdir': "/",
 				'UserNickName': "访客",
 				'AnonymousVisitor': "Yes",
 
+				
+				'Today': str(datetime.date.today()),
 				'EmailTitle': message.subject,
+				'CountItemsDueToday': str(DueTodayTotal),  
 				'ItemsDueToday':tarsusaItemCollection + tarsusaItem_DueToday,
  
 			}

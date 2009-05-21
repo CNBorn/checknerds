@@ -24,9 +24,10 @@ class tarsusaUser(db.Model):
 
 	apikey = db.StringProperty()
 	
-	notification = db.StringProperty()
-	
-	
+	#notification = db.StringProperty()
+	notify_dailybriefing = db.BooleanProperty()
+	notify_dailybriefing_time = db.TimeProperty()
+	notify_addedasfriend = db.BooleanProperty()
 
 	# fields to be appended:
 	#	Twitter, 	

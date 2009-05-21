@@ -28,6 +28,8 @@ from google.appengine.api import images
 
 import memcache
 import tarsusaCore
+import patcher
+
 
 import PyRSS2Gen
 
@@ -233,6 +235,10 @@ class UserSettingPage(tarsusaRequestHandler):
 		EditedUser = tarsusaUser.get_by_id(int(userid))
 		CurrentUser = self.get_user_db()
 
+		#Since r136+
+		#UserModel update for notification.
+		patcher.patch_notification_daily_and_friends(userid)
+
 		if EditedUser is not None and CurrentUser is not None:			
 			
 			if CurrentUser.key().id() == EditedUser.key().id():
@@ -251,6 +257,13 @@ class UserSettingPage(tarsusaRequestHandler):
 					website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website,'class':'sl'}))	
 					##Please reference more from the URL
 
+					notify_dailybriefing = forms.BooleanField(label='每日邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_dailybriefing}))
+					notify_dailybriefing_time = forms.CharField(label='每日邮件提醒时间', widget=forms.TextInput(attrs={'value':EditedUser.notify_dailybriefing_time,'class':'sl'}))
+					notify_addedasfriend = forms.BooleanField(label='用户添加好友邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_addedasfriend}))
+
+
+					apikey = forms.CharField(label="ApiKey(请勿泄露)", widget=forms.TextInput(attrs={'readonly':'', 'class':'sl'}))
+
 					class Meta:
 						model = tarsusaUser
 						exclude =['user','userid','usedtags','urlname','friends','datejoinin']
@@ -263,7 +276,7 @@ class UserSettingPage(tarsusaRequestHandler):
 				outputStringUserAvatarSetting = ""
 				
 				if EditedUser.avatar:
-					outputStringUserAvatarImage = "<img src=/img?avatar=" + str(EditedUser.key().id()) + " width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
+					outputStringUserAvatarImage = "<img src=/image?avatar=" + str(EditedUser.key().id()) + " width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
 				else:
 					outputStringUserAvatarImage = "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
 

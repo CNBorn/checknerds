@@ -2,15 +2,15 @@
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 0.7, codename Nevada
+# version 1.0, codename Nevada->California
 # - patcher.py
 # Copyright (C) CNBorn, 2008
-# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+# http://cnborn.net/blog, http://twitter.com/CNBorn
 #
-# 
-#
+# A Patcher for Updating existing Data Models.
 #
 # **************************************************************** 
+
 import urllib
 import cgi
 import wsgiref.handlers
@@ -19,6 +19,8 @@ from google.appengine.ext import webapp
 from google.appengine.ext import db
 from modules import *
 from base import *
+
+import datetime
 
 def chk_dbmodel_update(ThisUser):
 	
@@ -49,35 +51,35 @@ def chk_dbmodel_update(ThisUser):
 	#####################################################
 
 
-class patch_empty_dispname(tarsusaRequestHandler):
-	def get(self):
-				
-		if not self.chk_login():
-			self.redirect('/')
-		
-		userid = urllib.unquote(cgi.escape(self.request.path[len('/patch/empty_dispname/'):]))
-		##Get the username in the url of /patch/empty_dispname/1234
-		
-		PatchedUser = tarsusaUser.get_by_id(int(userid))
-		if PatchedUser != None:
-			PatchedUser.dispname = PatchedUser.user.nickname()
-			if PatchedUser.user.nickname() == '':
-				PatchedUser.dispname = str(PatchedUser.mail)
-			PatchedUser.put()
-
-
-
-class patch_error(tarsusaRequestHandler):
-	def get(self):
+def patch_empty_dispname():
+	if not self.chk_login():
 		self.redirect('/')
-		
+	
+	userid = urllib.unquote(cgi.escape(self.request.path[len('/patch/empty_dispname/'):]))
+	##Get the username in the url of /patch/empty_dispname/1234
+	
+	PatchedUser = tarsusaUser.get_by_id(int(userid))
+	if PatchedUser != None:
+		PatchedUser.dispname = PatchedUser.user.nickname()
+		if PatchedUser.user.nickname() == '':
+			PatchedUser.dispname = str(PatchedUser.mail)
+		PatchedUser.put()
 
-def main():
-	application = webapp.WSGIApplication([('/patch/empty_dispname/.+', patch_empty_dispname),
-									   ('/patch/.+',patch_error)],
-                                       debug=True)
 
-	wsgiref.handlers.CGIHandler().run(application)
+def patch_notification_daily_and_friends(userid):
+	# Patch No.2 
+	#      Added serveral properties in tarsusaUser since Rev.136+
+	#			 For the Usage of Notification feature.
+	
+	ThisUser = tarsusaUser.get_by_id(int(userid))	
+	
+	if ThisUser.notify_dailybriefing == None:
+		ThisUser.notify_dailybriefing = True 
+	
+	if ThisUser.notify_dailybriefing_time == None:
+		ThisUser.notify_dailybriefing_time = datetime.time(0)
+	
+	if ThisUser.notify_addedasfriend == None:
+		ThisUser.notify_addedasfriend = True
 
-if __name__ == "__main__":
-      main()
+	ThisUser.put()
