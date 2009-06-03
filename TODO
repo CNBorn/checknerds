@@ -722,4 +722,10 @@
 			  updating all /image urls
 			  CronMail to modified as a real CronMailer client.
 
-		
+	IN 09.06.04
+		R.I.P Democracy heroes.
+
+		Temporily disabled newly added settings in UserSettingPage, for it is not ready.
+		Updated get_tarsusaItem_count in tarsusaCore, It should be count more than 1k automatically.
+		Fixed two /img?avatar bugs.
+

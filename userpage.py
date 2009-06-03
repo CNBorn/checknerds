@@ -257,16 +257,17 @@ class UserSettingPage(tarsusaRequestHandler):
 					website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website,'class':'sl'}))	
 					##Please reference more from the URL
 
-					notify_dailybriefing = forms.BooleanField(label='每日邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_dailybriefing}))
-					notify_dailybriefing_time = forms.CharField(label='每日邮件提醒时间', widget=forms.TextInput(attrs={'value':EditedUser.notify_dailybriefing_time,'class':'sl'}))
-					notify_addedasfriend = forms.BooleanField(label='用户添加好友邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_addedasfriend}))
+					#notify_dailybriefing = forms.BooleanField(label='每日邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_dailybriefing}))
+					#notify_dailybriefing_time = forms.CharField(label='每日邮件提醒时间', widget=forms.TextInput(attrs={'value':EditedUser.notify_dailybriefing_time,'class':'sl'}))
+					#notify_addedasfriend = forms.BooleanField(label='用户添加好友邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_addedasfriend}))
 
 
-					apikey = forms.CharField(label="ApiKey(请勿泄露)", widget=forms.TextInput(attrs={'readonly':'', 'class':'sl'}))
+					#apikey = forms.CharField(label="ApiKey(请勿泄露)", widget=forms.TextInput(attrs={'readonly':'', 'class':'sl'}))
 
 					class Meta:
 						model = tarsusaUser
-						exclude =['user','userid','usedtags','urlname','friends','datejoinin']
+						#exclude =['user','userid','usedtags','urlname','friends','datejoinin']
+						exclude =['user','userid','usedtags','urlname','friends','datejoinin', 'notify_dailybriefing', 'notify_dailybriefing_time', 'notify_addedasfriend', 'apikey']
 				
 				outputStringUserSettingForms = ItemForm().as_p() #also got as_table(), as_ul()
 
@@ -437,7 +438,7 @@ class UserMainPage(tarsusaRequestHandler):
 			## Preparation
 			## Will be useed
 			if ViewUser.avatar:
-				outputStringUserAvatar = "<img src='/img?avatar=" + str(ViewUser.key().id()) + "' width=64 height=64>"
+				outputStringUserAvatar = "<img src='/image?avatar=" + str(ViewUser.key().id()) + "' width=64 height=64>"
 			else:
 				outputStringUserAvatar = "<img src='/img/default_avatar.jpg' width=64 height=64>"
 				

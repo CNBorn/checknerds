@@ -528,7 +528,7 @@ class get_fp_RecentRegisteredUserForAnonymous(tarsusaRequestHandler):
 			if tarsusaUserCollection: 
 				for each_RecentUser in tarsusaUserCollection:
 					if each_RecentUser.avatar:
-						strRecentUsers += '<span ' + 'style="line-height: 2em;"><a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '"><img src=/img?avatar=' + str(each_RecentUser.key().id()) + " width=32 height=32>"
+						strRecentUsers += '<span ' + 'style="line-height: 2em;"><a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '"><img src=/image?avatar=' + str(each_RecentUser.key().id()) + " width=32 height=32>"
 					else:
 						## Show Default Avatar
 						strRecentUsers += '<span ' + 'style="line-height: 2em;"><a href="/user/' + cgi.escape(str(each_RecentUser.key().id())) +  '">' + "<img src='/img/default_avatar.jpg' width=32 height=32>"

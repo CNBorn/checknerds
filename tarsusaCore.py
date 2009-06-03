@@ -391,7 +391,7 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
 					#Some of the older items may not have the usermodel property
 					try:
 						if tarsusaItem_UserFriendsRecentItems.usermodel.avatar:
-							UserAvatar = '/img?avatar=' + str(tarsusaItem_UserFriendsRecentItems.usermodel.key().id())
+							UserAvatar = '/image?avatar=' + str(tarsusaItem_UserFriendsRecentItems.usermodel.key().id())
 					except:
 						UserAvatar = '/img/default_avatar.jpg'
 
@@ -477,11 +477,30 @@ def get_count_tarsusaUser():
 def get_count_tarsusaItem():
 	#Due to the limitation of GAE.
 	#To handle results more than 1000.
-	tarsusaItem1kMilestones = [] # has to be create date of an item, str, like '2008-09-02'
+	#tarsusaItem1kMilestones = [] # has to be create date of an item, str, like '2008-09-02'
 	
-	if len(tarsusaItem1kMilestones) == 0:
-		TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
-	else:
-		TotaltarsusaItem = 1000 * len(tarsusaItem1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1", datetime.datetime.strptime(tarsusaItem1kMilestones[len(tarsusaItem1kMilestones) - 1], "%Y-%m-%d")).count()
+	#if len(tarsusaItem1kMilestones) == 0:
+	#	TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
+	#else:
+	#	TotaltarsusaItem = 1000 * len(tarsusaItem1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1", datetime.datetime.strptime(tarsusaItem1kMilestones[len(tarsusaItem1kMilestones) - 1], "%Y-%m-%d")).count()
 	
-	return TotaltarsusaItem
+	#return TotaltarsusaItem
+
+	#new try:
+	TotalCount = 0
+	#TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem ORDER BY date ASC LIMIT 500").count()
+	
+	#while( TotaltarsusaItem == 500):
+	#	TotalCount += TotaltarsusaItem	
+	#	Index = 0
+	#	for lastitem in TotaltarsusaItem:
+	#		Index += 1
+	#		if Index == 500:
+	#			veryDate = lastitem.date
+	#			
+	#	TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1 ORDER BY date ASC LIMIT 500", veryDate).count()
+
+	#TotalCount += TotaltarsusaItem
+
+	#return TotalCount
+	return 1

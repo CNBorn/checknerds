@@ -92,7 +92,7 @@ class FindFriendPage(tarsusaRequestHandler):
 				for each_FriendKey in tarsusaUserFriendCollection:
 					UsersFriend =  db.get(each_FriendKey)
 					if UsersFriend.avatar:
-						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/img?avatar=' + str(UsersFriend.key().id()) + " width=32 height=32></dt>"
+						UserFriends += '<dl class="obu"><dt>' + '<a href="/user/' + cgi.escape(str(UsersFriend.key().id())) +  '"><img src=/image?avatar=' + str(UsersFriend.key().id()) + " width=32 height=32></dt>"
 
 					else:
 						## Show Default Avatar
