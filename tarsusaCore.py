@@ -488,19 +488,18 @@ def get_count_tarsusaItem():
 
 	#new try:
 	TotalCount = 0
-	#TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem ORDER BY date ASC LIMIT 500").count()
+	TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem ORDER BY date ASC LIMIT 500").count()
 	
-	#while( TotaltarsusaItem == 500):
-	#	TotalCount += TotaltarsusaItem	
-	#	Index = 0
-	#	for lastitem in TotaltarsusaItem:
-	#		Index += 1
-	#		if Index == 500:
-	#			veryDate = lastitem.date
-	#			
-	#	TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1 ORDER BY date ASC LIMIT 500", veryDate).count()
+	while( TotaltarsusaItem == 500):
+		TotalCount += TotaltarsusaItem	
+		Index = 0
+		for lastitem in TotaltarsusaItem:
+			Index += 1
+			if Index == 500:
+				veryDate = lastitem.date
+				
+		TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1 ORDER BY date ASC LIMIT 500", veryDate).count()
 
-	#TotalCount += TotaltarsusaItem
+	TotalCount += TotaltarsusaItem
 
-	#return TotalCount
-	return 1
+	return TotalCount
