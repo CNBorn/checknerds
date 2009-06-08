@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %} CheckNerds - 关于2009年6月期间的维护问题{% endblock title %}
+        <div id="content-holder">
+		{% block content-holder %}
+  		<div id="leftside">
+
+			<div id="featuredcode2">
+                	<div id="featuredcode2-top"></div>
+                   	<div id="featuredcode2-mid">
+                    <h2 class="posttitle" style="font-weight:normal;">关于2009年6月期间的维护问题</h2><br />
+						<div style="padding-left: 15px; padding-right: 15px; padding-top: 10px;">
+							首先对于在CheckNerds维护期间给您造成的不便，真诚地向您致歉！<br />
+							<br />
+							导致这次维护时间的直接原因，是由于GAE Datastore的一个技术问题引起的。我在6月3日晚部署了一个新版本，这个版本的改进并不是很多，却不知为何意外搞乱了Datastore数据库的索引，导致数据库中的事项信息无法正常读取。<br />
+							<br />							
+							请大家放心，各位的数据都在完整保存，没有任何变动。在此问题发生后，我连夜测试多种部署，尝试找寻问题的根源及解决方案。在未来的几天里，Twiiter上以及身边的朋友们为我出谋划策，十分感谢他们的支持和理解。我在Google App Engine官方论坛发帖后，得到的回应基本可算肯定是索引的问题，与我这里的测试结果也基本吻合。我现在正在进行的解决方案，是尝试把GAE内部的数据库索引清空，重新建立整个索引。但遗憾的是我的数据库索引又碰到了罕见的假死问题，有几个关键索引不能清空（我想也可能是问题的根源所在），需要 Google方面来进行处理。我现在已经在联络Google负责App Engine的人员来帮助我处理。希望在这个问题解决后，这个维护和修正的状态可以尽早结束。<br />
+							<br />
+							总的来说，自己对于App Engine的理解也还是不够。在事件发生后，从 <a href="http://twitter.com/Lin_Cong">@Lin_Cong</a> 那里学习到了一些GAE部署和维护的技巧，可以帮助我在以后有效避免此类事件的发生。<br />
+							<br />
+							虽然这是我的个人项目，但是任何一个面向用户的网站所需要做到的，就是对用户负责。这次的情况，实在我意料之外。在目前我无法承诺可以确切的恢复时间的情况下，请大家接受我的歉意，并请确知我正在尽一切努力来尝试解决问题。一旦有任何进展我都会在这个页面公布。<br />
+							<br />
+							这次事件难免要影响大家使用的热情，只希望大家能够相信我可以用与往常一样的激情和承诺，来解决这个问题。<br />
+							<br />
+							真诚的致歉，<br />
+							<br />
+							<a href="http://cnborn.net">CNBorn</a><br />
+							June 8th, 2009<br />
+							<br />
+						</div>						
+                	</div>
+                	<div id="featuredcode2-bot"></div>
+        	</div>
+		</div>
+		{% endblock content-holder %}

@@ -728,4 +728,7 @@
 		Temporily disabled newly added settings in UserSettingPage, for it is not ready.
 		Updated get_tarsusaItem_count in tarsusaCore, It should be count more than 1k automatically.
 		Fixed two /img?avatar bugs.
-
+	IN 09.06.06
+		There is a revert revision.
+	IN 09.06.08
+		Done a Webpage that contains the details of 'June Failure".
