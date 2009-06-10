@@ -108,7 +108,7 @@ input.disabledConfirmButton {
 /* Full-width layout, here we come */
 
 body {
-    background: url(bg.png);
+    background: url(/img/bg.png);
     /*background: #e3e3e3;*/
 	background-color:#F0F8E4;
 	background-repeat:repeat-x;
@@ -411,7 +411,8 @@ div.fiflufi div.rightCol {
     padding: 15px;
     width: 300px;
     /*background: url(http://cdn.last.fm/flatness/grids/fiflufi_right_top_gradient.5.png) right top no-repeat transparent;*/
-	background-color: #F3FAE8;
+    background: url(/img/ctest_rightcol.png) right top repeat-x transparent;
+	/*background-color: #F3FAE8;*/
 /*    overflow: hidden;*/
 }
 
@@ -667,9 +668,9 @@ div.halfhalf {
 
 #header, 
 #headerWrapper {
-    /* background-image: url('http://cdn.last.fm/flatness/header/bg_header_red.png'); */
-	background-color: #EFF8E1;
-    background-repeat: no-repeat;
+    background-image: url('/img/ctest_banner.png'); 
+	/* background-color: #EFF8E1;*/
+    background-repeat: repeat-x;
 }
 
 .lfmBlack #header,

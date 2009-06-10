@@ -55,9 +55,10 @@
 
                     	<td class="textalign-right">
                             {% if not UserLoggedIn %}
-							<a href="/docs/failure_during_june09">致歉：近期维护声明</a>
-							<img src="/img/favb16.png">&nbsp;使用Google帐户登录(维护中)&nbsp;<small><a href="/docs/why_google_account">(?)</a></small>
+							<a href="/docs/failure_during_june09">维护已完成，感谢大家支持</a>
+							<img src="/img/favb16.png">&nbsp;<a href="/Login/">使用Google帐户登录</a>&nbsp;<small><a href="/docs/why_google_account">(?)</a></small>
 							{% else %}
+							<a href="/docs/failure_during_june09">维护已完成，感谢大家支持</a>
 							<a href="/user/{{UserID}}/setting">{{UserNickName}}的设置</a>
 							<a href="/Logout/">登出</a>
 							{% endif %}							

@@ -248,7 +248,7 @@ class CaliforniaPage(tarsusaRequestHandler):
 				'AnonymousVisitor': "Yes",
 			}
 	
-		path = os.path.join(os.path.dirname(__file__), 'pages/california.html')
+		path = os.path.join(os.path.dirname(__file__), 'pages/california_test.html')
 		self.response.out.write(template.render(path, template_values))	
 
 def main():

@@ -1,0 +1,7850 @@
+/* putting this here for now should move elsewhere */
+.textareaActions {
+    margin: 5px;
+    padding: 4px;
+    padding-left:0;
+    margin-left:-6px;
+}
+
+.textareaActions .action, .textareaActions div {
+    margin: 6px;
+}
+
+.attachbutton {
+    padding: 6px 6px 6px 20px;
+    border: 1px solid #C0C0C0;
+    background: #fff url(http://cdn.last.fm/paperclip.png) 3px center no-repeat;
+}
+
+
+.autoCompleteResults  {
+    background: white;
+    border: 2px solid #C0C0C0;
+    z-index: 1000;
+    position:absolute;
+    margin:0px;
+    padding:0px;
+    width:350px !important;
+}
+.autoCompleteResults li {
+    padding: 3px;
+}
+.autoCompleteResults li.selected {
+    background: #C0C0C0;
+    color: white;
+}
+
+/* should moved later */
+
+* html {
+    filter: expression(document.execCommand("BackgroundImageCache", false, true));
+}
+
+* html .clearit {
+    height: 1%;
+}
+
+/* CSS RESET */
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,select,textarea,p,blockquote,th,td {
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+
+input, select {
+    vertical-align: baseline;
+}
+
+textarea {
+    font-family: "Lucida Grande", Arial, Helvetica, Verdana, sans-serif;
+}
+
+input[type=text],
+input[type=password],
+textarea {
+    font-size: 12px;
+    background: #fff;
+    color: #000;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 100%;
+}
+
+fieldset,img {
+    border: 0;
+}
+
+address,caption,cite,code,dfn,th,var {
+    font-style: normal;
+    font-weight: normal;
+}
+
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
+ol,ul {
+    list-style: none;
+}
+
+.styledText ul,
+.bbcode ul,
+#faqContent ul {
+    list-style: disc;
+}
+
+.styledText ol,
+.bbcode ol,
+#faqContent ol {
+    list-style: decimal;
+}
+
+.styledText li,
+.bbcode li,
+#faqContent li {
+    margin-left: 2em;
+}
+
+caption,th {
+    text-align: left;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-size: 100%;
+    font-weight: bold;
+}
+
+q:before,q:after {
+    content: '';
+}
+
+abbr,acronym {
+    border: 0;
+}
+
+/* BASE CSS */
+
+#page {
+    color: #000;
+    font-family: "Lucida Grande", Arial, Helvetica, Verdana, sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #1b1b1b;
+    overflow: hidden;
+    clear: both;
+    position: relative;
+}
+
+/* links */
+
+a {
+    color: #9C9B50;
+    text-decoration: none;
+    -moz-outline: none;
+}
+
+a:hover {
+    color: #9C9B50;
+    /*text-decoration: underline;*/
+	text-decoration: none;
+}
+
+/* misc */
+
+sub,
+sup {
+    font-size: 0.75em;
+    line-height: 0.1;
+}
+
+span.shoutCount {
+    color: #696969;
+}
+
+#page .hint {
+    color: #999;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+small {
+    font-size: 10px;
+}
+
+/* our favourite class */
+
+.clearit:after,
+#content:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+
+.clearit,
+#content {
+    zoom: 1;
+}
+
+/* Forms */
+
+input[type=text],
+input[type=password],
+textarea {
+    border: 1px solid #bbb;
+    padding: 3px;
+}
+
+/* this isn't really supposed to be here, but well... */
+
+.staff span.name {
+    background: #96BE57 !important;
+}
+
+.subscriber span.name {
+    background: #000 !important;
+}
+
+.moderator span.name {
+    background: orange !important;
+}
+
+.userType {
+    font-size: 9px;
+    vertical-align: super;
+    line-height: 0px;
+    font-weight: normal;
+}
+
+.staff .userType {
+    color: #96BE57 !important;
+}
+
+.moderator .userType {
+    color: orange !important;
+}
+
+.subscriber .userType {
+    color: #000 !important;
+}
+
+span.userImage {
+    position: relative;
+}
+
+img.groupImage,
+span.userImage img {
+    padding: 1px;
+    border: 1px solid #ccc;
+}
+
+a:hover img.groupImage,
+a:hover span.userImage img {
+    padding: 1px;
+    border-color: #0187c5;
+}
+
+span.userImage img.staff_icon,
+span.userImage img.subscriber_icon,
+span.userImage img.moderator_icon,
+a:hover span.userImage img.staff_icon,
+a:hover span.userImage img.subscriber_icon,
+a:hover span.userImage img.moderator_icon {
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    margin: 0 0 6px 0;
+    padding: 0;
+    border: 1px solid #ccc;
+}
+
+span.staffWithIcon {
+    padding-right: 7px;
+    background: url(http://cdn.last.fm/flatness/global/user/icon_staff_m.png) no-repeat top right;
+}
+
+.inline {
+    display: inline;   
+}
+    /* for 1-button forms inline with bigButton */
+    form.inline.lfmBigButton {
+        position: relative;
+    }
+        form.inline.lfmBigButton input.button {
+            position: relative;
+            top: 2px;
+            height: 18px;
+        }
+
+
+/* background image flickering fix */
+html {
+  filter: expression(document.execCommand("BackgroundImageCache", false, true));
+}
+
+* html .clearit {
+    height: 1%;
+}
+
+div#browsablechart {
+  margin-top: 7px;
+}
+
+div#browsablechart fieldset#typeSelector {
+  margin-bottom: 1em;
+}
+
+div#browsablechart fieldset#typeSelector.withDateSelector {
+  margin-bottom: 1.5em;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 13px;
+  float: left;
+  clear: both;
+}
+
+div#browsablechart div#dateSelector {
+  padding-left: 190px;
+  position: relative;
+  margin-bottom: 1em;
+  clear: both;
+}
+
+div#browsablechart div#calendar {
+  width: 175px;
+  float: left;
+  display: inline;
+  margin-left: -190px;
+}
+
+#LastWebsite div#browsablechart table.calendar {
+  width: 100%;
+}
+
+#LastWebsite div#browsablechart table.calendar td {
+  width: 14%;
+}
+
+div#browsablechart table#selectedWeekStats {
+  margin-top: 0.7em;
+  font-size: 11px;
+}
+
+div#browsablechart table#selectedWeekStats strong {
+  margin-left: 0.5em;
+}
+
+#browsablechart #moreInfo {
+  margin: 0;
+  position: absolute;
+  bottom: 0;
+  left: 190px;
+}
+
+#browsablechart #moreInfo ul.calendarLegend {
+  margin: 0;
+  white-space: nowrap;
+}
+
+div#browsablechart div#dateSelector p.chartmore {
+  margin: 0;
+  font-size: 11px;
+}
+
+#page a.lfmBigButton,
+#page a.lfmSmallButton,
+#page .indicator,
+#page .dismissbutton,
+#page .mockAddButton {
+    height: 18px;
+    display: -moz-inline-box;
+    display: inline-block;
+    padding: 0 3px 0 0;
+    background: #163551 url(http://cdn.last.fm/flatness/buttons/6/add_right.png) no-repeat right top;
+    color: #fff;
+    font-size: 11px;
+    text-decoration: none;
+    text-align: right;
+    vertical-align: middle;
+    cursor: pointer;
+    text-shadow: #163551 0 -1px 1px;
+    overflow: hidden;
+}
+
+#page a.lfmBigButton strong,
+#page a.lfmBigButton span,
+#page a.lfmSmallButton strong,
+#page a.lfmSmallButton span,
+#page .indicator span,
+#page .indicator strong,
+#page .dismissbutton span,
+#page .dismissbutton strong,
+#page .mockAddButton span,
+#page .mockAddButton strong {
+    height: 14px;
+    padding: 2px 5px 2px 25px;
+    background: #16517d url(http://cdn.last.fm/flatness/buttons/6/add_left.png) no-repeat left top;
+    display: -moz-inline-box;
+    display: inline-block;
+    line-height: 14px;
+    vertical-align: top;
+}
+
+#page a.lfmTagButton strong {
+    background: #fff url(http://cdn.last.fm/flatness/buttons/6/tags_left.2.png) no-repeat left top;
+}
+
+#page .mockAddButton {
+    cursor: auto;
+}
+
+#page a.lfmBigButton:hover,
+#page a.lfmSmallButton:hover {
+    background-position: right bottom;
+    color: #fff;
+}
+
+#page a.lfmBigButton:hover span,
+#page a.lfmBigButton:hover strong,
+#page a.lfmSmallButton:hover span,
+#page a.lfmSmallButton:hover strong {
+    background-position: left bottom;
+}
+
+#page a.lfmSmallButton {
+    height: 15px;
+    font-size: 9px;
+}
+#page a.lfmSmallButton strong,
+#page a.lfmSmallButton span {
+    height: 13px;
+    padding: 2px 5px 0 20px;
+    line-height: 12px;
+}
+
+/* Share */
+#page a.lfmSendButton {
+    background: #2a2a2a url(http://cdn.last.fm/flatness/buttons/6/share_right.gif) no-repeat right top;
+    text-shadow: #2a2a2a 0 -1px 1px
+}
+#page a.lfmSendButton strong {
+    background: #2a2a2a url(http://cdn.last.fm/flatness/buttons/6/share_left.gif) no-repeat left top;
+}
+/* Join */
+#page a.lfmJoinButton {
+    background: #2a2a2a url(http://cdn.last.fm/flatness/buttons/6/join_right.png) no-repeat right top;
+    text-shadow: #2a2a2a 0 -1px 1px
+}
+#page a.lfmJoinButton strong {
+    background: #54d3dd url(http://cdn.last.fm/flatness/buttons/6/join_left.png) no-repeat left top;
+}
+/* Befriend */
+#page a.lfmBefriendButton {
+    background: #163551 url(http://cdn.last.fm/flatness/buttons/6/add_right.png) no-repeat right top;
+    text-shadow: #163551 0 -1px 1px
+}
+#page a.lfmBefriendButton strong {
+    background: #163551 url(http://cdn.last.fm/flatness/buttons/6/add_left.png) no-repeat left top;
+}
+
+#page a.lfmBigMultiButton {
+    padding-right: 22px;
+    background: #7f7f7f url(http://cdn.last.fm/flatness/buttons/6/more_right.png) no-repeat right top;
+    text-shadow: #7f7f7f 0 -1px 1px
+}
+
+#page a.lfmBigMultiButton span {
+    background: #7f7f7f url(http://cdn.last.fm/flatness/buttons/6/more_left.png) no-repeat left top;
+}
+
+#page a.lfmSmallMultiButton {
+    width: 26px;
+    padding: 0;
+    background: transparent url(http://cdn.last.fm/flatness/buttons/6/small_multi.png) no-repeat right top;
+}
+
+#page a.lfmSmallMultiButton span {
+    width: 26px;
+    padding: 0;
+    background: transparent;
+}
+
+#page a.lfmSmallModuleButton {
+    width: 31px;
+    padding: 0;
+    background: transparent url(http://cdn.last.fm/flatness/buttons/4/small_multi_white.png) no-repeat right top;
+}
+
+#page a.lfmSmallActiveModuleButton {
+    background-position: right -15px !important;
+}
+
+#page a.lfmSmallModuleButton span {
+    width: 31px;
+    padding: 0;
+    background: transparent;
+}
+
+#page a.lfmBigActiveMultiButton {
+    background-position: right -18px !important;
+}
+
+#page a.lfmBigActiveMultiButton span {
+    background-position: left -18px !important;
+}
+
+#page a.lfmSmallActiveMultiButton {
+    background-position: left bottom !important;
+}
+
+#page .indicator {
+    background: #b7b7b7 url(http://cdn.last.fm/flatness/buttons/3/is_right.png) no-repeat right top;
+    text-shadow: #999 0 -1px 1px
+}
+#page .indicator span,
+#page .indicator strong {
+    background: #b7b7b7 url(http://cdn.last.fm/flatness/buttons/4/is_left.png) no-repeat left top;
+}
+#page .lovedindicator span,
+#page .lovedindicator strong {
+    background: #b7b7b7 url(http://cdn.last.fm/flatness/buttons/4/is_left_loved.png) no-repeat left top;
+}
+
+/* Free Download */
+
+#page a.lfmFreeDownloadButton {
+    height: 15px;
+    padding-right: 2px;
+    background: url(http://cdn.last.fm/flatness/buttons/7/freedownload_right.png) no-repeat right top;
+    overflow: visible;
+    text-shadow: none;
+    font-size: 9px;
+}
+
+#page a.lfmFreeDownloadButton span,
+#page a.lfmFreeDownloadButton strong {
+    height: 11px;
+    line-height: 11px;
+    padding: 2px 3px 2px 17px;
+    background: url(http://cdn.last.fm/flatness/buttons/7/freedownload_left.png) no-repeat left top;
+    color: #fff;
+    white-space: nowrap;
+    font-weight: normal;
+}
+
+#page a.lfmFreeDownloadButtonLarge {
+    width: 300px;
+    height: auto;
+    margin: 0 0 9px 0;
+    padding: 0 0 3px 0;
+    overflow: visible;
+    text-shadow: #1586bb 0 -1px 1px;
+    font-size: 11px;
+    background: url(http://cdn.last.fm/flatness/buttons/7/freedownload_large_bottom.png) no-repeat left bottom;
+}
+#page a.lfmFreeDownloadButtonLarge:hover {
+    background-position: right bottom;
+}
+
+#page a.lfmFreeDownloadButtonLarge span,
+#page a.lfmFreeDownloadButtonLarge strong {
+    width: 269px;
+    height: auto;
+    margin-top: 0;
+    padding: 2px 5px 0 26px;
+    color: #fff;
+    white-space: nowrap;
+    text-align: left;
+    line-height: 18px;
+    background: url(http://cdn.last.fm/flatness/buttons/7/freedownload_large_top.png) no-repeat left top;
+}
+#page a.lfmFreeDownloadButtonLarge:hover span,
+#page a.lfmFreeDownloadButtonLarge:hover strong {
+    background-position: right top;
+}
+
+/* Multibutton menu */
+
+#multiButtonMenu {
+    position: absolute;
+    margin: 0 0 0 7px;
+    z-index: 50;
+}
+
+#multiButtonMenu li.mAddToLibrary,
+#multiButtonMenu li.mRemoveFromLibrary,
+#multiButtonMenu li.mAddToFriends {
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+}
+#multiButtonMenu li.mSend {
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+#multiButtonMenu li {
+    display: none;
+}
+
+#multiButtonMenu div.mAddToLibrary li.mAddToLibrary,
+#multiButtonMenu div.mRemoveFromLibrary li.mRemoveFromLibrary,
+#multiButtonMenu div.mAddToFriends li.mAddToFriends,
+#multiButtonMenu div.mSend li.mSend,
+#multiButtonMenu div.mObsess li.mObsess,
+#multiButtonMenu div.mAddToPlaylist li.mAddToPlaylist,
+#multiButtonMenu div.mAddTags li.mAddTags,
+#multiButtonMenu div.mMessage li.mMessage,
+#multiButtonMenu div.mLove li.mLove,
+#multiButtonMenu div.mUnlove li.mUnlove,
+#multiButtonMenu div.mBan li.mBan,
+#multiButtonMenu div.mUnban li.mUnban,
+
+#multiButtonMenu div.mMessageAll li.mMessageAll,
+#multiButtonMenu div.mEditPermissions li.mEditPermissions,
+#multiButtonMenu div.mAbdicate li.mAbdicate,
+#multiButtonMenu div.mLeave li.mLeave,
+
+#multiButtonMenu div.mEditDetails li.mEditDetails {
+    display: block;
+}
+
+#multiButtonMenu div.mLoading li.mLoading {
+    display: block;
+}
+
+#multiButtonMenu div.mLoading li.mLoading a {
+    height: 73px;
+    width: 70px;
+    background: url(http://cdn.last.fm/flatness/spinner_big_f2f2f2.gif) center no-repeat #f2f2f2 !important;
+}
+
+/* Buy / Download */
+
+#page div.lfmBuyButtonContainRight,
+#page div.lfmBuyButtonContainRight div.lfmDropDown {
+    float: right;
+    text-align: right;
+}
+#page div.lfmBuyButtonContainRightDownloadsRingtones {
+    margin: -21px 0 -20px 0;
+}
+#page div.lfmBuyButtonContainRightDownloadsRingtones div.lfmDownloadButton {
+    clear: right;
+}
+#page a.lfmRingtoneButton,
+#page a.lfmBuyButton,
+#page a.lfmDownloadButton {
+    white-space: nowrap;
+    background: #979797 url(http://cdn.last.fm/flatness/buttons/6/buy_dl_right.png) no-repeat right top;
+    text-shadow: #777 0 -1px 1px;
+    white-space: nowrap;
+}
+#page a.lfmRingtoneButton span,
+#page a.lfmRingtoneButton strong {
+    background: #979797 url(http://cdn.last.fm/flatness/buttons/6/rt_left.png) no-repeat left top;
+}
+#page a.lfmBuyButton span,
+#page a.lfmBuyButton strong {
+    background: #979797 url(http://cdn.last.fm/flatness/buttons/6/buy_left.png) no-repeat left top;
+}
+#page a.lfmDownloadButton span,
+#page a.lfmDownloadButton strong {
+    background: #979797 url(http://cdn.last.fm/flatness/buttons/6/dl_left.png) no-repeat left top;
+}
+
+#page a.lfmRingtoneButtonDropDown,
+#page a.lfmBuyButtonDropDown,
+#page a.lfmDownloadButtonDropDown {
+    padding: 0 14px 0 0;
+    white-space: nowrap;
+    background: #979797 url(http://cdn.last.fm/flatness/buttons/6/buy_dl_drp_right.png) no-repeat right top;
+    text-shadow: #777 0 -1px 1px;
+    white-space: nowrap;
+}
+#page a.lfmRingtoneButtonDropDown span,
+#page a.lfmRingtoneButtonDropDown strong {
+    background: #979797 url(http://cdn.last.fm/flatness/buttons/6/rt_drp_left.png) no-repeat left top;
+}
+#page a.lfmBuyButtonDropDown span,
+#page a.lfmBuyButtonDropDown strong {
+    background: #979797 url(http://cdn.last.fm/flatness/buttons/6/buy_drp_left.png) no-repeat left top;
+}
+#page a.lfmDownloadButtonDropDown span,
+#page a.lfmDownloadButtonDropDown strong {
+    background: #979797 url(http://cdn.last.fm/flatness/buttons/6/dl_drp_left.png) no-repeat left top;
+}
+
+#page .expanded a.lfmRingtoneButtonDropDown,
+#page .expanded a.lfmBuyButtonDropDown,
+#page .expanded a.lfmDownloadButtonDropDown {
+    background-position: right center;
+}
+
+#page .expanded a.lfmRingtoneButtonDropDown span,
+#page .expanded a.lfmRingtoneButtonDropDown strong,
+#page .expanded a.lfmBuyButtonDropDown span,
+#page .expanded a.lfmBuyButtonDropDown strong,
+#page .expanded a.lfmDownloadButtonDropDown span,
+#page .expanded a.lfmDownloadButtonDropDown strong {
+    background-position: left center;
+}
+
+#page .buyButtonSupplier,
+#page .buyButtonSupplier a {
+    font-size: 10px;
+}
+
+.lfmDropDown {
+    display: inline-block;
+    z-index: 1;
+    margin: 3px 3px 3px 0;
+    padding: 0;
+}
+.lfmDropDownBody {
+    position: absolute;
+    margin: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+ul.lfmDropDownBody {
+    border-bottom: 0;
+    font-size: 10px;
+}
+
+#page ul.lfmDropDownBody li {
+    width: auto;
+    border-bottom: 1px solid #ccc;
+    white-space: nowrap;
+}
+#page ul.lfmDropDownBody li a {
+    display: block;
+    padding: 1px 4px;
+    background: #f2f2f2;
+    color: #6f6f6f;
+    font-weight: normal;
+    font-size: 10px;
+    line-height: 1.6;
+    text-decoration: none;
+}
+#page ul.lfmDropDownBody li a:hover {
+    background: #6f6f6f;
+    color: #f2f2f2;
+}
+#page ul.lfmDropDownBody li small {
+    margin-left: 4px;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+/* calendar */
+
+#page table.calendar {
+  width: 158px;
+  font-size: 11px;
+  line-height: 1em;
+  border-collapse: collapse;
+  margin-bottom: 2em;
+}
+
+#page .sidebar table.calendar {
+  margin-bottom: 1em;
+}
+
+#page table.chartSelectCalendar {
+  margin-bottom: 0;
+}
+
+#page table.calendar caption {
+  text-align: left;
+  font-weight: bold;
+  font-size: 11px;
+  color: #A0A0A0;
+  padding-bottom: 0.5em;
+  line-height: 1em;
+  margin: 0;
+}
+
+#page table.calendar caption a {
+  color: #A0A0A0;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+#page table.calendar thead tr th {
+  color: #A0A0A0;
+  background: #FFF;
+  font-weight: normal;
+  padding-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+#page table.chartSelectCalendar thead tr th {
+  border: 1px solid #ccc;
+  padding-top: 0.3em;
+  padding-bottom: 0.4em;
+}
+
+#page table.chartSelectCalendar thead tr th#tableMonthHeading {
+  border-left: hidden;
+  border-right: hidden;
+}
+
+#page table.calendar tbody tr td {
+  color: #545454;
+  text-align: right;
+  border: 1px solid #ccc;
+  line-height: 1em;
+  vertical-align: bottom;
+  padding: 0;
+}
+
+#page table.calendar tbody tr td.noday {
+  border: none;
+}
+
+#page table.calendar tbody tr td span,
+#page table.chartSelectCalendar tbody tr td a,
+#page table.chartSelectCalendar tbody tr.nodata td {
+  padding: 0.75em 0.25em 0.25em 0;
+  display: block;
+}
+
+#page table.chartSelectCalendar tbody tr.nodata td {
+  display: table-cell;
+}
+
+table.calendar tr td a {
+  padding: 0.75em 0 0 0;
+  text-decoration: none;
+  margin: 0;
+  display: block;
+}
+
+#page table.calendar tbody tr td.marker {
+  border: none;
+  border-left: 1px solid #ccc;
+  background-color: transparent !important;
+  padding: 0 0 0 0.3em !important;
+  vertical-align: middle !important;
+}
+
+#page table.calendar tr td.marker img {
+  visibility: hidden;
+  position: relative;
+  top: 0.2em;
+}
+
+#page table.calendar tr.selected td.marker img {
+  visibility: visible;
+}
+
+#page table.calendar tr.invisibleMarker td.marker img,
+#page table.calendar tr.nodata td.marker img {
+  visibility: hidden;
+}
+
+#page table.calendar tr td a:hover,
+#page table.calendar tr td.highlight a {
+  text-decoration: none;
+  background-color: #CCC !important;
+}
+
+#page table.chartSelectCalendar tr td a:hover,
+#page table.calendar tr.selected td,
+#page table.calendar tr.selected td a:hover {
+  text-decoration: none;
+  background: #E9EBEF !important;
+}
+
+#page table.calendar tbody tr td.past,
+#page table.calendar tbody tr.nodata td,
+#page table.calendar tbody tr td.trailing {
+  color: #CCC;
+}
+
+#page table.calendar tbody tr.nodata td {
+  background: #FFF !important;
+}
+
+#page table.calendar thead tr th.weekend,
+#page table.calendar tbody tr td.weekend,
+#page table.calendar tbody tr td.weekend span,
+#page table.calendar tbody tr td.weekend a {
+  color: #EA8484 !important;
+}
+
+ul.calendarLegend {
+  list-style-type: none;
+  margin: 0 0 1.4em 0;
+  padding: 0;
+  font-size: 11px;
+  line-height: 1.25em;
+}
+
+ul.calendarLegend li {
+  margin: 0 0 0.42em 0;
+  padding: 0 0 0 1.5em;
+}
+
+ul.calendarLegend li span {
+  float: left;
+  display: inline;
+  width: 1em;
+  height: 1em;
+  border: 1px solid #ccc;
+  margin-left: -1.5em;
+}
+
+ul.calendarLegend li span.selected {
+  background-color: #E9EBEF;
+}
+
+/* calSheet */
+
+span.calSheet {
+    display: block;
+    text-align: center;
+}
+
+span.calSheet span {
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+span.calSheet span.month {
+    background: #96BE57;
+    border: 1px solid #96BE57;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1.1em;
+    font-weight: bold;
+    text-align: center;
+}
+
+span.calSheet span.day {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    color: #000;
+    line-height: 1.4em;
+    font-weight: bold;
+    letter-spacing: -0.1em;
+}
+
+/* calSheetSmall */
+
+span.calSheetSmall {
+    width: 25px;
+}
+
+span.calSheetSmall span.month {
+    height: 10px;
+    font-size: 9px;
+}
+
+span.calSheetSmall span.day {
+    font-size: 14px;
+}
+
+div.catalogueHead {
+    position: relative;
+}
+
+div.catalogueHead h1 {
+    display: inline;
+    font-size: 18px;
+}
+
+/* image */
+
+div.catalogueHead .catalogueImage {
+    float: left;
+    margin: 0 15px 10px 0;
+}
+
+div.catalogueHead .catalogueImage span.image {
+    display: block;
+    padding: 1px;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+div.catalogueHead .catalogueImage span.image span {
+    display: block;
+    height: auto;
+    overflow: hidden;
+}
+
+div.catalogueHead .catalogueImage img {
+    display: block;
+}
+
+div.catalogueHead span.moduleOptions {
+    padding: 1px 3px;
+    background: #F7F7F7;
+}
+
+div.catalogueHead a.catalogueImage:hover {
+    text-decoration: none;
+}
+
+div.catalogueHead a.catalogueImage:hover span {
+    text-decoration: underline;
+}
+
+/* stats */
+
+div.catalogueHead p.stats,
+div.catalogueHead p.listeningNow {
+    margin: 12px 0;
+    color: #696969;
+    font-size: 11px;
+    line-height: 1.363636em;
+}
+
+div.catalogueHead p.listeningNow {
+    margin-bottom: 0;
+}
+
+/* buttons */
+
+div.catalogueHead div.buttons {
+    margin: 1em 0;
+    line-height: 2em;
+}
+
+* html div.catalogueHead div.buttons .lfmButton,
+* html div.catalogueHead div.buttons .indicator {
+    margin-bottom: 4px;
+}
+
+/* tags */
+
+div.catalogueHead div.tags p {
+    font-size: 11px;
+    line-height: 1.363636em;
+}
+div.catalogueHead div.tags h3 {
+    margin: 15px 0 0 0;
+}
+
+div.catalogueHead p.tags {
+    margin: 0;
+    padding-right: 20px;
+    text-indent: -20px;
+    font-size: 11px;
+    line-height: 1.181818em;
+}
+
+div.catalogueHead p.tags span {
+    position: relative;
+    left: 20px;
+    top: 0;
+    color: #0187c5;
+}
+
+div.catalogueHead p.tags span img {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* comments */
+
+div.catalogueHead p.comments {
+    font-size: 11px;
+    line-height: 1.181818em;    
+}
+
+div.catalogueHead p.comments .shoutCount {
+    font-size: 11px;
+}
+
+div.catalogueHead p.comments {
+/*    margin-bottom: 1em;*/
+}
+
+div.catalogueHead p.comments img {
+    margin: 0 4px 0px 1px;
+    vertical-align: bottom;
+}
+
+
+/* album specific */
+
+.albumHead {
+    padding: 0 0 0 215px;
+}
+
+.albumHead div.albumCover {
+    float: left;
+    display: inline;
+    margin: 0 0 0 -215px;
+    text-align: right;
+}
+
+.albumHead div.albumCover p {
+    margin: 5px 0 0 0;
+}
+
+.albumHead h1 {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.albumHead h1 a {
+    font-weight: bold;
+    color: #696969;
+}
+
+.albumHead h1 a:hover {
+    color: #0187c5;
+}
+
+/* track specific */
+
+.trackHead span.trackCover {
+    display: inline;
+    float: left;
+    margin: 0 0 0 -152px;
+}
+
+table.barChart {
+  font-family: Arial, Helvetica, Verdana, "Free Sans", "FreeSans", sans-serif;
+}
+
+table.barChart td.subject {
+  width: 62%;
+  background-image: url("http://cdn.last.fm/depth/charts/barchart_fakeborder.gif");
+  background-position: right top;
+  background-repeat: repeat-y;
+}
+
+table.tagChart td.subject {
+  background-image: url("http://cdn.last.fm/depth/charts/tagchart_fakeborder.gif");
+}
+
+table.fullTrackChart td.subject,
+table.trackChart td.subject {
+  background-image: none;
+}
+
+table.barChart td.quantifier {
+  width: 38%;
+}
+
+table.barChart a {
+	background: none;
+	padding: 0 0.15em;
+}
+
+table.barChart td {
+	border-top: solid 1px #DADADA;
+	padding: 2px 5px 4px 5px;
+	font-size: 12px;
+	line-height: 1.16667em;
+	vertical-align: top;
+}
+
+table.tagChart td {
+  border-top: 1px solid #C5D0DD;
+}
+
+table.barChart td.subject span {
+  height: 1.16667em;
+  overflow: hidden;
+  display: block;
+  padding-right: 8px;
+}
+
+table.fullTrackChart td.subject span,
+table.trackChart td.subject span {
+  padding-right: 0;
+}
+
+table.barChart td.position {
+	text-align: right;
+	color: #969696;
+	border-right: solid 1px #B5B5B5;
+}
+
+table.barChart td.delta {
+	color: #BDBDBD;
+	padding-left: 0;
+	padding-right: 0;
+	font-size: 9px;
+	white-space: nowrap;
+}
+
+table.barChart td.delta img {
+	margin-right: 1px;
+}
+
+table.tagChart td.position {
+	color: #98AABF;
+	border-right: solid 1px #98AABF;
+}
+
+table.barChart td.playButtons {
+  padding: 2px 0 0 6px;
+}
+
+table.barChart td.addToPlaylistButtons {
+  padding: 2px 10px 0 4px;
+  background-image: url("http://cdn.last.fm/depth/charts/barchart_fakeborder.gif");
+  background-position: right top;
+  background-repeat: repeat-y;
+}
+
+table.barChart tr:hover td,
+table.barChart tr.hover td  {
+  background-color: #EEE;
+  border-top: solid 1px #B5B5B5;
+}
+
+table.tagChart tr:hover td,
+table.tagChart tr.hover td  {
+  background-color: #E2E8F1;
+  border-top: solid 1px #A8B9CC;
+}
+
+table.barChart tr:hover td.addToPlaylistButtons,
+table.barChart tr:hover td.addToPlaylistButtons {
+  color: #FFF;
+}
+
+table.barChart tr:hover td.quantifier,
+table.barChart tr.hover td.quantifier {
+	background-color: #FFF;
+	border-top: none;
+}
+
+table.barChart td.subject a:hover {
+  background: none;
+  color: #545454;
+}
+
+table.tagChart td.subject a,
+table.tagChart td.subject a:hover {
+  color: #4B72A9;
+}
+
+table.barChart td.quantifier {
+	padding: 0;
+	color: #FFF;
+  border-top: none;
+}
+
+table.barChart td.quantifier div {
+	background-color: #CCC;
+	height: 18px;
+	line-height: 18px;
+}
+
+table.tagChart td.quantifier div {
+	background-color: #C5D0DD;
+}
+
+table.barChart td.quantifier div span {
+	padding-left: 4px;
+	padding-right: 9px;
+	background: url("http://cdn.last.fm/depth/charts/barchart_end.gif") top right no-repeat;
+	display: block;
+	white-space: nowrap;
+}
+
+table.tagChart td.quantifier div span {
+	background: url("http://cdn.last.fm/depth/charts/tagchart_end2.gif") top right no-repeat;
+}
+
+
+/* half-width stuff */
+
+#content table.inlineChart td.subject {
+  width: 90%;
+  padding: 0;
+  background-image: none;
+}
+
+#content table.inlineChart td.position {
+  color: #969696;
+}
+
+#content table.inlineChart td.delta {
+  color: #AAA;
+}
+
+#content table.inlineChart tr td.playButtons {
+  border-bottom: 2px solid #FFF;
+  background-image: url("http://cdn.last.fm/depth/charts/inlinechart_fixed_bg.gif");
+  background-position: right top;
+  background-repeat: repeat-x;
+}
+
+#content table.inlineChart div {
+  position: relative;
+  padding: 0 5px;
+}
+
+#content table.inlineChart span.text {
+  position: relative;
+  z-index: 5;
+  padding: 2px 0;
+}
+
+#content table.inlineChart span.percentageBar {
+  background-color: #E8E8E8;
+  display: block;
+  background-image: url("http://cdn.last.fm/depth/charts/half-width_bg.gif");
+  background-position: right center;
+  background-repeat: no-repeat;
+  position: absolute;
+  height: 18px;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  min-width: 9px;
+}
+
+table.barChart td.counter {
+  text-align: right;
+  color: #969696;
+  white-space: nowrap;
+}
+
+#content table.inlineChart tr:hover span.percentageBar,
+#content table.inlineChart tr.hover span.percentageBar {
+  background-color: #DFDFDF;
+  background-image: url("http://cdn.last.fm/depth/charts/half-width_bg_hover.gif");
+}
+
+#content table.inlineChart tr:hover td.subject,
+#content table.inlineChart tr.hover td.subject,
+#content table.inlineChart tr:hover td.position,
+#content table.inlineChart tr.hover td.position,
+#content table.inlineChart tr:hover td.delta,
+#content table.inlineChart tr.hover td.delta {
+  background-image: none;
+  background-color: #EEE;
+}
+
+#content table.inlineChart tr:hover td.playButtons,
+#content table.inlineChart tr.hover td.playButtons {
+  border-bottom-color: #EEE;
+  background-image: url("http://cdn.last.fm/depth/charts/inlinechart_fixed_bg_hover.gif");
+}
+
+/* add to playlist buttons */
+/* See the IE CSS file for some stuff! */
+
+#content table a.addToPlaylist {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: transparent;
+  background-position: left top;
+  float: right;
+  display: inline;
+  margin-top: -1px;
+  margin-bottom: -1px;
+}
+
+#content table td > a.addToPlaylist {
+ visibility: hidden;
+ background-image: url("http://cdn.last.fm/depth/icons/addtoplaylist.gif");
+}
+
+#content table a.addToPlaylist span {
+  width: 16px;
+  height: 16px;
+  font-size: 0;
+  line-height: 0;
+  text-decoration: none;
+  text-indent: -9999px;
+  display: block;
+}
+
+#content table tr:hover a.addToPlaylist {
+  visibility: visible;
+  background-image: url("http://cdn.last.fm/depth/icons/addtoplaylist.gif");
+  background-repeat:no-repeat;
+}
+
+#content table tr.previewhover a.addToPlaylist,
+#content table tr.flphover a.addToPlaylist,
+#content table tr.hover a.addToPlaylist {
+  background-image: url("http://cdn.last.fm/depth/icons/addtoplaylist.gif");
+  background-repeat:no-repeat;
+}
+
+#content table td a.addToPlaylist:hover {
+ background-image: url("http://cdn.last.fm/depth/icons/addtoplaylist.gif");
+ cursor: pointer !important;
+}
+
+#content table tr td a.playlistAddProgress,
+#content table tr td a.playlistAddProgress:hover {
+  background-image: url("http://cdn.last.fm/depth/global/progress.gif");
+  background-position: 0 -2px;
+  background-repeat:no-repeat;
+}
+
+#content table tr td a.playlistAdded,
+#content table tr td a.playlistAdded:hover {
+  background-image: url("http://cdn.last.fm/depth/icons/track_added.gif") !important;
+  background-repeat:no-repeat;
+}
+
+.cloud {
+    font-family: "Helvetica Neue", Arial, Helvetica, Verdana, "Free Sans", "FreeSans", sans-serif;
+    font-weight: bold;
+    text-align: center;
+}
+.cloud .cloudItem {
+    margin: 5px;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+#editor {
+	text-align: left;
+	margin-top: 2px;
+	padding: 2px 0;
+	width: 465px;
+}
+
+#editor.journalMode {
+	width: 685px;
+}
+
+#editor #editorTitle,
+#editor #message,
+#editor #toolbar,
+#editorPanel,
+#editorPreviewContainer {
+ 	width: 465px;
+}
+
+#editor #statusbar {
+	border: 1px solid #F5F5F5;
+	height: 1.2em;
+	display: none;
+	float: left;
+}
+
+#editor #bbbuttons {
+	padding: 0;
+	border: 0;
+	margin: 3px 0 0 0;
+}
+
+#editor #toolbar {
+	margin-top: 4px;
+}
+
+#editor #editorPreviewPane {
+	background: #FFF;
+	margin: 5px 0 10px 0;
+	padding: 15px;
+	border: 1px solid #DFDFDF;
+}
+
+#editor #actionbuttons {
+	padding: 3px;
+}
+
+#editor .bbbuttons {
+  clear: both;
+}
+
+#editor .bbbuttons li {
+	display: inline;
+	float: left;
+  margin: 0;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	list-style: none;
+	cursor: pointer;
+	background: url('http://cdn.last.fm/depth/buttons/journal_button_01.gif') top left no-repeat;
+	padding-left: 4px;
+	line-height: 15px;
+	font-size: 11px;
+	white-space: nowrap;
+}
+
+#editor .bbbuttons li.lfm {
+    color: #4A71A9;
+}
+
+#editor .bbbuttons li span {
+    display: block;
+    padding-right: 4px;
+    background: url('http://cdn.last.fm/depth/buttons/journal_button_02.gif') top right no-repeat;
+}
+
+#journalgroups {
+    clear: both;
+    margin-top: 15px;
+}
+
+div.wikiFactBox {
+    margin: 1em 0;
+}
+dl.factbox {
+    padding: 0 0 0 111px;
+}
+
+dl.factbox dt {
+    clear: both;
+    display: inline;
+    float: left;
+    margin: 0 0 0 -111px;
+    padding: 7px 0 0 0;
+    width: 100px;
+}
+
+dl.factbox dd {
+    padding: 7px 0 0 0;
+    display: block;
+}
+
+div#player {
+    width: 300px;
+    overflow: visible;
+    margin-bottom: 30px;
+}
+
+div.shortPlayer {
+    height: 221px;
+}
+
+#LastFooter {
+    font-size: 11px;
+    text-align: left;
+    line-height: 1.181818em;
+    margin: 10px 0 0 110px;
+    color: #000;
+    overflow: hidden;
+}
+
+* + html #spArticleBody #LastFooter {
+    width: 808px;
+}
+
+.full #LastFooter {
+    margin-left: 0;
+}
+
+* + html #spArticleBody .full #LastFooter {
+    width: 918px;
+}
+
+#footerStuff {
+    overflow: hidden;
+    margin: 0 0 15px 0;
+    background: #eef5fc;
+    padding: 10px 0;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    line-height: 15px;
+    width : 100%;
+}
+
+#footerStuff li {
+    width: 50%;
+    _width: 48%;
+    float: left;
+    display: inline;
+}
+
+* + html #footerStuff li {
+    width: 48%;
+}
+
+#footerMessage {
+    margin-left: 15px;
+}
+
+#footerMessage h3 {
+    font-size: 11px;
+}
+
+#footerMessage p {
+    margin: 0;
+}
+
+#uploadYourMusic {
+   margin-left: 15px;
+}
+
+#footer_content {
+    margin: 0 0 25px 0;
+    padding: 10px 15px 10px 0;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+#footerLinks {
+    padding: 8px 0 0 0;
+    margin: 0 0 25px 0;
+    list-style-type: none;
+}
+
+#footerLinks * {
+    margin: 0;
+    padding: 0;
+}
+
+#footerLinks a {
+    color: #000;
+}
+
+#footerLinks li {
+    display: block;
+    float: left;
+    width: 25%;
+    _width: 24%;
+}
+
+* + html #footerLinks li {
+    width: 24%;
+}
+
+#footerLinks dt {
+    width: 177px;
+    font-weight: bold;
+    font-size: 12px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 3px;
+    margin-left: 15px;
+}
+
+#footerLinks dd {
+    margin-bottom: 0.2em;
+    margin-left: 15px;
+}
+
+#LastFooter #jasrac {
+    width: 226px;
+    height: 75px;
+    margin: 30px auto 0 auto;
+}
+
+#justCantGetEnough {
+    padding-bottom: 3px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 3px;
+    margin-left: 15px;
+}
+
+#justCantGetEnough blockquote {
+    margin: 0 0 25px 0;
+    font-family: "Lucida Sans", sans-serif;
+    font-style: italic;
+    font-size: 11px;
+    color: #696969;
+}
+
+#legalities {
+    clear: both;
+    margin-left: 15px;
+}
+
+#legalities form {
+    float: right;
+}
+
+#legalities form label {
+    display: block;
+    margin-bottom: 3px;
+    color: #000;
+}
+
+#legalities form select {
+    margin-right: 0.363636em;
+}
+
+#legalities p#copy {
+    margin-top: 8px;
+}
+
+#legalities p#copy,
+#legalities p#copy a {
+    color: #696969;
+    font-size: 10px;
+}
+
+#legalities #cbsi_f form {
+    float: right;
+}
+
+#legalities #cbsi_f_pop {
+    font-weight: bold;
+    color: #000;
+    margin: 0 0 3px 0;
+}
+
+#legalities #cbsi_f_pop a {
+    font-weight: normal;
+    color: #0187c5;
+}
+
+#legalities p#copy span.date{
+  color: #999;
+}
+
+/* ads */
+
+#footer_ads .LastAd {
+    width: 25%;
+    _width: 24.9%;
+    height: 64px;
+    float: left;
+    display: inline;
+    text-align: left;
+}
+
+* + html #footer_ads .LastAd {
+    width: 24.9%;
+}
+
+#footer_ads {
+    padding: 0;
+    height: 64px;
+    overflow: hidden;
+    clear: both;
+    zoom: normal;
+    margin: 5px 0 15px 0;
+}
+
+#footer_ads  .footer_ad_wrapper {
+    overflow: hidden;
+}
+
+#footer_ads .last {
+    margin-right: 0;
+}
+
+* html #footer_ads .last {
+    margin-right: -3px;
+}
+
+#footer_ads a {
+    display: none;
+}
+
+#footer_ads div a  {
+    display: block;
+}
+
+#footerCopy {
+    margin-top: 15px;
+    color: #696969;
+    font-size: 10px;
+}
+
+#footerCopy a {
+    color: #696969;
+    text-decoration: underline;
+}
+
+#footerCopy a:hover {
+    color: #0187c5;
+    text-decoration: underline;
+}
+
+/* Comments List */
+
+ul.forumComments {
+    overflow: visible;
+    width: 100%;
+    margin-bottom: 2em;
+}
+
+ul.forumComments div.comment {
+    margin: 0;
+    padding: 10px 15px 10px 111px;
+    position: relative;
+    zoom: 1;
+}
+
+ul.forumComments li.odd {
+    background: #f5f5f5;
+    border-top: 1px solid #e1e1e1;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+
+/* User Details */
+
+ul.forumComments ul.commentUserDetails {
+    display: inline;
+}
+
+ul.forumComments ul.commentUserDetails li {
+    display: inline;
+}
+
+ul.forumComments ul.commentUserDetails li.userName {
+    float: left;
+    margin-left: -96px;
+}
+
+ul.forumComments ul.commentUserDetails li.userName span,
+ul.forumComments ul.commentUserDetails li.userName span a {
+    color: #969696;
+    text-decoration: none;
+}
+
+ul.forumComments ul.commentUserDetails li.userName span a:hover {
+    text-decoration: underline;
+}
+
+ul.forumComments ul.commentUserDetails li.userThumb {
+    clear: left;
+    float: left;
+    margin-top: 10px;
+    margin-left: -96px;
+}
+
+ul.forumComments ul.commentUserDetails li.userThumb a span.userImage {
+    display: block;
+    float: left;
+}
+
+
+ul.forumComments ul.commentUserDetails li.userDetails {
+    clear: left;
+    float: left;
+    margin-left: -96px;
+}
+
+ul.forumComments ul.commentUserDetails li.userDetails span.user span.userType {
+    display: none;
+}
+
+ul.forumComments ul.commentUserDetails li.date {
+    display: block;
+    text-align: right;
+    color: #969696;
+    font-size: 11px;
+}
+
+/* Actual Content */
+
+ul.forumComments div.comment .wrapper {
+    display: block;
+    width: 440px;
+    position: relative;
+    z-index: 20;
+}
+
+ul.forumComments div.comment h4 {
+    margin: 0;
+    font-size: 12px;
+    color: #252525;
+}
+
+ul.forumComments div.comment .messageContent {
+    min-height: 6em;
+    padding-top: 7px;
+}
+
+ul.forumComments div.comment .messageContent a:hover {
+    background-color: transparent;
+}
+
+ul.forumComments div.comment .messageContent li {
+    margin: 0.7em 0 0.7em 2em;
+    list-style-position: outside !important;
+}
+
+ul.forumComments div.comment .messageContent ul br {
+    display: none;
+}
+
+
+/* Signature */
+
+ul.forumComments div.comment div.messageSig {
+    margin: 24px -15px 0 -15px;
+    padding-top: 8px;
+    border-top: 1px solid #ccc;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 11px;
+    max-height: 256px;
+    overflow: hidden;
+}
+
+ul.forumComments div.comment div.messageSig a {
+    border-bottom: none;
+    text-decoration: underline;
+}
+
+ul.forumComments div.comment div.messageSig a:hover {
+    background: none;
+}
+
+/* Quote, Reply Buttons */
+
+ul.forumComments div.comment div.forumLine {
+    text-align: right;
+    margin-top: 15px;
+}
+
+ul.forumComments div.comment div.forumLine a {
+    color: #969696;
+    font-size: 11px;
+}
+
+ul.forumComments div.comment div.forumLine a:hover {
+    color: #666;
+    background: transparent;
+}
+
+/* Quotes */
+
+span.quote {
+    display: block;
+    margin: 5px 0 1.5em 0;
+    padding: 5px;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    position: relative;
+    zoom: 1;
+}
+
+span.quote span.quote {
+    margin: 5px 0 0 0;
+}
+
+/* superscript in forum signatures */
+
+.messageSig sub,
+.messageSig sup {
+	line-height: 1.3;
+}
+
+div.comment a.entry-title {
+  display: none;
+}
+
+.forum textarea {
+    height: 100px;
+}
+
+
+
+/* Forum Search Results */
+.forumSearchResults .forumCrumb {
+    display: block;
+    margin: 10px 0 0 0;
+    padding: 0 15px;
+    font-size: 11px;
+    font-weight: normal;
+    color: #666;
+}
+
+.forumSearchResults .forumCrumb a {
+    color: #666;
+    border: none;
+}
+
+.forumSearchResults .forumCrumb a:hover {
+    color: #0187c5;
+    text-decoration: underline;
+}
+
+.forumSearchResults ul.forumComments .messageSig,
+.forumSearchResults ul.forumComments .forumStuff,
+.forumSearchResults ul.forumComments .forumLine {
+    display: none;
+}
+
+
+/* Recent Discussions (on group pages etc.) */
+div.recentDiscussions table td.subject {
+    padding: 0 0 10px 50px;
+    font-size: 11px;
+}
+
+div.recentDiscussions table td.subject span.userImage {
+    display: inline;
+    float: left;
+    margin-left: -50px;
+}
+
+div.recentDiscussions table td.subject strong {
+    font-size: 12px;
+}
+
+
+div.forumview #topbarForum,
+div.forumview #bottombarForum {
+	margin-bottom: 15px;
+	overflow: hidden;
+	clear: both;
+	line-height: 2.5;
+}
+
+div.forumview #topbarForum .pagination,
+div.forumview #bottombarForum .pagination {
+    margin: 0;
+}
+
+table.forumtable {
+	width: 100%;
+	margin-top: 5px;
+	margin-bottom: 20px;
+	border-collapse: collapse;
+}
+
+table.forumtable th {
+	background: transparent;
+	text-align: left;
+	font-size: 12px;
+	padding: 0 8px 8px 9px;
+	color: #666;
+}
+
+table.forumtable td {
+	padding: 6px 10px 8px 10px;
+	vertical-align: top;
+	font-size: 12px;
+	border-right: solid 1px #E1E1E1;
+	border-bottom: solid 1px #E1E1E1;
+	border-top: solid 1px #E1E1E1;
+}
+
+#LastWebsite table.forumtable td a:hover {
+  background-color: transparent;
+}
+
+table.forumtable tr.alt td {
+	padding-top: 5px;
+  background-color: #F5F5F5;
+	border-bottom: solid 1px #E1E1E1;
+	border-top: solid 1px #E1E1E1;
+}
+
+table.forumtable .forumTitle,
+table.forumtable .threadTitle {
+	width: 50%;
+}
+
+table.forumtable .threadTitle strong.sticky {
+	color: #4B72A9;
+}
+
+table.forumtable .threadTitle strong.hot {
+	color: #F98086;
+}
+
+table.forumtable .threadTitle a:visited {
+	color: #A0A0A0;
+}
+
+table.forumtable td.forumTitle small {
+	line-height: 1.3;
+	font-size: 11px;
+}
+
+table.forumtable td.threadTitle small.threadPagination {
+	font-size: 12px;
+	color: #A0A0A0;
+}
+
+table.forumtable td.threadTitle small.threadPagination a {
+	color: #A0A0A0;
+	padding: 0 0.3em;
+	margin: 0 -0.2em;
+	text-decoration: none;
+}
+
+table.forumtable td.threadTitle small.threadPagination a:hover {
+	color: #A0A0A0;
+}
+
+table.forumtable td a.author {
+    color: #000;
+}
+
+table.forumtable .numTopics,
+table.forumtable .numPosts {
+	width: 5em;
+	text-align: center;
+}
+
+table.forumtable .numReplies,
+table.forumtable .numViews {
+	text-align: center;
+}
+
+table.forumtable .end,
+table.forumtable .lastPost {
+	border-right: none;
+}
+
+table.forumtable .lastPost small {
+	vertical-align: baseline;
+	font-size: 11px;
+	white-space: nowrap;
+}
+
+table.forumtable .lastPost small a {
+	text-decoration: none;
+}
+
+table.forumtable .lastPost small a:hover {
+	color: #545454;
+}
+
+table.forumtable tr td.lastPost small a:visited {
+	color: #A0A0A0;
+}
+
+table.forumtable tr td.lastPost small a:hover:visited {
+	color: #A0A0A0;
+}
+
+/* reply tracker */
+
+table#replyTrackerTable td {
+  line-height: 1.16667;
+}
+
+#replyTrackerTable td.msgTitle a:visited {
+	color: #A0A0A0;
+}
+
+table.forumtable tr td.location a {
+  text-decoration: none;
+}
+
+table.forumtable tr td.location a {
+  color: #545454;
+}
+
+/* grapevine */
+
+#posthistorytable.forumtable td.lastPost {
+	width: 10em;
+}
+/*
+/* pm inbox */
+
+table.forumtable tr.unreadMsg td {
+	font-weight: bold;
+}
+
+table.forumtable tr td.msgIcon {
+	border-right: none;
+	padding-right: 0;
+	width: 15px;
+	padding-left: 5px;
+}
+
+table.forumtable tr td.msgIcon img {
+	float: right;
+}
+
+.excerpts {
+	clear: both;
+}
+
+/* Quick tweaks for rules */
+
+#forumRules #content h1 {
+    margin: 1em 0;
+}
+
+#forumRules ul.rules li {
+    margin: 1em 0;
+}
+
+#forumRules dt {
+    font-weight: bold;
+    display: block;
+    margin: .8em 0 0;
+}
+
+#forumRules dd {
+    display: block;
+    margin: .1em 0 .4em;
+}
+
+#forumRules dd input {
+    margin-right: 3px;
+}
+
+
+/* Forum Search Box */
+#forumsearch {
+    margin: 0 0 20px 0;
+    padding: 10px 15px;
+    background: #f5f5f5;
+}
+
+#forumSearchInput {
+    font-size: 12px;
+    width: 160px;
+    padding: 1px 3px;
+    margin: 0;
+    border: 1px solid #ccc;
+}
+
+a#advancedSearch {
+    margin: 0 0 0 1em;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+fieldset#advancedOptions {
+    margin: 1em 0 0 0;
+}
+
+#resultsOrder {
+    font-size: 11px;
+    text-align: right;
+    line-height: 3em;
+}
+
+#faqs {
+    font-size: 12px;
+    line-height: 1.5em;
+}
+
+a.icon:hover {
+    text-decoration: none !important;
+}
+a.icon:hover span,
+a.icon:hover strong {
+    text-decoration: underline !important;
+}
+
+img.comment_icon {
+    margin: 0 3px -2px 0;
+}
+img.journal_icon {
+    margin: 0 5px -5px 0;
+}
+img.new_journal_icon {
+    margin: 0 4px -4px 0;
+}
+img.tag_icon {
+    margin: 0 6px -1px 0;
+}
+img.mail_icon {
+    margin: 0 4px 0 0;
+}
+img.playingnow_icon {
+    margin: 0 0 -2px 2px;
+}
+img.play_icon {
+    margin: 0 4px -4px 0;
+}
+img.dismiss_icon {
+    margin: 0 4px -2px 0;
+}
+img.feed_small_icon {
+    margin: 0 4px -1px 0;
+}
+img.cal_icon {
+    margin: 0 4px 0 2px;
+}
+img.feed_icon,
+img.ics_icon,
+img.ical_icon,
+img.google_cal_icon,
+img.google_cal_small_icon,
+img.outlook_cal_icon {
+    margin: 0 4px 0 0;
+}
+img.ics_small_icon {
+    margin: 0 4px -1px 0;
+}
+img.itunes_icon {
+    margin: 0 4px -4px 0;
+}
+img.itunes_small_icon {
+    margin: 0 4px -1px 0;
+}
+img.print_icon {
+    margin: 0 4px -3px 0;
+}
+img.edit_icon {
+    margin: 0 4px -5px 0;
+}
+img.loved_indicator_icon {
+    margin: 0 4px 0 0;
+}
+img.playlist_icon {
+    margin: 0 4px -1px 0;
+}
+img.radio_large_icon {
+    margin: 0 5px 0 0;
+}
+img.recommended_icon {
+    margin: 0 5px 0 0;
+}
+img.attending_icon {
+    margin: -3px 0 -6px 0;
+}
+img.maybeattending_icon {
+    margin: -3px 0 -6px 0;
+}
+img.eventclash_icon {
+    margin: -3px 0 -6px 0;
+}
+img.flag_icon {
+    margin: 0 4px -3px 0;
+}
+img.ticket_icon {
+    margin: 0 4px 0 0;
+}
+img.settings_icon {
+    margin: 0 3px -1px 0;
+}
+img.up_icon {
+    margin: 0 3px 0 0;
+}
+
+img.staff_icon,
+img.subscriber_icon,
+img.moderator_icon {
+    margin: 0 2px 6px 0;
+}
+
+/* Resource icons */
+img.res_track_icon,
+img.res_artist_icon,
+img.res_album_icon {
+    margin: 0 4px -4px 0;
+}
+
+
+/* IN THE LONG RUN, THIS SHOULD REPLACE ALL THE ABOVE */
+
+img.icon {
+    background-image: url('http://cdn.last.fm/flatness/sprites/4/icons.png');
+}
+*html img.icon {
+    background-image: url('http://cdn.last.fm/flatness/sprites/4/icons.IE6.png');
+}
+
+
+.flag_uk_icon       { background-position: 0 0; }
+.flag_de_icon       { background-position: 0 -20px; }
+.flag_es_icon       { background-position: 0 -40px; }
+.flag_fr_icon       { background-position: 0 -60px; }
+.flag_it_icon       { background-position: 0 -80px; }
+.flag_jp_icon       { background-position: 0 -100px; }
+.flag_pl_icon       { background-position: 0 -120px; }
+.flag_pt_icon       { background-position: 0 -140px; }
+.flag_ru_icon       { background-position: 0 -160px; }
+.flag_se_icon       { background-position: 0 -180px; }
+.flag_tr_icon       { background-position: 0 -200px; }
+.flag_zh_icon       { background-position: 0 -220px; }
+.globe_icon         { background-position: 0 -240px; }
+.ss-amarok_icon     { background-position: 0 -260px; }
+.ss-wmp_icon        { background-position: 0 -280px; }
+.ss-itunes_icon     { background-position: 0 -300px; }
+.ss-wa2_icon        { background-position: 0 -320px; }
+.ss-iphone_icon     { background-position: 0 -340px; }
+.ss-logitech_icon   { background-position: 0 -360px; }
+.ss-playdar_icon    { background-position: 0 -380px; }
+.ss-lfm_icon        { background-position: 0 -400px; }
+.ss-spotify_icon    { background-position: 0 -420px; }
+.ss-android_icon    { background-position: 0 -440px; }
+.ss-generic_icon    { background-position: 0 -460px; }
+.settings_icon      { background-position: 0 -500px; }
+.flag_icon          { background-position: 0 -520px; }
+.eventclash_icon    { background-position: 0 -540px; }
+.maybeattending_icon{ background-position: 0 -560px; }
+.attending_icon     { background-position: 0 -580px; }
+.recommended_icon   { background-position: 0 -600px; }
+.ticket_icon        { background-position: 0 -640px; }
+.moderator_icon     { background-position: 0 -660px; }
+.subscriber_icon    { background-position: 0 -680px; }
+.staff_icon         { background-position: 0 -700px; }
+.edit_icon          { background-position: 0 -720px; }
+.itunes_icon        { background-position: 0 -880px; }
+.outlook_cal_icon   { background-position: 0 -900px; }
+.google_cal_icon    { background-position: 0 -920px; }
+.ical_icon          { background-position: 0 -940px; }
+.ics_icon           { background-position: 0 -940px; }
+.cal_icon           { background-position: 0 -960px; }
+.feed_small_icon    { background-position: 0 -1000px; }
+.loved_icon         { background-position: 0 -1020px; }
+.unloved_icon       { background-position: 0 -1040px; }
+.loved_indicator_icon { background-position: 0 -1060px; }
+.play_icon          { background-position: 0 -1080px; }
+.dismiss_icon       { background-position: 0 -1120px; }
+.comment_icon       { background-position: 0 -1220px; }
+.journal_icon       { background-position: 0 -1240px; }
+.new_journal_icon   { background-position: 0 -1260px; }
+.addtofriends_icon  { background-position: 0 -1280px; }
+.isfriend_icon      { background-position: 0 -1300px; }
+.mailuser_icon      { background-position: 0 -1320px; }
+.up_icon            { background-position: 0 -1340px; }
+.radio_play_icon    { background-position: 0 -1380px; }
+.tag_icon           { background-position: 0 -1400px; }
+.radio_tag_icon     { background-position: 0 -1400px; }
+.radio_playlists_icon   { background-position: 0 -1420px; }
+.act_created_icon   { background-position: 0 -1440px; }
+.act_added_icon     { background-position: 0 -1460px; }
+.act_connected_icon { background-position: 0 -1480px; }
+.act_disconnected_icon  { background-position: 0 -1500px; }
+.act_befriended_icon        { background-position: 0 -1520px; }
+.act_updatedpermissions_icon    { background-position: 0 -1540px; }
+.act_joined_icon    { background-position: 0 -1560px; }
+.act_left_icon      { background-position: 0 -1580px; }
+.act_attending_icon { background-position: 0 -1600px; }
+.act_maybeattending_icon    { background-position: 0 -1620px; }
+.act_notattending_icon  { background-position: 0 -1640px; }
+.act_obsession_icon     { background-position: 0 -1660px; }
+.act_tagged_icon    { background-position: 0 -1680px; }
+.act_loved_icon     { background-position: 0 -1700px; }
+.act_recommended_icon   { background-position: 0 -1720px; }
+
+
+/* IE6 fix */
+* html #page .globe_icon { background: url('http://cdn.last.fm/depth/flags/mini/globe.gif') left top no-repeat; }
+* html #page.lfmBlack .globe_icon { background: url('http://cdn.last.fm/depth/flags/mini/globe_black.gif') left top no-repeat; }
+
+.indicator_new {
+    height: 24px;
+    display: -moz-inline-box;
+    display: inline-block;
+    padding: 0 3px 0 0;
+    background: url("http://cdn.last.fm/flatness/red_new_box.2.png") no-repeat right bottom;
+    color: #fff;
+    font-size: 11px;
+    text-decoration: none;
+    text-align: right;
+    vertical-align: middle;
+    font-weight: bold;
+    text-shadow: #163551 0 -1px 1px;
+    overflow: hidden;
+}
+
+.indicator_new span {
+    height: 21px;
+    padding: 1px 5px 2px 9px;
+    background: url("http://cdn.last.fm/flatness/red_new_box.2.png") no-repeat left top;
+    display: -moz-inline-box;
+    display: inline-block;
+    line-height: 20px;
+    vertical-align: top;
+}
+
+div#calendar table.interactive {
+    display: none;
+}
+div#calendar table.first {
+    display: table;
+}
+div#calendar table.controls {
+    margin: -1px 0 0 0;
+    width: 158px;
+    position: absolute;
+}
+div#calendar table.controls td a {
+    text-decoration: none;
+}
+div#calendar table.controls td a {
+    display: block;
+    width: 17px;
+    line-height: 15px;
+}
+div#calendar table.controls td.next a {
+    background:url(http://cdn.last.fm/depth/global/arrow_r.png) top left no-repeat;
+}
+div#calendar table.controls td.prev a {
+    background:url(http://cdn.last.fm/depth/global/arrow_l.png) top right no-repeat;
+}
+div#calendar table.controls td.next a:hover {
+    background-image:url(http://cdn.last.fm/depth/global/arrow_r_hover.png);
+}
+div#calendar table.controls td.prev a:hover {
+    background-image:url(http://cdn.last.fm/depth/global/arrow_l_hover.png);
+}
+div#calendar table.controls td.next a.busy, div#calendar table.controls td.next a:hover.busy {
+    background-image:url(http://cdn.last.fm/depth/global/arrow_r_anim.gif);
+}
+div#calendar table.controls td.prev a.busy, div#calendar table.controls td.prev a:hover.busy {
+    background-image:url(http://cdn.last.fm/depth/global/arrow_l_anim.gif);
+}
+div.interactive caption {
+    text-align: center !important;
+    width: 158px;
+    padding-top: 2px;
+}
+/*
+div#eventsNav ul li.pickadate {
+  padding-top: 5px;
+}
+*/
+
+
+/* Album Cover
+   =========== */
+
+span.albumCover {
+    position: relative;
+    display: block;
+}
+a span.albumCover {
+    cursor: pointer;
+}
+span.coverSmall {
+    width: 44px;
+    height: 35px;
+}
+span.coverMedium {
+    width: 75px;
+    height: 67px;
+}
+span.coverLarge {
+    width: 138px;
+    height: 131px;
+}
+span.coverMega {
+    width: 194px;
+    height: 184px;
+}
+
+span.albumCover span.art {
+    display: block;
+    position: absolute;
+}
+
+span.coverMedium span.art {
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+    left: 7px;
+    top: 2px;
+}
+span.coverLarge span.art {
+    width: 126px;
+    height: 126px;
+    overflow: hidden;
+    left: 11px;
+    top: 3px;
+}
+span.coverMega span.art {
+    width: 174px;
+    height: 174px;
+    overflow: hidden;
+    top: 5px;
+    left: 15px;
+}
+
+
+
+span.albumCover img  { display: block; }
+
+span.albumCover span.jewelcase {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-repeat: no-repeat;
+    background-position: left top;
+}
+
+/* TODO: correct width and height */
+
+span.coverMedium span.jewelcase {
+    width: 73px;
+    height: 68px;
+    background-image: url(http://cdn.last.fm/flatness/catalogue/album/jewelcase_medium.png);
+}
+* html span.coverMedium span.jewelcase {
+    background: transparent;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/catalogue/album/jewelcase_medium.png', sizingMethod='crop');
+}
+
+span.coverLarge span.jewelcase {
+    left: 0px;
+    width: 141px;
+    height: 134px;
+    background-image: url(http://cdn.last.fm/flatness/catalogue/album/jewelcase_large.png);
+}
+* html span.coverLarge span.jewelcase {
+    background: transparent;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/catalogue/album/jewelcase_large.png', sizingMethod='crop');
+}
+span.coverMega span.jewelcase {
+    left: 0px;
+    width: 194px;
+    height: 184px;
+    background-image: url(http://cdn.last.fm/flatness/catalogue/album/jewelcase_mega.png);
+}
+* html span.coverMega span.jewelcase {
+    background: transparent;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/catalogue/album/jewelcase_mega.png', sizingMethod='crop');
+}
+
+span.albumCover span.tracks {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 1px 3px;
+    color: #fff;
+    font-size: 10px;
+    background: #333;
+}
+
+#launcher input#userInput {
+    display: inline;
+    float: left;
+    width: 190px;
+    height: 16px;
+    line-height: 16px;
+    margin: -1px 7px 0 0;
+    padding: 1px 5px;
+    border: 1px solid #505050;
+    outline: 0;
+    font-size: 11px;
+    font-weight: normal;
+    color: #696969;
+}
+
+#launcher p {
+    clear: left;
+    margin: 5px 0 0 3px;
+    font-size: 11px;
+    color: #ccc;
+}
+
+
+#launcher #searchTypes {
+    margin: 0 0 3px 0;
+}
+
+#launcher #searchTypes li {
+    font-size: 11px;
+    line-height:12px;
+    float: left;
+    font-weight: bold;
+    margin: 0 5px 5px 0;
+    padding: 0 5px 0 0;
+    border-right: 1px solid #505050;
+    text-shadow: #505050 0 -1px 1px;
+}
+
+#launcher #searchTypes li.last {
+    border-right: 0;
+}
+#launcher #searchTypes li a {
+    color: #ccc;
+}
+#launcher #searchTypes li a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+#launcher #searchTypes li.selected a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+div.messageBox {
+    margin: 15px 0;
+}
+
+div.messageBox span.messageWrapper {
+    padding: 0.125em 0.5em 0.25em 25px;
+    font-weight: normal;
+    line-height: 1.3em;
+}
+
+div.successMessage span.messageWrapper {
+    background: url(http://cdn.last.fm/flatness/messageboxes/success.png) 0.5em center no-repeat #d6ebcc;
+}
+div.errorMessage span.messageWrapper {
+    background: url(http://cdn.last.fm/flatness/messageboxes/error.png) 0.5em center no-repeat #ffeacc;
+}
+
+* + html div.successMessage span.messageWrapper {
+    background-position: 0.5em top;
+}
+
+* + html div.errorMessage span.messageWrapper {
+    background-position: 0.5em top;
+}
+
+div.infoMessage span.messageWrapper,
+div.warnMessage span.messageWrapper,
+div.artistMessage span.messageWrapper,
+div.infoMessageBlock,
+div.warnMessageBlock,
+div.artistMessageBlock {
+    padding: 0.125em 0.5em 0.25em 0.5em;
+}
+div.infoMessage span.messageWrapper,
+div.infoMessageBlock {
+    background:  #e4f1ff;
+}
+div.warnMessage span.messageWrapper,
+div.warnMessagelock {
+    background: #ffeacc;
+}
+div.artistMessage span.messageWrapper,
+div.artistMessageBlock {
+    background:  #f1e4ff;
+}
+div.nodataMessageBlock,
+div.nodataMessage span.messageWrapper {
+    padding: 0.5em;
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+}
+
+div.rightCol div.nodataMessageBlock,
+div.rightCol div.nodataMessage span.messageWrapper {
+    background: #e3e3e3;
+}
+
+div.dismissMessage {
+    margin: 0 0 15px 0;
+    padding: 5px;
+    border: 5px solid #fff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #fff;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.272727;
+}
+div.dismissMessage img.delete_icon {
+    float: right;
+}
+div.dismissMessage h3 {
+    margin-bottom: 10px;
+}
+div.dismissMessage p {
+    color: #696969;
+}
+div.dismissMessageGrey {
+    background: #eee;
+    border-color: #eee;
+}
+div.dismissMessageSmall {
+    padding: 3px;
+    font-size: 10px;
+    line-height: 1.4;
+}
+div.dismissMessage p.icons {
+    margin: 20px 0 0 0;
+}
+div.dismissMessage p.icons img {
+    margin: 0 5px;
+}
+div.dismissMessageSmall p.icons img {
+    margin: 0 3px;
+}
+div.dismissMessage p.icons a.multiline {
+    float: left;
+    text-decoration: none;
+}
+div.dismissMessage p.icons a.large:hover span {
+    text-decoration: underline;
+}
+
+div#radioTrialMessage {
+    position: relative;
+    border-color: #a5d7ef;
+    background: #d6efff;
+    color: #636363;
+    border-width: 1px;
+    margin: 10px 0 0 0;
+    padding: 10px 10px 0 10px;
+    font-size: 11px;
+    line-height: 1.181818;
+    z-index: 500;
+}
+div#radioTrialModal {
+    z-index: 490px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+}
+div#radioTrialMessage p,
+div#radioTrialMessage.dismissMessageGrey p {
+    color: #000;
+}
+div#radioTrialMessage h3 {
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+div#radioTrialMessage div.inYourFace {
+    padding-bottom: 5px;
+}
+div#radioTrialMessage div.inYourFace h3 {
+    margin-bottom: 10px;
+    font-size: 19px;
+}
+div#radioTrialMessage div.inYourFace p {
+    margin-bottom: 10px;
+    font-size: 11px;
+    line-height: 1.333333;
+    color: #636363;
+}
+div#radioTrialMessage.trialStart,
+div#radioTrialMessage.trialEnd,
+div#radioTrialMessage.subscribe {
+    text-align: left;
+    margin: 0 0 10px 0;
+}
+div#radioTrialMessage.trialStart div.inYourFace,
+div#radioTrialMessage.trialEnd div.inYourFace,
+div#radioTrialMessage.subscribe div.inYourFace {
+    padding-bottom: 5px;
+}
+div#radioTrialMessage.trialStart div.inYourFace h3,
+div#radioTrialMessage.trialEnd div.inYourFace h3,
+div#radioTrialMessage.subscribe div.inYourFace h3 {
+    margin-bottom: 10px;
+    font-size: 19px;
+}
+div#radioTrialMessage.trialStart div.inYourFace p,
+div#radioTrialMessage.trialEnd div.inYourFace p,
+div#radioTrialMessage.subscribe div.inYourFace p {
+    margin-bottom: 10px;
+    font-size: 12px;
+    line-height: 1.333333;
+    color: #636363;
+}
+
+div#radioTrialMessage.dismissMessageGrey strong {
+    color: #000;
+}
+
+div#radioTrialMessage table.trialLeft {
+    width: 100%;
+    margin: 10px 0 15px 0;
+    line-height: 8px;
+}
+div#radioTrialMessage table.trialLeft td {
+    width: 25%;
+    padding: 0 5px;
+    color: #696969;
+    text-align: left;
+    vertical-align: middle;
+}
+div#radioTrialMessage table.trialLeft td.first {
+    text-align: right;
+}
+div#radioTrialMessage table.trialLeft td.progressCell {
+    width: 50%;
+    padding: 0;
+}
+div#radioTrialMessage table.trialLeft div.progress {
+    margin: 0;
+    height: 8px;
+    border: 1px solid #9c9b9b;
+    background: #eee;
+}
+div#radioTrialMessage.dismissMessageGrey table.trialLeft div.progress {
+    background: #fff;
+}
+div#radioTrialMessage div.progress div {
+    height: 100%;
+}
+div#radioTrialMessage span.used {
+    float: right;
+}
+
+div#radioTrialMessage.homeExpired {
+    margin: 0 0 10px 0;
+    text-align: left;
+}
+div#radioTrialMessage.homeExpired h3 {
+    color: #636363;
+}
+div#radioTrialMessage.homeExpired p {
+    text-align: center;
+    color: #636363;
+}
+
+ul.minifeedSmall li {
+    padding: 3px 0 3px 25px;
+    border-bottom: 1px solid #ddd;
+    font-size: 11px;
+}
+
+ul.minifeedSmall li img {
+    display: inline;
+    float: left;
+    margin: 0 0 0 -25px;
+}
+
+* html ul.minifeedSmall li {
+    zoom: 1;
+}
+
+ul.minifeedSmall li.last {
+    border: none;
+}
+
+ul.minifeedSmall li a {
+    color: #9C9B50;
+    text-decoration: none;
+}
+
+ul.minifeedSmall li a:hover {
+    text-decoration: underline;
+}
+
+ul.minifeedSmall li span.date {
+    color: #999;
+}
+
+ul.minifeedSmall .removeActivity img {
+    clear: both;
+    float: none;
+    margin: 0 4px -2px 0;
+}
+
+#moderationBox {
+    margin: 0 -15px 15px -15px;
+    overflow: hidden;
+    background: #fffcca;
+    padding: 6px 15px 7px 15px;
+}
+
+* html #moderationBox {
+    padding: 4px 15px 7px 15px;
+    zoom: 1;
+}
+
+.fullWidth #moderationBox,
+.fiflufi .leftCol #moderationBox {
+    margin-top: -15px;
+}
+
+#moderationBox.forSearch {
+    margin: 15px 0 0 0;
+}
+
+#moderationBox p {
+    display: inline;
+}
+
+#moderationBox p {
+    float: left;
+}
+
+#moderationBox .blah {
+    float: right;
+}
+
+ul.newsfeedMedium {
+    width: 60%;
+}
+
+ul.newsfeedMedium li {
+    clear: both;
+    padding: 3px 0 3px 15px;
+    border-bottom: 1px solid #ddd;
+    background: url(http://cdn.last.fm/flatness/square-10x10.gif) 0 5px no-repeat;
+}
+
+ul.newsfeedMedium li.last {
+    border: none;
+}
+
+ul.newsfeedMedium li a {
+    color: #0187c5;
+    text-decoration: none;
+}
+
+ul.newsfeedMedium li a:hover {
+    text-decoration: underline;
+}
+
+ul.newsfeedMedium li span.date {
+    color: #bbb;
+}
+
+ul.newsfeedMedium div {
+    padding: 5px 0 0 0;
+}
+
+
+ul.newsfeedMedium div.shout blockquote a {
+    display: inline;
+    background: #fff0e0;
+    color: #545454;
+    font-style: italic;
+    font-weight: bold;
+}
+
+ul.newsfeedMedium div.event a {
+    color: #545454;
+}
+
+ul.newsfeedMedium div.event span.calSheet {
+    float: left;
+    display: block;
+    width: 39px;
+    height: 42px;
+    margin: 4px 6px 0 -15px;
+    border: 1px solid #ccc;
+    font-family: "Helvetica", "Arial", sans-serif;
+    text-align: center;
+}
+
+ul.newsfeedMedium div.event span.calSheet span {
+    display: block;
+    font-weight: bold;
+    line-height: 1em;
+}
+
+ul.newsfeedMedium div.event span.calSheet span.month {
+    margin: 3px 0 0 0;
+    color: #333;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+ul.newsfeedMedium div.event span.calSheet span.day {
+    font-size: 24px;
+}
+
+ul.newsfeedMedium div.event span.summary {
+    display: block;
+    font-size: 14px;
+}
+
+ul.newsfeedMedium div.event span.summary strong {
+    color: #333;
+    font-weight: bold;
+}
+
+
+ul.newsfeedMedium div.event span.location {
+    display: block;
+}
+
+ul.newsfeedMedium div.event span.options a {
+    color: #0187c5;
+}
+
+ul.newsfeedMedium div.userstore {
+    margin: 0 0 0 -15px;
+}
+
+ul.newsfeedMedium div.group {
+    margin: 0 0 0 -15px;
+    padding-left: 75px;
+}
+
+ul.newsfeedMedium div.group img {
+    float: left;
+    display: inline;
+    margin: 0 0 0 -75px;
+    /* remove this after using live info */
+    width: 60px;
+    height: 60px;
+}
+
+ul.newsfeedMedium div.group span {
+    display: block;
+}
+
+ul.newsfeedMedium div.album {
+    margin-left: -15px;
+    padding-left: 75px;
+}
+
+ul.newsfeedMedium div.album img {
+    float: left;
+    display: inline;
+    width: 60px;
+    height: 60px;
+    margin: 0 0 0 -75px;
+}
+
+ul.newsfeedMedium div.album strong {
+    display: block;
+    color: #545454;
+}
+
+ul.newsfeedMedium div.album span {
+    display: block;
+}
+
+/* Noobstrap */
+
+#noobWelcome {
+    margin: 0 0 0 0;
+    padding: 10px 10px 0 10px;
+    border: 5px solid #e4f1ff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #e4f1ff;
+}
+#library #noobWelcome {
+    width: 500px;
+}
+#noobStrapForm {
+    margin: 10px 0 0 0;
+}
+#noobStrapForm .infoMessage {
+    margin: 0;
+}
+#noobStrapForm textarea#noobStrapTextarea {
+    display: block;
+    height: 150px;
+    width: 98%;
+    margin: 0 0 11px 0;
+    font-size: 16px;
+}
+
+#postStrap {
+    margin: 5px 0 15px 0;
+    padding: 2px 15px;
+    border: 5px solid #e4f1ff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #e4f1ff;
+    font-size: 11px;
+    line-height: 1.636364;
+}
+#postStrap p {
+    margin: 5px 0;
+}
+
+/* generic */
+
+.noobstrap {
+    padding: 10px;
+    border: 5px solid #e4f1ff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #e4f1ff;
+}
+
+.noobstrap h3 {
+    color: #96BE57;
+    clear: both;
+}
+
+.noobstrap p.big {
+    font-size: 14px;
+}
+
+.noobstrap .box {
+    margin: 15px 0 0 0;
+    padding: 5px 10px 5px 10px;
+    border: 5px solid #fff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.noobstrap .screenshots {
+    padding: 15px 0 0 15px;
+}
+
+* html .noobstrap .box,
+* html .noobstrap .screenshots {
+    height: 1%;
+    overflow: auto;
+}
+
+.noobstrap .screenshots p {
+    max-width: 26em;
+}
+
+.noobstrap .screenshots .screenshot {
+    float: right;
+    display: inline;
+    width: 132px;
+    color: #696969;
+    font-size: 10px;
+    margin: -15px 0 0 15px;
+    text-align: center;
+}
+
+.noobstrap .screenshots .screenshot img {
+    border: 1px solid #ccc;
+    padding: 1px;
+    background: #fff;
+}
+
+/* artist specific */
+
+a.ontour {
+    color: #fff;
+    background: #96BE57;
+    font-size: 9px;
+    line-height: 1em;
+    font-weight: normal;
+    white-space: nowrap;
+    text-transform: uppercase;
+    border: 3px solid #96BE57;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    margin-left: 0.25em;
+}
+
+a.ontour:hover {
+    text-decoration: none;
+    background-color: #999;
+    border-color: #999;
+}
+
+div.pagehead {
+    position: relative;
+    margin: 15px 0;
+    padding: 0 0 0 48px;
+}
+
+.fullWidth div.pagehead,
+.leftCol div.pagehead {
+    margin-top: 0;
+}
+
+div.pagehead .noImage {
+    margin-left: -48px;
+}
+
+div.pagehead p {
+    color: #0187c5;
+    font-size: 12px;
+}
+
+div.pagehead p span.calSheet {
+    margin-left: -48px;
+}
+
+div.pagehead p span.userImage {
+    float: left;
+    margin-left: -48px;
+}
+
+div.pagehead p span.userImage img {
+    float: none;
+    margin-left: 0;
+}
+
+div.pagehead p img {
+    float: left;
+    margin-left: -48px;
+    padding: 1px;
+    border: 1px solid #ccc;
+}
+
+div.pagehead h1 {
+    color: #000;
+    font-size: 17px;
+    margin-top: 0.15em;
+}
+
+div.pagehead h1.withAlbum {
+    padding-right: 85px;
+}
+div.pagehead h1.withAlbum a.featuredAlbum {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+div.pagehead h1 a.feed {
+    margin-left: 0.25em;
+}
+
+div.pagehead h1 a.feed img {
+    float: none;
+    vertical-align: baseline;
+    margin: 0;
+}
+
+div.pagehead div.pagination {
+    position: absolute;
+    top: 1.3em;
+    right: 15px;
+    float: none;
+}
+
+body.r-tag div.pagehead p img {
+    border: 0;
+}
+
+div.pagehead p.note {
+    color: #696969;
+    font-size: 11px;
+}
+
+div.pagehead img {
+    margin-bottom: 3px;
+    vertical-align: middle;
+}
+
+/* pagination styles */
+
+.pages {
+    display: none;
+}
+
+div.pagination {
+    float: right;
+    margin: 0.5em 0;
+    font-size: 11px;
+    line-height: 2.5;
+}
+
+div.pagination .selected,
+div.pagination a {
+    text-decoration: none;
+    padding: 0.2em 0.5em;
+    border: 1px solid #ccc;
+    margin: 0 0.2em;
+}
+div.pagination a:hover {
+    color: #000;
+    border-color: #aaa;
+    background: #efefef;
+}
+
+div.pagination .selected {
+    font-weight: bold;
+    border: 0;
+}
+div.pagination .ellipsis {
+    margin: 0 0.5em;
+}
+
+div.pagination a:hover span {
+    text-decoration: underline;
+}
+
+div.pagination a.prevlink,
+div.pagination a.prevlink:hover {
+    padding-left: 15px;
+    border: 0;
+    background: url(http://cdn.last.fm/depth/global/page_previous.gif) no-repeat left center;
+    color: #0187c5;
+}
+
+div.pagination a.nextlink,
+div.pagination a.nextlink:hover {
+    padding-right: 15px;
+    border: 0;
+    background: url(http://cdn.last.fm/depth/global/page_next.gif) no-repeat right center;
+    color: #0187c5;
+}
+
+#profilerButton {
+    display:inline;
+    float:left;
+    font-size:10px;
+    font-weight:bold;
+    height:22px;
+    line-height:22px;
+    margin:0 0 0 26px;
+    overflow:hidden;
+    color: #D20039;
+}
+#profilerButton:hover,
+#profilerButton:hover div.messageBox strong {
+    background-color: #BFDFF4;
+}
+#profilerButton div.messageBox {
+    margin: 0;
+}
+#profilerButton.blink span {
+    visibility: hidden;
+}
+
+.profilerSection {
+    font-size: 10px;
+}
+.profilerSection .fixed {
+    height: 300px;
+    overflow: auto;
+}
+.profilerSection .code {
+    padding: 5px;
+    border: 1px solid #ddd;
+    background: #eee;
+    margin-bottom: 10px;
+    overflow: auto;
+}
+
+
+div.resource {
+    position: relative;
+    margin: 0 0 1.5em 0;
+    padding: 0.5em;
+    background: #f0f0f0;
+}
+.resource span.actions {
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.2em 0.5em 0.5em 0.5em;
+    background: #f6f6f6;
+    font-size: 11px;
+}
+.resource:hover span.actions {
+    visibility: visible;
+}
+.resource span.actions a {
+    color: #000;
+}
+.resource span.actions a:hover {
+    color: #0187c5;
+}
+.resource span.actions img {
+    margin: 1px 4px 0 0;
+    float: left;
+}
+
+body div.resource h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.428571;
+    font-weight: normal;
+    background: none;
+}
+body div.resourceSmall h1 {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.resource h1 a img.thumb,
+.resource h1 a span.userImage,
+.resource h1 a span.albumCover,
+.resource h1 a span.videoStill {
+    float: left;
+    margin-bottom: 0.5em;
+}
+
+.resource h1 a span.albumCover,
+.resource h1 a span.videoStill {
+    padding: 2px;
+    background: #fff;
+}
+
+.user h1 a img.thumb {
+    padding: 1px;
+    border: 1px solid #999;
+}
+
+.resource h1 a span.albumCover {
+    margin-bottom: 1em;
+    padding: 0;
+}
+.resource h1 a span.poster {
+    margin: 0 0 1em 0;
+}
+.resource h1 a span.userImage img.thumb,
+.resource h1 a span.albumCover img.thumb,
+.resource h1 a span.poster img.thumb,
+.resource h1 a span.videoStill img.thumb {
+    float: none;
+    margin: 0;
+    padding: 0;
+}
+
+.resourceSmall h1 a img.thumb,
+.resourceSmall h1 a span.calSheet {
+    margin-left: -48px;
+}
+.resourceSmall h1 a span.albumCover {
+    margin-left: -46px;
+}
+.resourceMedium h1 a img.thumb,
+.resourceMedium h1 a span.userImage,
+.resourceMedium h1 a span.calSheet {
+    margin-left: -83px;
+}
+.resourceVideoMedium h1 a span.videoStill {
+    margin-left: -138px;
+}
+.resourceMedium h1 a span.calSheet {
+    width: 50px;
+}
+.resourceMedium h1 a span.calSheet span.month {
+    font-size: 11px;
+    height: 18px;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+}
+.resourceMedium h1 a span.calSheet span.day {
+    font-size: 24px;
+    line-height: 1.5;
+}
+.resourceMedium h1 a span.albumCover {
+    margin-left: -88px;
+}
+.resourceLarge h1 a img.thumb {
+    margin-left: -153px;
+}
+.resourceLarge h1 a span.albumCover,
+.resourceLarge h1 a span.calSheet {
+    margin-left: -149px;
+}
+
+.resource p,
+.resource div {
+    margin: 0.2em 0 0 0;
+    color: #111;
+}
+
+body div.resourceSmall h1,
+.resourceSmall p,
+.resourceSmall div {
+    padding-left: 50px;
+}
+body div.resourceMedium h1,
+.resourceMedium p,
+.resourceMedium div {
+    padding-left: 85px;
+}
+body div.resourceVideoMedium h1,
+.resourceVideoMedium p,
+.resourceVideoMedium div {
+    padding-left: 138px;
+}
+body div.resourceLarge h1,
+.resourceLarge p,
+.resourceLarge div {
+    padding-left: 155px;
+}
+
+div.richtext div.full {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+
+div.scroller {
+    overflow: auto;
+    position: relative;
+    color: #555;
+    margin: 20px 0;
+    padding: 0; 
+}
+
+div.scrollerJS {
+    width: auto !important;
+}
+
+* html div.scroller {
+    width: 100%;
+    height: 84px;
+    overflow-y: hidden;
+}
+
+* + html div.scroller {
+    width: 100%;
+    height: 84px;
+    overflow-y: hidden;
+}
+
+div.scroller a.scrollLeft,
+div.scroller a.scrollRight {
+    display: block;
+    height: 64px;
+    width: 10px;
+    position: absolute;
+    top: 2px;
+    font-size: 0;
+    line-height: 0;
+    text-indent: -9999px;
+    background-position: 0 0;
+}
+
+div.scroller a.scrollLeft,
+div.scroller a.scrollLeft:hover {
+    left: 0;
+    background-image: url("http://cdn.last.fm/flatness/scroller/left.png");
+}
+
+div.scroller a.scrollRight,
+div.scroller a.scrollRight:hover {
+    right: 0;
+    background-image: url("http://cdn.last.fm/flatness/scroller/right.png");
+}
+
+div.scroller a.scrollLeft:hover,
+div.scroller a.scrollRight:hover {
+    background-position: 0 -64px;
+}
+
+div.scroller a.scrollLeft:active,
+div.scroller a.scrollRight:active {
+    background-position: 0 -128px;
+    outline: 0;
+}
+
+div.scroller a.scrollLeft.disabled,
+div.scroller a.scrollRight.disabled {
+    background-position: 0 -192px;
+}
+
+div.scroller div.imageTrackContainer {
+    clear: both;
+    margin: 0 -5px;
+}
+
+div.scrollerJS div.imageTrackContainer {
+    overflow: hidden;
+    position: relative;
+    height: 68px;
+    margin: 0;
+}
+
+div.scroller div.imageTrackContainer ul {
+    margin: 0 auto;
+    padding: 0;
+    list-style-type: none;
+    height: $imageLinkSizepx;
+    overflow: hidden;
+}
+
+div.scrollerJS div.imageTrackContainer ul {
+    position: absolute;
+    left: 0;
+}
+
+div.scroller div.imageTrackContainer ul li {
+    margin: 0 2px;
+    padding: 0;
+    float: left;
+    display: inline;
+    width: 68px;
+    height: 68px;
+}
+
+div.scroller div.imageTrackContainer ul li a {
+    border: solid 2px #FFF;
+    width: 64px;
+    height: 64px;
+    display: block;
+    overflow: hidden;
+}
+
+div.scroller div.imageTrackContainer ul li.selected a,
+div.scroller div.imageTrackContainer ul li a:hover {
+    border: solid 2px #FFF386;
+}
+
+#secondaryNavigation {
+    position: absolute;
+    left: -111px;
+    top: -1px;
+    width: 111px;
+    z-index: 10;
+    font-size: 12px;
+    line-height: 2em;
+    font-weight: bold;
+}
+
+div.sic #secondaryNavigation {
+    top: -1px;
+}
+
+#secondaryNavigation ul {
+    overflow: hidden;
+    padding: 1px 0 0 0;
+    border-top: 1px solid #ccc;
+}
+
+#secondaryNavigation li {
+    display: block;
+}
+
+#secondaryNavigation li a {
+    display: block;
+    width: 94px;
+    margin: -1px 0 0 0;
+    padding: 4px 5px 5px 10px;
+    text-decoration: none;
+    background: url(http://cdn.last.fm/flatness/secondary_nav_bg.png) left top repeat-x #ededed;
+    border: 1px solid #ccc;
+    color: #696969;
+}
+#secondaryNavigation li.first a {
+    border-top: 0;
+}
+
+#secondaryNavigation li a:hover,
+#secondaryNavigation li.current a {
+    color: #96BE57;
+    background: #fff;
+}
+#secondaryNavigation li.current a {
+    border-right-color: #fff;
+}
+
+/* shoutboxInput */
+div#shoutbox {
+    font-size: 11px;
+    line-height: 1.181818;
+}
+
+div.shoutboxInput form {
+    padding: 0 0 0 80px;
+    clear: both;
+    position: relative;
+    min-height: 72px;
+}
+
+* html div.shoutboxInput form {
+    height: 72px;
+}
+
+div.shoutboxInput form span.avatar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 68px;
+    height: 68px;
+}
+
+/* otherwise the little subscriber dot is at the wrong position */
+div.shoutboxInput form span.avatar span.userImage {
+    display: block;
+}
+
+div.shoutboxInput form textarea {
+    display: block;
+    width: 99%;
+    height: 60px;
+}
+
+* + html div.shoutboxInput form textarea {
+    width: 98%;
+}
+
+* html div.shoutboxInput form textarea {
+    width: 98%;
+}
+
+div.shoutboxInput div.textareaActions {
+    margin: 5px 0 0 0;
+    color: #696969;
+}
+
+div.shoutboxInput div.textareaActions input#sbPost {
+    float: right;
+}
+
+div.shoutboxInput div.overCharLimit #sbCharCount {
+    color: red;
+}
+
+div.shoutboxInput div.overCharLimit #sbPost {
+    color: #888;
+}
+
+/* shoutboxList */
+ul.shouts {
+    margin: 15px 0;
+    width: 100%;
+}
+
+* html ul.shouts {
+    width: auto;
+}
+
+ul.shouts li.message {
+    clear: both;
+    position: relative;
+    margin: 0 0 20px 0;
+    padding: 0 0 0 80px;
+}
+
+ul.shouts li.message .author {
+    display: block;
+    border-bottom: 1px solid #ccc;
+    font-size: 11px;
+    padding: 0 5px 2px 0;
+    line-height: 1.5em;
+    font-weight: normal;
+}
+
+ul.shouts li.message .author a {
+    font-weight: bold;
+}
+
+ul.shouts li.message .author span.userImage {
+    display: inline;
+    float: left;
+    position: relative;
+    margin-left: -80px;
+}
+
+ul.shouts li.message span.date {
+    margin: 0 3px 0 0;
+    color: #696969;
+}
+
+ul.shouts li.message blockquote {
+    padding: 5px 5px 5px 1px;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+ul.shouts li.message .meta {
+    position: absolute;
+    top: 0;
+    right: 17px;
+    width: 200px;
+    text-align: right;
+    font-size: 10px;
+}
+
+ul.shouts li.message .meta form {
+    display: none;
+    position: absolute;
+    top: 1px;
+    right: -14px;
+    margin: 0;
+    display: inline;
+}
+
+/* inline */
+
+#page .stationbuttonInline {
+    color: #1b1b1b;
+    font-size: 11px;
+    line-height: 1.181818;
+    white-space: nowrap;
+}
+#page .stationbuttonImage {
+    white-space: normal;
+}
+
+#page .stationbuttonInline:hover {
+    color: #1b1b1b;
+}
+
+#page .stationbuttonInline span {
+    vertical-align: middle;
+}
+
+#page .stationbuttonInline img.radio_play_icon {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.stationbuttonInline img.radio_small_icon {
+    margin: 0 4px 0 0;
+    position: relative;
+    top: 2px;
+}
+
+/* medium */
+
+.stationbuttonMedium {
+    clear: both;
+    display: block;
+    position: relative;
+    max-width: 250px;
+    height: 34px;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/5/medium_left.png) left top no-repeat;
+    margin: 0 10px 10px 0;
+    padding-left: 30px;
+    color: #ccc;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 32px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+* html #page .stationbuttonMedium {
+    background-image: none;
+    width:expression(document.body.clientWidth > 250? "250px": "auto" );
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/buttons/stationbutton/5/medium_left.png', sizingMethod='crop');
+}
+
+#page .stationbuttonMedium:hover,
+#page .stationbuttonMedium:hover span.stationButtonWrapper {
+    color: #1b1b1b;
+    text-decoration: none;
+}
+
+.stationbuttonMedium span.stationButtonWrapper {
+    position: relative;
+    display: block;
+    padding: 0 10px 0 2px;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/5/medium_right.png) right top no-repeat;
+    height: 34px;
+    color: #4785c2;
+}
+
+.stationbuttonMediumPlaylist span.stationButtonWrapper {
+    padding: 0 40px 0 2px;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/5/medium_playlist_right.png) right top no-repeat;
+}
+
+* html #page .stationbuttonMedium span.stationButtonWrapper {
+    background-image: none;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/buttons/stationbutton/5/medium_right.png', sizingMethod='scale');
+}
+
+* html #page .stationbuttonMediumPlaylist span.stationButtonWrapper {
+    background-image: none;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/buttons/stationbutton/5/medium_playlist_right.png', sizingMethod='scale');
+}
+
+
+.stationbuttonMediumRight {
+    float: right;
+    margin: 0 0 10px 10px;
+    max-width: auto;
+}
+* html #page .stationbuttonMediumRight {
+    width: auto;
+}
+/* big */
+
+.stationbuttonBig {
+    display: block;
+    max-width: 252px;
+    height: 48px;
+    padding-left: 48px;
+    line-height: 1.2;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/4/big.png) left top no-repeat;
+    color: #4785c2;
+    font-size: 11px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.stationbuttonBig:hover {
+    color: #4785c2;
+    text-decoration: none;
+}
+
+.stationbuttonBig:hover strong {
+    text-decoration: underline;
+}
+
+.stationbuttonBig span.stationButtonWrapper {
+    position: relative;
+    display: block;
+    padding: 8px 44px 5px 0;
+    height: 37px;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/4/big.png) right top no-repeat;
+}
+
+.stationbuttonBig strong {
+    display: block;
+    font-size: 16px;
+}
+
+#page .stationbuttonBig img,
+#page .stationbuttonBig a:hover img, 
+#page .stationbuttonBig span.userImage,
+#page .stationbuttonBig a:hover span.userImage {
+    border: 0;
+    background: 0;
+    position: absolute;
+    top: 7px;
+    right: 6px;
+    padding: 0;
+}
+
+/* Large */
+
+.stationbuttonLarge {
+    clear: both;
+    display: block;
+    position: relative;
+    width: 252px;
+    height: 52px;
+    line-height: 1.181818em;
+    font-size: 11px;
+    padding-left: 46px;
+    cursor: pointer;
+    overflow: hidden;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/6/large_left.png) left top no-repeat;
+    color: #ccc;
+}
+
+.stationbuttonLarge:hover {
+    background-position: left -52px;
+}
+
+.stationbuttonLarge:hover span.stationButtonWrapper {
+    background-position: right -52px;
+}
+
+.stationbuttonLarge span.stationButtonWrapper {
+    position: relative;
+    display: block;
+    padding: 8px 0 8px 2px;
+    margin: 0 0 3px 0;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/6/large_right.png) right top no-repeat;
+    height: 52px;
+    color: #696969;
+}
+
+.stationbuttonLarge span.stationButtonWrapper strong {
+    color: #0187c5;
+    font-size: 12px;
+    line-height: 1.2em;
+}
+
+.stationbuttonLarge span.stationButtonWrapper p {
+    margin: 2px 0 0 0;
+}
+
+
+.stationbuttonLarge:hover {
+    text-decoration: none;
+}
+
+.stationbuttonLarge:hover span.stationButtonWrapper strong {
+    color: #1b1b1b;
+}
+
+.stationbuttonGrey {
+    background: url(http://cdn.last.fm/flatness/global/icon_radio_medium.png) 5px 5px no-repeat;
+    background-color: #ccc;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.stationbuttonGrey span.stationButtonWrapper {
+    background: none;
+    color: #696969;
+    text-shadow: #2E2D2E 0 -1px 1px;
+    text-shadow: none;
+}
+
+#page .stationbuttonGrey:hover span.stationButtonWrapper {
+    color: #696969;
+}
+
+#page .stationbuttonRight .stationbutton,
+#page .stationbuttonRight .stationbutton .stationButtonWrapper {
+    float: right;
+}
+
+html:not([lang*=""]) #page .stationbuttonRight .stationbutton .stationButtonWrapper {
+    float: none;
+}
+
+* html #page .stationbuttonRight {
+    text-align: right;
+}
+
+* html #page .stationbuttonRight .stationbutton,
+* html #page .stationbuttonRight .stationbutton .stationButtonWrapper {
+    float: none;
+    display: inline-block;
+}
+
+* + html #page .stationbuttonRight {
+    text-align: right;
+}
+
+* + html #page .stationbuttonRight .stationbutton,
+* + html #page .stationbuttonRight .stationbutton .stationButtonWrapper {
+    float: none;
+    display: inline-block;
+}
+
+/* More stations toggle */
+
+p.toggleStations {
+    margin: 10px 0 5px 5px;
+    font-size: 10px;
+}
+#toggleStations,
+#toggleStations:hover {
+    color: #696969;
+    text-decoration: none;
+}
+#toggleStations:hover span {
+    text-decoration: underline;
+}
+
+
+/* New Medium style to avoid conflicts 
+ * with playlist station buttons, but
+ * we’ll need to switch over once we 
+ * change all the buttons 
+**/
+
+.stationbuttonMedium3 {
+    clear: both;
+    display: block;
+    position: relative;
+    max-width: 250px;
+    height: 25px;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/6/medium3_left.png) left top no-repeat;
+    margin: 0 10px 10px 0;
+    padding-left: 25px;
+    color: #ccc;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 25px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+* html #page .stationbuttonMedium3 {
+    background-image: none;
+    width:expression(document.body.clientWidth > 250? "250px": "auto" );
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/buttons/stationbutton/6/medium3_left.png', sizingMethod='crop');
+}
+
+#page .stationbuttonMedium3:hover,
+#page .stationbuttonMedium3:hover span.stationButtonWrapper {
+    color: #1b1b1b;
+    text-decoration: none;
+}
+
+.stationbuttonMedium3 span.stationButtonWrapper {
+    position: relative;
+    display: block;
+    padding: 0 10px 0 2px;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/6/medium3_right.png) right top no-repeat;
+    height: 25px;
+    color: #2993c5;
+}
+
+#page .stationbuttonMedium3:hover {
+    background-position: left -25px;
+}
+
+#page .stationbuttonMedium3:hover span.stationButtonWrapper {
+    background-position: right -25px;
+}
+
+.stationbuttonMedium3Playlist span.stationButtonWrapper {
+    padding: 0 40px 0 2px;
+    background: url(http://cdn.last.fm/flatness/buttons/stationbutton/6/medium3_playlist_right.png) right top no-repeat;
+}
+
+* html #page .stationbuttonMedium3 span.stationButtonWrapper {
+    background-image: none;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/buttons/stationbutton/6/medium3_right.png');
+}
+
+* html #page .stationbuttonMedium3Playlist span.stationButtonWrapper {
+    background-image: none;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/buttons/stationbutton/6/medium3_playlist_right.png');
+}
+
+
+.stationbuttonMedium3Right {
+    float: right;
+    margin: 0 0 10px 10px;
+    max-width: auto;
+}
+* html #page .stationbuttonMedium3Right {
+    width: auto;
+}
+
+a.tag {
+    display: block;
+    float: left;
+    height: 19px;
+    padding: 0 2px 0 0;
+    background: url(http://cdn.last.fm/flatness/icons/tag/1/globaltag_right.png) no-repeat right top;
+    color: #fff;
+    font-size: 11px;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+a.tag:hover {
+    text-decoration: none;
+    background-position: right bottom;
+    color: #fff;
+}
+
+a.tag span {
+    display: block;
+    float: left;
+    height: 15px;
+    padding: 1px 7px 3px 19px;
+    background: url(http://cdn.last.fm/flatness/icons/tag/1/globaltag_left.png) no-repeat left top;
+    line-height: 15px;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+a.tag:hover span {
+    background-position: left bottom;
+}
+
+/* Tag browser for /music landing pages */
+
+div.tagBrowser {
+    display: block;
+    overflow: auto;
+    position: relative;
+}
+
+ul.tagList {
+    width: 111px;
+    float: left;
+    display: inline;
+    overflow: hidden;
+}
+
+ul.tagList li {
+    display: block;
+    float: left;
+    clear: left;
+    width: 76px;
+    margin: 0 15px 0 0;
+    padding: 3px 10px;
+    border-bottom: 1px solid #ccc;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+ul.tagList li a {
+    display: block;
+    font-weight: normal;
+}
+
+
+div.tagBrowser div.wrapper {
+    width: 439px;
+    float: left;
+    display: inline;
+    overflow: hidden;
+    position: relative;
+    zoom: 1;
+}
+
+.tagHead {
+    display: block;
+    overflow: auto;
+    background: #cdcccc url(http://cdn.last.fm/flatness/shaders/60-vert-f2f2f2-cdcccc.gif) repeat-x;
+    color: #000;
+    padding: 7px 13px;
+    border-bottom: 1px solid #b3b3b3;
+}
+
+.tagHead .tagpage {
+    font-size: 11px;
+    float: right;
+    font-weight: bold;
+}
+
+.tagHead .tagpage .tag_icon {
+    margin: 0 4px -2px 0;
+}
+
+.tagHead h2 {
+    color: #000;
+    font-size: 16px;
+    line-height: 1.25em;
+}
+
+.tagHead h2 .tag_icon {
+    margin: 0 5px 3px 0;
+}
+
+.tagHead .similarTags {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    line-height: 1.181818em;
+    color: #999;
+}
+
+.tagHead .similarTags strong {
+    font-weight: normal;
+    color: #000;
+}
+
+/* .horizontalOptions - used in charts/search/... toggle */
+
+.horizontalOptions {
+    display: block;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid #ccc;
+    font-size: 10px;
+    line-height: normal;
+}
+
+.horizontalOptions ul {
+    overflow: hidden;
+    margin-bottom: -1px;
+}
+
+.loading .horizontalOptions ul {
+    background: url(http://cdn.last.fm/flatness/spinner_small.gif) 99% top no-repeat;
+}
+
+.horizontalOptions ul li {
+    float: left;
+    margin: 0 5px 0 0;
+    list-style: none;
+}
+
+.horizontalOptions ul li a,
+.horizontalOptions ul li span,
+.horizontalOptions ul li strong {
+    float: left;
+    height: 20px;
+    line-height: 20px;
+    margin: 0 3px 0 0;
+    padding: 0 2px 0 5px;
+}
+.horizontalOptions ul li a {
+    color: #0187c5;
+    text-decoration: none;
+}
+.horizontalOptions ul li a span,
+.horizontalOptions ul li a strong {
+    float: none;
+    margin: 0;
+    padding: 0;
+}
+
+.horizontalOptions ul li.current {
+    background: url(http://cdn.last.fm/flatness/navigation/tab_mini_right.png) no-repeat right top;
+}
+
+.horizontalOptions ul li.current a {
+    background: url(http://cdn.last.fm/flatness/navigation/tab_mini_left.png) no-repeat left top;
+    color: #696969;
+    text-decoration: none;
+}
+
+.horizontalOptions ul li a:hover {
+    text-decoration: underline;
+}
+
+.horizontalOptions ul li.current a:hover {
+    text-decoration: none;
+}
+
+/* new tertiary nav */
+
+div.tertiaryNavigation {
+    display: block;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid #666;
+    font-size: 11px;
+    line-height: normal;
+}
+
+div.tertiaryNavigation ul li {
+    float: left;
+    position: relative;
+    margin: 0 6px -1px 0;
+}
+
+div.tertiaryNavigation ul li.last {
+    margin-right: 0px;
+}
+
+div.tertiaryNavigation ul li a,
+div.tertiaryNavigation ul li span,
+div.tertiaryNavigation ul li strong {
+    float: left;
+    height: 23px;
+    line-height: 23px;
+}
+div.tertiaryNavigation ul li a {
+    margin: 0 3px 0 0;
+    padding: 0 4px 0 7px;
+    color: #0187c5;
+    text-decoration: none;
+}
+div.tertiaryNavigation ul li a span,
+div.tertiaryNavigation ul li a strong {
+    float: none;
+}
+
+div.tertiaryNavigation ul li {
+    background: url(http://cdn.last.fm/flatness/navigation/tab_right.png) no-repeat right top;
+}
+
+div.tertiaryNavigation ul li a {
+    background: url(http://cdn.last.fm/flatness/navigation/tab_left.png) no-repeat left top;
+}
+
+div.tertiaryNavigation ul li.current {
+    background: url(http://cdn.last.fm/flatness/navigation/tab_active_right.png) no-repeat right top;
+}
+
+div.tertiaryNavigation ul li.current a {
+    background: url(http://cdn.last.fm/flatness/navigation/tab_active_left.png) no-repeat left top;
+    color: #000;
+    text-decoration: none;
+}
+div.tertiaryNavigation ul li.plain {
+    background: none;
+}
+
+div.tertiaryNavigation ul li a:hover {
+    text-decoration: underline;
+}
+
+div.tertiaryNavigation ul li.current a:hover {
+    text-decoration: none;
+}
+
+div.tertiaryNavigation ul li.last,
+div.tertiaryNavigation ul li:last-child {
+    border: 0;
+}
+
+/* old tertiary nav */
+ul.tertiaryNavigation {
+    clear: both;
+    margin: 1em 0;
+    padding: 0;
+    background: #eee;
+    overflow: hidden;
+}
+
+ul.tertiaryNavigation li {
+    float: left;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+ul.tertiaryNavigation a {
+    display: block;
+    padding: 0.25em 1em;
+}
+
+ul.tertiaryNavigation a:hover {
+    background: #ddd;
+}
+
+ul.tertiaryNavigation li.current a {
+    background: #999;
+    font-weight: bold;
+    color: #fff;
+}
+
+
+div.twidget {
+    
+}
+
+div.twidget ul {
+    margin: 0 0 .5em;
+}
+
+div.twidget li {
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #FFFFFF;
+    padding: 6px 0;
+}
+
+div.twidget li a {
+    color: #696969;
+}
+
+div.twidget li span a {
+    color: #0187c5;
+}
+
+span.videoStill {
+    display: block;
+    position: relative;
+    padding: 1px;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+span.videoStill span.still {
+    position: relative;
+    display: block;
+    float: left;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+span.videoStill span.play {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 1px;
+    left: 1px;
+    text-indent: -9999px;
+    overflow: hidden;
+}
+
+a:hover span.videoStill {
+    border-color: #0187c5;
+}
+
+/* Medium */
+
+span.videoStillMedium {
+    width: 122px;
+    height: 75px;
+    overflow: hidden;
+}
+
+span.videoStillMedium span.still img {
+    position: relative;
+    left: -19px;
+    top: -20px;
+}
+
+span.videoStillMedium span.play {
+   background: url(http://cdn.last.fm/flatness/catalogue/video/vplay.png) no-repeat left top;
+}
+
+* html span.videoStillMedium span.play  {
+    background: transparent;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/catalogue/video/vplay.png', sizingMethod='crop');
+    cursor: pointer;
+}
+
+/* Mega */
+
+span.videoStillMega {
+    width: 248px;
+    height: 140px;
+    overflow: hidden;
+}
+
+span.videoStillMega span.still img {
+    position: relative;
+    left: -20px;
+    top: -40px;
+}
+
+span.videoStillMega span.play {
+   background: url(http://cdn.last.fm/flatness/catalogue/video/vplay_mega.png) no-repeat left top;
+}
+
+* html span.videoStillMega span.play  {
+    background: transparent;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/catalogue/video/vplay_mega.png', sizingMethod='crop');
+    cursor: pointer;
+}
+
+
+/** Youtube Override */
+
+span.videoStillYoutubeMedium span.still img {
+    left: 0;
+}
+
+span.videoStillYoutubeMedium span.play {
+    background-image: url(http://cdn.last.fm/flatness/catalogue/video/play_youtube.png);
+}
+
+* html span.videoStillYoutubeMedium span.play {
+   background: transparent;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/catalogue/video/play_youtube.png', sizingMethod='crop');
+    cursor: pointer;
+}
+
+/** Hover & Active States */
+
+a:hover span.videoStillMedium span.play {
+    background-position: 0px -78px;
+}
+
+a:active span.videoStillMedium span.play {
+    background-position: 0px -156px;
+}
+
+.source-Youtube a:hover span.videoStillMedium span.play,
+.source-Youtube a:active span.videoStillMedium span.play {
+    background-position: 0px -79px;
+}
+
+a:hover span.videoStillMega span.play {
+    background-position: 0px -140px;
+}
+
+a:active span.videoStillMega span.play {
+    background-position: 0px -280px;
+}
+
+
+#page span.lineupPoster {
+    display: block;
+    position: relative;
+    background: #1b1b1b;
+    color: #fff;
+}
+#page span.lineupPoster span {
+    clear: both;
+    display: block;
+    padding: 5px;
+    font-size: 9px;
+    line-height: 1.333333;
+    background: #1b1b1b;
+}
+#page span.lineupPostermega span {
+    font-size: 11px;
+    line-height: 1.181818;
+}
+#page span.lineupPoster img {
+    float: left;
+    margin: 0
+}
+#page span.lineupPoster span.foot {
+    text-align: right;
+}
+
+.promoInfoBox {
+    margin: 0 0 10px 0;
+    padding: 15px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #fff;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.promoInfoBox h3 {
+    margin: 0 0 5px 0;
+    font-size: 12px;
+}
+
+.promoInfoBox p {
+    color: #696969;
+}
+
+.promoInfoBox a.promoButton {
+    display: -moz-inline-box;
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    font-size: 0;
+    line-height: 0;
+    background: #1b1b1b;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    height: 20px;
+    text-decoration: none;
+    color: #fff;
+    font-size:11px;
+    font-weight:bold;
+    padding: 0;
+    margin: 10px 0 10px 0;
+    vertical-align: middle;
+}
+
+.promoInfoBox a.promoButton:hover {
+    background: #0187c5;
+}
+
+
+.promoInfoBox a.promoButton span {
+    white-space: nowrap;
+    cursor: pointer;
+    color: #fff;
+    display: -moz-inline-box;
+    display: inline-block;
+    letter-spacing: 0;
+    line-height: 11px;
+    height: 20px;
+    padding: 4px 0 0 8px;
+    margin: 0 8px 0 0;
+    border: none;
+    vertical-align: text-top;
+    zoom: 1;
+}
+
+/* Dell Home page */
+
+body#dell_home {
+    background: #fff url('http://cdn.last.fm/customisation/2008_dell/skin.2.jpg') no-repeat 50% 0;
+}
+
+/* 2008 AT&T Fiona Oct */
+
+body#att_fiona_2008_10 {
+    background: #002c41 url('http://cdn.last.fm/customisation/2008_att/fiona-skin.2.jpg') no-repeat 50% 0;
+}
+
+/* 2008 Paolo Conte Sep 24-Oct 8 */
+
+body#paoloconte_2008_09 {
+    background: #b3885e url('http://cdn.last.fm/customisation/2008_paoloconte/skin.jpg') no-repeat 50% 0;
+}
+
+/* 2008 Motorola Sep 23-Oct 1 */
+
+body#motorola_2008_09 {
+    background: #000 url('http://cdn.last.fm/customisation/2008_moto_09/skin.2.jpg') no-repeat 50% 0;
+}
+
+
+/* 2008 AT&T Austin City Limits Sep 26-29
+
+body#att_acl_2008_09 {
+    background: #ebebeb url('http://cdn.last.fm/customisation/2008_att/skin.jpg') no-repeat 50% 0;
+}
+
+/* 2008 Dandy Warhols US September 13-17
+
+body#dandy_warhols_2008_09_us {
+    background: #000 url('http://cdn.last.fm/customisation/eventpages/2008_dandywarhols/skin.png') no-repeat 0 0;
+}
+
+/* 2008 O2 DE September 15-15
+
+body#o2_2008_09_de {
+    background: #030e3c url('http://cdn.last.fm/customisation/2008_o2_de/skin.jpg') no-repeat 0 0;
+}
+
+/* 2008 Converse July 17-30
+
+body#converse_2008_07 {
+    background: url('http://cdn.last.fm/customisation/2008_converse/skin.5.jpg') no-repeat 50% 0;
+}
+body#converse_2008_07 div.fiflufi {
+    background: url('http://cdn.last.fm/customisation/2008_converse/logo.jpg') no-repeat 35px 600px;
+}
+
+/* 2008 Motorola July 17-21
+
+body#motorola_2008_07 {
+    background: #000 url('http://cdn.last.fm/customisation/2008_moto/skin.3.jpg') no-repeat 50% 263px;
+}
+*/
+
+#page .barbicanInfoBox2008_10 {
+    padding-top: 25px;
+    background: #e6e6e6 url(http://cdn.last.fm/flatness/promo/barbican/barbicanInfoBox2008_10-bg.png) 20px 0 no-repeat;
+}
+
+#page .vodafoneInfoBox2008_11 a img {
+    margin: 3px auto;
+    display: block;
+}
+
+.motoInfoBox {
+    margin: 15px 0 10px 0;
+    padding: 5px;
+    border: 10px solid #fff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #e6e6e6 url(http://cdn.last.fm/flatness/promo/motorokr/motorola_infobox-logo.gif) right bottom no-repeat;
+    border-color: #e6e6e6;
+    text-align: center;
+    line-height: 1.3;
+}
+.motoInfoBox h3 {
+    margin: 0 0 5px 0;
+    font-size: 12px;
+}
+.motoInfoBox p {
+    color: #696969;
+}
+.motoInfoBox a.motoButton {
+    display: -moz-inline-box;
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    font-size: 0;
+    line-height: 0;
+    background-position: right top;
+    background-repeat: no-repeat;
+    height: 25px;
+    text-decoration: none;
+    color: #fff;
+    font-size:11px;
+    font-weight:bold;
+    text-transform:uppercase;
+    padding: 0;
+    margin: 10px 0 10px 0;
+    vertical-align: middle;
+    padding-top: -2px;
+    background-image: url(http://cdn.last.fm/flatness/promo/motorokr/motorola_infobox-btn.gif);
+}
+.motoInfoBox a.motoButton span {
+    white-space: nowrap;
+    cursor: pointer;
+    color: #fff;
+    display: -moz-inline-box;
+    display: inline-block;
+    line-height: 1;
+    letter-spacing: 0;
+    background-image: url(http://cdn.last.fm/flatness/promo/motorokr/motorola_infobox-btn.gif);
+    background-position: left top;
+    background-repeat: no-repeat;
+    height: 25px;
+    padding: 6px 0 0 8px;
+    margin: 0 8px 0 0;
+    border: none;
+    vertical-align: text-top;
+    zoom: 1;
+}
+
+
+
+
+
+ul.albums .lfmDropDown {
+    margin: 3px 3px 3px 0;
+}
+
+/* albumsLarge */
+
+.albumsLarge {
+    line-height: 1.25;
+    clear: both;
+    position: relative;
+}
+
+ul.albumsLarge li {
+    display: inline;
+    float: left;
+    width: 49.5%;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+ul.albumsLarge li.odd {
+    clear: both;
+}
+
+div.resContainer {
+    padding: 0 15px 0 155px;
+}
+
+div.resContainer span.albumCover {
+    display: inline;
+    float: left;
+    margin: 0 0 0 -155px;
+}
+
+div.resContainer {
+    min-height: 135px;
+}
+
+.albumsMedium div.resContainer {
+    min-height: 85px;
+}
+
+* + html div.resContainer span.albumCover {
+    margin: 0;
+    float: none;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.albumsLarge div.resContainer a.artist {
+    font-size: 11px;
+}
+
+.albumsLarge div.resContainer a {
+    color: #1b1b1b;
+    text-decoration: none;
+}
+
+.albumsLarge div.resContainer a:hover {
+    color: #0187c5;
+    text-decoration: underline;
+}
+
+.albumsLarge div.resContainer p.stats {
+    margin: 3px 0 0 0;
+    color: #696969;
+    font-size: 10px;
+}
+
+.albumsLarge div.resContainer div.buttons {
+    margin: 1.5em 0 0 0;
+}
+
+.albumsLarge div.resContainer p.label {
+    margin: 5px 0 0 0;
+    font-size: 10px;
+    color: #696969;
+}
+
+.albumsLarge div.resContainer p.label a {
+    color: #696969;
+}
+
+.albumsLarge div.resContainer p.label a:hover {
+    color: #0187c5;
+}
+
+.albumsLarge a.playbutton {
+    position: absolute;
+    left: 115px;
+    top: 105px;
+}
+
+
+/* albumsMedium */
+
+.albumsMedium {
+    position: relative;
+    line-height: 1.25em;
+}
+
+ul.albumsMedium li {
+    display: inline;
+    float: left;
+    position: relative;
+    width: 49.5%;
+    margin-bottom: 15px;
+}
+
+ul.albumsMedium li.odd {
+    clear: both;
+}
+
+.albumsMedium div.resContainer {
+    padding: 0 15px 0 85px;
+}
+
+.albumsMedium div.resContainer span.albumCover {
+    float: left;
+    display: inline;
+    margin: 0 0 0 -85px;
+}
+
+* + html .albumsMedium div.resContainer span.albumCover {
+    margin: 0;
+}
+
+.albumsMedium div.resContainer a {
+    color: #000;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.albumsMedium div.resContainer a:hover {
+    color: #0187c5;
+    text-decoration: underline;
+}
+
+.albumsMedium div.resContainer a.artist {
+    font-size: 11px;
+}
+
+.albumsMedium a.playbutton {
+    position: absolute;
+    left: 52px;
+    top: 47px;
+}
+
+p.newRelease {
+    position: absolute;
+    top: 137px;
+    left: 0px;
+    text-align: right;
+    width: 140px;
+    display: inline;
+}
+
+.albumsMedium p.newRelease {
+    top: 70px;
+    width: 72px;
+}
+
+
+p.newRelease span {
+    padding: 0 2px;
+    line-height: 1.3;
+    font-weight: bold;
+    font-size: 90%;
+    border-top:1px solid #FFF2A6;
+    background: #FEF081; 
+    color: #1b1b1b;
+}
+
+/* Large */
+
+ul.artistsLarge {
+    display: block;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.181818em;
+    margin-right: -15px;
+}
+
+ul.artistsLarge li {
+    position: relative;
+    float: left;
+    display: inline;
+    width: 132px;
+    height: 155px;
+    margin: 0 9px 0 0;
+    overflow: hidden;
+}
+
+.pictureFrame {
+    position: relative;
+    display: block;
+    width: 132px;
+    height: 109px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.pictureFrame .image {
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    display: block;
+    width: 126px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.pictureFrame .image img.defaultImage {
+    margin: -12px 0 0 0;
+}
+
+.pictureFrame .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 132px;
+    height: 109px;
+    background: url(http://cdn.last.fm/flatness/picture_frame.png) left top transparent;
+}
+
+
+* html .pictureFrame .overlay {
+    background: transparent;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/picture_frame.png', sizingMethod='crop');
+    cursor: pointer;
+}
+
+ul.artistsLarge span.track a {
+    color: #696969;
+}
+
+ul.artistsLarge a {
+    color: #000;
+}
+
+ul.artistsLarge a.plays {
+    color: #0187c5;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+ul.artistsLarge a:hover {
+    color: #0187c5;
+}
+
+ul.artistsLarge li a strong.withAdd {
+    display: block;
+    margin: 1px 0 0 3px;
+    text-indent: 20px;
+    line-height: 1.454545;
+}
+ul.artistsLarge a.playbutton {
+    position: absolute;
+    left: 105px;
+    top: 81px;
+}
+ul.artistsLarge a.addbutton {
+    position: absolute;
+    left: 3px;
+    top: 111px;
+    width: 15px;
+    height: 15px;
+    background: url('http://cdn.last.fm/flatness/global/icon_add_hover.gif') no-repeat 0 0;
+}
+ul.artistsLarge a:hover img.add_icon {
+    display: none;
+}
+
+.visible ul.artistsLarge .loading span.image {
+    background: url(http://cdn.last.fm/flatness/spinner_big.gif) center no-repeat #fff;
+}
+
+ul.artistsLarge form {
+    display: none;
+}
+
+ul.artistsLarge li p.info {
+    color: #696969;
+}
+
+/* square */
+
+ul.artistsSquare {
+    margin: 0 0 7px 0;
+}
+ul.artistsSquare li {
+    float: left;
+    display: inline;
+    width: 188px;
+    margin: 6px 0 0 0;
+    font-size: 11px;
+    line-height: 1.181818;
+}
+
+ul.artistsSquare a {
+    display: block;
+    padding: 1px 0 0 45px;
+    color: #0187c5;
+}
+
+ul.artistsSquare a img {
+    padding: 1px;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+ul.artistsSquare a.highlight img {
+    border-color: #0187c5;
+}
+
+ul.artistsSquare strong {
+    color: #000;
+}
+ul.artistsSquare a:hover strong {
+    color: #0187c5;
+}
+ul.artistsSquare img {
+    display: inline;
+    float: left;
+    margin: -1px 0 0 -45px;
+}
+
+/* medium */
+
+ul.artistsMedium {
+    display: block;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.181818em;
+    margin-right: -15px;
+}
+
+ul.artistsMedium li {
+    position: relative;
+    float: left;
+    display: inline;
+    width: 72px;
+    height: 86px;
+    margin: 0 9px 5px 0;
+    overflow: hidden;
+}
+
+ul.artistsMedium a li {
+    clear: both;
+    display: block;
+}
+
+/* medium, but then vertical (we should get rid of the default medium style alltogether...) */
+
+ul.artistsMediumVertical li {
+    clear: both;
+    padding: 0 0 13px 78px;
+}
+
+ul.artistsMediumVertical li a.artist {
+    color: #1b1b1b;
+}
+
+ul.artistsMediumVertical li a strong {
+    display: block;
+}
+
+ul.artistsMediumVertical li a img {
+    display: inline;
+    float: left;
+    margin: 0 0 0 -77px;
+    padding: 1px;
+    background: #fff;
+    outline: 1px solid #ccc;
+}
+
+/* small */
+
+ul.artistsSmall {
+    margin: 1em 0;
+}
+
+ul.artistsSmall li {
+    margin: 0 0 1em 0;
+    padding: 0 0 0 79px;
+    overflow: hidden;
+}
+
+ul.artistsSmall a {
+    text-decoration: none;
+}
+
+ul.artistsSmall h4 {
+    margin-left: -15px;
+    border-top: solid 1px #ddd;
+    padding-left: 15px;
+    background: #eee;
+}
+
+ul.artistsSmall img {
+    float: left;
+    display: inline;
+    margin: -1px 0 0 -79px;
+}
+
+ul.artistsSmall li strong {
+    display: block;
+    font-weight: bold;
+}
+
+ul.artistsSmall li div a {
+    margin-right: 5px;
+    padding-left: 14px;
+    text-decoration: none;
+}
+
+ul.artistsSmall li div.media {
+    margin-top: 5px;
+}
+
+ul.artistsSmall li div.media a.videos {
+    background: url(http://cdn.last.fm/flatness/video_small.gif) 0 2px no-repeat;
+}
+
+ul.artistsSmall li div.media a.tracks {
+    background: url(http://cdn.last.fm/flatness/track_small.gif) 0 2px no-repeat;
+}
+
+ul.artistsSmall li div.media a strong {
+    display: none;
+}
+
+ul.artistsSmall li div.media a span {
+    padding: 0 5px;
+    background: #ddd;
+    color: #333;
+    font-size: 10px;
+}
+
+/* not really a list, but hey... */
+
+p.artists {
+    padding: 1em 0 0 0;
+    clear: both;
+    font-size: 11px;
+    line-height: 1.181818;
+}
+
+p.artists a {
+    color: #0187c5;
+    text-decoration: none;
+}
+
+p.artists a.highlight {
+    background: #0187c5;
+    color: #fff;
+}
+
+/* artistsWithInfo */
+ul.artistsWithInfo {
+    clear: both;
+}
+
+ul.artistsWithInfo li {
+    clear: both;
+    display: block;
+    position: relative;
+    margin: 15px 0 0 0;
+    padding: 0 0 15px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+ul.artistsWithInfo li.last {
+    border-bottom: none;
+}
+
+ul.artistsWithInfo li .pictureFrame {
+    float: left;
+    display: inline;
+}
+
+ul.artistsWithInfo li .playbutton {
+    position: absolute;
+}
+
+ul.artistsWithInfo li a.artist,
+ul.artistsWithInfo li a.track {
+    color: #1b1b1b;
+}
+
+ul.artistsWithInfo li p.stats {
+    color: #696969;
+}
+
+ul.artistsWithInfo li p.bio {
+    margin: 1em 0;
+}
+
+/* artistsWithInfo large specific */
+
+ul.artistsWithInfo li.large {
+    padding-left: 145px;
+}
+
+ul.artistsWithInfo li.large .pictureFrame {
+    margin-left: -145px;
+}
+
+ul.artistsWithInfo li.large .playbutton {
+    left: 105px;
+    top: 80px;
+}
+
+* html #page .artistsWithInfo li.large .playbutton {
+    margin-left: -145px;
+}
+
+ul.artistsWithInfo li.large a.artist strong {
+    font-size: 16px;
+    line-height: 1.181818em; 
+}
+
+ul.artistsWithInfo li.large p.stats {
+    font-size: 11px;
+}
+
+/* artistsWithInfo medium specific */
+
+ul.artistsWithInfo li.medium {
+    padding-left: 80px;
+}
+
+ul.artistsWithInfo li.medium .pictureFrame {
+    margin-left: -80px;
+}
+
+ul.artistsWithInfo li.medium .playbutton {
+    position: static;
+}
+
+ul.artistsWithInfo li.medium p.stats {
+    font-size: 11px;
+}
+
+/* Similarity match */
+
+ul.artistsWithInfo div.matchmeter {
+    float: right;
+    display: block;
+    right: 0px;
+    top: 0px;
+    width: 180px;
+    background: #efefef;
+    padding: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    font-size: 11px;
+    line-height: 1.181818em;
+}
+
+ul.artistsWithInfo div.matchmeter strong {
+    text-transform: uppercase;
+}
+
+ul.artistsWithInfo div.matchmeter span.bar {
+    clear: both;
+    display: block;
+    width: 100%;
+    height: 5px;
+    margin: 3px 0 0 0;
+    background: #ccc;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+}
+ul.artistsWithInfo div.matchmeter span.bar span {
+    display: block;
+    height: 5px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+}
+
+ul.artistsWithInfo div.matchmeter span.pc90 span {
+    background: #ff0101;
+}
+
+ul.artistsWithInfo div.matchmeter span.pc70 span {
+    background: #e9c102;
+}
+
+ul.artistsWithInfo div.matchmeter span.pc50 span {
+    background: #05bd4c;
+}
+
+ul.artistsWithInfo div.matchmeter span.pc30 span {
+    background: #453e45;
+}
+
+ul.artistsWithInfo div.matchmeter span.pc10 span {
+    background: #9a9a9a;
+}
+
+/* Medium with featured */
+
+ul.artistsMediumWithFeatured {
+    padding-left: 267px;
+}
+
+ul.artistsMediumWithFeatured li {
+    border-top: 1px solid #ccc;
+}
+
+ul.artistsMediumWithFeatured li .container {
+    display: block;
+    padding: 5px;
+    padding-right: 73px;
+    border-top: 1px solid #fff;
+    font-size: 11px;
+    line-height: 1.181818em;
+    min-height: 64px;
+}
+
+ul.artistsMediumWithFeatured li img.artistImage {
+    display: inline;
+    float: right;
+    margin-right: -73px;
+}
+
+ul.artistsMediumWithFeatured li strong.artist {
+    display: block;
+    font-size: 12px;
+    line-height: 1.166667em;
+    color: #1b1b1b;
+}
+
+ul.artistsMediumWithFeatured li a:hover {
+    text-decoration: none;
+}
+
+ul.artistsMediumWithFeatured li a:hover strong.artist {
+    color: #0187c5;
+}
+
+ul.artistsMediumWithFeatured li p.info {
+    font-size: 11px;
+    line-height: 1.181818em;
+    color: #1b1b1b;
+}
+    
+
+ul.artistsMediumWithFeatured li span.info {
+    display: block;
+    font-size: 11px;
+    line-height: 1.181818em;
+}
+
+ul.artistsMediumWithFeatured li p.info {
+    margin-top: 5px;
+}
+
+ul.artistsMediumWithFeatured li.first {
+    display: inline;
+    float: left;
+    margin-left: -267px;
+    border: 1px solid #ccc;
+    padding: 1px;
+    background: #fff;
+}
+
+ul.artistsMediumWithFeatured li.first a {
+    display: block;
+    position: relative;
+    width: 252px;
+    height: 189px;
+    background-color: #000; /* CSS Defensiveness */
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+ul.artistsMediumWithFeatured li.first p.info {
+    display: block;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 252px;
+    color: #fff;
+    font-size: 11px;
+    line-height: 1.272727em;
+}
+
+ul.artistsMediumWithFeatured li.first p.info * {
+    padding: 3px 9px;
+    display: inline;
+    float: left;
+    background: #000;
+    opacity: 0.9;
+    -moz-opacity: 0.9;
+    filter:alpha(opacity=90);
+}
+        
+
+ul.artistsMediumWithFeatured li.first p.info strong {
+    font-size: 14px;
+    line-height: 1.142857em;
+    font-weight: bold;
+    padding: 3px 9px;
+}
+
+ul.artistsMediumWithFeatured li.first p.info .extra {
+    clear: left;
+    padding-bottom: 5px;
+}
+
+
+ul.artistsMediumWithFeatured li.first a:hover p.info strong {
+    color: #0187c5;
+}
+
+
+/* Mega with featured */
+
+ul.artistsMegaWithFeatured {
+    clear: both;
+    display: block;
+    border: 1px solid #ccc;
+}
+
+ul.artistsMegaWithFeatured li {
+    display: block;
+    float: left;
+}
+
+ul.artistsMegaWithFeatured li a {
+    position: relative;
+    display: block;
+    width: 195px;
+    height: 134px;
+    border: 1px solid #fff;
+    background-color: #ccc;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+ul.artistsMegaWithFeatured li.first a {
+    width: 352px;
+    height: 270px;
+}
+
+ul.artistsMegaWithFeatured li a:hover {
+    text-decoration: none;
+}
+
+ul.artistsMegaWithFeatured li p.info {
+    display: block;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    color: #fff;
+    font-size: 11px;
+    line-height: 1.181818em;
+}
+
+ul.artistsMegaWithFeatured li p.info * {
+    padding: 3px 9px;
+    display: inline;
+    clear: left;
+    float: left;
+    background: #000;
+    /* white-space: nowrap; */
+    opacity: 0.9;
+    -moz-opacity: 0.9;
+    filter:alpha(opacity=90);
+}
+
+ul.artistsMegaWithFeatured li p.info strong {
+    font-size: 14px;
+    line-height: 1.142857em;
+    font-weight: bold;
+    padding: 3px 9px;
+}
+
+ul.artistsMegaWithFeatured li a:hover p.info strong {
+    color: #0187c5;
+}
+
+/* Pictureframe */
+
+.pictureFrameMediumsquare {
+    position: relative;
+    display: block;
+    width: 72px;
+    height: 59px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.pictureFrameMediumsquare .image {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    display: block;
+    width: 64px;
+    height: 52px;
+    overflow: hidden;
+}
+
+.pictureFrameMediumsquare img.defaultImage {
+    margin: -8px 0 0 0;
+}
+
+.pictureFrameMediumsquare .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 72px;
+    height: 59px;
+    background: transparent url(http://cdn.last.fm/flatness/picture_frame_medium.2.png) left top no-repeat;
+}
+
+
+* html .pictureFrameMediumsquare .overlay {
+    background: transparent;
+filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://cdn.last.fm/flatness/picture_frame_medium.2.png', sizingMethod='crop');
+    cursor: pointer;
+}
+
+/* Wrappers */
+
+#page div.artistsLargeOneRowWrapper {
+    position: relative;
+    clear: both;
+    height: 155px;
+    overflow: hidden;
+}
+
+#page div.artistsLargeTwoRowsWrapper {
+    position: relative;
+    clear: both;
+    height: 310px;
+    overflow: hidden;
+}
+
+/* Artist Recs */
+
+ul.artistRecs {
+    padding-bottom: 10px;
+}
+
+ul.artistRecs li {
+    display: block;
+    float: left;
+    width: 265px;
+    padding-bottom: 10px;
+    font-size: 11px;
+    line-height: 1.272727em;
+    color: #696969;
+}
+
+ul.artistRecs li.odd {
+    clear: both;
+}
+
+ul.artistRecs li div.container {
+    padding-left: 78px;
+    padding-right: 9px;
+    position: relative;
+}
+
+ul.artistRecs li .pictureFrame {
+    display: inline;
+    float: left;
+    margin-left: -78px;
+}
+
+ul.artistRecs li a.artist {
+    color: #1b1b1b;
+}
+
+ul.artistRecs li a.artist:hover {
+    color: #0187c5;
+    text-decoration: underline;
+}
+
+ul.artistRecs li a strong.name {
+    font-size: 12px;
+}
+
+ul.artistRecs li a.playbutton {
+    position: absolute;
+    left: 45px;
+    top: 34px;
+}
+
+* html ul.artistRecs li a.playbutton {
+    display: inline;
+    float: left;
+    margin-left: -81px;
+}
+
+ul.artistRecs li p.info {
+    margin-top: 0.363636em;
+}
+
+.mediumChartWithImages li {
+    position: relative;
+    display: block;
+    clear: both;
+    width: 100%;
+    height: 84px;
+}
+
+.mediumChartWithImages li a {
+    display: block;
+    height: 64px;
+    padding-left: 66px;
+}
+
+.mediumChartWithImages li a:hover {
+    text-decoration: none;
+}
+
+.mediumChartWithImages li a small {
+    display: block;
+    line-height: 1.181818em;
+    color: #696969;
+    font-size: 11px;
+}
+
+.mediumChartWithImages li img.chartImage {
+    float: left;
+    margin: 0 0 0 -66px;
+    border: 1px solid #0187c5;
+}
+
+.mediumChartWithImages li a:hover img.chartImage {
+    border-color: #0187c5;
+}
+
+.mediumChartWithImages li p {
+    padding: 3px 5px;
+}
+
+.mediumChartWithImages li a:hover p strong {
+    text-decoration: underline;
+}
+
+.mediumChartWithImages li span.position {
+    position: absolute;
+    display: block;
+    left: 59px;
+    top: 0px;
+    width: 20px;
+    text-align: center;
+    height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 20px;
+    background: #73b7e5;
+    color: #fff;
+    display: none;
+}
+
+#page .chartbar2 {
+    position: relative;
+    display: block;
+    width: auto;
+    height: 22px;
+    line-height: 22px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: bold;
+    color: #fff;
+}
+
+#page .chartbar2 span.bar {
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    min-width: 60px;
+    height: 22px;
+    line-height: 22px;
+    background: url(http://cdn.last.fm/flatness/charts/chartbar.png) no-repeat right top;
+}
+
+#page .chartbar2 span.value {
+    display: block;
+    position: relative;
+    padding: 0 5px;
+    z-index: 1;
+    font-size: 11px;
+    line-height: 22px;
+}
+
+* html .chartbar2 span.value {
+    margin: 3px 0;
+}
+
+#page a .chartbar2 span.value,
+#page a:hover .chartbar2 span.value {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* small */
+
+ul.journalsSmall {
+    border-bottom: 1px solid #fff;
+    font-size: 11px;
+}
+
+ul.journalsSmall li {
+    padding: 5px 5px 5px 25px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ccc;
+}
+ul.journalsSmall li img.journal_icon {
+    float: left;
+    display: inline;
+    margin: 0 0 0 -25px;
+}
+
+ul.journalsSmall li.first {
+    border-top: none;
+}
+
+ul.journalsSmall a strong {
+    color: #1b1b1b;
+}
+
+ul.journalsSmall a:hover strong {
+    color: #0187c5;
+}
+
+ul.journalsSmall li span.info {
+    display: block;
+    margin: 3px 0 0 0;
+    font-size: 10px;
+}
+
+ul.journalsSmall li span.info {
+    color: #696969;
+}
+
+/* with excerpt */
+
+ul.journalsExcerpt li {
+    padding: 10px 10px 10px 75px;
+}
+
+ul.journalsExcerpt li a.excerptImage {
+    float: left;
+    margin-left: -76px;
+    margin-top: 3px;
+}
+
+ul.journalsExcerpt li a.title img {
+    display: none;
+}
+
+/* featured */
+
+ul.journalsFeatured li {
+    font-size: 12px;
+    border-bottom: none;
+}
+
+ul.journalsFeatured li.last {
+    border-bottom: none;
+}
+
+ul.journalsFeatured li span.info {
+    margin-top: 0;
+}
+
+ul.journalsFeatured li p.excerpt {
+    margin-top: 5px;
+}
+
+/* currently based on shoutboxes */
+
+ul.obsessionsMedium {
+    margin: 1em 0;
+    font-size: 11px;
+}
+
+ul.obsessionsMedium li {
+    margin: 0 0 1em 0;
+    padding: 0 0 0 135px;
+    overflow: hidden;
+    font-size: 12px;
+}
+
+
+ul.obsessionsMedium h4 {
+    margin: 0 0 5px -15px;
+    border-top: solid 1px #ddd;
+    padding-left: 15px;
+    background: #eee;
+    font-size: 15px;
+}
+
+ul.obsessionsMedium h4 a {
+    text-decoration: none;
+}
+
+ul.obsessionsMedium img {
+    float: left;
+    display: inline;
+    margin: -1px 0 0 -135px;
+}
+
+ul.obsessionsMedium small {
+    font-size: 10px;
+    color: #aaa;
+}
+
+/* small */
+
+
+ul.eventsSmall span.calSheet {
+    float: left;
+    display: inline;
+    margin-left: -37px;
+}
+
+ul.eventsSmall li {
+    zoom: 1;
+    padding: 5px 5px 5px 42px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ccc;
+    font-size: 11px;
+    line-height: 1.181818em;
+}
+
+ul.eventsSmall li.first {
+    border-top: 0;
+}
+ul.eventsSmall li.last {
+    border-bottom: 0;
+}
+
+ul.eventsSmall a {
+    text-decoration: none;
+}
+
+ul.eventsSmall li strong.summary {
+    display: block;
+    font-size: 11px;
+    line-height: 1.181818em;
+    color: #000;
+}
+ul.eventsSmall a:hover strong.summary,
+ul.eventsSmall a:hover span.summary {
+    color: #0187c5;
+    text-decoration: underline;
+}
+
+ul.eventsSmall li small.location {
+    display: block;
+    color: #000;
+    font-size: 11px;
+    margin: 1px 0 4px 0;
+}
+
+ul.eventsSmall li p.info {
+    font-size: 10px;
+    color: #696969;
+}
+
+ul.eventsSmall a.comments:hover {
+    text-decoration: underline;
+}
+
+ul.eventsSmall li.past span.calSheet {
+	filter: alpha(opacity=60);
+ 	-moz-opacity: 0.6;
+    opacity: 0.6;
+}
+
+/* Medium */
+
+ul.eventsMedium {
+    font-size: 11px;
+    line-height: 1.5em;
+}
+
+ul.eventsMedium li {
+    margin-bottom: 10px;
+}
+
+ul.eventsMedium li div.event {
+    padding: 4px;
+    border-top: 1px solid #9cf;
+    font-size: 11px;
+    background: #f2f2f2;
+}
+
+ul.eventsMedium li.hasposter div.event {
+    padding-left: 79px;
+}
+
+ul.eventsMedium li h3 a {
+    color: #0187c5;
+}
+
+ul.eventsMedium li a {
+    text-decoration: none;
+}
+
+ul.eventsMedium li a:hover {
+    text-decoration: underline;
+}
+
+ul.eventsMedium li h3 img {
+    display: none;
+}
+
+ul.eventsMedium li.hasposter div.event h3 img {
+    display: block;
+    float: left;
+    margin: 0 0 0 -75px;
+}
+
+ul.eventsMedium li span.artists a {
+    color: #000;
+}
+
+ul.eventsMedium li address a {
+    color: #666;
+}
+
+ul.eventsMedium li div.eventInfo {
+    margin: 5px 0 0 0;
+    font-size: 10px;
+}
+
+ul.eventsMedium li div.eventInfo a.tickets {
+    padding: 0 0 0 20px;
+    background: url(http://cdn.last.fm/flatness/ticket.png) no-repeat left 2px;
+}
+
+
+/* Medium with featured */
+
+ul.eventsMediumWithFeatured {
+    clear: both;
+    padding-left: 267px;
+}
+
+ul.eventsMediumWithFeatured li {
+    border-top: 1px solid #ccc;
+}
+
+ul.eventsMediumWithFeatured li .container {
+    padding: 5px;
+    padding-right: 34px;
+    border-top: 1px solid #fff;
+    font-size: 11px;
+    line-height: 1.181818em;
+}
+
+ul.eventsMediumWithFeatured li .calSheet {
+    display: inline;
+    float: right;
+    margin-right: -32px;
+}
+
+ul.eventsMediumWithFeatured li a.summary {
+    display: block;
+    font-size: 12px;
+    line-height: 1.166667em;
+    color: #1b1b1b;
+    text-decoration: none;
+}
+
+ul.eventsMediumWithFeatured li a.summary:hover {
+    color: #0187c5;
+    text-decoration: none;
+}
+
+ul.eventsMediumWithFeatured li .location {
+    display: block;
+}
+
+ul.eventsMediumWithFeatured li p.info {
+    margin-top: 5px;
+    color: #696969;
+}
+
+ul.eventsMediumWithFeatured li.first {
+    display: inline;
+    float: left;
+    margin-left: -267px;
+    border: 1px solid #ccc;
+    padding: 1px;
+    background: #fff;
+}
+
+ul.eventsMediumWithFeatured li.first a {
+    display: block;
+    position: relative;
+    width: 252px;
+    height: 189px;
+    background-color: #000; /* CSS Defensiveness */
+    background-repeat: no-repeat;
+    background-position: center top;
+    text-decoration: none;
+}
+
+ul.eventsMediumWithFeatured li.first a:hover {
+    text-decoration: none;
+}
+
+ul.eventsMediumWithFeatured li.first p.info {
+    display: block;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 200px;
+    padding: 9px 9px 9px 9px;
+    padding-left: 43px;
+    background: #000;
+    color: #fff;
+    font-size: 11px;
+    line-height: 1.272727em;
+    opacity: 0.9;
+    -moz-opacity: 0.9;
+    filter:alpha(opacity=90);
+}
+
+ul.eventsMediumWithFeatured li.first p.info span.calSheet {
+    display: inline;
+    float: left;
+    margin-left: -34px;
+    line-height: 1.214286em;
+}
+
+ul.eventsMediumWithFeatured li.first p.info strong {
+    display: block;
+    font-size: 14px;
+    line-height: 1.142857em;
+    font-weight: bold;
+}
+
+ul.eventsMediumWithFeatured li.first a:hover p.info strong {
+    color: #0187c5;
+}
+
+/* overrides */
+
+ul.eventsNoBorder,
+ul.eventsNoBorder li {
+    border: 0;
+}
+
+dl.factboxMedium {
+    border: 1px solid #ddd;
+    font-size: 11px;
+    padding: 0 10px 0 120px;
+}
+
+dl.factboxMedium dt{
+    position: relative;
+    float: left;
+    margin: 0 0 0 -110px;
+    font-weight: bold;
+}
+
+dl.factboxMedium dd {
+    width: 100%;
+}
+
+dl.factboxMedium dd ul li {
+    position: relative;
+    padding: 0 0 0 5px;
+    margin: 0 0 0 -5px;
+}
+
+dl.factboxMedium dd a {
+    color: #96BE57;
+}
+
+dl.factboxMedium dd ul li small {
+    position: absolute;
+    top: 0;
+    right: 5px;
+}
+
+dl.factboxMedium dd ul li.odd {
+    background: #efefef;
+}
+
+ul#eventPhotos li {
+    display: inline;
+    float: left;
+    margin: 0 10px 10px 0;
+    width: 59px;
+    height: 59px;
+    border: 1px solid #ccc;
+    padding: 2px;
+    background: #fff;
+}
+
+ul#eventPhotos li a {
+    display: block;
+    overflow: hidden;
+    width: 59px;
+    height: 59px;
+}
+
+ul#eventPhotos li.highlight {
+    border: 1px solid #0187c5;
+    background: #0187c5;
+}
+
+p#eventHeadliners {
+    clear: both;
+}
+
+p#eventHeadliners a.highlight {
+    text-decoration: underline;
+}
+
+/* just square images */
+
+ul.floatingSquares {
+    overflow: hidden;
+    margin: 1em -15px 1em 0;
+    padding: 0;
+}
+
+ul.floatingSquares li {
+    float: left;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    font-size: 11px;
+}
+
+ul.floatingSquares a {
+    display: block;
+}
+
+ul.floatingSquares li {
+    width: 75px;
+    height: 75px;
+}
+
+/* inline, comma-separated */
+
+ul.inline {
+    margin: 0;
+    padding: 0;
+}
+
+ul.inline li {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+ul.inline li:after {
+    content: ", ";
+}
+
+ul.inline li.last:after {
+    content: "";
+}
+
+/* small */
+
+ul.groupsSmall li.last {
+    border-bottom: 0;
+}
+
+ul.groupsSmall a,
+ul.groupsSmall a:hover {
+    text-decoration: none;
+    display: block;
+}
+
+ul.groupsSmall li strong {
+    display: block;
+    font-size: 11px;
+}
+
+ul.groupsSmall li a strong img.groupImage {
+    float: left;
+    margin-left: -49px;
+}
+
+ul.groupsSmall li.first {
+    border-top: none;
+}
+
+ul.groupsSmall li {
+    display: block;
+    padding: 5px 5px 5px 49px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ccc;
+    font-size: 11px;
+}
+
+ul.groupsSmall li span.info {
+    display: block;
+    margin: 2px 0 0 0;
+    font-size: 10px;
+    color: #696969;
+}
+
+ul.groupsSmall a strong {
+    color: #000;
+}
+
+ul.groupsSmall a:hover strong {
+    color: #0187c5;
+}
+
+/* medium */
+
+ul.groupsMedium {
+    margin: 1em 0;
+}
+
+ul.groupsMedium li {
+    display: block;
+    float: left;
+    width: 49%;
+    margin: 0 0 30px 0;
+    font-size: 11px;
+}
+
+ul.groupsMedium li div.groupContainer {
+    padding: 0 0 0 79px;
+}
+
+ul.groupsMedium li.odd {
+    clear: both;
+}
+
+ul.groupsMedium li.odd div.groupContainer {
+    padding-right: 30px;
+}
+
+ul.groupsMedium strong {
+    display: block;
+    border-bottom: 1px solid #ccc;
+}
+
+ul.groupsMedium strong a {
+    color: #1b1b1b;
+}
+
+ul.groupsMedium strong a:hover {
+    color: #0187c5;
+    text-decoration: none;
+}
+
+ul.groupsMedium strong img.groupImage {
+    float: left;
+    margin: 0 0 0 -79px;
+}
+
+p.members {
+    color: #696969;
+    font-size: 10px;
+    line-height: 17px;
+}
+
+p.latestActivity {
+    line-height: 14px;
+}
+
+
+ul.groupsMedium h4 {
+    margin: 0 -189px 0.25em -15px;
+    border-top: solid 1px #ddd;
+    padding-left: 15px;
+    background: #eee;
+    font-size: 16px;
+    line-height: 1.25em;
+}
+
+ul.groupsMedium h4 img {
+    float: left;
+    display: inline;
+    margin: -1px 0 0 -126px;
+}
+
+.newsEntriesSmall {
+    color: #696969;
+    border-bottom: 1px solid #fff;
+}
+
+.newsEntriesSmall li {
+    clear: both;
+    padding: 5px 5px 5px 5px;
+    overflow: hidden;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+.newsEntriesSmall .withFavIcon {
+    padding-left: 25px;
+}
+
+.newsEntriesSmall .favIcon {
+    padding: 1px;
+    border: 1px solid #ccc;
+    float: left;
+    display: inline;
+    margin: 0 0 0 -25px;
+}
+
+.newsEntriesSmall .sub {
+    font-size: 10px;
+}
+
+.newsEntriesSmall .comment_icon {
+    margin-bottom: -3px;
+}
+
+.newsEntriesSmall .sub a,
+.latestNewsEntry .sub a {
+    color: #696969;
+}
+
+.latestNewsEntry {
+    overflow: hidden;
+    padding: 0 0 5px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.latestNewsEntry .entryImage,
+.latestNewsEntry .favIcon {
+    border: 1px solid #ccc;
+    padding: 1px;
+    float: left;
+    display: inline;
+}
+
+.latestNewsEntry .entryImage {
+    margin: 0 10px 0 0;
+}
+
+.latestNewsEntry .sub {
+    color: #696969;
+    margin-bottom: 0.7em;
+    font-size: 10px;
+}
+
+.latestNewsEntry h3 img {
+    margin: 0 0 0 -25px;
+}
+
+.latestNewsEntryWithFavIcon h3 {
+    padding: 0 0 0 25px;
+}
+
+.latestNewsEntryWithFavIcon .sub {
+    padding-left: 25px;
+}
+
+.latestNewsEntry .entry-content {
+    line-height: 1.363636;
+}
+
+.latestNewsEntry .rightshouts,
+.newsEntriesSmall .rightshouts {
+    text-align: right;
+    margin: 4px 5px 0 0;
+    font-size: 10px;
+}
+
+.newsEntriesSmall .rightshouts {
+    margin-right: 0;
+}
+
+ul.notices li {
+    overflow: hidden;
+    margin: 0 0 15px 0;
+    position: relative;
+    background: #f5f5f5;
+    border-bottom: solid 1px #ddd;
+}
+
+ul.notices div.from {
+    overflow: hidden;
+    padding: 8px 0 5px 0;
+    font-size: 11px;
+    background: #eee;
+    border-bottom: solid 1px #ddd;
+    line-height: 1.363636em;
+    color: #696969;
+}
+
+ul.notices li.new {
+    border-bottom: solid 1px #c6d7ea;
+}
+
+ul.notices li.new div.from {
+    background: #e3eef9;
+    border-bottom: 1px solid #c6d7ea;
+}
+
+ul.notices li.new div.item {
+    background: #f1f6fa;
+}
+
+ul.notices div.from span.userImage {
+    float: left;
+    display: inline;
+    margin: -3px 10px 0 5px;
+}
+
+ul.notices div.from strong {
+    color: #000;
+}
+
+ul.notices li div.item {
+    padding: 5px;
+}
+
+ul.notices p.message {
+    margin: 5px 0 10px 0;
+}
+
+ul.notices p.outcome {
+    margin-top: 10px;
+    text-align: right;
+    color: #696969;
+    font-size: 11px;
+}
+
+ul.notices p.outcome a {
+    text-decoration: none;
+}
+
+ul.notices p.outcome a:hover {
+    text-decoration: underline;
+}
+
+ul.notices div.resource {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+
+ul.notices div.resource h1,
+ul.notices div.resource p {
+    padding-left: 83px;
+}
+
+ul.notices div.resource h1 * {
+    margin-bottom: 0;
+}
+
+ul.notices div.resource p.message {
+    font-size: 11px;
+}
+
+ul.notices form {
+    text-align: right;
+}
+
+/* misc */
+
+ul.notices a.close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    background: transparent;
+    color: #ccc;
+    line-height: 1em;
+    padding: 0 0.25em 0.25em 0.25em;
+    -webkit-border-radius: 0.6em;
+    -moz-border-radius: 0.6em;
+}
+
+ul.notices a.close:hover {
+    background: #ccc;
+    color: #f5f5f5;
+}
+
+ul.notices li.new a.close {
+    color: #98c1dd;
+}
+
+ul.notices li.new a.close:hover {
+    background: #98c1dd;
+    color: #fff;
+}
+
+ul.pictures {
+    margin: 0 -15px 0 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+ul.centeredPictures {
+    text-align: center;
+}
+
+ul.pictures li {
+    position: relative;
+    float: left;
+    display: inline;
+    margin: 0 15px 10px 0;
+    padding: 0;
+    width: 174px;
+    padding-top: 140px;
+    height: 4em;
+    overflow: hidden;
+    list-style-type: none;
+    font-size: 11px;
+    line-height: 1.181818em;
+    color: #696969;
+}
+
+ul.pictures .pic {
+    text-decoration: none;
+}
+
+ul.pictures .pic:hover strong {
+    text-decoration: underline;
+}
+
+ul.pictures img {
+    position: absolute;
+    bottom: 4.2em;
+    left: 0;
+    padding: 3px;
+    border: 1px solid #ccc;
+}
+
+ul.centeredPictures img {
+    left: 50%;
+}
+
+ul.pictures a:hover img {
+    background: #EEE;
+}
+
+ul.pictures .date {
+    white-space: nowrap;
+}
+
+ul.pictures .dismiss_icon {
+    border: 0;
+    cursor: pointer;
+    position: static;
+    left: auto;
+    padding: 0;
+    margin-right: 0;
+    vertical-align: top;
+}
+
+* html ul.pictures .dismiss_icon {
+    margin-right: 4px;
+}
+
+* + html ul.pictures .dismiss_icon {
+    margin-right: 4px;
+}
+
+.inlineTagList li {
+    display: inline;
+    padding: 0 7px 5px 0;
+}
+
+.freeTracks, .topTracks {
+    margin: 0 0 5px 0;
+}
+
+.freeTracks li, .topTracks li {
+    padding: 7px 7px 7px 30px;
+    font-size: 11px;
+    line-height: 1.181818em;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+.withHead .topTracks li { 
+    border-top: 1px solid #333;
+    color: #fff;
+}
+
+.freeTracks li.first, .topTracks li.first {
+    border-top: 0;
+}
+
+.freeTracks li.last, .topTracks li.last {
+    border-bottom: 0;
+}
+
+.freeTracks li.odd, .topTracks li.odd {
+    background: #f7f7f7;
+}
+
+.withHead .topTracks li.odd { 
+    background: #070707;
+}
+
+.freeTracks li a.playbutton, .topTracks li a.playbutton {
+    float: left;
+    display: inline;
+    margin: 0 0 0 -22px;
+}
+
+.freeTracks li a, .topTracks li a {
+    color: #000;
+}
+
+.withHead .topTracks li a { 
+    color: #fff;
+}
+
+.freeTracks li .trackDuration, .topTracks li .trackDuration {
+    font-size: 10px;
+}
+
+.freeTracks .lfmFreeDownloadButton {
+    float: right;
+    margin: 0 0 0 5px;
+}
+
+
+/* square */
+
+ul.usersSquare {
+    display: block;
+    width: 304px; /* explicitly set width, so it likes the margins below */
+}
+
+ul.usersSquare li {
+    display: block;
+    float: left;
+    width: 70px;
+    height: 70px;
+    margin: 0 6px 6px 0;
+}
+
+ul.smallSquare li a,
+ul.usersSquare li a {
+    display: block;
+    float: left;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    position: relative;
+}
+
+ul.smallSquare li a:hover,
+ul.usersSquare li a:hover {
+    z-index: 2;
+}
+
+ul.usersSquare li a span.userImage {
+    display: block;
+    width: 64px;
+    height: 64px;
+    background: #fff;
+}
+
+ul.smallSquare li a span.name,
+ul.usersSquare li a span.name {
+    display: block;
+    visibility: hidden;
+    position: absolute;
+    padding: 2px 4px;
+    line-height: 1.272727;
+    background: #0187c5;
+    color: #fff;
+    font-size: 10px;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+ul.smallSquare {
+    margin: 1em -4px 1em 0;
+}
+
+ul.smallSquare li {
+    float: left;
+    display: inline;
+    width: 38px;
+    height: 38px;
+    margin: 0 4px 4px 0;
+}
+ul.smallSquare li.last {
+    margin-right: 0;
+}
+
+ul.smallSquare li a img {
+    display: block;
+    width: 34px;
+    height: 34px;
+    background: #fff;
+}
+
+/* small */
+
+ul.usersSmall li {
+    float: left;
+    display: inline;
+    width: 49%;
+    margin: 0 0 7px 0;
+}
+
+ul.usersSmall li div {
+    padding: 0 0 0 48px;
+    font-size: 11px;
+    line-height: 1.181818em;
+    color: #696969;
+}
+
+ul.usersSmall li.odd {
+    clear: both;
+}
+
+ul.usersSmall li.odd div {
+    margin-right: 10px;
+}
+
+ul.usersSmall li strong a {
+    color: #1b1b1b;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer; /* explicit for IE */
+}
+
+ul.usersSmall li strong a:hover {
+    color: #0187c5;
+}
+
+ul.usersSmall span.userImage {
+    float: left;
+    display: inline;
+    margin: 0 0 0 -48px;
+}
+
+ul.usersSmall .nowlistening,
+ul.usersSmall .justlistened {
+    color: #390;
+}
+
+ul.usersSmall .nowlistening {
+    font-weight: bold;
+}
+
+* html .module ul.usersSmall {
+    position: relative;
+}
+
+* html .module ul.usersSmall li,
+* html .module ul.usersSmall div {
+    position: relative;
+    height: 38px;
+}
+
+* + html ul.usersSmall div {
+    position: relative;
+    min-height: 38px;
+}
+
+* html .module ul.usersSmall span.userImage {
+    float: none;
+    display: block;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+* + html ul.usersSmall span.userImage {
+    float: none;
+    display: block;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* user img styles */
+
+span.imgMedium {
+    border: 1px solid #999;
+}
+
+span.imgMedium img {
+    border: 2px solid #fff;
+}
+
+a.user span.imgMedium {
+    border: 1px solid #999;
+}
+
+a.subscriber span.imgMedium {
+    border: 1px solid #8ab3e7;
+}
+
+a.staff span.imgMedium {
+    border: 1px solid #ef647a;
+}
+
+a.user:hover span.imgMedium {
+    border: 1px solid #666;
+}
+
+a.user:hover span.imgMedium,
+a.user:hover span.imgMedium img {
+    border-color: #666;
+}
+
+a.subscriber:hover span.imgMedium,
+a.subscriber:hover span.imgMedium img {
+    border-color: #4971a9;
+}
+
+a.staff:hover span.imgMedium,
+a.staff:hover span.imgMedium img {
+    border-color: #96BE57;
+}
+
+/* medium */
+
+ul.usersMedium {
+    margin: 1em 0;
+    font-size: 11px;
+    line-height: 1.181818;
+}
+
+ul.usersMedium li {
+    position: relative;
+    display: block;
+    float: left;
+    width: 49%;
+    margin: 0 0 30px 0;
+}
+
+ul.usersMedium li div.userContainer {
+    padding: 0 0 0 79px;
+}
+
+ul.usersMedium li.odd {
+    clear: both;
+}
+
+ul.usersMedium li.odd div.userContainer,
+ul.usersMedium li.odd a.delete {
+    margin-right: 30px;
+}
+
+ul.usersMedium div.userContainer strong {
+    display: block;
+    border-bottom: 1px solid #ccc;
+}
+
+ul.usersMedium strong a {
+    color: #1b1b1b;
+}
+
+ul.usersMedium strong a:hover {
+    color: #0187c5;
+    text-decoration: none;
+}
+
+ul.usersMedium strong span.userImage {
+    float: left;
+    margin: 0 0 0 -79px;
+    cursor: pointer;
+}
+
+ul.usersMedium div.userContainer p strong {
+    display: inline;
+    border: 0;
+}
+
+ul.usersMedium p.info {
+    padding: 3px 0;
+    color: #696969;
+    font-size: 10px;
+}
+
+ul.usersMedium li a.delete {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    display: none;
+}
+
+ul.usersMedium li:hover a.delete {
+    display: block;
+}
+
+/* mini (for eventz n shit) */
+
+ul.usersMini li {
+    display: block;
+    float: left;
+    clear: both;
+    margin: 0 0 3px 0;
+    padding: 0 0 0 25px;
+}
+
+ul.usersMini li strong span.userImage {
+    display: inline;
+    float: left;
+    margin: 0 0 0 -25px;
+}
+
+/* small */
+
+ul.venuesSmall {
+    margin: 1em 0;
+}
+
+ul.venuesSmall li {
+    overflow: hidden;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+ul.venuesSmall li.first {
+    border-top: none;
+}
+
+ul.venuesSmall a {
+    display: block;
+    padding: 5px 5px 5px 79px;
+    text-decoration: none;
+}
+
+ul.venuesSmall a strong {
+    font-weight: bold;
+}
+
+ul.venuesSmall a:hover strong {
+    text-decoration: underline;
+}
+
+ul.venuesSmall a img {
+    float: left;
+    display: inline;
+    margin: 0 0 0 -74px;
+}
+
+ul.venuesSmall p {
+    margin: 0;
+    color: #000;
+}
+
+/* the almost-thumbnail-only video lists */
+
+ul.videosLarge {
+    clear: both;
+    overflow: hidden;
+}
+
+ul.videosLarge li {
+    display: inline;
+    float: left;
+    width: 126px;
+    overflow: hidden;
+    margin: 0 11px 11px 0;
+    font-size: 11px;
+    line-height: 1.181818em;
+}
+
+ul.videosLarge li a strong {
+    display: block;
+    margin: 2px;
+    font-weight: normal;
+}
+
+/* */
+
+ul.mediumVideoList {
+    margin: 1em -15px 1em 0;
+    width: ;
+    clear: both;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.181818;
+}
+
+ul.mediumVideoList li {
+    float: left;
+    display: inline;
+    margin: 0 15px 0 0;
+    padding: 0 0 0 4px;
+    width: 170px;
+    height: 150px;
+    position: relative;
+}
+
+ul.mediumVideoList strong {
+    display: block;
+    margin: 0.272727em 0;
+}
+
+ul.mediumVideoList h4 a {
+    text-decoration: none;
+}
+
+ul.mediumVideoList h4 a:hover,
+ul.mediumVideoList h5 a:hover {
+    text-decoration: underline;
+}
+
+ul.mediumVideoList span.shoutCount a {
+    color: #696969;
+    font-size: 10px;
+}
+
+ul.mediumVideoList .videoStill {
+    margin-left: -2px;
+}
+
+p.official {
+    margin: 4px 0 3px;
+}
+
+    .r-tag p.official {
+        display: none;
+    }
+
+ul.mediumVideoList p.source {
+    position: absolute;
+    top: 63px;
+    height: 11px;
+    background: #F6EED9;
+    border-left: 1px solid #FFCC66;
+    border-top: 1px solid #FFCC66;
+    -moz-border-radius: 2px 0 0 0;
+    -webkit-border-radius: 2px 0 0 0;
+    color: #222;
+    right: 48px;
+    padding: 1px 3px 1px 4px;
+    font-size: 9px;
+    display: none;
+}
+
+ul.mediumVideoList a:hover p.source {
+    display: block;
+}
+
+p.official span {
+    text-decoration: none;
+    padding: 0px 2px;
+    font-size: 9px;
+    color: #696969;
+    background: #F6EED9;
+    border: 1px solid #FFCC66;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
+/* the wide video lists, with lots of details */
+
+ul.wideVideoList {
+    margin: 1em -15px 1em 0;
+    clear: both;
+    overflow: hidden;
+}
+
+ul.wideVideoList li {
+    float: left;
+    display: inline;
+    margin: 0 15px 0 0;
+    border-top: solid 1px #eee;
+    padding: 2px 0 0 141px;
+    width: 222px;
+    height: 90px;
+    position: relative;
+    font-size: 11px;
+    line-height: 1.18181818182em;
+}
+
+ul.wideVideoList h5 {
+    margin: 0;
+    padding: 0;
+    color: #696969;
+    font-size: 11px;
+}
+
+ul.wideVideoList h5 a {
+    color: #696969;
+    text-decoration: none;
+}
+
+ul.wideVideoList h4 {
+    margin: 0 0 0.272727em 0;
+    font-size: 11px;
+}
+
+ul.wideVideoList h4 a {
+    text-decoration: none;
+}
+
+ul.wideVideoList h4 a:hover,
+ul.wideVideoList h5 a:hover {
+    text-decoration: underline;
+}
+
+ul.wideVideoList p.lsd_buttons {
+    float: left;
+    display: inline;
+    width: 48px;
+    margin: 0;
+    line-height: 1.5em;
+}
+
+ul.wideVideoList p.tags {
+    float: left;
+    display: inline;
+    width: 174px;
+    margin: 0;
+    color: #696969;
+    font-size: 10px;
+    line-height: 1.3em;
+}
+
+ul.wideVideoList p.tags a {
+    color: #696969;
+}
+
+ul.wideVideoList p.tags a:hover {
+    color: #000;
+}
+
+ul.wideVideoList span.shoutCount {
+    position: absolute;
+    top: 0.454545em;
+    right: 0;
+}
+
+ul.wideVideoList .videoStill {
+    position: absolute;
+    left: 0;
+    top: -1px;
+}
+
+/* */
+
+#relatedVideos {
+    height: 400px;
+    overflow: auto;
+    position: relative;
+}
+
+#relatedVideos li {
+    clear: left;
+}
+
+#relatedVideos span.videoStill {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+#relatedVideos li strong {
+    display: block;
+    margin: 0.2727em 0;
+}
+
+
+ul.videosLargeFluid {
+    clear: both;
+    display: block;
+    overflow: hidden;
+    height: 107px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+ul.videosLargeFluid li {
+    height: 107px;
+}
+
+/* Medium */
+
+ul.videosMedium li {
+    font-size: 11px;
+    line-height: 1.181818em;
+    display: inline;
+    float: left;
+    width: 126px;
+    margin: 0 9px 9px 0;
+}
+
+
+ul.videosMedium li .videoStill {
+    display: block;
+}
+
+/* chart base */
+
+table.chart {
+    width: 100%;
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+table.chart td {
+    vertical-align: top;
+    line-height: 16px;
+    padding: 3px 5px;
+}
+
+table.chart thead td {
+    color: #696969;
+    white-space: nowrap;
+}
+
+table.chart thead td.positionCell,
+table.chart thead td.playbuttonCell {
+    width: 1px;
+}
+
+table.chart tr.odd td {
+    background-color: #ebebeb;
+}
+
+table.chart td.positionCell {
+    width: 20px;
+    color: #696969;
+    text-align: right;
+}
+
+table.chart td.playbuttonCell {
+    width: 17px;
+    padding-bottom: 0;
+    padding-top: 1px;
+}
+
+table.chart td.playbuttonCell img {
+    margin: 0;
+}
+
+table.chart td.subjectCell div {
+    width: 100%;
+    height: 1.363636em;
+    overflow: hidden;
+}
+
+table.chart td.subjectCell a {
+    color: #1b1b1b;
+}
+
+table.chart td.subjectCell a:hover {
+    color: #0187c5;
+}
+
+table.chart td.durationCell,
+table.chart td.reachCell {
+    width: 20px;
+    color: #696969;
+    text-align: left;
+}
+
+table.chart td.downloadbuttonCell {
+    width: 31px;
+}
+
+table.chart td.lovedCell {
+    padding: 3px 5px 0 0;
+    width: 11px;
+}
+
+table.chart td.multibuttonCell {
+    width: 26px;
+    padding: 3px 5px 0 3px;
+    line-height: 0;
+}
+
+table.chart td.chartbarCell {
+    width: 33%;
+    padding: 0;
+}
+
+* html table.chart td.chartbarCell {
+    padding: 0 0 2px 0;
+}
+
+table.chart tr.odd td.chartbarCell,
+table.chart tr:hover td.chartbarCell {
+    background-color: transparent;
+}
+
+#page table.chart a.lfmButton {
+    position: relative;
+    left: -9999px;
+}
+
+table.chart tbody tr:hover td,
+table.chart tbody tr.open td {
+    background: #d0e4f0;
+}
+
+#page table.chart a.lfmFreeDownloadButton,
+#page table.chart tr:hover a.lfmButton,
+#page table.chart tr.open a.lfmButton {
+    left: 0;
+}
+
+/* the chartbars */
+
+div.chartbar {
+    background: url(http://cdn.last.fm/flatness/charts/charts_right.png) no-repeat right top;
+    overflow: hidden;
+}
+
+* html div.chartbar {
+    background: url(http://cdn.last.fm/flatness/charts/charts_right_8bit.png) no-repeat right top;
+}
+
+div.chartbar span {
+    display: block;
+    height: 17px;
+    margin: 0 3px 0 0;
+    padding: 3px 0.5em 0 0.5em;
+    background: #71b7e6;
+    color: #fff;
+    overflow: hidden;
+}
+
+/* flp-fdl indicators */
+
+td.subjectCell small {
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+tr.flp small,
+tr.fdl small {
+    color: #999 !important;
+}
+
+tr.fdl small a {
+    color: #0187c5 !important;
+}
+
+table.chart td .mp3 {
+    display: block;
+    width: 3em;
+
+    padding: 0px 4px 0px 4px;
+    
+    color: #fff;    
+    background: #0187c5;
+
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+
+	text-align: center;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+table.chart td .mp3:hover {
+    text-decoration: none;
+}
+
+/* small */
+
+table.eventsSmall {
+    border-bottom: 1px solid #fff;
+}
+
+table.eventsSmall span.calSheet {
+    float: left;
+    display: inline;
+    margin-left: -37px;
+}
+
+table.eventsSmall td {
+    padding: 5px 5px 5px 42px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+table.eventsSmall td.first {
+    border-top: none;
+}
+
+table.eventsSmall td strong.summary {
+    display: block;
+    color: #0187c5;
+    font-size: 11px;
+    line-height: 1.25em;
+}
+
+table.eventsSmall td a:hover strong.summary {
+    text-decoration: underline;
+}
+
+table.eventsSmall td small.location {
+    display: block;
+    color: #000;
+    font-size: 11px;
+    margin: 1px 0 4px 0;
+}
+
+table.eventsSmall td span.info {
+    display: block;
+    font-size: 10px;
+}
+
+table.eventsSmall td span.info {
+    color: #696969;
+}
+
+table.eventsSmall a span.addComment {
+    color: #0187c5;
+}
+
+/* Events Map */
+
+#eventsMap p.date {
+    padding: 0 0 5px 33px;
+    border-bottom: 1px solid #ccc;
+}
+#eventsMap p.date span.calSheet {
+    float: left;
+    margin: -8px 0 0 -33px;
+}
+#eventsMap p.summary a {
+    display: block;
+    min-height: 45px;
+    padding: 5px 0 10px 45px;
+    color: #1b1b1b;
+    text-decoration: none;
+}
+#eventsMap p.summary a strong {
+    color: #0187c5;
+}
+#eventsMap p.summary a:hover strong {
+    text-decoration: underline;
+}
+#eventsMap p.summary a strong img {
+    display: inline;
+    float: left;
+    margin: 0 0 5px -45px;
+}
+
+/* Medium */
+
+table.eventsMedium {
+    width: 100%;
+    margin: 0 0 30px 0;
+    font-size: 11px;
+    line-height: 1.25em;
+}
+
+table.eventsMedium tr.month th {
+    padding: 3em 0 0 0;
+    color: #1b1b1b;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+table.eventsMedium tr.month th.first {
+    padding-top: 1em;
+}
+
+table.eventsMedium tr.day th {
+    padding: 35px 0 5px 45px;
+    font-size: 16px;
+    font-weight: bold;
+}
+table.eventsMediumRecent tr.day th {
+    color: #696969;
+}
+table.eventsMedium tr.day th span.calSheet {
+    float: left;
+    margin: -17px 0 0 -45px;
+    width: 32px;
+}
+table.eventsMedium tr.day th span.calSheet span.day {
+    line-height: 1.8em;
+}
+table.eventsMedium tr.day span.status {
+    margin-top: -5px;
+    padding: 0 0.25em;
+    background: #e4f1ff;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+table.eventsMedium tr td {
+    padding: 7px 1em 1em 0;
+    border-top: 1px solid #ccc;
+}
+
+table.eventsMedium tr td.summary {
+    width: 45%;
+}
+table.eventsMedium tr td.summary a {
+    display: block;
+    min-height: 45px;
+    padding-left: 45px;
+    color: #1b1b1b;
+    text-decoration: none;
+}
+table.eventsMedium td.summary a strong {
+    color: #0187c5;
+}
+table.eventsMedium td.summary a:hover strong {
+    text-decoration: underline;
+}
+table.eventsMedium td.summary a strong img {
+    display: inline;
+    float: left;
+    margin: 0 0 5px -45px;
+}
+
+table.eventsMedium tr.attending td,
+table.eventsMedium tr.maybeattending td {
+    background: #e8f1f8;
+}
+table.ownEventsMedium tr.attending td,
+table.ownEventsMedium tr.maybeattending td {
+    background: transparent;
+}
+table.eventsMedium tr.recommended td {
+    background: #f2f2f2;
+}
+table.eventsMedium tr.highlight td {
+    background: #f8ece9;
+}
+
+table.eventsMedium tr td.location {
+    width: 160px;
+}
+table.eventsMedium tr td.info {
+    width: 110px;
+}
+table.eventsMedium tr td.users {
+    width: 100px;
+}
+table.eventsMedium td.info p {
+    font-size: 10px;
+    color: #696969;
+}
+table.eventsMedium td.icon {
+    width: 15px;
+    padding-right: 0;
+}
+
+table.eventsMedium div.geo {
+    display: none;
+}
+/* overrides */
+
+table.eventsNoBorder,
+table.eventsNoBorder td {
+    border: 0;
+}
+
+table.tracklist {
+    clear: both;
+    width: 100%;
+    color: #696969;
+    font-size: 13px;
+    line-height: 1.181818em;
+}
+
+table.tracklist .play_icon {
+    margin: 0;
+}
+
+table.tracklist tbody tr:hover,
+table.tracklist tbody tr.open {
+    background: #F3FAE8;
+}
+
+table.tracklist th {
+    white-space: nowrap;
+}
+
+table.tracklist tr.last td {
+    border-bottom: none;
+}
+
+table.tracklist th,
+table.tracklist td {
+    padding: 5px 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+table.tracklist td.imageSmall {
+    width: 34px;
+    padding: 5px;
+}
+
+table.tracklist td.imageMedium {
+    width: 64px;
+    padding: 5px;
+}
+
+table.tracklist td.playbutton,
+table.tracklist td.playbuttonCell {
+    width: 17px;
+    padding: 3px 0 0 3px;
+}
+
+table.tracklist td.lovedCell {
+    padding: 5px 5px 0 0;
+    width: 11px;
+}
+
+table.tracklist .loved_indicator_icon {
+    margin-top: 2px;
+}
+
+table.tracklist td.tagged,
+table.tracklist td.taggedCell {
+    padding-top: 9px;
+    padding-bottom: 0;
+    width: 15px;
+}
+
+table.tracklist td.deleteCell {
+    width: 14px;
+    padding-bottom: 0;
+}
+
+table.tracklist td.subjectCell {
+    color: #000;
+    width: 100%;
+}
+
+table.tracklist .position {
+    padding-right: 0;
+}
+
+table.tracklist .position,
+table.tracklist .length,
+table.tracklist .playcount {
+    text-align: right;
+}
+
+table.tracklist .smallmultibuttonCell {
+    padding: 5px 5px 0 0;
+    width: 26px;
+}
+
+table.tracklist td.downloadbuttonCell {
+    padding-top: 3px;
+    padding-bottom: 0;
+    width: 15px;
+}
+
+#page table.tracklist a.lfmButton,
+#page table.tracklist a.delete,
+#page table.tracklist .dismiss {
+    position: relative;
+    left: -9999px;
+}
+
+#page table.tracklist a.lfmFreeDownloadButton,
+#page table.tracklist tr:hover a.lfmButton,
+#page table.tracklist tr.open a.lfmButton,
+#page table.tracklist tr:hover a.delete,
+#page table.tracklist tr:hover .dismiss {
+    left: 0;
+}
+
+table.tracklist td.border {
+    border-left: 1px solid #ccc;
+}
+
+table.tracklist a {
+    color: #000;
+}
+
+table.tracklist a:hover {
+    color: #9C9850;
+}
+
+table.tracklist a.mp3 {
+    display: block;
+    width: 3em;
+    margin-top: 2px;
+    padding: 2px 4px 1px 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    background: #0187c5;
+    color: #fff;
+    text-align: center;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+table.tracklist a.mp3:hover {
+    text-decoration: none;
+}
+
+table.tracklist td.imageCell {
+    padding: 0;
+}
+
+table.tracklist td.imageCell img {
+	padding: 3px;
+	display: block;
+    float: left;
+}
+
+table.tracklist td.dateCell {
+    padding-right: 5px;
+    padding-left: 5px;
+    text-align: right;
+    color: #999;
+    white-space: nowrap;
+    font-size: 10px;
+}
+
+table.tracklist td.highlight {
+    border-top: 1px solid #ccc;
+}
+

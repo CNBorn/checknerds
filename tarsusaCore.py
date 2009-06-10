@@ -331,7 +331,7 @@ def get_UserFriends(userid):
 			Each_UserFriends = {'id': str(UsersFriend.key().id())}
 						
 			if UsersFriend.avatar:
-				Each_UserFriends['avatarpath'] =  '/img?avatar=' + str(UsersFriend.key().id())
+				Each_UserFriends['avatarpath'] =  '/image?avatar=' + str(UsersFriend.key().id())
 			else:
 				Each_UserFriends['avatarpath'] =  '/img/default_avatar.jpg'
 
