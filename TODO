@@ -739,4 +739,5 @@
 		Updated /image urls
 	IN 09.06.11
 		California Test page now can add items.
-
+	IN 09.06.12
+		Emergency Bug fix: AddItem can still add item even when user is not logged in.

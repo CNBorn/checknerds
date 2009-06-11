@@ -245,7 +245,7 @@ class AddItemProcess(tarsusaRequestHandler):
 
 			# Permission check is very important.
 			# New CheckLogin code built in tarsusaRequestHandler 
-			if self.chk_login:
+			if self.chk_login():
 				CurrentUser = self.get_user_db()
 			else:
 				#self.redirect('/')
