@@ -741,3 +741,7 @@
 		California Test page now can add items.
 	IN 09.06.12
 		Emergency Bug fix: AddItem can still add item even when user is not logged in.
+	IN 09.06.13
+		Done first API call:Get User information, more to be added.
+		Structure changes in docs page.
+

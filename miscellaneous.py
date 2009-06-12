@@ -212,10 +212,9 @@ class DocsPage(tarsusaRequestHandler):
 			}
 		
 		pageid = self.request.path[len('/docs/'):]
-		if pageid == 'failure_during_june09':
-			path = os.path.join(os.path.dirname(__file__), 'pages/docs_failure_during_june09.html')
-		else:
-			path = os.path.join(os.path.dirname(__file__), 'pages/docs_why_google_account.html')
+		if pageid == '':
+			pageid = 'index'
+		path = os.path.join(os.path.dirname(__file__), 'pages/docs/' + pageid + '.html')
 
 		self.response.out.write(template.render(path, template_values))
 

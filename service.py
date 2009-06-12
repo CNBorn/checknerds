@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-
+#
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 0.7, codename Nevada
+# version 1.0, codename California
 # - service.py
-# Copyright (C) CNBorn, 2008
-# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+# Copyright (C) CNBorn, 2008-2009
+# http://cnborn.net, http://twitter.com/CNBorn
 #
 # Provides API functions 
-#
 #
 # **************************************************************** 
 import urllib
@@ -102,9 +101,42 @@ class patch_error(tarsusaRequestHandler):
 	def get(self):
 		self.redirect('/')
 		
+class api_getuser(tarsusaRequestHandler):
+	
+	#First CheckNerds API: Get User information.
+
+	def get(self):
+		self.write('<h1>please use POST</h1>')
+	
+	def post(self):
+		#self.write(self.request.body)
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+
+		userid = self.request.get('userid')
+		
+		APIUser = tarsusaUser.get_by_id(int(apiuserid))
+		if apikey == APIUser.apikey and APIUser.apikey != None:
+
+			#Should use log to monitor API usage.
+			#Also there should be limitation for the apicalls/per hour.
+
+			ThisUser = tarsusaUser.get_by_id(int(userid))
+			user_info = {'id' : str(ThisUser.key().id()), 'name' : ThisUser.dispname, 'datejoinin' : str(ThisUser.datejoinin), 'website' : ThisUser.website, 'avatar' : 'http://www.checknerds.com/image?avatar=' + str(ThisUser.key().id())}
+			
+			self.write(user_info)
+		elif APIUser.apikey == None:
+			self.write('APIKEY is not generated.')
+
+
+#APIs to be added:
+#	AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
+#	
 
 def main():
-	application = webapp.WSGIApplication([('/service/badge.+', badge),
+	application = webapp.WSGIApplication([
+									   ('/service/user.+', api_getuser),
+									   ('/service/badge.+', badge),
 									   ('/patch/.+',patch_error)],
                                        debug=True)
 

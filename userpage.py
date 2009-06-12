@@ -261,13 +261,12 @@ class UserSettingPage(tarsusaRequestHandler):
 					#notify_dailybriefing_time = forms.CharField(label='每日邮件提醒时间', widget=forms.TextInput(attrs={'value':EditedUser.notify_dailybriefing_time,'class':'sl'}))
 					#notify_addedasfriend = forms.BooleanField(label='用户添加好友邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_addedasfriend}))
 
-
-					#apikey = forms.CharField(label="ApiKey(请勿泄露)", widget=forms.TextInput(attrs={'readonly':'', 'class':'sl'}))
+					apikey = forms.CharField(label="ApiKey(请勿泄露)", widget=forms.TextInput(attrs={'readonly':'', 'class':'sl', 'value':EditedUser.apikey}))
 
 					class Meta:
 						model = tarsusaUser
 						#exclude =['user','userid','usedtags','urlname','friends','datejoinin']
-						exclude =['user','userid','usedtags','urlname','friends','datejoinin', 'notify_dailybriefing', 'notify_dailybriefing_time', 'notify_addedasfriend', 'apikey']
+						exclude =['user','userid','usedtags','urlname','friends','datejoinin', 'notify_dailybriefing', 'notify_dailybriefing_time', 'notify_addedasfriend']
 				
 				outputStringUserSettingForms = ItemForm().as_p() #also got as_table(), as_ul()
 
@@ -330,8 +329,7 @@ class UserSettingPage(tarsusaRequestHandler):
 		dispname = self.request.get('dispname')
 		website = self.request.get('website')
 		
-		if url_mime:  
-			if avatar:
+		if avatar:
 				
 				# New CheckLogin code built in tarsusaRequestHandler 
 				if self.chk_login():
@@ -348,7 +346,28 @@ class UserSettingPage(tarsusaRequestHandler):
 				self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
 
 
-			else:  
+		elif self.request.get('apikey_gene') == 'apikey':
+
+				#Regenerate the APIKEY.
+				if self.chk_login():
+					CurrentUser = self.get_user_db()
+
+					#From Plog.
+					'''
+					Generate a random string for using as api password, api user is user's full email
+					'''
+					from random import sample
+					from md5 import md5
+					s = 'abcdefghijklmnopqrstuvwxyz1234567890'
+					password = ''.join(sample(s, 8))
+					
+					CurrentUser.apikey = md5(str(CurrentUser.key().id()) + CurrentUser.mail + 'CheckNerds' + password).hexdigest()
+					CurrentUser.put()
+	
+				self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
+
+
+		else:
 				
 				# New CheckLogin code built in tarsusaRequestHandler 
 				if self.chk_login():
@@ -404,9 +423,6 @@ class UserSettingPage(tarsusaRequestHandler):
 						pass
 						self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
 					#sendmsg(self, 'added')  
-		else:
-			 #sendmsg(self, 'fill in the form!')  
-			 self.write('please write')
 
 class UserMainPage(tarsusaRequestHandler):
 	def get(self):
