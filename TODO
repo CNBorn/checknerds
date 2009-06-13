@@ -744,4 +744,5 @@
 	IN 09.06.13
 		Done first API call:Get User information, more to be added.
 		Structure changes in docs page.
-
+	IN 09.06.14
+		Trying to add new functions in service.py

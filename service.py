@@ -23,6 +23,9 @@ from base import *
 
 import time, datetime
 
+import tarsusaCore
+
+import logging
 class badge(tarsusaRequestHandler):
 	def get(self):
 		
@@ -133,9 +136,53 @@ class api_getuser(tarsusaRequestHandler):
 #	AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
 #	
 
+class api_getuseritem(tarsusaRequestHandler):
+	
+	#First CheckNerds API: Get User information.
+
+	def get(self):
+		self.write('<h1>please use POST</h1>')
+	
+	def post(self):
+		#self.write(self.request.body)
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+
+		userid = self.request.get('userid')
+
+
+		routine = self.request.get('routine')
+		if routine == '':
+			routine='none'
+				
+		logging.info(routine)
+
+		'''
+			startdate='',
+			enddate='',
+			startdonedate=''
+			enddonedate=''
+			maxitems=9, '''	
+
+		APIUser = tarsusaUser.get_by_id(int(apiuserid))
+		if apikey == APIUser.apikey and APIUser.apikey != None:
+			if apiuserid == userid:
+				#Get APIUser's Items
+				
+				#It can only get todo or done items.
+				tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=False, routine=routine)
+				self.write(tarsusaItemCollection_UserDoneItems)	
+			else:
+				#Get Other Users Items
+				self.write('<h1>Currently You can\'t get other people\'s items.</h1>')
+		else:
+			self.write('<h1>Authentication failed.</h1>')
+
+
 def main():
 	application = webapp.WSGIApplication([
 									   ('/service/user.+', api_getuser),
+									   ('/service/item.+', api_getuseritem),
 									   ('/service/badge.+', badge),
 									   ('/patch/.+',patch_error)],
                                        debug=True)
