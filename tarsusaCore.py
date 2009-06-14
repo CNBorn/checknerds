@@ -29,7 +29,7 @@ import memcache
 ## Caution!
 ## These funtions here won't check permission for login!
 
-def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddate='', startdonedate='', enddonedate='', sort='asc', maxitems=9, omittopbottom=False):
+def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddate='', startdonedate='', enddonedate='', sort='asc', maxitems=9, omittopbottom=False, public='none'):
 	
 	ThisUser = tarsusaUser.get_by_id(int(userid))
 	Item_List = []
@@ -37,12 +37,28 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	#Get tarsusaItemCollection
 	query = tarsusaItem.all()
 	#It seems that when query gets done=True, it returns nothing!
-	query.filter('done =', done)
+	
+	#Newly Add done=None state
+	if done != None:
+		query.filter('done =', done)
 
 	query.filter('user =', ThisUser.user)
 	query.filter('routine =', routine)
 
-	
+	#Caution: Public setting will display all items by default.
+	#When calling the function using external API, 
+	#The Setting should be filtered first, 
+	#In case users will be able to see other's items.
+	if public != 'none':
+		if public == 'nonprivate':
+			query.filter('public !=', 'private')
+		elif public == 'public':
+			query.filter('public =', 'public')
+		elif public == 'private':			
+			query.filter('public =', 'private')
+	else:
+		#No matter what the public is.
+		pass
 
 	if startdate != '':
 		#print startdate
@@ -87,7 +103,7 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
 	for each_tarsusaItem in tarsusaItemCollection_queryResults:
 		
-		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
+		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'done': each_tarsusaItem.done, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
 		Item_List.append(this_item)
 	#print Item_List
 

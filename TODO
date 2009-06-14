@@ -746,3 +746,6 @@
 		Structure changes in docs page.
 	IN 09.06.14
 		Trying to add new functions in service.py
+		---
+		tarsusaCore.GetItem is now with public parameters, done setting can be ignore(display both done and todo items.
+		API GetItems now can set with public, maxitems, done.	

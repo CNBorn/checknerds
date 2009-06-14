@@ -138,7 +138,8 @@ class api_getuser(tarsusaRequestHandler):
 
 class api_getuseritem(tarsusaRequestHandler):
 	
-	#First CheckNerds API: Get User information.
+	#CheckNerds API: Get User Items.
+	#Parameters: apiuserid, apikey, userid, routine, public, maxitems
 
 	def get(self):
 		self.write('<h1>please use POST</h1>')
@@ -150,19 +151,44 @@ class api_getuseritem(tarsusaRequestHandler):
 
 		userid = self.request.get('userid')
 
+		done = self.request.get('done')
+		if done == 'True':
+			done = True
+		elif done == 'False':
+			done = False
+		else:
+			done = None
 
 		routine = self.request.get('routine')
 		if routine == '':
 			routine='none'
-				
+		
 		logging.info(routine)
-
+		#!!!!!
+		#Below Settings should be changed 
+		#When user can check other users ITEMs!
+		#
+		public = self.request.get('public')
+		if public == '':
+			public = 'none'
+			#'none' means it doesn't matter, display all items.
+		logging.info(public)
+		
+		maxitems = self.request.get('maxitems')
+		if maxitems == None or maxitems == '':
+			count = 10
+		else:
+			count = int(maxitems)
+			if count > 100:
+				count = 100
+		logging.info(maxitems)
+		
 		'''
 			startdate='',
 			enddate='',
 			startdonedate=''
 			enddonedate=''
-			maxitems=9, '''	
+		'''
 
 		APIUser = tarsusaUser.get_by_id(int(apiuserid))
 		if apikey == APIUser.apikey and APIUser.apikey != None:
@@ -170,11 +196,11 @@ class api_getuseritem(tarsusaRequestHandler):
 				#Get APIUser's Items
 				
 				#It can only get todo or done items.
-				tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=False, routine=routine)
+				tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, maxitems=count, public=public)
 				self.write(tarsusaItemCollection_UserDoneItems)	
 			else:
 				#Get Other Users Items
-				self.write('<h1>Currently You can\'t get other people\'s items.</h1>')
+				self.write('<h1>Currently You can\'t get other user\'s items.</h1>')
 		else:
 			self.write('<h1>Authentication failed.</h1>')
 
