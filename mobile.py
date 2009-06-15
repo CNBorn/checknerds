@@ -163,7 +163,7 @@ class mToDoPage(tarsusaRequestHandler):
 				self.response.out.write(template.render(path, template_values))
 		
 		else:
-			self.redirect("/m/todo")
+			self.redirect("/m")
 
 class mDonePage(tarsusaRequestHandler):
 	def get(self):
@@ -253,7 +253,7 @@ class mDonePage(tarsusaRequestHandler):
 				self.response.out.write(template.render(path, template_values))
 		
 		else:
-			self.redirect("/m/todo")
+			self.redirect("/m")
 
 class mDoneLogPage(tarsusaRequestHandler):
 	def get(self):

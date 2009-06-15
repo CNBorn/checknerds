@@ -58,7 +58,7 @@ class DoneItem(tarsusaRequestHandler):
 				tItem.done = True
 				tItem.put()
 
-				memcache.event('doneitem', CurrentUser.key().id())
+				#memcache.event('doneitem', CurrentUser.key().id())
 			
 			else:
 				## if this item is a routine item.
@@ -68,9 +68,9 @@ class DoneItem(tarsusaRequestHandler):
 				if DoneYesterdaysDailyRoutine == True:
 					NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
 
-					memcache.event('doneroutineitem_daily_yesterday', CurrentUser.key().id())
+					#memcache.event('doneroutineitem_daily_yesterday', CurrentUser.key().id())
 				else:
-					memcache.event('doneroutineitem_daily_today', CurrentUser.key().id())
+					#memcache.event('doneroutineitem_daily_today', CurrentUser.key().id())
 				
 				#NewlyDoneRoutineItem.routine = tItem.routine
 				# The done date will be automatically added by GAE datastore.			

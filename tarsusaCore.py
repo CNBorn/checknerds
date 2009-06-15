@@ -478,6 +478,57 @@ def get_count_UserItemStats(CurrentUser):
 
 	return template_values 
 
+def DoneItem(ItemId, UserId, Misc):
+	#DoneItem function specially designed for API calls.	
+	#Duplicated Code from tarsusaItemCore, refactor needed in the future.
+	
+	## This function won't check permission for login, for external API usage.
+	#Instead, you need to provide a userid, and the function will check wheather this user have the permission to do so.
+	#Which indicates that you definately need a permission check mechanism when you calling this function from outside.
+
+	DoneYesterdaysDailyRoutine = False
+	if Misc == 'y':
+		DoneYesterdaysDailyRoutine = True
+
+	tItem = tarsusaItem.get_by_id(int(ItemId))
+	
+	if tItem.usermodel.key().id() == int(UserId):
+		## Check User Permission to done this Item
+
+		if tItem.routine == 'none':
+			## if this item is not a routine item.
+			tItem.donedate = datetime.datetime.now()
+			tItem.done = True
+			tItem.put()
+		else:
+			## if this item is a routine item.
+			NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
+			NewlyDoneRoutineItem.user = users.get_current_user()
+			NewlyDoneRoutineItem.routineid = int(ItemId)
+			if DoneYesterdaysDailyRoutine == True:
+				NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
+			#NewlyDoneRoutineItem.routine = tItem.routine
+			# The done date will be automatically added by GAE datastore.			
+			
+
+			#To Check whether this routine item was done today.
+			#Prevention to add duplicate tarsusaRoutineLogItem.
+			one_day = datetime.timedelta(days=1)
+			yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
+			if DoneYesterdaysDailyRoutine == False:
+				tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday + one_day ,datetime.datetime.now())
+			else:
+				tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
+
+			if not tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count() >= 1:
+				NewlyDoneRoutineItem.put()
+			
+			return 0
+			#self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())
+
+	else:
+		return 1
+
 def get_count_tarsusaUser():
 	#Due to the limitation of GAE.
 	#To handle results more than 1000.	

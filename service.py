@@ -26,6 +26,7 @@ import time, datetime
 import tarsusaCore
 
 import logging
+
 class badge(tarsusaRequestHandler):
 	def get(self):
 		
@@ -98,8 +99,6 @@ class badge(tarsusaRequestHandler):
 		#self.response.out.write(simplejson.dumps(Output))
 		#self.write(Output)
 
-	
-
 class patch_error(tarsusaRequestHandler):
 	def get(self):
 		self.redirect('/')
@@ -130,7 +129,6 @@ class api_getuser(tarsusaRequestHandler):
 			self.write(user_info)
 		elif APIUser.apikey == None:
 			self.write('APIKEY is not generated.')
-
 
 #APIs to be added:
 #	AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
@@ -204,11 +202,41 @@ class api_getuseritem(tarsusaRequestHandler):
 		else:
 			self.write('<h1>Authentication failed.</h1>')
 
+class api_doneitem(tarsusaRequestHandler):
+	
+	#CheckNerds API: DoneItem.
+	#Parameters: apiuserid, apikey, itemid
+
+	def get(self):	
+		self.write('<h1>please use POST</h1>')
+
+	def post(self):
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+
+		itemid = self.request.get('itemid')
+	
+		APIUser = tarsusaUser.get_by_id(int(apiuserid))
+		ThisItem = tarsusaItem.get_by_id(int(itemid))
+		if apikey == APIUser.apikey and APIUser.apikey != None:
+			logging.info(apiuserid)
+			logging.info(ThisItem.usermodel.key().id())
+			if int(apiuserid) == ThisItem.usermodel.key().id():
+				#Get APIUser's Items
+				Misc = ''
+				self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
+				#Should be 200
+			else:
+				#Get Other Users Items
+				self.write('<h1>Currently You can\'t manipulate other user\'s items.</h1>')
+		else:
+			self.write('<h1>Authentication failed.</h1>')
 
 def main():
 	application = webapp.WSGIApplication([
 									   ('/service/user.+', api_getuser),
 									   ('/service/item.+', api_getuseritem),
+									   ('/service/done.+', api_doneitem),
 									   ('/service/badge.+', badge),
 									   ('/patch/.+',patch_error)],
                                        debug=True)
