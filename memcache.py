@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-
+#
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 0.7, codename Nevada
+# version 1.0, codename California
 # - memcache.py
-# Copyright (C) CNBorn, 2008
-# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+# Copyright (C) CNBorn, 2008-2009
+# http://cnborn.net, http://twitter.com/CNBorn
 #
 # **************************************************************** 
 

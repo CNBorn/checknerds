@@ -505,11 +505,11 @@ def DoneItem(ItemId, UserId, Misc):
 			NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
 			NewlyDoneRoutineItem.user = users.get_current_user()
 			NewlyDoneRoutineItem.routineid = int(ItemId)
+			
 			if DoneYesterdaysDailyRoutine == True:
 				NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
 			#NewlyDoneRoutineItem.routine = tItem.routine
 			# The done date will be automatically added by GAE datastore.			
-			
 
 			#To Check whether this routine item was done today.
 			#Prevention to add duplicate tarsusaRoutineLogItem.
@@ -527,6 +527,95 @@ def DoneItem(ItemId, UserId, Misc):
 			#self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())
 
 	else:
+		return 1
+
+def UndoneItem(ItemId, UserId, Misc):
+	#UndoneItem function specially designed for API calls.	
+	#Duplicated Code from tarsusaItemCore, refactor needed in the future.
+	
+	## This function won't check permission for login, for external API usage.
+	#Instead, you need to provide a userid, and the function will check wheather this user have the permission to do so.
+	#Which indicates that you definately need a permission check mechanism when you calling this function from outside.
+	# Permission check is very important.
+
+	UndoneYesterdaysDailyRoutine = False
+	if Misc == 'y':
+		UndoneYesterdaysDailyRoutine = True
+
+	## Please be awared that ItemId here is a string!
+	tItem = tarsusaItem.get_by_id(int(ItemId))
+
+	if tItem.usermodel.key().id() == int(UserId):
+		## Check User Permission to undone this Item
+
+		if tItem.routine == 'none':
+			## if this item is not a routine item.
+			tItem.donedate = ""
+			tItem.done = False
+			tItem.put()
+			#-----	
+			memcache.event('undoneitem', int(UserId))
+			#return 0 indicates it's ok.
+			return 0
+
+		else:
+			if tItem.routine == 'daily':				
+
+				if UndoneYesterdaysDailyRoutine != True:
+
+					del tItem.donetoday
+					tItem.put()
+					
+					memcache.event('undoneroutineitem_daily_today', int(UserId))
+					
+					## Please Do not forget to .put()!
+
+					## This is a daily routine, and we are going to undone it.
+					## For DailyRoutine, now I just count the matter of deleting today's record.
+					## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
+					
+					# GAE can not make dateProperty as query now! There is a BUG for GAE!
+					# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
+					
+					tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now())
+				
+					#It has been fixed. For just deleting TODAY's routinelog.
+					one_day = datetime.timedelta(days=1)
+					yesterday = datetime.datetime.now() - one_day
+
+					for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
+						if result.donedate < datetime.datetime.now() and result.donedate.date() != yesterday.date() and result.donedate > yesterday:
+							result.delete()
+
+					#return 0 indicates it's ok.
+					return 0
+
+				else:
+					# Undone Yesterday's daily routine item.	
+					
+					memcache.event('undoneroutineitem_daily_yesterday', int(UserId))
+					
+					try:
+						del tItem.doneyesterday
+						tItem.put()
+					except:
+						pass
+					
+					one_day = datetime.timedelta(days=1)
+					yesterday = datetime.datetime.combine(datetime.date.today() - one_day,datetime.time(0))
+					tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday, datetime.datetime.today())
+					## CAUTION: SOME ITEM MAY BE DONE IN THE NEXT DAY, SO THE DONEDATE WILL BE IN NEXT DAY
+					## THEREFORE donedate>:2 and donedate<datetime.datetime.today() <--today() is datetime
+
+					for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
+						if result.donedate < datetime.datetime.now() and result.donedate.date() == yesterday.date(): #and result.donedate.date() > datetime.datetime.date(datetime.datetime.now() - datetime.timedelta(days=2)):
+							result.delete()
+						else:
+							pass
+					
+					return 0
+	else:
+		#Authentication failed.
 		return 1
 
 def get_count_tarsusaUser():

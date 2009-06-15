@@ -24,8 +24,13 @@ from base import *
 import time, datetime
 
 import tarsusaCore
+import memcache
 
 import logging
+
+global_vars = {}
+global_vars['apilimit'] = 400
+
 
 class badge(tarsusaRequestHandler):
 	def get(self):
@@ -211,32 +216,96 @@ class api_doneitem(tarsusaRequestHandler):
 		self.write('<h1>please use POST</h1>')
 
 	def post(self):
+		
 		apiuserid = self.request.get('apiuserid') 
 		apikey = self.request.get('apikey')
 
-		itemid = self.request.get('itemid')
-	
-		APIUser = tarsusaUser.get_by_id(int(apiuserid))
-		ThisItem = tarsusaItem.get_by_id(int(itemid))
-		if apikey == APIUser.apikey and APIUser.apikey != None:
-			logging.info(apiuserid)
-			logging.info(ThisItem.usermodel.key().id())
-			if int(apiuserid) == ThisItem.usermodel.key().id():
-				#Get APIUser's Items
-				Misc = ''
-				self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
-				#Should be 200
+		#Check with API Usage.
+		UserApiUsage = memcache.get_item("userapiusage", int(apiuserid))
+		if UserApiUsage >= global_vars['apilimit']:
+			#Api Limitation exceed.
+			self.write('<h1>API Limitation exceed.</h1>')
+			return False
+		else:	
+			#Actual function.
+			itemid = self.request.get('itemid')
+			APIUser = tarsusaUser.get_by_id(int(apiuserid))
+			ThisItem = tarsusaItem.get_by_id(int(itemid))
+			if apikey == APIUser.apikey and APIUser.apikey != None:
+				if int(apiuserid) == ThisItem.usermodel.key().id():
+					#Get APIUser's Items
+					Misc = ''
+					#Misc could be set to 'y' to done a yesterday's routineitem
+					self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
+					#Should be 200 status in future, currently just 0(success), 1(failed)
+
+					#------------------------
+					#Manipulating API calls count.
+					if UserApiUsage	== None:
+					UserApiUsage = 0
+					UserApiUsage += 5 #For this is a write action.
+					memcache.set_item("userapiusage", UserApiUsage, int(apiuserid))
+					#------------------------
+
+				else:
+					#Get Other Users Items
+					self.write('<h1>Currently You can\'t manipulate other user\'s items.</h1>')
 			else:
-				#Get Other Users Items
-				self.write('<h1>Currently You can\'t manipulate other user\'s items.</h1>')
-		else:
-			self.write('<h1>Authentication failed.</h1>')
+				self.write('<h1>Authentication failed.</h1>')
+
+class api_undoneitem(tarsusaRequestHandler):
+	
+	#CheckNerds API: UndoneItem.
+	#Parameters: apiuserid, apikey, itemid
+
+	def get(self):	
+		self.write('<h1>please use POST</h1>')
+
+	def post(self):
+		
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+
+		#Check with API Usage.
+		UserApiUsage = memcache.get_item("userapiusage", int(apiuserid))
+		if UserApiUsage >= global_vars['apilimit']:
+			#Api Limitation exceed.
+			self.write('<h1>API Limitation exceed.</h1>')
+			return False
+		else:	
+			#Actual function.
+			itemid = self.request.get('itemid')
+		
+			APIUser = tarsusaUser.get_by_id(int(apiuserid))
+			ThisItem = tarsusaItem.get_by_id(int(itemid))
+			if apikey == APIUser.apikey and APIUser.apikey != None:
+				if int(apiuserid) == ThisItem.usermodel.key().id():
+					#Get APIUser's Items
+					Misc = ''
+					#Misc could be set to 'y' to done a yesterday's routineitem
+					self.write(tarsusaCore.UndoneItem(itemid, apiuserid, Misc))
+					#Should be 200 status in future, currently just 0(success), 1(failed)
+
+					#------------------------
+					#Manipulating API calls count.
+					if UserApiUsage	== None:
+						UserApiUsage = 0
+					UserApiUsage += 5 #For this is a write action.
+					memcache.set_item("userapiusage", UserApiUsage, int(apiuserid))
+					#------------------------
+
+				else:
+					#Get Other Users Items
+					self.write('<h1>Currently You can\'t manipulate other user\'s items.</h1>')
+			else:
+				self.write('<h1>Authentication failed.</h1>')
 
 def main():
 	application = webapp.WSGIApplication([
 									   ('/service/user.+', api_getuser),
 									   ('/service/item.+', api_getuseritem),
 									   ('/service/done.+', api_doneitem),
+									   ('/service/undone.+', api_undoneitem),
 									   ('/service/badge.+', badge),
 									   ('/patch/.+',patch_error)],
                                        debug=True)
