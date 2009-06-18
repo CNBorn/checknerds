@@ -753,4 +753,6 @@
 		Fixed /m/todo|/m/done redirect issue when logged out.
 		Implemented DoneItem API in service.py
 		----
-		Implemented APIUsage Limitation on DoneItem/UndoneItem API		
+		Implemented APIUsage Limitation on DoneItem/UndoneItem API	
+	In 09.06.16
+		Adding AddItem function in tarsusaCore.

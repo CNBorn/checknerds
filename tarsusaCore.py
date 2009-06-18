@@ -618,6 +618,118 @@ def UndoneItem(ItemId, UserId, Misc):
 		#Authentication failed.
 		return 1
 
+def AddItem(UserId, rawName, rawComment, rawRoutine, rawPublic, rawInputDate, rawExpectDate, rawTags=None):
+
+	#Check if comment property's length is exceed 500
+	try:
+		if len(rawComment)>500:
+			item_comment = rawComment[:500]
+		else:
+			item_comment = rawComment
+	except:
+		item_comment = ''
+
+	try:
+		# The following code works on GAE platform.
+		# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
+		item2beadd_name = cgi.escape(rawName)				
+
+		try:
+			item2beadd_comment = cgi.escape(item_comment)
+		except:
+			item2beadd_comment = ''
+							
+		try:
+			tarsusaItem_Tags = cgi.escape(rawTags).split(",")
+		except:
+			tarsusaItem_Tags = ''
+
+		#routine is a must provided in template, by type=hidden
+		item2beadd_routine = cgi.escape(self.request.get('routine'))
+
+		first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=rawRoutine)
+		first_tarsusa_item.public = self.request.get('public')
+		first_tarsusa_item.done = False
+
+		# DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
+		# The easiest way to convert this to a datetime seems to be;
+		#datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
+		# the '*' operator unpacks the tuple, producing the argument list.	
+		# also learned sth from: http://bytes.com/forum/thread603681.html
+
+		# Logic: If the expectdate is the same day as today, It is none.
+		try:
+			expectdatetime = None
+			expectdate = datetime.date(*time.strptime(rawInputDate,"%Y-%m-%d")[:3])
+			if expectdate == datetime.datetime.date(datetime.datetime.today()):
+				expectdatetime == None
+			else:
+				currenttime = datetime.datetime.time(datetime.datetime.now())
+				expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+		except:
+			expectdatetime = None
+		first_tarsusa_item.expectdate =  expectdatetime
+
+		## the creation date will be added automatically by GAE datastore				
+		first_tarsusa_item.usermodel = CurrentUser				
+		#first_tarsusa_item.put()
+		try:
+			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+		except:
+			tarsusaItem_Tags = None
+
+	except:
+		#Something is wrong when adding the item.
+		self.write("sth is wrong.")
+
+	#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
+	if item2beadd_routine == 'daily':
+		memcache.event('addroutineitem_daily', CurrentUser.key().id())
+	else:
+		memcache.event('additem', CurrentUser.key().id())
+	
+	if cgi.escape(self.request.get('public')) != 'private':
+		memcache.event('addpublicitem', CurrentUser.key().id())
+
+	for each_tag_in_tarsusaitem in tarsusaItem_Tags:
+		
+		## It seems that these code above will create duplicated tag model.
+		## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
+		catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
+		try:
+			each_cat = catlist[0]
+		
+		except:				
+			try:
+				#added this line for Localhost GAE runtime...
+				each_cat = Tag(name=each_tag_in_tarsusaitem.decode('utf-8'))			
+				each_cat.put()
+			except:
+				each_cat = Tag(name=each_tag_in_tarsusaitem)
+				each_cat.put()
+
+		first_tarsusa_item.tags.append(each_cat.key())
+		# To Check whether this user is using this tag before.
+		tag_AlreadyUsed = False
+		for check_whether_used_tag in CurrentUser.usedtags:
+			item_check_whether_used_tag = db.get(check_whether_used_tag)
+			if item_check_whether_used_tag != None:
+				if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
+					tag_AlreadyUsed = True
+			else:
+				if each_cat.key() == check_whether_used_tag:
+					tag_AlreadyUsed = True
+			
+		if tag_AlreadyUsed == False:
+			CurrentUser.usedtags.append(each_cat.key())		
+	
+	first_tarsusa_item.put()
+	CurrentUser.put()
+
+
+
+
+
 def get_count_tarsusaUser():
 	#Due to the limitation of GAE.
 	#To handle results more than 1000.	
