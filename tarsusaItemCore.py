@@ -27,6 +27,7 @@ import string
 import re
 
 import memcache
+import shardingcounter
 
 from modules import *
 from base import *
@@ -68,9 +69,9 @@ class DoneItem(tarsusaRequestHandler):
 				if DoneYesterdaysDailyRoutine == True:
 					NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
 
-					#memcache.event('doneroutineitem_daily_yesterday', CurrentUser.key().id())
+					memcache.event('doneroutineitem_daily_yesterday', CurrentUser.key().id())
 				else:
-					#memcache.event('doneroutineitem_daily_today', CurrentUser.key().id())
+					memcache.event('doneroutineitem_daily_today', CurrentUser.key().id())
 				
 				#NewlyDoneRoutineItem.routine = tItem.routine
 				# The done date will be automatically added by GAE datastore.			
@@ -223,11 +224,10 @@ class RemoveItem(tarsusaRequestHandler):
 				
 				memcache.event('deleteroutineitem_daily', CurrentUser.key().id())
 
-		#if self.referer[:2] == '/m':
-		self.redirect(self.referer)
-		#else:
-		#	self.redirect('/')
+		#ShardingCounter
+		shardingcounter.increment("tarsusaItem", "minus")
 
+		self.redirect(self.referer)
 
 class AddItemProcess(tarsusaRequestHandler):
 	def post(self):
@@ -304,6 +304,9 @@ class AddItemProcess(tarsusaRequestHandler):
 				# This part of tag process inspired by ericsk.
 				# many to many
 
+				#ShardingCounter
+				shardingcounter.increment("tarsusaItem")
+
 			except:
 				## the following code works on the localhost GAE runtimes.
 				
@@ -347,6 +350,9 @@ class AddItemProcess(tarsusaRequestHandler):
 					first_tarsusa_item.done = False
 					first_tarsusa_item.usermodel = CurrentUser
 					first_tarsusa_item.put()
+
+					#ShardingCounter
+					shardingcounter.increment("tarsusaItem")
 					
 					try:
 						tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")

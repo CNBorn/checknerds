@@ -41,6 +41,11 @@ class MainPage(tarsusaRequestHandler):
 				CurrentUser.userid = CurrentUser.key().id()
 				CurrentUser.dispname = users.get_current_user().nickname()
 				CurrentUser.put()
+
+				#ShardingCounter
+				import shardingcounter
+				shardingcounter.increment("tarsusaUser")
+
 			
 			else:
 				## DB Model Patch

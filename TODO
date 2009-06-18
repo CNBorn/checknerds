@@ -756,3 +756,7 @@
 		Implemented APIUsage Limitation on DoneItem/UndoneItem API	
 	In 09.06.16
 		Adding AddItem function in tarsusaCore.
+	IN 09.06.18
+		With My New Computer - Oz
+		Implemented the ShardingCounter. With the Apache Lisenced Code, from Google.
+		Temporarily	disabled API controls in UserSettingPage for it is not ready yet.

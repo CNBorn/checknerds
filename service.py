@@ -242,7 +242,7 @@ class api_doneitem(tarsusaRequestHandler):
 					#------------------------
 					#Manipulating API calls count.
 					if UserApiUsage	== None:
-					UserApiUsage = 0
+						UserApiUsage = 0
 					UserApiUsage += 5 #For this is a write action.
 					memcache.set_item("userapiusage", UserApiUsage, int(apiuserid))
 					#------------------------

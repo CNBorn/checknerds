@@ -26,6 +26,8 @@ import time, datetime
 
 import memcache
 
+import shardingcounter
+
 ## Caution!
 ## These funtions here won't check permission for login!
 
@@ -731,43 +733,9 @@ def AddItem(UserId, rawName, rawComment, rawRoutine, rawPublic, rawInputDate, ra
 
 
 def get_count_tarsusaUser():
-	#Due to the limitation of GAE.
-	#To handle results more than 1000.	
-	UserCount1kMilestones = [] # has to be userid, int
-
-	if len(UserCount1kMilestones) == 0:
-		TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
-	else:
-		TotalUserCount = 1000 * len(UserCount1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaUser WHERE userid > :1", UserCount1kMilestones[len(UserCount1kMilestones) - 1]).count()
-	
-	return TotalUserCount
+	#Added Jun, 18th 2009 's statstics of CheckNerds along with the newly implermented shardingCounter
+	return 984 + shardingcounter.get_count("tarsusaUser")
 
 def get_count_tarsusaItem():
-	#Due to the limitation of GAE.
-	#To handle results more than 1000.
-	#tarsusaItem1kMilestones = [] # has to be create date of an item, str, like '2008-09-02'
-	
-	#if len(tarsusaItem1kMilestones) == 0:
-	#	TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
-	#else:
-	#	TotaltarsusaItem = 1000 * len(tarsusaItem1kMilestones) + db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1", datetime.datetime.strptime(tarsusaItem1kMilestones[len(tarsusaItem1kMilestones) - 1], "%Y-%m-%d")).count()
-	
-	#return TotaltarsusaItem
-
-	#new try:
-	TotalCount = 0
-	TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem ORDER BY date ASC LIMIT 500").count()
-	
-	while( TotaltarsusaItem == 500):
-		TotalCount += TotaltarsusaItem	
-		Index = 0
-		for lastitem in TotaltarsusaItem:
-			Index += 1
-			if Index == 500:
-				veryDate = lastitem.date
-				
-		TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem WHERE date > :1 ORDER BY date ASC LIMIT 500", veryDate).count()
-
-	TotalCount += TotaltarsusaItem
-
-	return TotalCount
+	#Added Jun, 18th 2009 's statstics of CheckNerds along with the newly implermented shardingCounter
+	return 995 + shardingcounter.get_count("tarsusaItem")
