@@ -108,10 +108,15 @@ input.disabledConfirmButton {
 /* Full-width layout, here we come */
 
 body {
-    background: url(/img/bg.png);
+    background: url(/img/bg2.png);
+    /*background: url(/img/newbg.jpg);
     /*background: #e3e3e3;*/
-	background-color:#F0F8E4;
+	/*background-color:#F0F8E4;
+	background-color:#AFCD7F;
+	background-repeat:repeat-x;*/
 	background-repeat:repeat-x;
+	/*background-color:#AFCD7F;*/
+	background-color:#C2CACD;
 }
 
 body #page {
@@ -119,6 +124,12 @@ body #page {
     min-width: 913px;
     max-width: 1102px;
     overflow: hidden;
+
+	background-color:#D9E2E6;
+	border-left: 1px solid #F0F0F0;
+	border-right: 1px solid #F0F0F0;
+
+
 }
 
 * html div#page {

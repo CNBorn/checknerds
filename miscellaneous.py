@@ -230,7 +230,7 @@ class CaliforniaPage(tarsusaRequestHandler):
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
 			import tarsusaCore
-			tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False)
+			tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, maxitems=15)
 			
 			template_values = {
 					'PrefixCSSdir': "/",

@@ -423,6 +423,9 @@ class AddItemProcess(tarsusaRequestHandler):
 			if self.referer[-6:] == "/m/add":
 				self.redirect("/m/todo")
 
+			#Return the newly add item's id
+			self.write(first_tarsusa_item.key().id())
+
 class EditItemProcess(tarsusaRequestHandler):
 	def post(self):	
 

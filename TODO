@@ -760,3 +760,8 @@
 		With My New Computer - Oz
 		Implemented the ShardingCounter. With the Apache Lisenced Code, from Google.
 		Temporarily	disabled API controls in UserSettingPage for it is not ready yet.
+	IN 09.06.22-23
+		Begin to Test a new color design for California Page.
+		Implemented addItem function in California like the way it should to be.
+		Implemented Ajax callback for California Page.
+

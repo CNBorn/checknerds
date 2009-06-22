@@ -727,10 +727,7 @@ def AddItem(UserId, rawName, rawComment, rawRoutine, rawPublic, rawInputDate, ra
 	
 	first_tarsusa_item.put()
 	CurrentUser.put()
-
-
-
-
+	
 
 def get_count_tarsusaUser():
 	#Added Jun, 18th 2009 's statstics of CheckNerds along with the newly implermented shardingCounter

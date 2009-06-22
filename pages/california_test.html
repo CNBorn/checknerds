@@ -3,11 +3,7 @@
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
-                        <title>CheckNerds</title>                
-        <link rel="search" type="application/opensearchdescription+xml" href="http://cdn.last.fm/opensearch_desc.xml" title="Last.fm">
-                        <meta name="description" content="收听 CNBorn 的个人电台（已播放 7,383 首曲目）。 CNBorn 的最佳艺术家：Wolfgang Amadeus Mozart, Ludwig van Beethoven, Richard Edlinger: Capella Istropolitana在全球最大的社会音乐平台 Last.fm 上创建自己的个人音乐专页。">
-        <meta http-equiv="content-language" content="zh">
-        <meta name="robots" content="NOODP">
+    <title>CheckNerds</title>                
                            
 		<link rel="shortcut icon" href="{{ PrefixCSSdir }}img/favicon.ico" >
         <link rel="apple-touch-icon" href="http://cdn.last.fm/flatness/apple-touch-icon.png">
@@ -22,45 +18,53 @@
 			<link rel="stylesheet" href="{{PrefixCSSdir}}css/ctest_main.css" type="text/css">
 			<link rel="stylesheet" href="{{PrefixCSSdir}}css/ctest_components.css" type="text/css">
 
+<!-- from former CheckNerds -->
+		<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.form.js"></script>
+		<link rel="stylesheet" media="screen" type="text/css" href="/css/datepicker.css" />
+		<script type="text/javascript" src="/js/datepicker.js"></script>
+<!-- from former CheckNerds -->
+
+
 </head><body class="r-user a-overview">
 
 <script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
 <script>
 $(function() {
 var counter=0;
+
 function addItem() {
-str = "<tr id='item" + counter + "'>" + 
-
-"<td class='imageCell imageSmall'>" + 
-
-'<a href="/doneItem/1"><img class="imgcheck" alt="点击完成" src="/img/checkbox32.png" width="32"></a></td>' + 
-
-"<td class='playbuttonCell'></td>" + 
-
-"<td class='subjectCell'><a href='/i/'>" + $("#inputName").val() + "</a></td>" + 
-
-"<td class='lovedCell'></td>" + 
-
-"<td class='smallmultibuttonCell'></td>" + 
-
-"<td class='dateCell'><span class='date'>0 分钟前</span></td></tr>";
 
 $.post("/additem",
-   { name: $("#inputName").val(), public: "private", routine: 'none' },
-   function(data){
-     //alert("Data Loaded: " + data);
+	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val() },
+   function(data){     
+	//var id = data;
+	//alert("Data Loaded: " + data);
+
+	str = "<tr id='item" + counter + "'>" + 
+	"<td class='imageCell imageSmall'>" + 
+	'<a href="/doneItem/' + data + '"><img class="imgcheck" alt="点击完成" src="/img/checkbox32.png" width="32"></a></td>' + 
+	"<td class='playbuttonCell'></td>" + 
+	"<td class='subjectCell'><a href='/i/" + data + "'>" + $("#inputName").val() + "</a></td>" + 
+	"<td class='lovedCell'></td>" + 
+	"<td class='smallmultibuttonCell'></td>" + 
+	"<td class='dateCell'><span class='date'>刚刚</span></td></tr>";	
+
+	$("#inputName").val("");
+	$("#add_public").val("");
+	$("#add_routine").val("");
+	$("#add_comment").val("");
+	$("#add_tags").val("");
+
+	$('#stats').load('/ajax/frontpage_getitemstats');
+
+	$('#recentTracks tr:eq(1)').after(str);
+	$('#item' + counter).fadeIn('slow');
+	counter += 1;
    }
+   , "success" 
 );
 
-//$("#inputName").val() = "";
-$("#inputName").val("");
-
-
-$('#stats').load('/ajax/frontpage_getitemstats');
-
-$('#recentTracks tr:first').after(str);
-$('#item' + counter).fadeIn('slow');
-counter += 1;
 }
 
 function removeItem() {
@@ -69,13 +73,63 @@ $('#item' + (counter-6)).hide();
 
 
 $('#add').live('click', addItem);
-alert("出现这个表示js程序没有BUG");
+//alert("出现这个表示js程序没有BUG");
 
 $('#news').load('/ajax/frontpage_getfriendstats');
 $('#stats').load('/ajax/frontpage_getitemstats');
 
 
 });
+
+//
+//
+//
+//
+//
+
+
+
+$(document).ready(function() {
+    $(this).attr('src', togglePlus);
+	 $('#addon').fadeOut('fast');
+
+  var toggleMinus = '/img/add32.png';
+
+  var togglePlus = '/img/checkbox32.png';
+
+  var $subHead = $('#recentTracks tr:first odd td:imageCell');
+
+  //$subHead.prepend('<td><img src="' + toggleMinus + '" alt="collapse this section" /></td>');
+  var toder = '<td><img src="' + toggleMinus + '" alt="collapse this section" /></td>';
+
+  //$('img', $subHead).addClass('clickable') 
+  //$subHead.addClass('clickable')
+  $('#toggle').click(function() {
+
+    var toggleSrc = $(this).attr('src');
+
+    if ( toggleSrc == toggleMinus ) {
+
+      //$(this).attr('src', togglePlus) .parents('tr').siblings().fadeOut('fast');
+     $(this).attr('src', togglePlus);
+	 $('#addon').fadeOut('fast');
+
+    } else{
+
+      $(this).attr('src', toggleMinus);
+      $('#addon').fadeIn('fast');
+      //$(this).attr('src', toggleMinus) .parents('tr').siblings().fadeIn('fast');
+
+    };
+
+  });
+
+}) 
+
+
+
+
+
 </script>
 
 
@@ -146,33 +200,64 @@ $('#stats').load('/ajax/frontpage_getitemstats');
         <div class="recentTracksContainer">
      
     <table class="candyStriped tracklist withimages" id="recentTracks">
-            <tbody>        <tr class="first odd" id="0">
-                                                                                                                                <td colspan="2" class="imageCell imageMedium highlight">
-                <a href=""><img class="defaultImage" alt="" src="/img/add32.png" width="34"></a>            </td>
-                            
-							<td class="subjectCell highlight">
-		   					<input type="text" id="inputName" name="name" class="sl" />
-							<select name="public">
-							<option selected="selected" value="private">不公开</option>
-							<option value="public">完全公开</option>
-							<option value="publicOnlyforFriends">仅对朋友公开</option>
+            <tbody>
+				<tr class="first odd" id="0">
+					<td colspan="2" class="imageCell imageMedium highlight">
+				   		<img class="defaultImage" alt="" src="/img/add32.png" width="34">
+					</td>
+					                        
+					<td class="subjectCell highlight">
+		   					<input type="text" id="inputName" name="name" style="width: 340px" class="sl" />
+							<select name="public" id="add_public">
+								<option selected="selected" value="private">不公开</option>
+								<option value="public">完全公开</option>
+								<option value="publicOnlyforFriends">仅对朋友公开</option>
 							</select>
 							<input name="routine" type="hidden" value="none">
-							<input type="submit" value="添加项目" class="sl" id="add"/>
-                            </td>
+					</td>
 
-
-                                    <td class="lovedCell highlight">
-                    </td>
-        <td class="smallmultibuttonCell highlight">
-                                                   </td>
-        <td class="dateCell highlight">
-                                                <span> 正在收听</span>                                    </td>
+                    <td class="lovedCell highlight"> <input id="toggle" type=button value="*"> </td>
+        			<td class="smallmultibuttonCell highlight"></td>
+					<td class="dateCell highlight">
+						<span><input type="submit" value="添加项目" class="sl" id="add"/> </span>
+					</td>
     
                 </tr>
 				
+				<tr class="odd" id="addon">
+					<td colspan="2" class="imageCell imageMedium highlight">
+					</td>
+					                        
+					<td class="subjectCell highlight">
+							内容<textarea name="comment" id="add_comment" rows="2" style="width:315px" wrap="PHYSICAL" class="ml"></textarea>
+							<br />
+		   					类别<input type="text" name="tags" id="add_tags" style="width: 180px" value="" class="sl">
+							<br />
+							<select name="routine" id="add_routine">
+								<option value="none" selected="selected" >非坚持性任务</option>
+								<option value="daily">每天</option>
+								<!-- option value="weekly">每周</option>
+								<option value="monthly">每月</option>
+								<option value="seasonly">每季度</option>
+								<option value="yearly">每年</option-->
+							</select>
+							<br />
+							预计完成<input type="text" class="sl" name="inputDate" id="inputDate" style="width: 80px"  value="" />
+					</td>
+
+                    <td class="lovedCell highlight"></td>
+        			<td class="smallmultibuttonCell highlight"></td>
+					<td class="dateCell highlight">
+						<span></span>
+					</td>
+   
+
+	
+																
 
 
+
+				</tr>
 
 		{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}		
 		<tr class="" id="1">
@@ -260,16 +345,14 @@ $('#stats').load('/ajax/frontpage_getitemstats');
                 
         
                     <div class="module">
-        <h2 class="heading"><span class="h2Wrapper"><a href="http://cn.last.fm/user/CNBorn/groups" title="">小组 (2)</a></span></h2>        <ul class="groupsSmall">
+        <h2 class="heading"><span class="h2Wrapper"><a href="#" title="">好友动态</a></span></h2>        <ul class="groupsSmall">
     <li class="first clearit">
-                        <a href="http://cn.last.fm/group/Mozart">                <strong><span class="groupImg"><img class="groupImage imagesmallsquare" alt="" src="/img/default_avatar.jpg" height="34" width="34"></span>Mozart</strong>
-                <span class="info">
-                    605 个成员                                                                                </span>
+                        <a href="">                <strong><span class="groupImg"><img class="groupImage imagesmallsquare" alt="" src="/img/default_avatar.jpg" height="34" width="34"></span>人物</strong>
+                <span class="info">时间 </span>
             </a>        
         </li><li class="last clearit">
-                        <a href="http://cn.last.fm/group/Wolfgang+Amadeus+Mozart">                <strong><span class="groupImg"><img class="groupImage imagesmallsquare" alt="" src="/img/default_avatar.jpg" height="34" width="34"></span>Wolfgang Amadeus Mozart</strong>
-                <span class="info">
-                    107 个成员                                                                                </span>
+                        <a href="">                <strong><span class="groupImg"><img class="groupImage imagesmallsquare" alt="" src="/img/default_avatar.jpg" height="34" width="34"></span>People</strong>
+                <span class="info">Time</span>
             </a>        
         </li>
 </ul>        
@@ -293,4 +376,37 @@ $('#stats').load('/ajax/frontpage_getitemstats');
 
         </div>
     </div>
-            </body></html>
+            </body>
+			
+<!-- from former CheckNerds -->	
+		<script type="text/javascript">
+		/*		$('#inputDate').DatePicker({
+					format:'Y-m-d',
+					date: $('#inputDate').val(),
+					current: $('#inputDate').val(),
+					starts: 1,
+					position: 'right',
+					onBeforeShow: function(){
+						$('#inputDate').DatePickerSetDate($('#inputDate').val(), true);
+					},
+					onChange: function(formated, dates){
+						$('#inputDate').val(formated);
+					}
+				});*/
+		</script>
+
+<!-- from former CheckNerds -->	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			</html>
