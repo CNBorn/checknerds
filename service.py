@@ -34,8 +34,6 @@ global_vars = {}
 global_vars['apilimit'] = 400
 
 
-
-
 class AppModel(db.Model):
 	"""Applications that uses CheckNerds API"""
 	name = db.StringProperty(required=True)
@@ -197,14 +195,17 @@ class api_getuser(tarsusaRequestHandler):
 		self.write('<h1>please use POST</h1>')
 	
 	def post(self):
-		#self.write(self.request.body)
+		#Verify the AppModel first.
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
+		verified = tarsusaCore.verify_AppModel(int(apiappid), apiservicekey)
+
 		apiuserid = self.request.get('apiuserid') 
 		apikey = self.request.get('apikey')
-
 		userid = self.request.get('userid')
 		
 		APIUser = tarsusaUser.get_by_id(int(apiuserid))
-		if apikey == APIUser.apikey and APIUser.apikey != None:
+		if verified == True and apikey == APIUser.apikey and APIUser.apikey != None:
 
 			#Should use log to monitor API usage.
 			#Also there should be limitation for the apicalls/per hour.

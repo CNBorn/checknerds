@@ -736,3 +736,35 @@ def get_count_tarsusaUser():
 def get_count_tarsusaItem():
 	#Added Jun, 18th 2009 's statstics of CheckNerds along with the newly implermented shardingCounter
 	return 995 + shardingcounter.get_count("tarsusaItem")
+
+def verify_AppModel(apiappid, apiservicekey):
+	import hashlib
+	#To Verify AppModel, Applications that uses CheckNerds API.
+	ThisApp = AppModel.get_by_id(apiappid)
+
+	#At beginning, will not turn this on.
+	#if ThisApp.enable == False:
+	#	return False
+
+	#Check with API Usage.
+	AppApiUsage = memcache.get("appapiusage" + str(apiappid))	
+	if UserApiUsage >= ThisApp.api_limit:
+		#Api Limitation exceed.
+		self.write('<h1>API Limitation exceed.</h1>')
+		return False
+	else:
+		if hashlib.sha256(ThisApp.servicekey).hexdigest() == hashlib.sha256(apiservicekey).hexdigest():
+			#Accept this App
+			#------------------------
+			#Manipulating API calls count.
+			if UserApiUsage	== None:
+				memcache.set(key="appapiusage" + str(apiappid), 0)
+			memcache.incr("appapiusage" + str(apiappid))
+			#------------------------
+			return True
+		else:
+			#Authentication Failed.
+			#Should return a status number in the future.
+			return False
+
+

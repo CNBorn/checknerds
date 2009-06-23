@@ -766,4 +766,4 @@
 		Implemented Ajax callback for California Page.
 	IN 09.06.23 (night)
 		Impletmented Admin page to add AppModel (colossus)
-
+		Implemented Verifyed_App function in tarsusaCore, called by api_getuser in service.py, havnt' tested yet.
