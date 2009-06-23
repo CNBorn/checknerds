@@ -764,4 +764,6 @@
 		Begin to Test a new color design for California Page.
 		Implemented addItem function in California like the way it should to be.
 		Implemented Ajax callback for California Page.
+	IN 09.06.23 (night)
+		Impletmented Admin page to add AppModel (colossus)
 

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %} CheckNerds - {{ singlePageTitle }} {% endblock title %}
+        <div id="content-holder">
+		{% block content-holder %}
+			<div id="singlepostholder">
+            	<div id="top"></div>
+                <div id="mid">
+                    <div id="singleleft">
+                        <h2 class="posttitle" style="font-weight:normal;">{{ singlePageTitle }} </h2>
+					 			{% for App in AllAppModel %}
+									<li>ID: {{App.key.id}}</li>
+									<li>Name: {{App.name}}</li>
+									<li>Description: {{App.description}}</li>
+									<li>Date: {{App.indate}}</li>
+									<li>Userid: {{App.usermodel.key.id}}</li>
+									<li>ServiceKey: {{App.servicekey}}</li>
+									<br />
+							    {% endfor %}
+	
+	<form id="myForm" action="/service/colossus/" method="post">
+				<table>
+					<tr colspan="2">
+					<td align="right">App标题</td> <td><input type="text" name="name" size="35" class="sl"></td>
+					</tr>
+					<tr colspan="2">
+					<td align="right">App描述</td> <td><textarea name="comment" rows="6" cols="33" wrap="PHYSICAL" class="ml"></textarea></td>
+					</tr>
+					<tr colspan="2"><td></td>
+					<td><small>不超过500个字符，多余部分会被删除</small></td>
+					</tr>
+					<tr colspan="2">
+					<td align="right">CheckNerds用户编号</td> <td><input type="text" name="userid" size="35" class="sl"></td>
+					</tr>
+
+					<tr><td colspan="3"><input type="submit" id="subbut" value="提交"></td></tr>
+				</table>
+					</div>
+                </div>
+                <div id="bot"></div>
+            </div>			
+        {% endblock content-holder %}
