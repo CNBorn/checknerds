@@ -28,6 +28,8 @@ import memcache
 
 import shardingcounter
 
+import service
+
 ## Caution!
 ## These funtions here won't check permission for login!
 
@@ -748,23 +750,58 @@ def verify_AppModel(apiappid, apiservicekey):
 
 	#Check with API Usage.
 	AppApiUsage = memcache.get("appapiusage" + str(apiappid))	
-	if UserApiUsage >= ThisApp.api_limit:
+	if AppApiUsage >= ThisApp.api_limit:
 		#Api Limitation exceed.
 		self.write('<h1>API Limitation exceed.</h1>')
 		return False
 	else:
-		if hashlib.sha256(ThisApp.servicekey).hexdigest() == hashlib.sha256(apiservicekey).hexdigest():
+		if hashlib.sha256(ThisApp.servicekey).hexdigest() == apiservicekey:
 			#Accept this App
 			#------------------------
 			#Manipulating API calls count.
-			if UserApiUsage	== None:
-				memcache.set(key="appapiusage" + str(apiappid), 0)
-			memcache.incr("appapiusage" + str(apiappid))
+			if AppApiUsage == None:
+				memkey = "appapiuseage" + str(apiappid)
+				AppApiUsage = 0
+			AppApiUsage += 1
+			memcache.set_item("appapiusage", AppApiUsage, int(apiappid))
 			#------------------------
 			return True
 		else:
 			#Authentication Failed.
 			#Should return a status number in the future.
 			return False
+
+
+def verify_UserApi(userid, userapikey):
+	import hashlib
+	import service
+	#To Verify UserApi, the Authentication process.
+	
+	#To check whether this user is existed.
+	ThisUser = tarsusaUser.get_by_id(userid)
+	if ThisUser == None:
+		return False
+
+	#Check with API Usage.
+	UserApiUsage = memcache.get_item("userapiusage", int(userid))
+	if UserApiUsage >= global_vars['apilimit']:
+		#Api Limitation exceed.
+		#self.write('<h1>API Limitation exceed.</h1>')
+		return False
+	else:
+		if hashlib.sha256(ThisUser.apikey).hexdigest() == userapikey:
+			#Should use log to monitor API usage.
+			#Also there should be limitation for the apicalls/per hour.
+			if UserApiUsage == None:
+				UserApiUsage = 0
+			UserApiUsage += 1
+			memcache.set_item("userapiusage", UserApiUsage, int(userid))
+			return True
+		else:
+			#Authentication Failed.
+			return False
+
+
+
 
 

@@ -767,3 +767,7 @@
 	IN 09.06.23 (night)
 		Impletmented Admin page to add AppModel (colossus)
 		Implemented Verifyed_App function in tarsusaCore, called by api_getuser in service.py, havnt' tested yet.
+	IN 09.06.24
+		Moved global_var settings in base.py
+		Added a verify_UserApi function in tarsusaCore, consists one of the two parts of API Authentication.
+		Now api_getuser	function (/service/user/) is now working with new api external calls setup.

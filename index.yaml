@@ -172,7 +172,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 7087 times in query history.
+# Used 7090 times in query history.
 - kind: tarsusaItem
   properties:
   - name: routine
@@ -244,7 +244,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 3097 times in query history.
+# Used 3100 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: routine

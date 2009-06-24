@@ -30,20 +30,6 @@ import memcache
 
 import logging
 
-global_vars = {}
-global_vars['apilimit'] = 400
-
-
-class AppModel(db.Model):
-	"""Applications that uses CheckNerds API"""
-	name = db.StringProperty(required=True)
-	description = db.TextProperty()
-	usermodel = db.ReferenceProperty(tarsusaUser)
-	servicekey = db.StringProperty(multiline=False)
-	api_limit = db.IntegerProperty(required=True, default=400)
-	enable = db.BooleanProperty(default=False)
-	indate = db.DateProperty(auto_now_add=True)
-	
 class colossus(tarsusaRequestHandler):
 	def get(self):
 		#This is the first admin page for CheckNerds.
@@ -198,15 +184,30 @@ class api_getuser(tarsusaRequestHandler):
 		#Verify the AppModel first.
 		apiappid = self.request.get('apiappid') 
 		apiservicekey = self.request.get('servicekey')
+		logging.info(apiservicekey)
 		verified = tarsusaCore.verify_AppModel(int(apiappid), apiservicekey)
-
+		
 		apiuserid = self.request.get('apiuserid') 
 		apikey = self.request.get('apikey')
 		userid = self.request.get('userid')
 		
 		APIUser = tarsusaUser.get_by_id(int(apiuserid))
-		if verified == True and apikey == APIUser.apikey and APIUser.apikey != None:
-
+		
+		#Exception.
+		if APIUser == None:
+			self.write("403 No Such User")
+			#self.error(403)
+			return 0
+		if verified == False:
+			self.write("403 Application Verifiction Failed.")
+			#self.error(403)
+			return 0
+		#--- verified AppApi Part.
+		if tarsusaCore.verify_UserApi(int(apiuserid), apikey) == False:
+			self.write("403 UserID Authentication Failed.")
+			return 0
+ 
+		if verified == True and APIUser.apikey != None:
 			#Should use log to monitor API usage.
 			#Also there should be limitation for the apicalls/per hour.
 

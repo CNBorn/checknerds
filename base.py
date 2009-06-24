@@ -167,3 +167,9 @@ def printExpireTimeGap(timeOne,timeTwo):
 		ReturnString = "To GO " + WorkString[0] + "Days" + TimeString[0] + "Hours" + TimeString[1] + "Mins"
 	return ReturnString
 
+
+## Used for API setting.
+
+global_vars = {}
+global_vars['apilimit'] = 400
+
