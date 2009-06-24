@@ -184,7 +184,14 @@ class api_getuser(tarsusaRequestHandler):
 		#Verify the AppModel first.
 		apiappid = self.request.get('apiappid') 
 		apiservicekey = self.request.get('servicekey')
+		if apiappid == "" or apiservicekey == "":
+			self.write("403 Not enough parameters.")
+			return 0
+		
 		logging.info(apiservicekey)
+		
+		
+		
 		verified = tarsusaCore.verify_AppModel(int(apiappid), apiservicekey)
 		
 		apiuserid = self.request.get('apiuserid') 

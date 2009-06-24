@@ -1,4 +1,4 @@
-{% extends "../base.html" %}
+{% extends "../../base.html" %}
 {% block title %} CheckNerds -  Docs Center{% endblock title %}
         <div id="content-holder">
 		{% block content-holder %}
@@ -9,21 +9,16 @@
                    	<div id="featuredcode2-mid">
                     <h2 class="posttitle" style="font-weight:normal;">CheckNerds 文档中心</h2><br />
 						<div style="padding-left: 15px; padding-right: 15px; padding-top: 10px;">
-							<h2>说明</h2>
-							<li><a href="/docs/why_google_account">关于使用Google 账户的登录说明</a></li>
-							<br />
-							<li><a href="/docs/failure_during_june09">2009年6月初维护的声明</a></li>
-							<br />
-							<br />
-							<h2>API 文档</h2>
-							<strong>API服务近期即将开启，欢迎大家关注</strong>	
-							<li><a href="#">API 概述</a></li>
-							<li><a href="#">API 可用功能列表</a></li>
-							<li><a href="#">API 认证</a></li>
-							<li><a href="api/limitation">访问限制</a></li>
-							<li><a href="api/tutorial">实例</a></li>
-
-
+							<h2>API限制说明</h2>
+							<strong>API限制：</strong><br />
+开发者首先需要注册应用，才能够访问CheckNerds API。
+开放初期，有免注册认证，不过限制较多。
+<li>测试应用API帐号（初期开放的免注册应用程序认证），200次/小时</li>
+<li>普通应用API，400次/小时</li>
+<li>高级，800</li>
+<br />
+<li>用户API调用限制 400次小时</li>
+<br />
 							<br />
 							<br />
 						</div>						

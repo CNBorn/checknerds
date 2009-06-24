@@ -741,9 +741,15 @@ def get_count_tarsusaItem():
 
 def verify_AppModel(apiappid, apiservicekey):
 	import hashlib
+	
+	if apiappid == None or apiservicekey == None:
+		return False
+	
 	#To Verify AppModel, Applications that uses CheckNerds API.
 	ThisApp = AppModel.get_by_id(apiappid)
-
+	if ThisApp == None:
+		return False
+	
 	#At beginning, will not turn this on.
 	#if ThisApp.enable == False:
 	#	return False

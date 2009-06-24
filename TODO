@@ -771,3 +771,5 @@
 		Moved global_var settings in base.py
 		Added a verify_UserApi function in tarsusaCore, consists one of the two parts of API Authentication.
 		Now api_getuser	function (/service/user/) is now working with new api external calls setup.
+		----
+		More Docs work, Polished Authentication (handle with more error circumstandces)
