@@ -773,3 +773,7 @@
 		Now api_getuser	function (/service/user/) is now working with new api external calls setup.
 		----
 		More Docs work, Polished Authentication (handle with more error circumstandces)
+	IN 09.06.25
+		Completed the first two APIs, getuser and get_useritem
+		New Architecture in the API function.
+

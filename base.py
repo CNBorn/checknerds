@@ -87,6 +87,81 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
 		return q.get()
 
+	def verify_api(self):
+		import modules
+		import tarsusaCore, memcache
+		import logging
+				
+		#Verifiction of external API calls.
+		#Verify the AppModel first.
+		
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
+		
+		if apiappid == "" or apiservicekey == "":
+			self.write("403 Not enough parameters.")
+			return False 
+		
+		#logging.info(apiservicekey)		
+		
+		verified = tarsusaCore.verify_AppModel(int(apiappid), apiservicekey)
+		
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+		userid = self.request.get('userid')
+		
+		APIUser = tarsusaUser.get_by_id(int(apiuserid))
+		
+		#Exception.
+		if APIUser == None:
+			self.write("403 No Such User")
+			#self.error(403)
+			return False
+		if verified == False:
+			self.write("403 Application Verifiction Failed.")
+			#self.error(403)
+			return False
+		#--- verified AppApi Part.
+		if tarsusaCore.verify_UserApi(int(apiuserid), apikey) == False:
+			self.write("403 UserID Authentication Failed.")
+			return False
+		
+		try:
+			if APIUser.apikey == None:
+				return False
+		except:
+			return False
+
+		return True
+
+			
+
+	def verify_api_limit(self):
+		import modules
+		import tarsusaCore, memcache
+		import logging
+		
+		#Check with API Usage.
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
+	
+		AppApiUsage = memcache.get_item("appapiusage", int(apiappid))
+		ThisApp = AppModel.get_by_id(int(apiappid))
+		if AppApiUsage >= ThisApp.api_limit:
+			#Api Limitation exceed.
+			self.write('403 API Limitation exceed. ')
+			return False	
+		elif AppApiUsage == None: #memcache.get_item returns None if there is not such var.
+			AppApiUsage = 0
+		
+		AppApiUsage += 1 
+		memcache.set_item("appapiusage", AppApiUsage, int(apiappid))
+		
+		return True
+
+
+
+
 ## These 2 below functions are derived from Plog.
 ##
 ## Now Tag is a new type of model 

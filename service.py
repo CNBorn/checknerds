@@ -181,49 +181,30 @@ class api_getuser(tarsusaRequestHandler):
 		self.write('<h1>please use POST</h1>')
 	
 	def post(self):
-		#Verify the AppModel first.
-		apiappid = self.request.get('apiappid') 
-		apiservicekey = self.request.get('servicekey')
-		if apiappid == "" or apiservicekey == "":
-			self.write("403 Not enough parameters.")
-			return 0
-		
-		logging.info(apiservicekey)
-		
-		
-		
-		verified = tarsusaCore.verify_AppModel(int(apiappid), apiservicekey)
-		
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-		userid = self.request.get('userid')
-		
-		APIUser = tarsusaUser.get_by_id(int(apiuserid))
-		
-		#Exception.
-		if APIUser == None:
-			self.write("403 No Such User")
-			#self.error(403)
-			return 0
-		if verified == False:
-			self.write("403 Application Verifiction Failed.")
-			#self.error(403)
-			return 0
-		#--- verified AppApi Part.
-		if tarsusaCore.verify_UserApi(int(apiuserid), apikey) == False:
-			self.write("403 UserID Authentication Failed.")
-			return 0
  
-		if verified == True and APIUser.apikey != None:
+		verified_api = self.verify_api()  
+		within_api_limit = self.verify_api_limit() 
+		
+		if verified_api == True and within_api_limit == True:
 			#Should use log to monitor API usage.
 			#Also there should be limitation for the apicalls/per hour.
+			apiappid = self.request.get('apiappid') 
+			apiservicekey = self.request.get('servicekey')
+			apiuserid = self.request.get('apiuserid') 
+			apikey = self.request.get('apikey')
+			userid = self.request.get('userid')
 
 			ThisUser = tarsusaUser.get_by_id(int(userid))
 			user_info = {'id' : str(ThisUser.key().id()), 'name' : ThisUser.dispname, 'datejoinin' : str(ThisUser.datejoinin), 'website' : ThisUser.website, 'avatar' : 'http://www.checknerds.com/image?avatar=' + str(ThisUser.key().id())}
 			
 			self.write(user_info)
-		elif APIUser.apikey == None:
-			self.write('APIKEY is not generated.')
+		elif verified_api == False:
+			self.write('403 API Authentication failed.')
+			return False
+		else:
+			self.write('403 API Limitation exceed.')
+			return False
+
 
 #APIs to be added:
 #	AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
@@ -238,53 +219,58 @@ class api_getuseritem(tarsusaRequestHandler):
 		self.write('<h1>please use POST</h1>')
 	
 	def post(self):
-		#self.write(self.request.body)
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-
-		userid = self.request.get('userid')
-
-		done = self.request.get('done')
-		if done == 'True':
-			done = True
-		elif done == 'False':
-			done = False
-		else:
-			done = None
-
-		routine = self.request.get('routine')
-		if routine == '':
-			routine='none'
+		verified_api = self.verify_api()  
+		within_api_limit = self.verify_api_limit() 
 		
-		logging.info(routine)
-		#!!!!!
-		#Below Settings should be changed 
-		#When user can check other users ITEMs!
-		#
-		public = self.request.get('public')
-		if public == '':
-			public = 'none'
-			#'none' means it doesn't matter, display all items.
-		logging.info(public)
-		
-		maxitems = self.request.get('maxitems')
-		if maxitems == None or maxitems == '':
-			count = 10
-		else:
-			count = int(maxitems)
-			if count > 100:
-				count = 100
-		logging.info(maxitems)
-		
-		'''
-			startdate='',
-			enddate='',
-			startdonedate=''
-			enddonedate=''
-		'''
+		if verified_api == True and within_api_limit == True:
+			apiappid = self.request.get('apiappid') 
+			apiservicekey = self.request.get('servicekey')
+			apiuserid = self.request.get('apiuserid') 
+			apikey = self.request.get('apikey')
+			userid = self.request.get('userid')
 
-		APIUser = tarsusaUser.get_by_id(int(apiuserid))
-		if apikey == APIUser.apikey and APIUser.apikey != None:
+
+			done = self.request.get('done')
+			if done == 'True':
+				done = True
+			elif done == 'False':
+				done = False
+			else:
+				done = None
+
+			routine = self.request.get('routine')
+			if routine == '':
+				routine='none'
+			
+			#logging.info(routine)
+			
+			#!!!!!
+			#Below Settings should be changed 
+			#When user can check other users ITEMs!
+			#
+			public = self.request.get('public')
+			if public == '':
+				public = 'none'
+				#'none' means it doesn't matter, display all items.
+			#logging.info(public)
+			
+			maxitems = self.request.get('maxitems')
+			if maxitems == None or maxitems == '':
+				count = 10
+			else:
+				count = int(maxitems)
+				if count > 100:
+					count = 100
+			
+			#logging.info(maxitems)
+			
+			#'''
+			#	startdate='',
+			#	enddate='',
+			#	startdonedate=''
+			#	enddonedate=''
+			#'''
+
 			if apiuserid == userid:
 				#Get APIUser's Items
 				
@@ -293,9 +279,15 @@ class api_getuseritem(tarsusaRequestHandler):
 				self.write(tarsusaItemCollection_UserDoneItems)	
 			else:
 				#Get Other Users Items
-				self.write('<h1>Currently You can\'t get other user\'s items.</h1>')
+				self.write('<h1>403 Currently You can\'t get other user\'s items.</h1>')
+				return False
+		
+		elif verified_api == False:
+			self.write('403 API Authentication failed.')
+			return False
 		else:
-			self.write('<h1>Authentication failed.</h1>')
+			self.write('403 API Limitation exceed.')
+			return False
 
 class api_doneitem(tarsusaRequestHandler):
 	
@@ -389,6 +381,11 @@ class api_undoneitem(tarsusaRequestHandler):
 					self.write('<h1>Currently You can\'t manipulate other user\'s items.</h1>')
 			else:
 				self.write('<h1>Authentication failed.</h1>')
+
+
+#To be added: api_checkAppModel
+
+
 
 def main():
 	application = webapp.WSGIApplication([

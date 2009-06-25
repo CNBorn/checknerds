@@ -107,7 +107,7 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
 	for each_tarsusaItem in tarsusaItemCollection_queryResults:
 		
-		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'done': each_tarsusaItem.done, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
+		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'done': each_tarsusaItem.done, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine}
 		Item_List.append(this_item)
 	#print Item_List
 
