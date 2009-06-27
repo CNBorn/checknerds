@@ -758,7 +758,8 @@ def verify_AppModel(apiappid, apiservicekey):
 	AppApiUsage = memcache.get("appapiusage" + str(apiappid))	
 	if AppApiUsage >= ThisApp.api_limit:
 		#Api Limitation exceed.
-		self.write('<h1>API Limitation exceed.</h1>')
+		self.write('<h1>API Limitation exceed.</h1>')		
+		logging.info("AppID:" + str(apiappid) + ":" + cgi.escape(ThisApp.name) + " has exceed its API limitation.")
 		return False
 	else:
 		if hashlib.sha256(ThisApp.servicekey).hexdigest() == apiservicekey:
@@ -770,6 +771,9 @@ def verify_AppModel(apiappid, apiservicekey):
 				AppApiUsage = 0
 			AppApiUsage += 1
 			memcache.set_item("appapiusage", AppApiUsage, int(apiappid))
+			#------------------------
+			#Below line could be turned off.
+			logging.info("AppID:" + str(apiappid) + ":" + cgi.escape(ThisApp.name) + " accessed via API")
 			#------------------------
 			return True
 		else:

@@ -1011,9 +1011,6 @@ div.halfhalf {
     border-right: none;
 } 
 
-#headLinks a:hover {
-    color: #fff;
-}
 #headLinks img {
     float: left;
     display: inline;

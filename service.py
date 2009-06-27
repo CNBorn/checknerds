@@ -299,41 +299,44 @@ class api_doneitem(tarsusaRequestHandler):
 
 	def post(self):
 		
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
+		verified_api = self.verify_api()  
+		within_api_limit = self.verify_api_limit() 
+		
+		if verified_api == True and within_api_limit == True:
 
-		#Check with API Usage.
-		UserApiUsage = memcache.get_item("userapiusage", int(apiuserid))
-		if UserApiUsage >= global_vars['apilimit']:
-			#Api Limitation exceed.
-			self.write('<h1>API Limitation exceed.</h1>')
-			return False
-		else:	
 			#Actual function.
 			itemid = self.request.get('itemid')
+			apiappid = self.request.get('apiappid') 
+			apiservicekey = self.request.get('servicekey')
+			apiuserid = self.request.get('apiuserid') 
+			apikey = self.request.get('apikey')
+			userid = self.request.get('userid')
+
 			APIUser = tarsusaUser.get_by_id(int(apiuserid))
 			ThisItem = tarsusaItem.get_by_id(int(itemid))
-			if apikey == APIUser.apikey and APIUser.apikey != None:
-				if int(apiuserid) == ThisItem.usermodel.key().id():
-					#Get APIUser's Items
-					Misc = ''
-					#Misc could be set to 'y' to done a yesterday's routineitem
-					self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
-					#Should be 200 status in future, currently just 0(success), 1(failed)
+			
+			if ThisItem is None:
+				self.write("404 No such Item.")
+				return False
 
-					#------------------------
-					#Manipulating API calls count.
-					if UserApiUsage	== None:
-						UserApiUsage = 0
-					UserApiUsage += 5 #For this is a write action.
-					memcache.set_item("userapiusage", UserApiUsage, int(apiuserid))
-					#------------------------
+			if int(apiuserid) == ThisItem.usermodel.key().id():
+				#Get APIUser's Items
+				Misc = ''
+				#Misc could be set to 'y' to done a yesterday's routineitem
+				self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
+				#Should be 200 status in future, currently just 0(success), 1(failed)
 
-				else:
-					#Get Other Users Items
-					self.write('<h1>Currently You can\'t manipulate other user\'s items.</h1>')
 			else:
-				self.write('<h1>Authentication failed.</h1>')
+				#Trying to manipulate Other Users Items, very badass.
+				self.write('<h1>403 You can\'t manipulate other user\'s items.</h1>')
+		
+		elif verified_api == False:
+			self.write('403 API Authentication failed.')
+			return False
+		else:
+			self.write('403 API Limitation exceed.')
+			return False
+
 
 class api_undoneitem(tarsusaRequestHandler):
 	
@@ -348,40 +351,43 @@ class api_undoneitem(tarsusaRequestHandler):
 		apiuserid = self.request.get('apiuserid') 
 		apikey = self.request.get('apikey')
 
-		#Check with API Usage.
-		UserApiUsage = memcache.get_item("userapiusage", int(apiuserid))
-		if UserApiUsage >= global_vars['apilimit']:
-			#Api Limitation exceed.
-			self.write('<h1>API Limitation exceed.</h1>')
-			return False
-		else:	
+		
+		verified_api = self.verify_api()  
+		within_api_limit = self.verify_api_limit() 
+		
+		if verified_api == True and within_api_limit == True:
 			#Actual function.
 			itemid = self.request.get('itemid')
+			apiappid = self.request.get('apiappid') 
+			apiservicekey = self.request.get('servicekey')
+			apiuserid = self.request.get('apiuserid') 
+			apikey = self.request.get('apikey')
+			userid = self.request.get('userid')
 		
 			APIUser = tarsusaUser.get_by_id(int(apiuserid))
 			ThisItem = tarsusaItem.get_by_id(int(itemid))
-			if apikey == APIUser.apikey and APIUser.apikey != None:
-				if int(apiuserid) == ThisItem.usermodel.key().id():
-					#Get APIUser's Items
-					Misc = ''
-					#Misc could be set to 'y' to done a yesterday's routineitem
-					self.write(tarsusaCore.UndoneItem(itemid, apiuserid, Misc))
-					#Should be 200 status in future, currently just 0(success), 1(failed)
+			
+			if ThisItem is None:
+				self.write("404 No such Item.")
+				return False
 
-					#------------------------
-					#Manipulating API calls count.
-					if UserApiUsage	== None:
-						UserApiUsage = 0
-					UserApiUsage += 5 #For this is a write action.
-					memcache.set_item("userapiusage", UserApiUsage, int(apiuserid))
-					#------------------------
+			if int(apiuserid) == ThisItem.usermodel.key().id():
+				#Get APIUser's Items
+				Misc = ''
+				#Misc could be set to 'y' to done a yesterday's routineitem
+				self.write(tarsusaCore.UndoneItem(itemid, apiuserid, Misc))
+				#Should be 200 status in future, currently just 0(success), 1(failed)
 
-				else:
-					#Get Other Users Items
-					self.write('<h1>Currently You can\'t manipulate other user\'s items.</h1>')
 			else:
-				self.write('<h1>Authentication failed.</h1>')
-
+				#Trying to manipulate Other Users Items, very badass.
+				self.write('<h1>403 You can\'t manipulate other user\'s items.</h1>')
+		
+		elif verified_api == False:
+			self.write('403 API Authentication failed.')
+			return False
+		else:
+			self.write('403 API Limitation exceed.')
+			return False
 
 #To be added: api_checkAppModel
 

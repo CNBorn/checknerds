@@ -157,9 +157,9 @@ $(document).ready(function() {
         <div id="headerWrapper">
                         
             <span id="sitename"><a href="/">CheckNerds</a></span>
-           {% if UserLoggedIn %}													 
+			{% if UserLoggedIn %}													 
             <ul id="primaryNav" class="clearit">
-                <li id="musicNav"><a href="/">任务</a></li>
+                <li id="musicNav"><a href="/user/{{UserID|escape}}/todo">待完成项目</a></li>
                 <li id="videosNav"><a href="/user/{{UserID|escape}}">我的页面</a>
                 </li>
                 <li id="listenNav"><a href="/FindFriend">我的朋友</a>
@@ -172,8 +172,10 @@ $(document).ready(function() {
            		{% if UserLoggedIn %}													 
                 <li><a href="/user/{{UserID}}/setting">设置</a> | </li>
                 <li><a href="/Logout/">登出</a> | </li>
+				{% else %}
+                <li><a href="/Login/">使用Google帐户登录</a><small><a href="/docs/why_google_account">(?)</a></small> | </li>
 				{% endif %}
-                <li><a href="/help">帮助</a> | </li>
+				<li><a href="/docs/">文档中心</a> | </li>
                 <li><a href="/about">关于</a> | </li>
                 <li class="last"><a href="/guestbook">意见反馈</a></li>
             </ul>

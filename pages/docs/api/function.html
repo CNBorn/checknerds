@@ -74,7 +74,51 @@ api用户key，请登录后进入设置页面，点击“生成APIKEY"按钮生�
 								403 User Limitation exceed.<br />
 <br />
 								认证通过：<br /> 
-								[{'comment': u'', 'donedate': datetime.datetime(2009, 6, 22, 17, 34, 1, 32261), 'name': u'A Blog post of OpenParty - Looking fish at Willowy bank', 'done': True, 'routine': u'none', 'date': datetime.datetime(2009, 6, 22, 17, 29, 16, 816587), 'id': '378'},.......]</div>						
+								[{'comment': u'', 'donedate': datetime.datetime(2009, 6, 22, 17, 34, 1, 32261), 'name': u'A Blog post of OpenParty - Looking fish at Willowy bank', 'done': True, 'routine': u'none', 'date': datetime.datetime(2009, 6, 22, 17, 29, 16, 816587), 'id': '378'},.......]<br /><br />
+								
+							<hr>
+							<p><h3>完成一个项目</h3></p><br />
+ 									Post请求到: http://www.checknerds.com/service/doneitem/	<br />
+									itemid: 需要完成的项目id，此项目所有者必须为apiuserid中认证的用户 <br /> 
+							</p>
+							<br />
+							<p> <strong>返回值:</strong><br /> 
+								认证不通过：<br /> 
+							<br />	
+								403 No Such Item<br /> 
+								403 Application Verifiction Failed.<br /> 
+								403 UserID Authentication Failed.<br /> 
+								403 User Limitation exceed.<br />
+								403 You can't manipulate other user's items.<br />
+<br />
+								认证通过：<br /> 
+								200 OK	
+<br />	
+							<br /><br />
+							<hr>
+							<p><h3>撤销完成一个项目</h3></p><br />
+ 									Post请求到: http://www.checknerds.com/service/undoneitem/ <br />
+									itemid: 需要撤销完成的项目id，此项目所有者必须为apiuserid中认证的用户 <br /> 
+							</p>
+							<br />
+							<p> <strong>返回值:</strong><br /> 
+								认证不通过：<br /> 
+							<br />	
+								403 No Such Item<br /> 
+								403 Application Verifiction Failed.<br /> 
+								403 UserID Authentication Failed.<br /> 
+								403 User Limitation exceed.<br />
+								403 You can't manipulate other user's items.<br />
+
+<br />
+								认证通过：<br /> 
+								200 OK	
+<br />	
+							<br /><br />	
+								
+								
+								
+								</div>						
                 	</div>
                 	<div id="featuredcode2-bot"></div>
         	</div>
