@@ -779,3 +779,5 @@
 	IN 09.06.27
 		Done DoneItem/UndoneItem in service.py, API can now use these two functions.
 		Small Utility Tweaks in California_testing page.
+	IN 09.06.29
+		Added Cron.yaml. flushcache will be executed every hour to reset the AppApiQuota.

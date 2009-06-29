@@ -74,14 +74,18 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		query.order('-date')
 
 	if startdonedate != '':
-		logging.info('startdonedate')
-		logging.info(startdonedate)
+		#logging.info('startdonedate')
+		#logging.info(startdonedate)
+		#above line could be used in testing
+
 		query.filter('donedate >', startdonedate)
 		query.order('donedate')
 		#Above will cause that weird error.(Got nothing.)
 	if enddonedate != '':
-		logging.info('enddonedate')
-		logging.info(enddonedate)
+		#logging.info('enddonedate')
+		#logging.info(enddonedate)
+		#above line could be used in testing
+
 		query.filter('donedate <', enddonedate)
 		query.order('-donedate')
 		
@@ -90,7 +94,8 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		if startdate == '' and enddonedate == '':	
 			#Default order by date DESC.	
 			#For example: Done first page.
-			logging.info('donefirstpage')
+			#logging.info('donefirstpage')
+						
 			#query.filter('done =', True)
 			#query.filter('donedate !=', datetime.datetime.now())
 			#logging.info(query.fetch(limit=9))

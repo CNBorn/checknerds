@@ -1,0 +1,5 @@
+cron:
+- description: AppAPIQuota reset - flushcache
+  url: /flushcache
+  schedule: every 60 minutes
+
