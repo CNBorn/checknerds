@@ -28,6 +28,7 @@ from modules import *
 from base import *
 
 from google.appengine.api import memcache
+import logging
 
 class GuestbookPage(tarsusaRequestHandler):
 	def get(self):
@@ -221,6 +222,7 @@ class DocsPage(tarsusaRequestHandler):
 class FlushCache(tarsusaRequestHandler):
 	def get(self):
 		memcache.flush_all()
+		logging.info("Memcache Flushed.")
 		self.redirect('/')
 
 class CaliforniaPage(tarsusaRequestHandler):

@@ -444,9 +444,10 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
 	#---
 	return UserFriendsItem_List[:maxdisplayitems]
 
-def get_count_UserItemStats(CurrentUser):	
+def get_count_UserItemStats(userid):	
 	#tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
 	#'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
+	CurrentUser = tarsusaUser.get_by_id(int(userid))
 
 	# Count User's Todos and Dones
 	cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())

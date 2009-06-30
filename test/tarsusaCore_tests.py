@@ -14,70 +14,47 @@ from google.appengine.api import images
 from modules import *
 import base
 import tarsusaCore
+import modules
 
-from google.appengine.api import apiproxy_stub_map
-from google.appengine.api import datastore_file_stub
-from google.appengine.api import urlfetch_stub
-from google.appengine.api import user_service_stub
+import logging
+class tarsusaCoreTest(unittest.TestCase):
 
-class ModelTest(unittest.TestCase):
 	def setUp(self):
-		# Every test needs a client.
-		#self.client = Client()        
+    	# Populate test entities.
+		entity = modules.tarsusaUser(name='Bar')
+		self.setup_key = entity.put()
 
-		import logging
+		NewtarsusaItem = modules.tarsusaItem(name="Item", done=False, routine="none")
+		NewtarsusaItem.put()
+		NewtarsusaItem2 = modules.tarsusaItem(name="Item", done=False, routine="none", usermodel=entity)
+		NewtarsusaItem2.put()
+		logging.info(NewtarsusaItem.key().id())
+	def tearDown(self):
+		# There is no need to delete test entities.
+		pass
 
+	def test_tarsusaCore_gettarsusaItemCollection(self):
+		#entity = model.MyEntity(name='Foo')
+		#self.assertEqual('Foo', entity.name)
+		tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(userid=1, done=False)
+	
+	def test_tarsusaCore_gettarsusaDailyRoutine(self):
+		DailyRoutine = tarsusaCore.get_dailyroutine(userid=1)
 
-		logging.info(users.get_current_user())
+	def test_tarsusaCore_getitemsdueToday(self):
+		DueToday = tarsusaCore.get_ItemsDueToday(userid=1)
 
-		#self.assertTrue(self.user is not None)        
+	def test_tarsusaCore_getuserdonelog(self):
+		Donelog = tarsusaCore.get_UserDonelog(userid=1)
+	
+	def test_tarsusaCore_getuserNonPrivateItems(self):
+		NonPrivateItems = tarsusaCore.get_UserNonPrivateItems(userid=1)
+	
+	def test_tarsusaCore_getUserFriendStats(self):
+		UserFriendStats = tarsusaCore.get_UserFriendStats(userid=1)
 
+	def test_tarsusaCore_countUserItemStats(self):
+		UserItemStats = tarsusaCore.get_count_UserItemStats(userid=1)
 
-	def test_tarsusaCore(self):
-		tarsusaUsers = tarsusaUser.all()
-
-		#CurrentUser = tarsusaUser.get_by_id(42)
-		#Item = tarsusaItem.get_by_id(42)
-		#self.write(Item.name)
-
-		apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
-		stub = datastore_file_stub.DatastoreFileStub(u'myTemporaryDataStorage', '/dev/null', '/dev/null')
-		apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', stub)       
-
-		apiproxy_stub_map.apiproxy.RegisterStub('user', user_service_stub.UserServiceStub())
-
-		from google.appengine.api import users
-
-		os.environ['AUTH_DOMAIN'] = 'gmail.com'
-		os.environ['USER_EMAIL'] = 'CNBorn@gmail.com' # set to '' for no logged in user 
-		os.environ['SERVER_NAME'] = 'testserver' 
-		os.environ['SERVER_PORT'] = '8080' 
-		os.environ['USER_IS_ADMIN'] = '0' 
-		os.environ['APPLICATION_ID'] = 'nevada'
-		
-		q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-		CurrentUser = q.get()
-
-		import logging
-		logging.info(CurrentUser)
-		logging.info(users.get_current_user())
-
-		#this_timestamp = datetime.datetime.fromtimestamp(int(pageid))
-		this_timestamp = datetime.datetime.now()
-						
-		#if tag_ViewPreviousPage == True:
-			#Limitation sharding startpoint differed since recent GAE updates.
-			#problem arouses around r118.
-		#tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date > :2 ORDER BY date ASC LIMIT 9", CurrentUser.user, this_timestamp)
-		#tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False, startdate=this_timestamp)
-
-		#else:
-			#tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False and date <= :2 ORDER BY date DESC LIMIT 9", CurrentUser.user, this_timestamp)
-		tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(userid=35, done=False, enddate=this_timestamp)
-
-		## Below begins user todo items. for MOBILE page.
-		#tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC LIMIT 9", CurrentUser.user)
-		# r120m test with new function in tarsusaCore.
-		#tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(35, False)
-
-
+	def test_tarsusaCore_doneItem(self):
+		DoneItem = tarsusaCore.DoneItem(ItemId="3", UserId="1", Misc='')

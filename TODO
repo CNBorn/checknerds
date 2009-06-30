@@ -781,3 +781,8 @@
 		Small Utility Tweaks in California_testing page.
 	IN 09.06.29
 		Added Cron.yaml. flushcache will be executed every hour to reset the AppApiQuota.
+	IN 09.06.30
+		Added Test code via GAEUnit, to test tarsusaCore.
+		GetUserItemStats function was tweaked for the test. (var call in)
+		Added Prompt at UserSettingPage for APIKEY can not changed manully.
+		Added Prompt at flushcache.
