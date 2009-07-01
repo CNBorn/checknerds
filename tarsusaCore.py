@@ -628,7 +628,9 @@ def UndoneItem(ItemId, UserId, Misc):
 		#Authentication failed.
 		return 1
 
-def AddItem(UserId, rawName, rawComment, rawRoutine, rawPublic, rawInputDate, rawExpectDate, rawTags=None):
+def AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', rawInputDate='', rawTags=None):
+	
+	CurrentUser = tarsusaUser.get_by_id(int(UserId))
 
 	#Check if comment property's length is exceed 500
 	try:
@@ -652,13 +654,13 @@ def AddItem(UserId, rawName, rawComment, rawRoutine, rawPublic, rawInputDate, ra
 		try:
 			tarsusaItem_Tags = cgi.escape(rawTags).split(",")
 		except:
-			tarsusaItem_Tags = ''
+			tarsusaItem_Tags = None 
 
 		#routine is a must provided in template, by type=hidden
-		item2beadd_routine = cgi.escape(self.request.get('routine'))
+		item2beadd_routine = cgi.escape(rawRoutine)
 
 		first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=rawRoutine)
-		first_tarsusa_item.public = self.request.get('public')
+		first_tarsusa_item.public = rawPublic
 		first_tarsusa_item.done = False
 
 		# DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
@@ -684,7 +686,7 @@ def AddItem(UserId, rawName, rawComment, rawRoutine, rawPublic, rawInputDate, ra
 		first_tarsusa_item.usermodel = CurrentUser				
 		#first_tarsusa_item.put()
 		try:
-			tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
+			tarsusaItem_Tags = cgi.escape(rawTags).split(",")
 		except:
 			tarsusaItem_Tags = None
 
@@ -698,45 +700,50 @@ def AddItem(UserId, rawName, rawComment, rawRoutine, rawPublic, rawInputDate, ra
 	else:
 		memcache.event('additem', CurrentUser.key().id())
 	
-	if cgi.escape(self.request.get('public')) != 'private':
+	if cgi.escape(rawPublic) != 'private':
 		memcache.event('addpublicitem', CurrentUser.key().id())
 
-	for each_tag_in_tarsusaitem in tarsusaItem_Tags:
-		
-		## It seems that these code above will create duplicated tag model.
-		## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
-		catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
-		try:
-			each_cat = catlist[0]
-		
-		except:				
-			try:
-				#added this line for Localhost GAE runtime...
-				each_cat = Tag(name=each_tag_in_tarsusaitem.decode('utf-8'))			
-				each_cat.put()
-			except:
-				each_cat = Tag(name=each_tag_in_tarsusaitem)
-				each_cat.put()
+	if tarsusaItem_Tags != None:
 
-		first_tarsusa_item.tags.append(each_cat.key())
-		# To Check whether this user is using this tag before.
-		tag_AlreadyUsed = False
-		for check_whether_used_tag in CurrentUser.usedtags:
-			item_check_whether_used_tag = db.get(check_whether_used_tag)
-			if item_check_whether_used_tag != None:
-				if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
-					tag_AlreadyUsed = True
-			else:
-				if each_cat.key() == check_whether_used_tag:
-					tag_AlreadyUsed = True
+		for each_tag_in_tarsusaitem in tarsusaItem_Tags:
 			
-		if tag_AlreadyUsed == False:
-			CurrentUser.usedtags.append(each_cat.key())		
+			## It seems that these code above will create duplicated tag model.
+			## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
+			catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
+			try:
+				each_cat = catlist[0]
+			
+			except:				
+				try:
+					#added this line for Localhost GAE runtime...
+					each_cat = Tag(name=each_tag_in_tarsusaitem.decode('utf-8'))			
+					each_cat.put()
+				except:
+					each_cat = Tag(name=each_tag_in_tarsusaitem)
+					each_cat.put()
+
+			first_tarsusa_item.tags.append(each_cat.key())
+			# To Check whether this user is using this tag before.
+			tag_AlreadyUsed = False
+			for check_whether_used_tag in CurrentUser.usedtags:
+				item_check_whether_used_tag = db.get(check_whether_used_tag)
+				if item_check_whether_used_tag != None:
+					if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
+						tag_AlreadyUsed = True
+				else:
+					if each_cat.key() == check_whether_used_tag:
+						tag_AlreadyUsed = True
+				
+			if tag_AlreadyUsed == False:
+				CurrentUser.usedtags.append(each_cat.key())		
 	
 	first_tarsusa_item.put()
 	CurrentUser.put()
-	
 
+	#ShardingCounter
+	shardingcounter.increment("tarsusaItem")
+	return first_tarsusa_item.key().id()
+	
 def get_count_tarsusaUser():
 	#Added Jun, 18th 2009 's statstics of CheckNerds along with the newly implermented shardingCounter
 	return 984 + shardingcounter.get_count("tarsusaUser")

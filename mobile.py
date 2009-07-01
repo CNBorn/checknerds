@@ -38,7 +38,7 @@ class mMainPage(tarsusaRequestHandler):
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
 	
-			cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser)
+			cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser.key().id())
 			#tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
 			#'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
 

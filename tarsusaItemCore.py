@@ -231,201 +231,36 @@ class RemoveItem(tarsusaRequestHandler):
 
 class AddItemProcess(tarsusaRequestHandler):
 	def post(self):
-		
+		import tarsusaCore	
 		if self.request.get('cancel') != "取消":
 			
-			#Check if comment property's length is exceed 500
-			try:
-				if len(self.request.get('comment'))>500:
-					item_comment = self.request.get('comment')[:500]
-				else:
-					item_comment = self.request.get('comment')
-			except:
-				item_comment = ''
-
 			# Permission check is very important.
 			# New CheckLogin code built in tarsusaRequestHandler 
 			if self.chk_login():
 				CurrentUser = self.get_user_db()
-			else:
-				#self.redirect('/')
-				return False
 
-			try:
-				# The following code works on GAE platform.
-				# it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
-				item2beadd_name = cgi.escape(self.request.get('name'))				
+				item2beadd_name = cgi.escape(self.request.get('name'))                          
 				#Error handler to be suit in the lite mobile add page.
 
 				try:
 					item2beadd_comment = cgi.escape(item_comment)
 				except:
 					item2beadd_comment = ''
-									
-				try:
-					tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-				except:
-					tarsusaItem_Tags = ''
+														
+				newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine'), self.request.get('public'), self.request.get('inputDate'), self.request.get('tags'))
+	
+				#Added mobile redirect
+				if self.referer[-6:] == "/m/add":
+					self.redirect("/m/todo")
 
-				#routine is a must provided in template, by type=hidden
-				item2beadd_routine = cgi.escape(self.request.get('routine'))
-
-				first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=cgi.escape(self.request.get('routine')))
-				#first_tarsusa_item = tarsusaItem(user=users.get_current_user(),name=cgi.escape(self.request.get('name')), comment=cgi.escape(item_comment),routine=cgi.escape(self.request.get('routine')))
-				#tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-				first_tarsusa_item.public = self.request.get('public')
-				first_tarsusa_item.done = False
-		
-
-				# DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
-				# The easiest way to convert this to a datetime seems to be;
-				#datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
-				# the '*' operator unpacks the tuple, producing the argument list.	
-				# also learned sth from: http://bytes.com/forum/thread603681.html
-
-				# Logic: If the expectdate is the same day as today, It is none.
-				try:
-					expectdatetime = None
-					expectdate = datetime.date(*time.strptime(self.request.get('inputDate'),"%Y-%m-%d")[:3])
-					if expectdate == datetime.datetime.date(datetime.datetime.today()):
-						expectdatetime == None
-					else:
-						currenttime = datetime.datetime.time(datetime.datetime.now())
-						expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
-				except:
-					expectdatetime = None
-				first_tarsusa_item.expectdate =  expectdatetime
-
-				## the creation date will be added automatically by GAE datastore				
-				first_tarsusa_item.usermodel = CurrentUser				
-				first_tarsusa_item.put()
-				
-				# http://blog.ericsk.org/archives/1009
-				# This part of tag process inspired by ericsk.
-				# many to many
-
-				#ShardingCounter
-				shardingcounter.increment("tarsusaItem")
-
-			except:
-				## the following code works on the localhost GAE runtimes.
-				
-				try:
-					item2beadd_name = cgi.escape(self.request.get('name').decode('utf-8'))				
-					#For this routine field do not response well when i add a varible here.
-					# I made it a hidden as default 'none' in mobile_addpage_lite.
-					# therefore this field can be considered as always appears.
-					
-					#item2beadd_routine = cgi.escape(self.request.get('routine').decode('utf-8'))
-					#Routine is also optional for the simple add process.
-
-					#Error handler to be suit in the lite mobile add page.
-					try:
-						item2beadd_comment = cgi.escape(item_comment.decode('utf-8'))
-					except:
-						item2beadd_comment = ''
-										
-					try:
-						tarsusaItem_Tags = cgi.escape(self.request.get('tags').decode('utf-8')).split(",")
-					except:
-						tarsusaItem_Tags = ''
-
-					first_tarsusa_item.public = self.request.get('public')
-
-					first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=cgi.escape(self.request.get('routine').decode('utf-8')))
-					first_tarsusa_item.public = self.request.get('public').decode('utf-8')
-					
-					try:
-						expectdatetime = None
-						expectdate = datetime.date(*time.strptime(self.request.get('inputDate').decode('utf-8'),"%Y-%m-%d")[:3])
-						if expectdate == datetime.datetime.date(datetime.datetime.today()):
-							expectdatetime == None
-						else:
-							currenttime = datetime.datetime.time(datetime.datetime.now())
-							expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
-						first_tarsusa_item.expectdate =  expectdatetime
-					except:
-						expectdatetime == None
-						
-					first_tarsusa_item.done = False
-					first_tarsusa_item.usermodel = CurrentUser
-					first_tarsusa_item.put()
-
-					#ShardingCounter
-					shardingcounter.increment("tarsusaItem")
-					
-					try:
-						tarsusaItem_Tags = cgi.escape(self.request.get('tags')).split(",")
-					except:
-						tarsusaItem_Tags = None
-
-				except:
-					## SOMETHING WRONG
-						self.write('something is wrong.') 
-						return False
-						# TODO JS can not catch this!
-
-			
-			#memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-			if item2beadd_routine == 'daily':
-				memcache.event('addroutineitem_daily', CurrentUser.key().id())
+				#Return the newly add item's id
+				self.write(newlyadd)
+	
 			else:
-				memcache.event('additem', CurrentUser.key().id())
-			
-			if cgi.escape(self.request.get('public')) != 'private':
-				memcache.event('addpublicitem', CurrentUser.key().id())
-		
-			for each_tag_in_tarsusaitem in tarsusaItem_Tags:
-				
-				#each_cat = Tag(name=each_tag_in_tarsusaitem)
-				#each_cat.count += 1
-				#each_cat.put()
-				
-				## It seems that these code above will create duplicated tag model.
-				## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
-				catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
-				try:
-					each_cat = catlist[0]
-				
-				except:				
-					try:
-						#added this line for Localhost GAE runtime...
-						each_cat = Tag(name=each_tag_in_tarsusaitem.decode('utf-8'))			
-						each_cat.put()
-					except:
-						each_cat = Tag(name=each_tag_in_tarsusaitem)
-						each_cat.put()
+				#self.redirect('/')
+				return False 	
 
-				first_tarsusa_item.tags.append(each_cat.key())
-				# To Check whether this user is using this tag before.
-				tag_AlreadyUsed = False
-				for check_whether_used_tag in CurrentUser.usedtags:
-					item_check_whether_used_tag = db.get(check_whether_used_tag)
-					if item_check_whether_used_tag != None:
-						if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
-							tag_AlreadyUsed = True
-					else:
-						if each_cat.key() == check_whether_used_tag:
-							tag_AlreadyUsed = True
-					
-				if tag_AlreadyUsed == False:
-					CurrentUser.usedtags.append(each_cat.key())		
-			
-			try:
-				first_tarsusa_item.put()
-			except:
-				self.write('BadValueError')
-				return False
-			
-			CurrentUser.put()
-
-			#Added mobile redirect
-			if self.referer[-6:] == "/m/add":
-				self.redirect("/m/todo")
-
-			#Return the newly add item's id
-			self.write(first_tarsusa_item.key().id())
-
+	
 class EditItemProcess(tarsusaRequestHandler):
 	def post(self):	
 

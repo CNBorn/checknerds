@@ -786,3 +786,7 @@
 		GetUserItemStats function was tweaked for the test. (var call in)
 		Added Prompt at UserSettingPage for APIKEY can not changed manully.
 		Added Prompt at flushcache.
+	IN 09.07.01
+		Fixed Mobile Problem caused by yesterday's update.
+		Refactored the Code in tarsusaItemCore, made the Core Code in tarsusaCore.
+		Tested and it is ok. Maybe more Intensive test needed.
