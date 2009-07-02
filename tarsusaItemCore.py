@@ -26,6 +26,7 @@ import datetime
 import string
 import re
 
+import tarsusaCore
 import memcache
 import shardingcounter
 
@@ -46,53 +47,19 @@ class DoneItem(tarsusaRequestHandler):
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
+	
+			if DoneYesterdaysDailyRoutine == True:
+				Misc = 'y'
+			else:
+				Misc = ''
+
+			self.write(tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc))
+
 		else:
 			#self.redirect('/')
 			self.redirect(self.referer)
 		
-		if tItem.user == users.get_current_user():
-			## Check User Permission to done this Item
-
-			if tItem.routine == 'none':
-				## if this item is not a routine item.
-				tItem.donedate = datetime.datetime.now()
-				tItem.done = True
-				tItem.put()
-
-				#memcache.event('doneitem', CurrentUser.key().id())
-			
-			else:
-				## if this item is a routine item.
-				NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
-				NewlyDoneRoutineItem.user = users.get_current_user()
-				NewlyDoneRoutineItem.routineid = int(ItemId)
-				if DoneYesterdaysDailyRoutine == True:
-					NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
-
-					memcache.event('doneroutineitem_daily_yesterday', CurrentUser.key().id())
-				else:
-					memcache.event('doneroutineitem_daily_today', CurrentUser.key().id())
-				
-				#NewlyDoneRoutineItem.routine = tItem.routine
-				# The done date will be automatically added by GAE datastore.			
-				
-				#To Check whether this routine item was done today.
-				#Prevention to add duplicate tarsusaRoutineLogItem.
-				one_day = datetime.timedelta(days=1)
-				yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
-				if DoneYesterdaysDailyRoutine == False:
-					tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday + one_day ,datetime.datetime.now())
-				else:
-					tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
-
-				if not tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count() >= 1:
-					NewlyDoneRoutineItem.put()
-				
-				self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())			
-		
-		#self.redirect(self.request.uri)
-		#self.redirect('/')
-		self.redirect(self.referer)
+		#self.redirect(self.referer)
 
 class UnDoneItem(tarsusaRequestHandler):
 	def get(self):
@@ -111,73 +78,18 @@ class UnDoneItem(tarsusaRequestHandler):
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
+			
+			if UndoneYesterdaysDailyRoutine == True:
+				Misc = 'y'
+			else:
+				Misc = ''
+
+			tarsusaCore.UndoneItem(int(ItemId), CurrentUser.key().id(), Misc)
+
 		else:
 			#self.redirect('/')
 			self.redirect(self.referer)
 
-		if tItem.user == users.get_current_user():
-			## Check User Permission to undone this Item
-
-			if tItem.routine == 'none':
-				## if this item is not a routine item.
-				tItem.donedate = ""
-				tItem.done = False
-
-				tItem.put()
-				
-				memcache.event('undoneitem', CurrentUser.key().id())
-			else:
-				if tItem.routine == 'daily':				
-
-					if UndoneYesterdaysDailyRoutine != True:
-
-						del tItem.donetoday
-						tItem.put()
-						
-						memcache.event('undoneroutineitem_daily_today', CurrentUser.key().id())
-						
-						## Please Do not forget to .put()!
-
-						## This is a daily routine, and we are going to undone it.
-						## For DailyRoutine, now I just count the matter of deleting today's record.
-						## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
-						
-						# GAE can not make dateProperty as query now! There is a BUG for GAE!
-						# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
-						
-						tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate < :2", int(ItemId), datetime.datetime.now())
-					
-						#It has been fixed. For just deleting TODAY's routinelog.
-						one_day = datetime.timedelta(days=1)
-						yesterday = datetime.datetime.now() - one_day
-
-						for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-							if result.donedate < datetime.datetime.now() and result.donedate.date() != yesterday.date() and result.donedate > yesterday:
-								result.delete()
-					else:
-						# Undone Yesterday's daily routine item.	
-						
-						memcache.event('undoneroutineitem_daily_yesterday', CurrentUser.key().id())
-						
-						try:
-							del tItem.doneyesterday
-							tItem.put()
-						except:
-							pass
-						
-						one_day = datetime.timedelta(days=1)
-						#yesterday = datetime.date.today() - one_day
-						yesterday = datetime.datetime.combine(datetime.date.today() - one_day,datetime.time(0))
-						tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday, datetime.datetime.today())
-						## CAUTION: SOME ITEM MAY BE DONE IN THE NEXT DAY, SO THE DONEDATE WILL BE IN NEXT DAY
-						## THEREFORE donedate>:2 and donedate<datetime.datetime.today() <--today() is datetime
-
-						for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-							if result.donedate < datetime.datetime.now() and result.donedate.date() == yesterday.date(): #and result.donedate.date() > datetime.datetime.date(datetime.datetime.now() - datetime.timedelta(days=2)):
-								result.delete()
-							else:
-								pass
-		
 		self.redirect(self.referer)
 
 class RemoveItem(tarsusaRequestHandler):

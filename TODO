@@ -790,3 +790,6 @@
 		Fixed Mobile Problem caused by yesterday's update.
 		Refactored the Code in tarsusaItemCore, made the Core Code in tarsusaCore.
 		Tested and it is ok. Maybe more Intensive test needed.
+	IN 09.07.02
+		Refactored Done/Undone Item in tarsusaItemCore.py
+		More UnitTest needed.
