@@ -353,15 +353,20 @@ class UserSettingPage(tarsusaRequestHandler):
 					CurrentUser = self.get_user_db()
 
 					#From Plog.
-					'''
-					Generate a random string for using as api password, api user is user's full email
-					'''
-					from random import sample
-					from md5 import md5
-					s = 'abcdefghijklmnopqrstuvwxyz1234567890'
-					password = ''.join(sample(s, 8))
+					#Generate a random string for using as api password, api user is user's full email
 					
-					CurrentUser.apikey = md5(str(CurrentUser.key().id()) + CurrentUser.mail + 'CheckNerds' + password).hexdigest()
+					from random import sample
+					import hashlib
+					s = 'abcdefghijklmnopqrstuvwxyz1234567890'
+					fusion_p = ''.join(sample(s, 8))
+					
+					fusion_uky = str(CurrentUser.key().id())
+					fusion_uma = str(CurrentUser.mail)
+					fusion_cn = "CheckNerds Approching to version California"
+					
+					fusion_uni = fusion_p + fusion_uky + fusion_uma + fusion_cn					
+					
+					CurrentUser.apikey = hashlib.sha1(fusion_uni).hexdigest()[:8]
 					CurrentUser.put()
 	
 				self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
