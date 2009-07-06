@@ -796,4 +796,5 @@
 	IN 09.07.06
 		Tweaked UserKey Generation code. It won't display the whole schema on error.
 		UserKey is shorten now, with 8-chars length.
+		Added AddItem in service.py
 

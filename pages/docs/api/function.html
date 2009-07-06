@@ -115,7 +115,33 @@ api用户key，请登录后进入设置页面，点击“生成APIKEY"按钮生�
 								200 OK	
 <br />	
 							<br /><br />	
-								
+							<hr>
+							
+							
+							
+							<p><h3>添加事项信息</h3></p><br />
+									添加项目到Api登录用户中<br />
+									Post 请求到 /service/additem/<br />									
+									name: 事项名称<br />
+									comment: 事项说明，请少于500字，超过的部分会被程序自动截断<br />
+									routine: 获取的事项是否是每日必做事项 daily表示每日必做事项 none表示一般事项<br />
+									public: 获取的事项是否公开 public表示公开，private表示非公开事项<br />
+									date: 事项预计完成日期，请使用与Python datatime模块输出一致的时间格式提交，空字符串默认为此项目没有时间限制<br />
+									tags: 事项分类标签，字符串，不同标签请使用半角逗号分割。如所示标签在用户已有标签中不存在，则会自动创建。<br />
+<br /> 
+									
+							</p>
+							<br />
+							<p> <strong>返回值:</strong><br /> 
+								认证不通过：<br /> 
+							<br />	
+								403 Application Verifiction Failed.<br /> 
+								403 UserID Authentication Failed.<br /> 
+								403 User Limitation exceed.<br />
+<br />
+								认证通过并创建成功：<br /> 
+							会返回一个数字，即所创建项目的id编号<br /><br />
+	
 								
 								
 								</div>						

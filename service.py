@@ -393,12 +393,71 @@ class api_undoneitem(tarsusaRequestHandler):
 
 
 
+
+
+
+class api_additem(tarsusaRequestHandler):
+	
+	#CheckNerds API: AddItem.
+	#Parameters: apiappid, apiservicekey, apiuserid, apikey
+	#			 item_name, item_comment, item_routine, item_public, item_date, item_tags 
+	#newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine'), self.request.get('public'), self.request.get('inputDate'), self.request.get('tags'))
+
+	def get(self):	
+		self.write('<h1>please use POST</h1>')
+
+	def post(self):
+		
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+		
+		verified_api = self.verify_api()  
+		within_api_limit = self.verify_api_limit() 
+		
+		if verified_api == True and within_api_limit == True:
+			#Actual function.
+			apiappid = self.request.get('apiappid') 
+			apiservicekey = self.request.get('servicekey')
+			apiuserid = self.request.get('apiuserid') 
+			apikey = self.request.get('apikey')
+		
+			APIUser = tarsusaUser.get_by_id(int(apiuserid))
+
+
+			#To Add APIUser's a new Item
+			item_name = self.request.get('name')
+			item_comment = self.request.get('comment')
+			item_routine = self.request.get('routine')
+			item_public = self.request.get('public')
+			item_date = self.request.get('date')
+			item_tags = self.request.get('tags')
+
+			newlyadd = tarsusaCore.AddItem(apiuserid, item_name, item_comment, item_routine, item_public, item_date, item_tags)
+			
+			#Should be 200 status in future, currently just 0(success), 1(failed)
+			return newlyadd
+		
+		elif verified_api == False:
+			self.write('403 API Authentication failed.')
+			return False
+		else:
+			self.write('403 API Limitation exceed.')
+			return False
+
+
+
+
+
+
+
+
 def main():
 	application = webapp.WSGIApplication([
 									   ('/service/user.+', api_getuser),
 									   ('/service/item.+', api_getuseritem),
 									   ('/service/done.+', api_doneitem),
 									   ('/service/undone.+', api_undoneitem),
+									   ('/service/additem.+', api_additem),
 									   ('/service/badge.+', badge),
 									   ('/service/colossus.+', colossus),
 									   ('/patch/.+',patch_error)],

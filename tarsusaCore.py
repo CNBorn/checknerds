@@ -659,7 +659,7 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', 
 		#routine is a must provided in template, by type=hidden
 		item2beadd_routine = cgi.escape(rawRoutine)
 
-		first_tarsusa_item = tarsusaItem(user=users.get_current_user(), name=item2beadd_name, comment=item2beadd_comment, routine=rawRoutine)
+		first_tarsusa_item = tarsusaItem(user=CurrentUser.user, name=item2beadd_name, comment=item2beadd_comment, routine=rawRoutine)
 		first_tarsusa_item.public = rawPublic
 		first_tarsusa_item.done = False
 
