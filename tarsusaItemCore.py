@@ -53,13 +53,14 @@ class DoneItem(tarsusaRequestHandler):
 			else:
 				Misc = ''
 
-			self.write(tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc))
+			#self.write(tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc))
+			tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc)
 
 		else:
 			#self.redirect('/')
 			self.redirect(self.referer)
 		
-		#self.redirect(self.referer)
+		self.redirect(self.referer)
 
 class UnDoneItem(tarsusaRequestHandler):
 	def get(self):

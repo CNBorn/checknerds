@@ -797,4 +797,5 @@
 		Tweaked UserKey Generation code. It won't display the whole schema on error.
 		UserKey is shorten now, with 8-chars length.
 		Added AddItem in service.py
-
+	IN 09.07.15
+		Fixed Done/Undone Redirect issue in Mobile version.
