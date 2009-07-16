@@ -799,3 +799,6 @@
 		Added AddItem in service.py
 	IN 09.07.15
 		Fixed Done/Undone Redirect issue in Mobile version.
+	IN 09.07.16
+		Refactored RemoveItem function in tarsusaCore, tarsusaItemCore.
+		Write RemoveItem in Unittest.

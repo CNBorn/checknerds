@@ -24,11 +24,15 @@ class tarsusaCoreTest(unittest.TestCase):
 		entity = modules.tarsusaUser(name='Bar')
 		self.setup_key = entity.put()
 
-		NewtarsusaItem = modules.tarsusaItem(name="Item", done=False, routine="none")
+		NewtarsusaItem = modules.tarsusaItem(name="Item", done=False, routine="none", usermodel=entity)
 		NewtarsusaItem.put()
 		NewtarsusaItem2 = modules.tarsusaItem(name="Item", done=False, routine="none", usermodel=entity)
 		NewtarsusaItem2.put()
-		logging.info(NewtarsusaItem.key().id())
+		
+		logging.info("user:" + str(entity.key().id()))
+		logging.info("Item:" + str(NewtarsusaItem.key().id()))
+		logging.info("Item2:" + str(NewtarsusaItem2.key().id()))
+
 	def tearDown(self):
 		# There is no need to delete test entities.
 		pass
@@ -58,3 +62,12 @@ class tarsusaCoreTest(unittest.TestCase):
 
 	def test_tarsusaCore_doneItem(self):
 		DoneItem = tarsusaCore.DoneItem(ItemId="3", UserId="1", Misc='')
+
+	def test_tarsusaCore_AddItem(self):
+		#AddItem = tarsusaCore.AddItem(UserId="1", rawName="Test Item Name", rawComment = "Test Item Comment", rawRoutine='', rawPublic="private", rawInputDate="2009-07-19", rawTags=None)
+		#tarsusaCore.AddItem(1, "Test Item Name", "Test Item Comment", '', "private", "2009-07-19", None)
+		#AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', rawInputDate='', rawTags=None):
+		pass
+
+	def test_tarsusaCore_Removeitem(self):
+		RemoveItem = tarsusaCore.RemoveItem(ItemId="2", UserId="1", Misc='')

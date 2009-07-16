@@ -743,7 +743,58 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', 
 	#ShardingCounter
 	shardingcounter.increment("tarsusaItem")
 	return first_tarsusa_item.key().id()
+
+def RemoveItem(ItemId, UserId, Misc):
+	tItem = tarsusaItem.get_by_id(int(ItemId))
+	if tItem is not None:
+
+		if tItem.usermodel.key().id() == int(UserId):
+			## Check User Permission to undone this Item
+
+			if tItem.public != 'none':
+				memcache.event('deletepublicitem', int(UserId))
+
+			if tItem.routine == 'none':
+				## if this item is not a routine item.
+				tItem.delete()
+				
+				memcache.event('deleteitem', int(UserId))
+
+			else:
+				## Del a RoutineLog item!
+				## All its doneRoutineLogWillBeDeleted!
+
+				## wether there will be another log for this? :-) for record nerd?
+
+				## This is a daily routine, and we are going to delete it.
+				## For DailyRoutine, now I just count the matter of deleting today's record.
+				## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
+				
+				# GAE can not make dateProperty as query now! There is a BUG for GAE!
+				# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
+				tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1", int(ItemId))
+				for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
+					result.delete()
+
+				tItem.delete()
+				
+				memcache.event('deleteroutineitem_daily', int(UserId))
+
+			#ShardingCounter
+			shardingcounter.increment("tarsusaItem", "minus")
+
+			return 0
+
+		else:
+			#Authentication Failed.
+			return 1
+	else:
+		#Authentication Failed.
+		return 1
+		
 	
+
+
 def get_count_tarsusaUser():
 	#Added Jun, 18th 2009 's statstics of CheckNerds along with the newly implermented shardingCounter
 	return 984 + shardingcounter.get_count("tarsusaUser")

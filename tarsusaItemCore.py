@@ -103,42 +103,12 @@ class RemoveItem(tarsusaRequestHandler):
 		# New CheckLogin code built in tarsusaRequestHandler 
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
+			
+			remove_status = tarsusaCore.RemoveItem(ItemId, CurrentUser.key().id(),'')
+
 		else:
 			self.redirect('/')
 
-		if tItem.user == users.get_current_user():
-			## Check User Permission to done this Item
-			if tItem.public != 'none':
-				memcache.event('deletepublicitem', CurrentUser.key().id())
-
-			if tItem.routine == 'none':
-				## if this item is not a routine item.
-				tItem.delete()
-				
-				memcache.event('deleteitem', CurrentUser.key().id())
-
-			else:
-				## Del a RoutineLog item!
-				## All its doneRoutineLogWillBeDeleted!
-
-				## wether there will be another log for this? :-) for record nerd?
-
-				## This is a daily routine, and we are going to delete it.
-				## For DailyRoutine, now I just count the matter of deleting today's record.
-				## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
-				
-				# GAE can not make dateProperty as query now! There is a BUG for GAE!
-				# http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
-				tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1", int(ItemId))
-				for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-					result.delete()
-
-				tItem.delete()
-				
-				memcache.event('deleteroutineitem_daily', CurrentUser.key().id())
-
-		#ShardingCounter
-		shardingcounter.increment("tarsusaItem", "minus")
 
 		self.redirect(self.referer)
 
