@@ -802,3 +802,5 @@
 	IN 09.07.16
 		Refactored RemoveItem function in tarsusaCore, tarsusaItemCore.
 		Write RemoveItem in Unittest.
+	IN 09.07.20
+		Small Tweaks, ready to bring in the CheckNerds Labs.

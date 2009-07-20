@@ -219,6 +219,35 @@ class DocsPage(tarsusaRequestHandler):
 
 		self.response.out.write(template.render(path, template_values))
 
+class LabsPage(tarsusaRequestHandler):
+	def get(self):
+
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()		
+			template_values = {
+					'PrefixCSSdir': "/",
+					'UserLoggedIn': 'Logged In',
+					'UserNickName': cgi.escape(CurrentUser.dispname),
+					'UserID': CurrentUser.key().id(),
+			}
+		
+		else:			
+			template_values = {
+				'PrefixCSSdir': "/",
+				'UserNickName': "访客",
+				'AnonymousVisitor': "Yes",
+			}
+		
+		pageid = self.request.path[len('/docs/'):]
+		if pageid == '':
+			pageid = 'index'
+		path = os.path.join(os.path.dirname(__file__), 'pages/labs/index.html')
+
+		self.response.out.write(template.render(path, template_values))
+	
+
+
 class FlushCache(tarsusaRequestHandler):
 	def get(self):
 		memcache.flush_all()
@@ -256,6 +285,7 @@ def main():
 	application = webapp.WSGIApplication([('/about',AboutPage),
 								       ('/blog',BlogPage),
 									   ('/docs.+', DocsPage),
+									   ('/labs.+', LabsPage),
 								       ('/statstics',StatsticsPage),
 									   ('/flushcache', FlushCache),
 									   ('/california', CaliforniaPage),

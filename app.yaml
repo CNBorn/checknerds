@@ -38,6 +38,9 @@ handlers:
 - url: /docs.+
   script: miscellaneous.py
 
+- url: /labs.+
+  script: miscellaneous.py
+
 - url: /Login.+
   script: hello.py
 
