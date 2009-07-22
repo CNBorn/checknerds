@@ -240,7 +240,7 @@ class mDonePage(tarsusaRequestHandler):
 			if next_timestamp != 0 and Find_Last_Index >= 9 and pageid != None:
 				template_values['nextpagestamp'] = next_timestamp
 	
-			if next_timestamp == 0 and previous_timestamp == 0:
+			if next_timestamp == 0 and previous_timestamp == 0 and Find_Last_Index != 0:
 				self.redirect("/m/done")
 
 

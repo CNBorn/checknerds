@@ -804,3 +804,8 @@
 		Write RemoveItem in Unittest.
 	IN 09.07.20
 		Small Tweaks, ready to bring in the CheckNerds Labs.
+	IN 09.07.22
+		Tweaked a little on memcache.event
+		Modified tarsusaCore.tarsusaItemCollection's output, now it can displays all fields of a tarsusaItem.
+		Updated Docs section of CheckNerds API.
+		Fixed a Bug of redirecting in Mobile when User have no done items.

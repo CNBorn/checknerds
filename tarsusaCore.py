@@ -111,8 +111,23 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 
 	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
 	for each_tarsusaItem in tarsusaItemCollection_queryResults:
-		
-		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'done': each_tarsusaItem.done, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine}
+		ItemTags = ''	
+		try:
+			TagsCount = 0
+			for each_tag in db.get(each_tarsusaItem.tags):
+				if TagsCount >= 1:
+					ItemTags += ',' + cgi.escape(each_tag.name)
+				else:
+					ItemTags += cgi.escape(each_tag.name)
+				TagsCount += 1
+			if ItemTags == '':
+				ItemTags = None
+		except:
+			# There is some chances that ThisItem do not have any tags.
+			ItemTags = None
+			pass
+
+		this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'done': each_tarsusaItem.done, 'date' : each_tarsusaItem.date, 'expectdate': each_tarsusaItem.expectdate, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'public' : each_tarsusaItem.public, 'tags' : ItemTags}
 		Item_List.append(this_item)
 	#print Item_List
 
