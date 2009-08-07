@@ -265,8 +265,12 @@ class api_getuseritem(tarsusaRequestHandler):
 			#logging.info(maxitems)
 			
 			#'''
-			#	startdate='',
+			beforedate = self.request.get('beforedate')
 			#	enddate='',
+
+			afterdate = self.request.get('afterdate')
+			#	startdate='',
+
 			#	startdonedate=''
 			#	enddonedate=''
 			#'''
@@ -275,7 +279,7 @@ class api_getuseritem(tarsusaRequestHandler):
 				#Get APIUser's Items
 				
 				#It can only get todo or done items.
-				tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, maxitems=count, public=public)
+				tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, startdate=afterdate, enddate=beforedate, maxitems=count, public=public)
 				self.write(tarsusaItemCollection_UserDoneItems)	
 			else:
 				#Get Other Users Items

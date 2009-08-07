@@ -147,6 +147,10 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 	
 		AppApiUsage = memcache.get_item("appapiusage", int(apiappid))
 		ThisApp = AppModel.get_by_id(int(apiappid))
+		if ThisApp == None:
+			self.write("404 Application does not exist.")
+			return False
+		
 		if AppApiUsage >= ThisApp.api_limit:
 			#Api Limitation exceed.
 			self.write('403 API Limitation exceed. ')

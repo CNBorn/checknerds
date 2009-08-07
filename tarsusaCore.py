@@ -39,15 +39,17 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	Item_List = []
 	
 	#Get tarsusaItemCollection
-	query = tarsusaItem.all()
+	#query = tarsusaItem.all()
+	query = db.Query(tarsusaItem)
+
 	#It seems that when query gets done=True, it returns nothing!
 	
 	#Newly Add done=None state
 	if done != None:
-		query.filter('done =', done)
+		query = query.filter('done =', done)
 
-	query.filter('user =', ThisUser.user)
-	query.filter('routine =', routine)
+	query = query.filter('user =', ThisUser.user)
+	query = query.filter('routine =', routine)
 
 	#Caution: Public setting will display all items by default.
 	#When calling the function using external API, 
@@ -65,13 +67,14 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		pass
 
 	if startdate != '':
-		#print startdate
-		query.filter('date >', startdate)
+		logging.info('filter' + str(startdate))
+		query = query.filter('date >', startdate)
 		query.order('date')
 	if enddate != '':
-		#print enddate
-		query.filter('date <', enddate)
-		query.order('-date')
+		logging.info('filter' + str(datetime.datetime.fromtimestamp(time.mktime(time.strptime(str(enddate)[:-7], "%Y-%m-%d %H:%M:%S")))))
+		#query = query.filter('date <', enddate)
+		query = query.filter('date <', datetime.datetime.fromtimestamp(time.mktime(time.strptime(str(enddate)[:-7], "%Y-%m-%d %H:%M:%S"))))
+		query = query.order('-date')
 
 	if startdonedate != '':
 		#logging.info('startdonedate')
@@ -108,7 +111,6 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 	#If it doesn't run, run this line
 	#print strOrderSort
 
-
 	tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
 	for each_tarsusaItem in tarsusaItemCollection_queryResults:
 		ItemTags = ''	
@@ -131,18 +133,22 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		Item_List.append(this_item)
 	#print Item_List
 
-	#sort the results order by donedate:
-	#Sort Algorithms from
-	#http://www.lixiaodou.cn/?p=12
-	length = len(Item_List)
-	
-	for i in range(0,length):
-		for j in range(length-1,i,-1):
-				if Item_List[j][strOrderSort] > Item_List[j-1][strOrderSort]:
-					temp = Item_List[j]
-					Item_List[j]=Item_List[j-1]
-					Item_List[j-1]=temp
-	#---
+
+
+	if strOrderSort != 'date':
+		
+		#sort the results order by donedate:
+		#Sort Algorithms from
+		#http://www.lixiaodou.cn/?p=12
+		length = len(Item_List)
+		
+		for i in range(0,length):
+			for j in range(length-1,i,-1):
+					if Item_List[j][strOrderSort] > Item_List[j-1][strOrderSort]:
+						temp = Item_List[j]
+						Item_List[j]=Item_List[j-1]
+						Item_List[j-1]=temp
+		#---
 
 	return Item_List
 

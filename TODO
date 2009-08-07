@@ -809,3 +809,6 @@
 		Modified tarsusaCore.tarsusaItemCollection's output, now it can displays all fields of a tarsusaItem.
 		Updated Docs section of CheckNerds API.
 		Fixed a Bug of redirecting in Mobile when User have no done items.
+	IN 09.08.07/08
+		Trying to add BeforeDAte/AfterDate parameter in tarsusaItemCollection API function.
+		But due to a GAE query.filter fault(it can not filter the time in datetime, so you must retrive records more than one day you have created in the history, otherwise you will get a endless loop in amboy.py in CheckNerds labs).
