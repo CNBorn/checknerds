@@ -812,3 +812,6 @@
 	IN 09.08.07/08
 		Trying to add BeforeDAte/AfterDate parameter in tarsusaItemCollection API function.
 		But due to a GAE query.filter fault(it can not filter the time in datetime, so you must retrive records more than one day you have created in the history, otherwise you will get a endless loop in amboy.py in CheckNerds labs).
+	IN 09.08.10
+		Minor tweak for startdate/enddate will not be used in a single query.
+		Previous get bug seems a false assertion, it is now ok with an updated amboy.py

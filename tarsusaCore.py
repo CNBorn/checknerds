@@ -70,7 +70,8 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 		logging.info('filter' + str(startdate))
 		query = query.filter('date >', startdate)
 		query.order('date')
-	if enddate != '':
+	#For this two conditions can't be run at the same time.
+	elif enddate != '':
 		logging.info('filter' + str(datetime.datetime.fromtimestamp(time.mktime(time.strptime(str(enddate)[:-7], "%Y-%m-%d %H:%M:%S")))))
 		#query = query.filter('date <', enddate)
 		query = query.filter('date <', datetime.datetime.fromtimestamp(time.mktime(time.strptime(str(enddate)[:-7], "%Y-%m-%d %H:%M:%S"))))
