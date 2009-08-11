@@ -179,7 +179,7 @@ indexes:
   - name: user
   - name: date
 
-# Used 8030 times in query history.
+# Used 8042 times in query history.
 - kind: tarsusaItem
   properties:
   - name: routine

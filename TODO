@@ -815,3 +815,5 @@
 	IN 09.08.10
 		Minor tweak for startdate/enddate will not be used in a single query.
 		Previous get bug seems a false assertion, it is now ok with an updated amboy.py
+	IN 09.08.11
+		Updated Pages of /labs
