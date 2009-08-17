@@ -41,6 +41,8 @@ class MainPage(tarsusaRequestHandler):
 				CurrentUser.userid = CurrentUser.key().id()
 				CurrentUser.dispname = users.get_current_user().nickname()
 				CurrentUser.put()
+				
+				logging.info("New User, id:" + str(CurrentUser.key().id()) + " name:" + CurrentUser.dispname)
 
 				#ShardingCounter
 				import shardingcounter

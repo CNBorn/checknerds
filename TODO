@@ -817,3 +817,5 @@
 		Previous get bug seems a false assertion, it is now ok with an updated amboy.py
 	IN 09.08.11
 		Updated Pages of /labs
+	In 09.08.17
+		Updated memcache logging method.

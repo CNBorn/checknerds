@@ -43,7 +43,7 @@ refresh_roles = {
 
 def event(key, CurrentUserid):
 
-	logging.debug('memcache - user %s : %s event' % (CurrentUserid, key))
+	logging.info('memcache - user %s : %s event' % (CurrentUserid, key))
 
 	for role in refresh_roles:
 		if re.match(role, key):
@@ -51,12 +51,12 @@ def event(key, CurrentUserid):
 				memkeydel_status = memcache.delete("%s_%s" % (CurrentUserid, obj)) 
 				if memkeydel_status == 1:
 					#1=DELETE_ITEM_MISSING
-					logging.info('missing: ' + ("%s_%s" % (CurrentUserid, obj)))
+					logging.debug('missing: ' + ("%s_%s" % (CurrentUserid, obj)))
 				elif memkeydel_status == 2:
 					#2=DELETE_SUCCESSFUL
-					logging.info("deleted: %s_%s" % (CurrentUserid, obj))
+					logging.debug("deleted: %s_%s" % (CurrentUserid, obj))
 				else:
-					logging.info('not delete' + ("%s_%s" % (CurrentUserid, obj)))
+					logging.debug('not delete' + ("%s_%s" % (CurrentUserid, obj)))
 
 	
 	return True
