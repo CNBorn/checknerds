@@ -1,13 +1,10 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="cn"><head profile="http://purl.org/uF/2008/03/">     
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="cn"><head>     
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
     <title>CheckNerds</title>                
-                           
 		<link rel="shortcut icon" href="{{ PrefixCSSdir }}img/favicon.ico" >
-        <link rel="apple-touch-icon" href="http://cdn.last.fm/flatness/apple-touch-icon.png">
-        
+        <link rel="apple-touch-icon" href="">
             <!--[if LT IE 7]>
         <style type="text/css">
         .transparent_png {
@@ -17,18 +14,14 @@
         <![endif]-->
 			<link rel="stylesheet" href="{{PrefixCSSdir}}css/ctest_main.css" type="text/css">
 			<link rel="stylesheet" href="{{PrefixCSSdir}}css/ctest_components.css" type="text/css">
-
 <!-- from former CheckNerds -->
-		<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
-		<script type="text/javascript" src="/js/jquery.form.js"></script>
-		<link rel="stylesheet" media="screen" type="text/css" href="/css/datepicker.css" />
-		<script type="text/javascript" src="/js/datepicker.js"></script>
+<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery.form.js"></script>
+<link rel="stylesheet" media="screen" type="text/css" href="/css/datepicker.css" />
+<script type="text/javascript" src="/js/datepicker.js"></script>
 <!-- from former CheckNerds -->
-
-
 </head><body class="r-user a-overview">
 
-<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
 <script>
 $(function() {
 var counter=0;
@@ -36,7 +29,7 @@ var counter=0;
 function addItem() {
 
 $.post("/additem",
-	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val() },
+	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
    function(data){     
 	//var id = data;
 	//alert("Data Loaded: " + data);
@@ -55,6 +48,7 @@ $.post("/additem",
 	$("#add_routine").val("");
 	$("#add_comment").val("");
 	$("#add_tags").val("");
+	$("#inputDate").val("");
 
 	$('#stats').load('/ajax/frontpage_getitemstats');
 
@@ -131,19 +125,6 @@ $(document).ready(function() {
 
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -269,7 +250,7 @@ $(document).ready(function() {
                 <div></div>
             </td>
 
-			<td class="subjectCell"><a href="/i/{{ tarsusaItem_UserToDoItem.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a></td>
+			<td class="subjectCell"><a href="/item/{{ tarsusaItem_UserToDoItem.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a></td>
 
  			<td class="lovedCell">
                     </td>
@@ -277,7 +258,7 @@ $(document).ready(function() {
         <td class="smallmultibuttonCell">
                                                     <a href="http://cn.last.fm/music/Clara+Haskil%2C+Ferenc+Fricsay%3A+Berlin+Philharmonic+Orchestra/_/Mozart%253A%2BPiano%2BConcerto%2B%252319%2BIn%2BF%252C%2BK%2B459%2B-%2B1.%2BAllegro%2BMaestoso" class="mRemoveFromLibrary mSend mAddTags mAddToPlaylist mLove lfmButton lfmMultiButton lfmButtonFortrack lfmSmallButton lfmSmallMultiButton lfmMultiButtonFull" forcelink="1"><span></span></a>        </td>
         <td class="dateCell">
-                                                <span class="date">40 分钟前</span>
+                                                <span class="date">{{ tarsusaItem_UserToDoItem.date|escape }}</span>
                                     </td>
     
                 </tr>
@@ -290,10 +271,6 @@ $(document).ready(function() {
  
 </div></div>
 </div>
-
-    
-
-                
  
                                                 
         </div><!-- .leftColWrapper -->
@@ -308,35 +285,15 @@ $(document).ready(function() {
         
         
                         <div class="module">
-        <h2 class="heading"><span class="h2Wrapper"><a href="http://cn.last.fm/user/CNBorn/friends" title="">好友 (11)</a></span></h2>                    <ul class="usersSmall clearit">
-    <li class="first odd subscriber friend">
-                                                                                    <div class="vcard">
-                                                            <strong><a href="http://cn.last.fm/user/guvenfidan" title="男, 土耳其" rel="acquaintance" class="url"><span class="userImage"><img class="photo fn" alt="guvenfidan" src="/img/default_avatar.jpg" height="34" width="34"></span><span class="nickname">guvenfidan</span></a></strong>
-                                         
-                                    </div>
-            
-            </li><li class="user friend">
-                                                                                    <div class="vcard">
-                                                                                                        <strong><a href="http://cn.last.fm/user/linghudaoren" title="titan, 24, 男, 中国" rel="acquaintance" class="url"><span class="userImage"><img class="photo fn" alt="titan" src="/img/default_avatar.jpg" height="34" width="34"></span><span class="nickname">linghudaoren</span></a></strong>
-                                         
-                                    </div>
-            
-            </li><li class="odd user friend">
-                                                                                    <div class="vcard">
-                                                                                                        <strong><a href="http://cn.last.fm/user/Utom" title="utom, 23, 男, 中国" rel="acquaintance" class="url"><span class="userImage"><img class="photo fn" alt="utom" src="/img/default_avatar.jpg" height="34" width="34"></span><span class="nickname">Utom</span></a></strong>
-                                         
-                                    </div>
-            
-            </li><li class="user friend">
-                                                                                    <div class="vcard">
-                                                            <strong><a href="http://cn.last.fm/user/belle-dejour" title="" rel="acquaintance" class="url"><span class="userImage"><img class="photo fn" alt="belle-dejour" src="/img/default_avatar.jpg" height="34" width="34"></span><span class="nickname">belle-dejour</span></a></strong>
-                                         
-                                    </div>
-            
-            </li><li class="odd user friend">
-                                                                                      
-            </li>
-</ul>                        <span class="moduleOptions"><a href="http://cn.last.fm/user/CNBorn/friends" title="">查看更多</a></span>
+        <h2 class="heading"><span class="h2Wrapper"><a href="/FindFriend" title="">我的朋友</a></span></h2>                    <ul class="usersSmall clearit">
+			
+			{% for EachtarsusaUserFriend in tarsusaUserFriends %}
+<li class="user friend">
+<div class="vcard"><strong><a href="/user/{{ EachtarsusaUserFriend.id }}" title="{{ EachtarsusaUserFriend.name }}" rel="acquaintance" class="url"><span class="userImage"><img class="photo fn" alt="{{ EachtarsusaUserFriend.name }}" src="{{ EachtarsusaUserFriend.avatarpath }}" height="34" width="34"></span><span class="nickname">{{ EachtarsusaUserFriend.name }}</span></a></strong></div>            
+			</li>
+			{% endfor %}
+
+</ul>                        <span class="moduleOptions"><a href="/FindFriend" title="">查看更多</a></span>
                         </div>
 
         
@@ -382,7 +339,7 @@ $(document).ready(function() {
 			
 <!-- from former CheckNerds -->	
 		<script type="text/javascript">
-		/*		$('#inputDate').DatePicker({
+				$('#inputDate').DatePicker({
 					format:'Y-m-d',
 					date: $('#inputDate').val(),
 					current: $('#inputDate').val(),
@@ -394,21 +351,8 @@ $(document).ready(function() {
 					onChange: function(formated, dates){
 						$('#inputDate').val(formated);
 					}
-				});*/
+				});
 		</script>
-
 <!-- from former CheckNerds -->	
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			</html>

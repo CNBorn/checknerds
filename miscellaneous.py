@@ -261,7 +261,9 @@ class CaliforniaPage(tarsusaRequestHandler):
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
 			import tarsusaCore
-			tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, maxitems=15)
+			tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, maxitems=25)
+
+			tarsusaUserFriends = tarsusaCore.get_UserFriends(CurrentUser.key().id())
 			
 			template_values = {
 					'PrefixCSSdir': "/",
@@ -269,6 +271,7 @@ class CaliforniaPage(tarsusaRequestHandler):
 					'UserNickName': cgi.escape(CurrentUser.dispname),
 					'UserID': CurrentUser.key().id(),
 					'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserTodoItems,
+					'tarsusaUserFriends': tarsusaUserFriends,
 			}
 		
 		else:			

@@ -206,106 +206,6 @@ div.fixed div.rightCol {
 /*    overflow: hidden;*/
 }
 
-/* Ads */
-
-#LastAd_Top {
-    margin: 0 0 8px 0;
-}
-
-.LastAd,
-.LastAd * {
-    line-height: 0px;
-    font-size: 1px;
-    vertical-align: baseline;    
-}
-
-.LastAd img {
-}
-
-#LastAd_Mid {
-    clear: both;
-    padding: 15px;
-    border-top: 1px solid #ebebeb;
-    background: #fff;
-    zoom: 1;
-}
-
-.sic #LastAd_Mid {
-    padding: 15px 0 0 0;
-    margin: 15px -15px 0 -15px;
-}
-
-#LastAd_Top .wrapper,
-#LastAd_Mid .wrapper {
-    width: 900px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-
-#LastAd_Skin a {
-    position: absolute;
-}
-
-div.sic div.leaderboardCentre {
-    padding: 0;
-}
-
-div.sic div.bottomRail {
-    border-top: 1px solid #ccc;
-    padding-top: 15px;
-    clear: both;
-}
-
-div.sic div#LastAd_SkyscraperRight {
-    float: right;
-    display: inline;
-    width: 160px;
-    height: 600px;
-}
-
-div#LastAd_SkyscraperRight div.wrapper {
-    width: 160px;
-    height: 600px;
-    overflow: hidden;
-}
-
-div.leaderboardCentre .wrapper,
-div.bottomRail .wrapper {
-    width: 728px;
-    height: 90px;
-    overflow: hidden;
-    margin: 0 auto;
-}
-
-div.skylineRight {
-    margin-left: -15px;
-    padding-right: 160px;
-    overflow: hidden;
-}
-div.skylineRight div.skyWrap {
-    overflow: hidden;
-    padding: 0 15px;
-    zoom: 1;
-}
-
-#page div.skylineRight div#LastAd_SkyscraperRight {
-    float: right;
-    display: inline;
-    margin: 0 -160px 0 0;
-}
-
-div.mpu {
-    margin: 15px 0;
-}
-
-div.mpu .wrapper {
-    width: 300px;
-    height: 250px;
-    overflow: hidden;
-}
-
-/**/
 
 div.sic #content .fullWidth {
     margin: 15px 0;
@@ -742,21 +642,7 @@ div.halfhalf {
     overflow: hidden;
 }
 
-#lastfmLogo {
-    background: url('http://cdn.last.fm/flatness/logo.6.png');
-}
-
-.lfmBlack #lastfmLogo {
-    background: url('http://cdn.last.fm/flatness/logo_black.3.png');
-}
-
 /* Spiegel */
-
-#header.spon #lastfmLogo {
-    background: url('http://cdn.last.fm/flatness/spon_lastfm.png');
-    left: 135px;
-    width: 87px;
-}
 
 #spon_logo {
     position: absolute;
