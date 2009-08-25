@@ -821,3 +821,5 @@
 		Updated memcache logging method.
 	IN 09.08.24
 		Updated California Page.
+	IN 09.08.25
+		Added GetUserFriends in API.

@@ -206,6 +206,43 @@ class api_getuser(tarsusaRequestHandler):
 			return False
 
 
+
+class api_getuserfriends(tarsusaRequestHandler):
+	
+	#CheckNerds API: Get User Friends information.
+
+	def get(self):
+		self.write('<h1>please use POST</h1>')
+	
+	def post(self):
+ 
+		verified_api = self.verify_api()  
+		within_api_limit = self.verify_api_limit() 
+		
+		if verified_api == True and within_api_limit == True:
+			#Should use log to monitor API usage.
+			#Also there should be limitation for the apicalls/per hour.
+			apiappid = self.request.get('apiappid') 
+			apiservicekey = self.request.get('servicekey')
+			apiuserid = self.request.get('apiuserid') 
+			apikey = self.request.get('apikey')
+			userid = self.request.get('userid')
+
+			ThisUser = tarsusaUser.get_by_id(int(userid))
+			if ThisUser:
+				ThisUsersFriendsLists = tarsusaCore.get_UserFriends(ThisUser.key().id())
+				self.write(ThisUsersFriendsLists)
+			else:
+				self.write('403 No Such User')
+				return False
+		elif verified_api == False:
+			self.write('403 API Authentication failed.')
+			return False
+		else:
+			self.write('403 API Limitation exceed.')
+			return False
+
+
 #APIs to be added:
 #	AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
 #	
@@ -341,7 +378,6 @@ class api_doneitem(tarsusaRequestHandler):
 			self.write('403 API Limitation exceed.')
 			return False
 
-
 class api_undoneitem(tarsusaRequestHandler):
 	
 	#CheckNerds API: UndoneItem.
@@ -394,11 +430,6 @@ class api_undoneitem(tarsusaRequestHandler):
 			return False
 
 #To be added: api_checkAppModel
-
-
-
-
-
 
 class api_additem(tarsusaRequestHandler):
 	
@@ -462,6 +493,7 @@ def main():
 									   ('/service/done.+', api_doneitem),
 									   ('/service/undone.+', api_undoneitem),
 									   ('/service/additem.+', api_additem),
+									   ('/service/friends.+', api_getuserfriends),
 									   ('/service/badge.+', badge),
 									   ('/service/colossus.+', colossus),
 									   ('/patch/.+',patch_error)],
