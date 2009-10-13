@@ -125,11 +125,16 @@ class AddItemProcess(tarsusaRequestHandler):
 				item2beadd_name = cgi.escape(self.request.get('name'))                          
 				#Error handler to be suit in the lite mobile add page.
 
+				#Check if comment property's length is exceed 500
+				rawComment = cgi.escape(self.request.get('comment'))
 				try:
-					item2beadd_comment = cgi.escape(item_comment)
+					if len(rawComment)>500:
+						item2beadd_comment = rawComment[:500]
+					else:
+						item2beadd_comment = rawComment
 				except:
 					item2beadd_comment = ''
-														
+																	
 				newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine'), self.request.get('public'), self.request.get('inputDate'), self.request.get('tags'))
 	
 				#Added mobile redirect
