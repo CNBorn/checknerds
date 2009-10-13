@@ -17,7 +17,12 @@
 				self.parent.parent.tb_remove();
 				}); 
 
-		});
+			});
+
+		function disableSubmit(obj)
+		{
+			obj.disabled = true;
+		}
 		</script> 
 		<body style="background-image: none; background-color: #FEFEF1;">
 			<form id="myForm" action="/additem" method="post">
@@ -69,7 +74,7 @@
 						</select></td>
 					</tr>
 
-					<tr colspan="2"><td align="right"><img src="/img/add16.png"></td><td><input type="submit" name="submit" style="height: 35px; width: 150px;" value="添加项目" onclick="this.disabled=true"></td>
+					<tr colspan="2"><td align="right"><img src="/img/add16.png"></td><td><input type="submit" name="submit" style="height: 35px; width: 150px;" value="添加项目" onclick="return true; disableSubmit(this);"></td>
 					</tr>
 				</table>
 			</form>
