@@ -53,7 +53,10 @@ class tarsusaCoreTest(unittest.TestCase):
 	
 	def test_tarsusaCore_getuserNonPrivateItems(self):
 		NonPrivateItems = tarsusaCore.get_UserNonPrivateItems(userid=1)
-	
+
+	def test_tarsusaCore_getUserFriends(self):
+		UserFriendList = tarsusaCore.get_UserFriends(userid=1)
+
 	def test_tarsusaCore_getUserFriendStats(self):
 		UserFriendStats = tarsusaCore.get_UserFriendStats(userid=1)
 
