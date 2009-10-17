@@ -826,4 +826,5 @@
 	IN 09.10.13
 		Solved the webkit additem problem, and comment blank problem.
 	IN 09.10.17
-
+		Cleaning up & refactoring the service.py
+	

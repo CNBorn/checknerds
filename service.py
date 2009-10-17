@@ -108,12 +108,16 @@ class api_getuseritem(tarsusaRequestHandler):
 		userid = self.request.get('userid')
 
 		done = self.request.get('done')
+		#logging.info(done == True)
+		#logging.info(done == 'True')
+		#Confirmed it is 'True' in text 
 		if done == 'True':
 			done = True
 		elif done == 'False':
 			done = False
 		else:
 			done = None
+		logging.info(done)
 
 		routine = self.request.get('routine')
 		if routine == '':
@@ -154,9 +158,14 @@ class api_getuseritem(tarsusaRequestHandler):
 
 		if apiuserid == userid:
 			#Get APIUser's Items
+
+			#I think there are still problem concerning different paras.
+			#for example, if you don't want sort by routine, then you should ignore it.
+			#but for a get_tarsusaItemCollection with all para in it, you are not ignoring it.
 			
 			#It can only get todo or done items.
 			tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, startdate=afterdate, enddate=beforedate, maxitems=count, public=public)
+			logging.info(tarsusaItemCollection_UserDoneItems)
 			self.write(tarsusaItemCollection_UserDoneItems)	
 		else:
 			#trying to Get Other Users Items
