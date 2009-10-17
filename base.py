@@ -134,8 +134,6 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
 		return True
 
-			
-
 	def verify_api_limit(self):
 		import modules
 		import tarsusaCore, memcache
@@ -163,7 +161,16 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 		
 		return True
 
-
+	def response_status(self, status_code, status_info=None, return_value=False):
+		'''
+		Set the response status & its info, and return the specify result state
+		mainly used in service.py, sample usage:
+			return self.response_status(404, 'No such Item', False) 
+			#This line returns False, because of the third para in the function
+		'''
+		self.response.set_status(status_code)
+		self.write(status_info)
+		return return_value
 
 
 ## These 2 below functions are derived from Plog.
