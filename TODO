@@ -823,3 +823,7 @@
 		Updated California Page.
 	IN 09.08.25
 		Added GetUserFriends in API.
+	IN 09.10.13
+		Solved the webkit additem problem, and comment blank problem.
+	IN 09.10.17
+

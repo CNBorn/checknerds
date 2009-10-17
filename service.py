@@ -30,7 +30,37 @@ import memcache
 
 import logging
 
+def admin_required(function):
+	def admin_required_wrapper(request, *args, **kw):
+		if request.user.is_authenticated() and users.is_current_user_admin():
+			return function(request, *args, **kw)
+		return HttpResponseRedirect(users.create_login_url(request.path))
+	return admin_required_wrapper
+
+def api_auth_and_limit(function):
+	'''
+		first py decorator i implemented, learnt from ihere blog.
+	'''
+	def api_auth_and_limit_wrapper(tRequestHandler, *args, **kw):
+		if tRequestHandler.verify_api() == True and tRequestHandler.verify_api_limit() == True:
+			return function(request, *args, **kw)
+		elif tRequestHandler.verify_api() == False:
+			tRequestHandler.response.set_status(403)
+			tRequestHandler.write('API Authentication failed.')
+			return False
+		else:
+			#tRequestHandler.verify_api_limit() == True
+			tRequestHandler.response.set_status(403)
+			tRequestHandler.write('API Limitation exceed.')
+			return False
+		#return HttpResponseRedirect(users.create_login_url(request.path))
+	return api_auth_and_limit_wrapper
+
 class colossus(tarsusaRequestHandler):
+	'''
+		#This is the first admin page for CheckNerds.
+		#Admin page for managing all Applications that uses CheckNerds API.
+	'''
 	def get(self):
 		#This is the first admin page for CheckNerds.
 		#Admin page for managing all Applications that uses CheckNerds API.
@@ -233,13 +263,16 @@ class api_getuserfriends(tarsusaRequestHandler):
 				ThisUsersFriendsLists = tarsusaCore.get_UserFriends(ThisUser.key().id())
 				self.write(ThisUsersFriendsLists)
 			else:
-				self.write('403 No Such User')
+				self.response.set_status(403)
+				self.write('No Such User')
 				return False
 		elif verified_api == False:
-			self.write('403 API Authentication failed.')
+			self.response.set_status(403)
+			self.write('API Authentication failed.')
 			return False
 		else:
-			self.write('403 API Limitation exceed.')
+			self.response.set_status(403)
+			self.write('API Limitation exceed.')
 			return False
 
 
@@ -254,82 +287,72 @@ class api_getuseritem(tarsusaRequestHandler):
 
 	def get(self):
 		self.write('<h1>please use POST</h1>')
-	
+
+	@api_auth_and_limit
 	def post(self):
-		verified_api = self.verify_api()  
-		within_api_limit = self.verify_api_limit() 
-		
-		if verified_api == True and within_api_limit == True:
-			apiappid = self.request.get('apiappid') 
-			apiservicekey = self.request.get('servicekey')
-			apiuserid = self.request.get('apiuserid') 
-			apikey = self.request.get('apikey')
-			userid = self.request.get('userid')
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+		userid = self.request.get('userid')
 
-
-			done = self.request.get('done')
-			if done == 'True':
-				done = True
-			elif done == 'False':
-				done = False
-			else:
-				done = None
-
-			routine = self.request.get('routine')
-			if routine == '':
-				routine='none'
-			
-			#logging.info(routine)
-			
-			#!!!!!
-			#Below Settings should be changed 
-			#When user can check other users ITEMs!
-			#
-			public = self.request.get('public')
-			if public == '':
-				public = 'none'
-				#'none' means it doesn't matter, display all items.
-			#logging.info(public)
-			
-			maxitems = self.request.get('maxitems')
-			if maxitems == None or maxitems == '':
-				count = 10
-			else:
-				count = int(maxitems)
-				if count > 100:
-					count = 100
-			
-			#logging.info(maxitems)
-			
-			#'''
-			beforedate = self.request.get('beforedate')
-			#	enddate='',
-
-			afterdate = self.request.get('afterdate')
-			#	startdate='',
-
-			#	startdonedate=''
-			#	enddonedate=''
-			#'''
-
-			if apiuserid == userid:
-				#Get APIUser's Items
-				
-				#It can only get todo or done items.
-				tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, startdate=afterdate, enddate=beforedate, maxitems=count, public=public)
-				self.write(tarsusaItemCollection_UserDoneItems)	
-			else:
-				#Get Other Users Items
-				self.write('<h1>403 Currently You can\'t get other user\'s items.</h1>')
-				return False
-		
-		elif verified_api == False:
-			self.write('403 API Authentication failed.')
-			return False
+		done = self.request.get('done')
+		if done == 'True':
+			done = True
+		elif done == 'False':
+			done = False
 		else:
-			self.write('403 API Limitation exceed.')
-			return False
+			done = None
 
+		routine = self.request.get('routine')
+		if routine == '':
+			routine='none'
+		
+		#logging.info(routine)
+		
+		#!!!!!
+		#Below Settings should be changed 
+		#When user can check other users ITEMs!
+		#
+		public = self.request.get('public')
+		if public == '':
+			public = 'none'
+			#'none' means it doesn't matter, display all items.
+		#logging.info(public)
+		
+		maxitems = self.request.get('maxitems')
+		if maxitems == None or maxitems == '':
+			count = 10
+		else:
+			count = int(maxitems)
+			if count > 100:
+				count = 100
+		
+		#logging.info(maxitems)
+		
+		#'''
+		beforedate = self.request.get('beforedate')
+		#	enddate='',
+
+		afterdate = self.request.get('afterdate')
+		#	startdate='',
+
+		#	startdonedate=''
+		#	enddonedate=''
+		#'''
+
+		if apiuserid == userid:
+			#Get APIUser's Items
+			
+			#It can only get todo or done items.
+			tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, startdate=afterdate, enddate=beforedate, maxitems=count, public=public)
+			self.write(tarsusaItemCollection_UserDoneItems)	
+		else:
+			#Get Other Users Items
+			self.response.set_status(403)
+			self.write('<h1>Currently You can\'t get other user\'s items.</h1>')
+			return False
+		
 class api_doneitem(tarsusaRequestHandler):
 	
 	#CheckNerds API: DoneItem.
@@ -357,6 +380,7 @@ class api_doneitem(tarsusaRequestHandler):
 			ThisItem = tarsusaItem.get_by_id(int(itemid))
 			
 			if ThisItem is None:
+				self.response.set_status(404)
 				self.write("404 No such Item.")
 				return False
 
@@ -372,10 +396,12 @@ class api_doneitem(tarsusaRequestHandler):
 				self.write('<h1>403 You can\'t manipulate other user\'s items.</h1>')
 		
 		elif verified_api == False:
-			self.write('403 API Authentication failed.')
+			self.response.set_status(403)
+			self.write('API Authentication failed.')
 			return False
 		else:
-			self.write('403 API Limitation exceed.')
+			self.response.set_status(403)
+			self.write('API Limitation exceed.')
 			return False
 
 class api_undoneitem(tarsusaRequestHandler):
@@ -408,7 +434,8 @@ class api_undoneitem(tarsusaRequestHandler):
 			ThisItem = tarsusaItem.get_by_id(int(itemid))
 			
 			if ThisItem is None:
-				self.write("404 No such Item.")
+				self.response.set_status(404)
+				self.write("No such Item.")
 				return False
 
 			if int(apiuserid) == ThisItem.usermodel.key().id():
@@ -423,10 +450,12 @@ class api_undoneitem(tarsusaRequestHandler):
 				self.write('<h1>403 You can\'t manipulate other user\'s items.</h1>')
 		
 		elif verified_api == False:
-			self.write('403 API Authentication failed.')
+			self.response.set_status(403)
+			self.write('API Authentication failed.')
 			return False
 		else:
-			self.write('403 API Limitation exceed.')
+			self.response.set_status(403)
+			self.write('API Limitation exceed.')
 			return False
 
 #To be added: api_checkAppModel
@@ -473,10 +502,12 @@ class api_additem(tarsusaRequestHandler):
 			return newlyadd
 		
 		elif verified_api == False:
-			self.write('403 API Authentication failed.')
+			self.response.set_status(403)
+			self.write('API Authentication failed.')
 			return False
 		else:
-			self.write('403 API Limitation exceed.')
+			self.response.set_status(403)
+			self.write('API Limitation exceed.')
 			return False
 
 

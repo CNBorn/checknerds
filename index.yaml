@@ -19,7 +19,7 @@ indexes:
   - name: user
   - name: donedate
 
-# Used 438 times in query history.
+# Used 441 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -28,7 +28,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 426 times in query history.
+# Used 429 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -74,7 +74,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 4524 times in query history.
+# Used 4530 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -112,7 +112,7 @@ indexes:
   - name: donedate
     direction: desc
 
-# Used 1544 times in query history.
+# Used 1550 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
