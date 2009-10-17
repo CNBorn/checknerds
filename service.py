@@ -43,7 +43,7 @@ def api_auth_and_limit(function):
 	'''
 	def api_auth_and_limit_wrapper(tRequestHandler, *args, **kw):
 		if tRequestHandler.verify_api() == True and tRequestHandler.verify_api_limit() == True:
-			return function(request, *args, **kw)
+			return function(tRequestHandler, *args, **kw)
 		elif tRequestHandler.verify_api() == False:
 			tRequestHandler.response.set_status(403)
 			tRequestHandler.write('API Authentication failed.')
@@ -210,32 +210,20 @@ class api_getuser(tarsusaRequestHandler):
 	def get(self):
 		self.write('<h1>please use POST</h1>')
 	
+	@api_auth_and_limit
 	def post(self):
- 
-		verified_api = self.verify_api()  
-		within_api_limit = self.verify_api_limit() 
+		#Should use log to monitor API usage.
+		#Also there should be limitation for the apicalls/per hour.
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+		userid = self.request.get('userid')
+
+		ThisUser = tarsusaUser.get_by_id(int(userid))
+		user_info = {'id' : str(ThisUser.key().id()), 'name' : ThisUser.dispname, 'datejoinin' : str(ThisUser.datejoinin), 'website' : ThisUser.website, 'avatar' : 'http://www.checknerds.com/image?avatar=' + str(ThisUser.key().id())}
 		
-		if verified_api == True and within_api_limit == True:
-			#Should use log to monitor API usage.
-			#Also there should be limitation for the apicalls/per hour.
-			apiappid = self.request.get('apiappid') 
-			apiservicekey = self.request.get('servicekey')
-			apiuserid = self.request.get('apiuserid') 
-			apikey = self.request.get('apikey')
-			userid = self.request.get('userid')
-
-			ThisUser = tarsusaUser.get_by_id(int(userid))
-			user_info = {'id' : str(ThisUser.key().id()), 'name' : ThisUser.dispname, 'datejoinin' : str(ThisUser.datejoinin), 'website' : ThisUser.website, 'avatar' : 'http://www.checknerds.com/image?avatar=' + str(ThisUser.key().id())}
-			
-			self.write(user_info)
-		elif verified_api == False:
-			self.write('403 API Authentication failed.')
-			return False
-		else:
-			self.write('403 API Limitation exceed.')
-			return False
-
-
+		self.write(user_info)
 
 class api_getuserfriends(tarsusaRequestHandler):
 	
@@ -244,37 +232,24 @@ class api_getuserfriends(tarsusaRequestHandler):
 	def get(self):
 		self.write('<h1>please use POST</h1>')
 	
+	@api_auth_and_limit
 	def post(self):
- 
-		verified_api = self.verify_api()  
-		within_api_limit = self.verify_api_limit() 
-		
-		if verified_api == True and within_api_limit == True:
-			#Should use log to monitor API usage.
-			#Also there should be limitation for the apicalls/per hour.
-			apiappid = self.request.get('apiappid') 
-			apiservicekey = self.request.get('servicekey')
-			apiuserid = self.request.get('apiuserid') 
-			apikey = self.request.get('apikey')
-			userid = self.request.get('userid')
+		#Should use log to monitor API usage.
+		#Also there should be limitation for the apicalls/per hour.
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+		userid = self.request.get('userid')
 
-			ThisUser = tarsusaUser.get_by_id(int(userid))
-			if ThisUser:
-				ThisUsersFriendsLists = tarsusaCore.get_UserFriends(ThisUser.key().id())
-				self.write(ThisUsersFriendsLists)
-			else:
-				self.response.set_status(403)
-				self.write('No Such User')
-				return False
-		elif verified_api == False:
-			self.response.set_status(403)
-			self.write('API Authentication failed.')
-			return False
+		ThisUser = tarsusaUser.get_by_id(int(userid))
+		if ThisUser:
+			ThisUsersFriendsLists = tarsusaCore.get_UserFriends(ThisUser.key().id())
+			self.write(ThisUsersFriendsLists)
 		else:
 			self.response.set_status(403)
-			self.write('API Limitation exceed.')
+			self.write('No Such User')
 			return False
-
 
 #APIs to be added:
 #	AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
@@ -361,49 +336,37 @@ class api_doneitem(tarsusaRequestHandler):
 	def get(self):	
 		self.write('<h1>please use POST</h1>')
 
+	@api_auth_and_limit
 	def post(self):
+	
+		#Actual function.
+		itemid = self.request.get('itemid')
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+		userid = self.request.get('userid')
+
+		APIUser = tarsusaUser.get_by_id(int(apiuserid))
+		ThisItem = tarsusaItem.get_by_id(int(itemid))
 		
-		verified_api = self.verify_api()  
-		within_api_limit = self.verify_api_limit() 
-		
-		if verified_api == True and within_api_limit == True:
-
-			#Actual function.
-			itemid = self.request.get('itemid')
-			apiappid = self.request.get('apiappid') 
-			apiservicekey = self.request.get('servicekey')
-			apiuserid = self.request.get('apiuserid') 
-			apikey = self.request.get('apikey')
-			userid = self.request.get('userid')
-
-			APIUser = tarsusaUser.get_by_id(int(apiuserid))
-			ThisItem = tarsusaItem.get_by_id(int(itemid))
-			
-			if ThisItem is None:
-				self.response.set_status(404)
-				self.write("404 No such Item.")
-				return False
-
-			if int(apiuserid) == ThisItem.usermodel.key().id():
-				#Get APIUser's Items
-				Misc = ''
-				#Misc could be set to 'y' to done a yesterday's routineitem
-				self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
-				#Should be 200 status in future, currently just 0(success), 1(failed)
-
-			else:
-				#Trying to manipulate Other Users Items, very badass.
-				self.write('<h1>403 You can\'t manipulate other user\'s items.</h1>')
-		
-		elif verified_api == False:
-			self.response.set_status(403)
-			self.write('API Authentication failed.')
+		if ThisItem is None:
+			self.response.set_status(404)
+			self.write("404 No such Item.")
 			return False
+
+		if int(apiuserid) == ThisItem.usermodel.key().id():
+			#Get APIUser's Items
+			Misc = ''
+			#Misc could be set to 'y' to done a yesterday's routineitem
+			self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
+			#Should be 200 status in future, currently just 0(success), 1(failed)
+
 		else:
+			#Trying to manipulate Other Users Items, very badass.
 			self.response.set_status(403)
-			self.write('API Limitation exceed.')
-			return False
-
+			self.write('<h1>You can\'t manipulate other user\'s items.</h1>')
+	
 class api_undoneitem(tarsusaRequestHandler):
 	
 	#CheckNerds API: UndoneItem.
@@ -412,51 +375,35 @@ class api_undoneitem(tarsusaRequestHandler):
 	def get(self):	
 		self.write('<h1>please use POST</h1>')
 
+	@api_auth_and_limit
 	def post(self):
-		
+
+		#Actual function.
+		itemid = self.request.get('itemid')
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
 		apiuserid = self.request.get('apiuserid') 
 		apikey = self.request.get('apikey')
-
+		userid = self.request.get('userid')
+	
+		APIUser = tarsusaUser.get_by_id(int(apiuserid))
+		ThisItem = tarsusaItem.get_by_id(int(itemid))
 		
-		verified_api = self.verify_api()  
-		within_api_limit = self.verify_api_limit() 
-		
-		if verified_api == True and within_api_limit == True:
-			#Actual function.
-			itemid = self.request.get('itemid')
-			apiappid = self.request.get('apiappid') 
-			apiservicekey = self.request.get('servicekey')
-			apiuserid = self.request.get('apiuserid') 
-			apikey = self.request.get('apikey')
-			userid = self.request.get('userid')
-		
-			APIUser = tarsusaUser.get_by_id(int(apiuserid))
-			ThisItem = tarsusaItem.get_by_id(int(itemid))
-			
-			if ThisItem is None:
-				self.response.set_status(404)
-				self.write("No such Item.")
-				return False
-
-			if int(apiuserid) == ThisItem.usermodel.key().id():
-				#Get APIUser's Items
-				Misc = ''
-				#Misc could be set to 'y' to done a yesterday's routineitem
-				self.write(tarsusaCore.UndoneItem(itemid, apiuserid, Misc))
-				#Should be 200 status in future, currently just 0(success), 1(failed)
-
-			else:
-				#Trying to manipulate Other Users Items, very badass.
-				self.write('<h1>403 You can\'t manipulate other user\'s items.</h1>')
-		
-		elif verified_api == False:
-			self.response.set_status(403)
-			self.write('API Authentication failed.')
+		if ThisItem is None:
+			self.response.set_status(404)
+			self.write("No such Item.")
 			return False
+
+		if int(apiuserid) == ThisItem.usermodel.key().id():
+			#Get APIUser's Items
+			Misc = ''
+			#Misc could be set to 'y' to done a yesterday's routineitem
+			self.write(tarsusaCore.UndoneItem(itemid, apiuserid, Misc))
+			#Should be 200 status in future, currently just 0(success), 1(failed)
+
 		else:
-			self.response.set_status(403)
-			self.write('API Limitation exceed.')
-			return False
+			#Trying to manipulate Other Users Items, very badass.
+			self.write('<h1>403 You can\'t manipulate other user\'s items.</h1>')
 
 #To be added: api_checkAppModel
 
@@ -470,49 +417,33 @@ class api_additem(tarsusaRequestHandler):
 	def get(self):	
 		self.write('<h1>please use POST</h1>')
 
+	@api_auth_and_limit
 	def post(self):
 		
 		apiuserid = self.request.get('apiuserid') 
 		apikey = self.request.get('apikey')
 		
-		verified_api = self.verify_api()  
-		within_api_limit = self.verify_api_limit() 
+		#Actual function.
+		apiappid = self.request.get('apiappid') 
+		apiservicekey = self.request.get('servicekey')
+		apiuserid = self.request.get('apiuserid') 
+		apikey = self.request.get('apikey')
+	
+		APIUser = tarsusaUser.get_by_id(int(apiuserid))
+
+		#To Add APIUser's a new Item
+		item_name = self.request.get('name')
+		item_comment = self.request.get('comment')
+		item_routine = self.request.get('routine')
+		item_public = self.request.get('public')
+		item_date = self.request.get('date')
+		item_tags = self.request.get('tags')
+
+		newlyadd = tarsusaCore.AddItem(apiuserid, item_name, item_comment, item_routine, item_public, item_date, item_tags)
 		
-		if verified_api == True and within_api_limit == True:
-			#Actual function.
-			apiappid = self.request.get('apiappid') 
-			apiservicekey = self.request.get('servicekey')
-			apiuserid = self.request.get('apiuserid') 
-			apikey = self.request.get('apikey')
-		
-			APIUser = tarsusaUser.get_by_id(int(apiuserid))
-
-
-			#To Add APIUser's a new Item
-			item_name = self.request.get('name')
-			item_comment = self.request.get('comment')
-			item_routine = self.request.get('routine')
-			item_public = self.request.get('public')
-			item_date = self.request.get('date')
-			item_tags = self.request.get('tags')
-
-			newlyadd = tarsusaCore.AddItem(apiuserid, item_name, item_comment, item_routine, item_public, item_date, item_tags)
-			
-			#Should be 200 status in future, currently just 0(success), 1(failed)
-			return newlyadd
-		
-		elif verified_api == False:
-			self.response.set_status(403)
-			self.write('API Authentication failed.')
-			return False
-		else:
-			self.response.set_status(403)
-			self.write('API Limitation exceed.')
-			return False
-
-
-
-
+		#Should be 200 status in future, currently just 0(success), 1(failed)
+		self.response.set_status(200)
+		return newlyadd
 
 
 
