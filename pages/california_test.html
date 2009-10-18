@@ -35,7 +35,7 @@ $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val()
 	"<td class='lovedCell'></td>" + 
 	"<td class='smallmultibuttonCell'></td>" + 
 	"<td class='dateCell'><span class='date'>刚刚</span></td></tr>";	*/
-
+	$('#content').load('/ajax/render/?func=undone&template=calit2');
 	$("#inputName").val("");
 	$("#add_public").val("");
 	$("#add_routine").val("");
@@ -48,6 +48,10 @@ $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val()
 }
 
 $('#add').live('click', addItem);
+$("#additem_more").toggle("fast");
+$("#toggle").click(function () {
+      $("#additem_more").toggle("fast");
+    });   
 })
 
 </script>
@@ -81,21 +85,20 @@ $('#add').live('click', addItem);
 
 	<div id="additem">
 		<input type="text" id="inputName" name="name" style="width: 340px;border:solid #000 1px;">
-				<select name="public" id="add_public">
-					<option selected="selected" value="private">不公开</option>
-					<option value="public">完全公开</option>
-					<option value="publicOnlyforFriends">仅对朋友公开</option>
-				</select>
-				<input name="routine" type="hidden" value="none">
+		<select name="public" id="add_public">
+			<option selected="selected" value="private">不公开</option>
+			<option value="public">完全公开</option>
+			<option value="publicOnlyforFriends">仅对朋友公开</option>
+		</select>
 		<input id="toggle" type=button value="*"><span><input type="submit" value="添加项目" class="sl" id="add"/> </span>
 
-		内容<textarea name="comment" id="add_comment" rows="2" style="width:315px" wrap="PHYSICAL" class="ml"></textarea><br />
-		类别<input type="text" name="tags" id="add_tags" style="width: 180px" value="" class="sl">
+		<p id="additem_more">内容<textarea name="comment" id="add_comment" rows="2" style="width:315px" wrap="PHYSICAL"></textarea><br />
+		类别<input type="text" name="tags" id="add_tags" style="width: 180px" value="">
 		<select name="routine" id="add_routine">
 			<option value="none" selected="selected" >非坚持性任务</option>
 			<option value="daily">每天</option>
 		</select>
-		预计完成<input type="text" class="sl" name="inputDate" id="inputDate" style="width: 80px"  value="" />
+		预计完成<input type="text" class="sl" name="inputDate" id="inputDate" style="width: 80px"  value="" /></p>
 	</div>
 
 

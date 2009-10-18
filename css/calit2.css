@@ -62,8 +62,8 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #content {float:right; line-height:1.5em; margin:0; padding:0; text-align:left; width:750px;}
 #contentalt {float:left; line-height:1.5em; margin-right:20px; padding:0; text-align:left; width:750px;}
 #content h3,#contentalt h3 {margin:10px 0 8px;}
-#content ul li {font-size:1.2em;background-color: #fafafb;list-style: none;margin: 0px 0 0px -80px;border-bottom-width: 1px;border-bottom-style: dashed;border-bottom-color: #f0f0f0;}
-#content ul li.odd {background-color: #fff;}
+#content ul li {font-size:1.2em;background-color: #fff;list-style: none;margin: 0px 0 0px -80px;}
+#content ul li.odd {background-color: #fafafb;border-bottom-width: 1px;border-bottom-style: dashed;border-bottom-color: #f0f0f0;}
 #content ul li:hover {background: #FFF url(/img/calit2/tr_bck.gif) repeat}
 
 
