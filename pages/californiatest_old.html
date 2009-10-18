@@ -1,0 +1,358 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="cn"><head>     
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+    <title>CheckNerds</title>                
+		<link rel="shortcut icon" href="{{ PrefixCSSdir }}img/favicon.ico" >
+        <link rel="apple-touch-icon" href="">
+            <!--[if LT IE 7]>
+        <style type="text/css">
+        .transparent_png {
+            behavior: url('/pngbehavior2.htc');
+        }
+        </style>
+        <![endif]-->
+			<link rel="stylesheet" href="{{PrefixCSSdir}}css/ctest_main.css" type="text/css">
+			<link rel="stylesheet" href="{{PrefixCSSdir}}css/ctest_components.css" type="text/css">
+<!-- from former CheckNerds -->
+<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery.form.js"></script>
+<link rel="stylesheet" media="screen" type="text/css" href="/css/datepicker.css" />
+<script type="text/javascript" src="/js/datepicker.js"></script>
+<!-- from former CheckNerds -->
+</head><body class="r-user a-overview">
+
+<script>
+$(function() {
+var counter=0;
+
+function addItem() {
+
+$.post("/additem",
+	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
+   function(data){     
+	//var id = data;
+	//alert("Data Loaded: " + data);
+
+	str = "<tr id='item" + counter + "'>" + 
+	"<td class='imageCell imageSmall'>" + 
+	'<a href="/doneItem/' + data + '"><img class="imgcheck" alt="点击完成" src="/img/checkbox32.png" width="32"></a></td>' + 
+	"<td class='playbuttonCell'></td>" + 
+	"<td class='subjectCell'><a href='/i/" + data + "'>" + $("#inputName").val() + "</a></td>" + 
+	"<td class='lovedCell'></td>" + 
+	"<td class='smallmultibuttonCell'></td>" + 
+	"<td class='dateCell'><span class='date'>刚刚</span></td></tr>";	
+
+	$("#inputName").val("");
+	$("#add_public").val("");
+	$("#add_routine").val("");
+	$("#add_comment").val("");
+	$("#add_tags").val("");
+	$("#inputDate").val("");
+
+	$('#stats').load('/ajax/frontpage_getitemstats');
+
+	$('#recentTracks tr:eq(1)').after(str);
+	$('#item' + counter).fadeIn('slow');
+	counter += 1;
+   }
+   , "success" 
+);
+
+}
+
+function removeItem() {
+$('#item' + (counter-6)).hide();
+}
+
+
+$('#add').live('click', addItem);
+//alert("出现这个表示js程序没有BUG");
+
+$('#news').load('/ajax/frontpage_getfriendstats');
+$('#stats').load('/ajax/frontpage_getitemstats');
+
+
+});
+
+//
+//
+//
+//
+//
+
+
+
+$(document).ready(function() {
+    $(this).attr('src', togglePlus);
+	 $('#addon').fadeOut('fast');
+
+  var toggleMinus = '/img/add32.png';
+
+  var togglePlus = '/img/checkbox32.png';
+
+  var $subHead = $('#recentTracks tr:first odd td:imageCell');
+
+  //$subHead.prepend('<td><img src="' + toggleMinus + '" alt="collapse this section" /></td>');
+  var toder = '<td><img src="' + toggleMinus + '" alt="collapse this section" /></td>';
+
+  //$('img', $subHead).addClass('clickable') 
+  //$subHead.addClass('clickable')
+  $('#toggle').click(function() {
+
+    var toggleSrc = $(this).attr('src');
+
+    if ( toggleSrc == toggleMinus ) {
+
+      //$(this).attr('src', togglePlus) .parents('tr').siblings().fadeOut('fast');
+     $(this).attr('src', togglePlus);
+	 $('#addon').fadeOut('fast');
+
+    } else{
+
+      $(this).attr('src', toggleMinus);
+      $('#addon').fadeIn('fast');
+      //$(this).attr('src', toggleMinus) .parents('tr').siblings().fadeIn('fast');
+
+    };
+
+  });
+
+}) 
+
+
+
+
+
+</script>
+
+
+
+
+            <div id="page" class="">
+        <div class="fiflufi">
+                
+       
+        
+    <div id="header" class="clearit">
+        <div id="headerWrapper">
+                        
+            <span id="sitename"><a href="/">CheckNerds</a></span>
+			{% if UserLoggedIn %}													 
+            <ul id="primaryNav" class="clearit">
+                <li id="musicNav"><a href="/user/{{UserID|escape}}/todo">待完成项目</a></li>
+                <li id="videosNav"><a href="/user/{{UserID|escape}}">我的页面</a>
+                </li>
+                <li id="listenNav"><a href="/FindFriend">我的朋友</a>
+                </li>
+                <li id="eventsNav"><a href="/donelog/">完成日志</a>
+                </li>
+            </ul>
+			{% endif %}
+            <ul id="headLinks">
+           		{% if UserLoggedIn %}													 
+                <li><a href="/user/{{UserID}}/setting">设置</a> | </li>
+                <li><a href="/Logout/">登出</a> | </li>
+				{% else %}
+                <li><a href="/Login/">使用Google帐户登录</a><small><a href="/docs/why_google_account">(?)</a></small> | </li>
+				{% endif %}
+				<li><a href="/docs/">文档中心</a> | </li>
+                <li><a href="/about">关于</a> | </li>
+                <li class="last"><a href="/guestbook">意见反馈</a></li>
+            </ul>
+        </div><!-- #headerWrapper -->
+    </div>
+    
+<div id="content">
+    <div><!-- This containing div fixes an IE bug where the absolutely positioned element disappears randomly. Don’t ask me why. -->
+    <div id="secondaryNavigation">
+                                            <ul>
+        <li class="current first">
+		<a href="/">首页</a></li>
+		<li><a href="#">每日必做</a></li>
+		<li><a href="/user/{{UserID|escape}}/todo">未做</a></li>
+		<li><a href="/user/{{UserID|escape}}/done">已做</a></li>    
+</ul>                                </div>
+</div>    <div class="leftCol">
+        <div class="leftColWrapper">
+                                                                                                                        
+                                      
+         <div class="module moduletracks" id="recentTracks">
+        <h2 class="heading"><span class="h2Wrapper"><a href="http://cn.last.fm/user/CNBorn/tracks" title="">项目列表</a></span></h2>                                
+    <div class="module-body">
+        <div class="recentTracksContainer">
+     
+    <table class="candyStriped tracklist withimages" id="recentTracks">
+            <tbody>
+				<tr class="first odd" id="0">
+					<td colspan="2" class="imageCell imageMedium highlight">
+				   		<img class="defaultImage" alt="" src="/img/add32.png" width="34">
+					</td>
+					                        
+					<td class="subjectCell highlight">
+		   					<input type="text" id="inputName" name="name" style="width: 340px" class="sl" />
+							<select name="public" id="add_public">
+								<option selected="selected" value="private">不公开</option>
+								<option value="public">完全公开</option>
+								<option value="publicOnlyforFriends">仅对朋友公开</option>
+							</select>
+							<input name="routine" type="hidden" value="none">
+					</td>
+
+                    <td class="lovedCell highlight"> <input id="toggle" type=button value="*"> </td>
+        			<td class="smallmultibuttonCell highlight"></td>
+					<td class="dateCell highlight">
+						<span><input type="submit" value="添加项目" class="sl" id="add"/> </span>
+					</td>
+    
+                </tr>
+				
+				<tr class="odd" id="addon">
+					<td colspan="2" class="imageCell imageMedium highlight">
+					</td>
+					                        
+					<td class="subjectCell highlight">
+							内容<textarea name="comment" id="add_comment" rows="2" style="width:315px" wrap="PHYSICAL" class="ml"></textarea>
+							<br />
+		   					类别<input type="text" name="tags" id="add_tags" style="width: 180px" value="" class="sl">
+							<br />
+							<select name="routine" id="add_routine">
+								<option value="none" selected="selected" >非坚持性任务</option>
+								<option value="daily">每天</option>
+								<!-- option value="weekly">每周</option>
+								<option value="monthly">每月</option>
+								<option value="seasonly">每季度</option>
+								<option value="yearly">每年</option-->
+							</select>
+							<br />
+							预计完成<input type="text" class="sl" name="inputDate" id="inputDate" style="width: 80px"  value="" />
+					</td>
+
+                    <td class="lovedCell highlight"></td>
+        			<td class="smallmultibuttonCell highlight"></td>
+					<td class="dateCell highlight">
+						<span></span>
+					</td>
+   
+
+	
+																
+
+
+
+				</tr>
+
+		{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}		
+		<tr class="" id="1">
+		<td class="imageCell imageSmall"><a href="/doneItem/{{tarsusaItem_UserToDoItem.id}}"><img class="imgcheck" alt="点击完成" src="/img/checkbox32.png" width="32"></a></td>
+            
+            <td class="playbuttonCell">
+                <div></div>
+            </td>
+
+			<td class="subjectCell"><a href="/item/{{ tarsusaItem_UserToDoItem.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a></td>
+
+ 			<td class="lovedCell">
+                    </td>
+
+        <td class="smallmultibuttonCell">
+                                                    <a href="http://cn.last.fm/music/Clara+Haskil%2C+Ferenc+Fricsay%3A+Berlin+Philharmonic+Orchestra/_/Mozart%253A%2BPiano%2BConcerto%2B%252319%2BIn%2BF%252C%2BK%2B459%2B-%2B1.%2BAllegro%2BMaestoso" class="mRemoveFromLibrary mSend mAddTags mAddToPlaylist mLove lfmButton lfmMultiButton lfmButtonFortrack lfmSmallButton lfmSmallMultiButton lfmMultiButtonFull" forcelink="1"><span></span></a>        </td>
+        <td class="dateCell">
+                                                <span class="date">{{ tarsusaItem_UserToDoItem.date|escape }}</span>
+                                    </td>
+    
+                </tr>
+		{% endfor %}	
+				
+				
+				
+        </tbody>
+</table>    
+ 
+</div></div>
+</div>
+ 
+                                                
+        </div><!-- .leftColWrapper -->
+    </div><!-- .leftCol -->
+    
+    <div class="rightCol">
+   <h2 class="heading"><span class="h2Wrapper"><a href="http://cn.last.fm/user/CNBorn/friends" title="">好友动态</a></span></h2> 
+  <ul class="minifeedSmall" id="news">                
+        <li id="dd0" class="befriended first"><img src="/img/default_avatar.jpg" height="20" width="20"><a href="#" title="23, 男, 中国">CNBorn</a> 的信息正在载入 <span class="date">即刻完成</span>
+        </li>
+  </ul>                                                          
+        
+        
+                        <div class="module">
+        <h2 class="heading"><span class="h2Wrapper"><a href="/FindFriend" title="">我的朋友</a></span></h2>                    <ul class="usersSmall clearit">
+			
+			{% for EachtarsusaUserFriend in tarsusaUserFriends %}
+<li class="user friend">
+<div class="vcard"><strong><a href="/user/{{ EachtarsusaUserFriend.id }}" title="{{ EachtarsusaUserFriend.name }}" rel="acquaintance" class="url"><span class="userImage"><img class="photo fn" alt="{{ EachtarsusaUserFriend.name }}" src="{{ EachtarsusaUserFriend.avatarpath }}" height="34" width="34"></span><span class="nickname">{{ EachtarsusaUserFriend.name }}</span></a></strong></div>            
+			</li>
+			{% endfor %}
+
+</ul>                        <span class="moduleOptions"><a href="/FindFriend" title="">查看更多</a></span>
+                        </div>
+
+        
+                <div class="module">
+		<ul class="usersSmall clearit" id="stats">
+ 			</ul>
+			</div><!-- end of statstics --!>
+                
+        
+                    <div class="module">
+        <h2 class="heading"><span class="h2Wrapper"><a href="#" title="">好友动态</a></span></h2>        <ul class="groupsSmall">
+    <li class="first clearit">
+                        <a href="">                <strong><span class="groupImg"><img class="groupImage imagesmallsquare" alt="" src="/img/default_avatar.jpg" height="34" width="34"></span>人物</strong>
+                <span class="info">时间 </span>
+            </a>        
+        </li><li class="last clearit">
+                        <a href="">                <strong><span class="groupImg"><img class="groupImage imagesmallsquare" alt="" src="/img/default_avatar.jpg" height="34" width="34"></span>People</strong>
+                <span class="info">Time</span>
+            </a>        
+        </li>
+</ul>        
+            </div>
+            
+        
+            </div><!-- .rightCol -->
+     </div><!-- #content -->
+
+<div id="LastFooter">
+    <div id="footer_content">
+        <div id="legalities">
+    	    <p id="copy">
+                    © CNBorn, 2008-2009, Powered by Google App Engine
+			</p>
+        </div><!-- #legalities -->
+    </div>
+</div><!-- #LastFooter -->
+ 
+
+
+        </div>
+    </div>
+            </body>
+			
+<!-- from former CheckNerds -->	
+		<script type="text/javascript">
+				$('#inputDate').DatePicker({
+					format:'Y-m-d',
+					date: $('#inputDate').val(),
+					current: $('#inputDate').val(),
+					starts: 1,
+					position: 'right',
+					onBeforeShow: function(){
+						$('#inputDate').DatePickerSetDate($('#inputDate').val(), true);
+					},
+					onChange: function(formated, dates){
+						$('#inputDate').val(formated);
+					}
+				});
+		</script>
+<!-- from former CheckNerds -->	
+			
+			</html>

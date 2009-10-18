@@ -272,6 +272,7 @@ class CaliforniaPage(tarsusaRequestHandler):
 					'UserID': CurrentUser.key().id(),
 					'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserTodoItems,
 					'tarsusaUserFriends': tarsusaUserFriends,
+					'htmltag_today': datetime.date.today(),
 			}
 		
 		else:			
