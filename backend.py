@@ -94,7 +94,7 @@ class colossus(tarsusaRequestHandler):
 
 def main():
 	application = webapp.WSGIApplication([
-									   ('/service/colossus.+', colossus)],
+									   ('/backend/colossus.+', colossus)],
                                        debug=True)
 
 	wsgiref.handlers.CGIHandler().run(application)

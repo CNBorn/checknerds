@@ -104,6 +104,9 @@ handlers:
 - url: /california
   script: miscellaneous.py
 
+- url: /backend/.+
+  script: backend.py
+
 - url: /service/.+
   script: service.py
 
