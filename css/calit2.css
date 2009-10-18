@@ -59,6 +59,10 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #content {float:right; line-height:1.5em; margin:0; padding:0; text-align:left; width:750px;}
 #contentalt {float:left; line-height:1.5em; margin-right:20px; padding:0; text-align:left; width:750px;}
 #content h3,#contentalt h3 {margin:10px 0 8px;}
+#content ul li {background-color: #fafafb;list-style: none;margin: -5px 0 5px -50px;}
+#content ul li.odd {background-color: #fff;list-style: none;font-size:1.2em;}
+#content ul li:hover {background: #FFF url(/img/calit2/tr_bck.gif) repeat}
+
 
 /* Footer */
 #footer {border-top:4px solid #dadada; clear:both; color:gray; font-size:0.9em; line-height:1.6em; margin:0 auto; padding:8px 0; text-align:right;}

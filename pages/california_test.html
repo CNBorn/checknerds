@@ -14,6 +14,14 @@
 	<link rel="stylesheet" type="text/css" href="{{PrefixCSSdir}}css/calit2.css" title="1024px" media="screen,projection" />
 	<title>1024px v3.0</title>
 </head>
+<script type="text/javascript">
+/*
+Planning to have a js function here to handle the tab->activetab issue.
+$('#content').load('/ajax/frontpage_getfriendstats');
+$('#tab_dailyroutine').
+$('#content').load('/ajax/render/?func=done&template=calit2');
+*/
+</script>
 
 <body>
 <div id="wrap">
@@ -37,9 +45,9 @@
 	</div>
 	
 	<div id="navitabs">
-		<a class="activenavitab" href="index.html">未完成</a><span class="hide"> | </span>
-		<a class="navitab" href="#" onclick="$('#content').load('/ajax/frontpage_getfriendstats');">每日</a><span class="hide"> | </span>
-		<a class="navitab" href="#" onclick="$('#content').load('/ajax/render/?func=done&template=calit2');">已做</a>
+		<a id="tab_undone" class="activenavitab" href="#" onclick="$('#content').load('/ajax/render/?func=undone&template=calit2');">未完成</a><span class="hide"> | </span>
+		<a id="tab_dailyroutine" class="navitab" href="#" onclick="$('#content').load('/ajax/frontpage_getfriendstats');">每日</a><span class="hide"> | </span>
+		<a id="tab_done" class="navitab" href="#" onclick="$('#content').load('/ajax/render/?func=done&template=calit2');">已做</a>
 	</div>
 
 
@@ -47,11 +55,10 @@
 
 
 	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}		
-		<p class="timestamp">
-		<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_UserToDoItem.key.id}}')">
+		<li><input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_UserToDoItem.key.id}}')">
 		<a href="/item/{{ tarsusaItem_UserToDoItem.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
 		 | <span class="date">{{ tarsusaItem_UserToDoItem.expectdate|escape }}</span>
-		</p>
+		</li>
 	{% endfor %}	
 
 		<p class="box"><strong>Note:</strong> If you want to support the development of more free templates, it is possible to make a <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=paypal%40andreasviklund%2ecom&amp;item_name=Donations%20for%20andreasviklund%2ecom&amp;item_number=2007&amp;no_shipping=0&amp;cn=Comments%20%28optional%29&amp;tax=0&amp;currency_code=USD&amp;lc=SE&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8">donation</a> of any amount through PayPal. All donations are used to develop new templates and to keep the template site online. Top donors will get their name and link listed on the site (if wanted). Advertising options are also available. Contact me for more information!</p>

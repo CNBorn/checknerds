@@ -573,20 +573,19 @@ class render(tarsusaRequestHandler):
 		func = self.request.get("func")
 		templatename = self.request.get("template")
 
-		if func == "done":
-			# New CheckLogin code built in tarsusaRequestHandler 
-			if self.chk_login():
-				CurrentUser = self.get_user_db()
+		# New CheckLogin code built in tarsusaRequestHandler 
+		if self.chk_login():
+			CurrentUser = self.get_user_db()
 
-			tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
+			if func == "done":
+				tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
+			elif func == "undone":
+				tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False)
 
 			template_values = {
-				'MobilePageTag': 'Done',
-				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
-				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
-				'htmltag_today': datetime.datetime.date(datetime.datetime.now()),
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_AjaxUserItems,
 			}
 			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_calit2_fp_done.html')
 			self.write(template.render(path, template_values))
