@@ -21,6 +21,35 @@ $('#content').load('/ajax/frontpage_getfriendstats');
 $('#tab_dailyroutine').
 $('#content').load('/ajax/render/?func=done&template=calit2');
 */
+$(document).ready(function() {
+//$(function() {
+
+function addItem() {
+$.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
+   function(data){     
+	/*str = "<tr id='item" + counter + "'>" + 
+	"<td class='imageCell imageSmall'>" + 
+	'<a href="/doneItem/' + data + '"><img class="imgcheck" alt="点击完成" src="/img/checkbox32.png" width="32"></a></td>' + 
+	"<td class='playbuttonCell'></td>" + 
+	"<td class='subjectCell'><a href='/i/" + data + "'>" + $("#inputName").val() + "</a></td>" + 
+	"<td class='lovedCell'></td>" + 
+	"<td class='smallmultibuttonCell'></td>" + 
+	"<td class='dateCell'><span class='date'>刚刚</span></td></tr>";	*/
+
+	$("#inputName").val("");
+	$("#add_public").val("");
+	$("#add_routine").val("");
+	$("#add_comment").val("");
+	$("#add_tags").val("");
+	$("#inputDate").val("");
+   }
+   , "success" 
+);
+}
+
+$('#add').live('click', addItem);
+})
+
 </script>
 
 <body>
@@ -50,18 +79,28 @@ $('#content').load('/ajax/render/?func=done&template=calit2');
 		<a id="tab_done" class="navitab" href="#" onclick="$('#content').load('/ajax/render/?func=done&template=calit2');">已做</a>
 	</div>
 
+	<div id="additem">
+		<input type="text" id="inputName" name="name" style="width: 340px;border:solid #000 1px;">
+				<select name="public" id="add_public">
+					<option selected="selected" value="private">不公开</option>
+					<option value="public">完全公开</option>
+					<option value="publicOnlyforFriends">仅对朋友公开</option>
+				</select>
+				<input name="routine" type="hidden" value="none">
+		<input id="toggle" type=button value="*"><span><input type="submit" value="添加项目" class="sl" id="add"/> </span>
+
+		内容<textarea name="comment" id="add_comment" rows="2" style="width:315px" wrap="PHYSICAL" class="ml"></textarea><br />
+		类别<input type="text" name="tags" id="add_tags" style="width: 180px" value="" class="sl">
+		<select name="routine" id="add_routine">
+			<option value="none" selected="selected" >非坚持性任务</option>
+			<option value="daily">每天</option>
+		</select>
+		预计完成<input type="text" class="sl" name="inputDate" id="inputDate" style="width: 80px"  value="" />
+	</div>
+
 
 	<div id="content">
-
-
-	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}		
-		<li><input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_UserToDoItem.key.id}}')">
-		<a href="/item/{{ tarsusaItem_UserToDoItem.id }}">{{ tarsusaItem_UserToDoItem.name|escape }}</a>
-		 | <span class="date">{{ tarsusaItem_UserToDoItem.expectdate|escape }}</span>
-		</li>
-	{% endfor %}	
-
-		<p class="box"><strong>Note:</strong> If you want to support the development of more free templates, it is possible to make a <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=paypal%40andreasviklund%2ecom&amp;item_name=Donations%20for%20andreasviklund%2ecom&amp;item_number=2007&amp;no_shipping=0&amp;cn=Comments%20%28optional%29&amp;tax=0&amp;currency_code=USD&amp;lc=SE&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8">donation</a> of any amount through PayPal. All donations are used to develop new templates and to keep the template site online. Top donors will get their name and link listed on the site (if wanted). Advertising options are also available. Contact me for more information!</p>
+		<p class="box"><strong>Now</strong> Loading...<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=paypal%40andreasviklund%2ecom&amp;item_name=Donations%20for%20andreasviklund%2ecom&amp;item_number=2007&amp;no_shipping=0&amp;cn=Comments%20%28optional%29&amp;tax=0&amp;currency_code=USD&amp;lc=SE&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8">donation</a> of any amount through PayPal. All donations are used to develop new templates and to keep the template site online. Top donors will get their name and link listed on the site (if wanted). Advertising options are also available. Contact me for more information!</p>
 	</div>
 
 	<div id="sidebar">

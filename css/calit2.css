@@ -15,7 +15,7 @@ blockquote {border:1px solid #dadada; font-size:0.9em; margin:20px 10px; padding
 blockquote p {margin:0;}
 
 /* Headers */
-h1 {color:#88bb55; font-size:2.6em; letter-spacing:-3px; margin:0 0 20px 25px;}
+h1 {color:#88bb55; font-size:2.6em; letter-spacing:-3px; margin:-10px 0 20px 25px;}
 h1 a {color:#88bb55; text-transform:none;}
 h2 {border-bottom:4px solid #dadada; color:#88bb55; font-size:1.4em; letter-spacing:-1px; margin:0 0 10px; padding:0 2px 2px 5px;}
 h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight:700; margin:10px 0 8px; padding:1px 2px 2px 3px;}
@@ -40,9 +40,9 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 
 
 /* Main wrap */
-#wrap {color:#404040; margin:10px auto; padding:0; width:970px;}
+#wrap {color:#404040; margin:6px auto; padding:0; width:970px;}
 #header {margin:0;}
-#toplinks {font-size:0.9em; padding:5px 2px 2px 3px; text-align:right;}
+#toplinks {font-size:0.9em; padding:0px 2px 2px 3px; text-align:right;}
 #toplinks a {color:gray;}
 #slogan {color:gray; font-size:1.3em; font-weight:700; letter-spacing:-1px; line-height:1.2em; margin:15px 0 20px 35px;}
 
@@ -55,12 +55,15 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #sidebar ul ul li a {font-weight:400;}
 #sidebar h2 {margin:3px 0 8px;}
 
+/* Additem Div content */
+#additem {float:right; line-height:1.5em; margin:0 0 5px 0; padding:0; text-align:left; width:750px;}
+
 /* Main content */
 #content {float:right; line-height:1.5em; margin:0; padding:0; text-align:left; width:750px;}
 #contentalt {float:left; line-height:1.5em; margin-right:20px; padding:0; text-align:left; width:750px;}
 #content h3,#contentalt h3 {margin:10px 0 8px;}
-#content ul li {background-color: #fafafb;list-style: none;margin: -5px 0 5px -50px;}
-#content ul li.odd {background-color: #fff;list-style: none;font-size:1.2em;}
+#content ul li {font-size:1.2em;background-color: #fafafb;list-style: none;margin: 0px 0 0px -80px;border-bottom-width: 1px;border-bottom-style: dashed;border-bottom-color: #f0f0f0;}
+#content ul li.odd {background-color: #fff;}
 #content ul li:hover {background: #FFF url(/img/calit2/tr_bck.gif) repeat}
 
 
