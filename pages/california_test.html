@@ -5,6 +5,12 @@
 	<meta name="description" content="Your description goes here" />
 	<meta name="keywords" content="your,keywords,goes,here" />
 	<meta name="author" content="Your Name" />
+<!-- from former CheckNerds -->
+<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery.form.js"></script>
+<link rel="stylesheet" media="screen" type="text/css" href="/css/datepicker.css" />
+<script type="text/javascript" src="/js/datepicker.js"></script>
+<!-- from former CheckNerds -->
 	<link rel="stylesheet" type="text/css" href="{{PrefixCSSdir}}css/calit2.css" title="1024px" media="screen,projection" />
 	<title>1024px v3.0</title>
 </head>
@@ -30,14 +36,14 @@
 		<p id="slogan">{{htmltag_today}}</p>
 	</div>
 	
-
-	<div id="content">
 	<div id="navitabs">
 		<a class="activenavitab" href="index.html">未完成</a><span class="hide"> | </span>
-		<a class="navitab" href="#">每日</a><span class="hide"> | </span>
-		<a class="navitab" href="#">已做</a>
+		<a class="navitab" href="#" onclick="$('#content').load('/ajax/frontpage_getfriendstats');">每日</a><span class="hide"> | </span>
+		<a class="navitab" href="#" onclick="$('#content').load('/ajax/render/?func=done&template=calit2');">已做</a>
 	</div>
 
+
+	<div id="content">
 
 
 	{% for tarsusaItem_UserToDoItem in tarsusaItemCollection_UserToDoItems %}		

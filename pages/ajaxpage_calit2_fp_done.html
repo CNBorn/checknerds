@@ -1,0 +1,8 @@
+	{% for tarsusaItem_UserDoneItem in tarsusaItemCollection_UserDoneItems %}		
+		<p class="timestamp">
+		<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_UserDoneItem.key.id}}')">
+		<a href="/item/{{ tarsusaItem_UserDoneItem.id }}">{{ tarsusaItem_UserDoneItem.name|escape }}</a>
+		 | <span class="date">{{ tarsusaItem_UserDoneItem.expectdate|escape }}</span>
+		</p>
+	{% endfor %}	
+

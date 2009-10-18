@@ -568,6 +568,31 @@ class admin_runpatch(tarsusaRequestHandler):
 		self.write('DONE with USERID' + RequestUserID)
 		#self.redirect('/')
 
+class render(tarsusaRequestHandler):
+	def get(self):
+		func = self.request.get("func")
+		templatename = self.request.get("template")
+
+		if func == "done":
+			# New CheckLogin code built in tarsusaRequestHandler 
+			if self.chk_login():
+				CurrentUser = self.get_user_db()
+
+			tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
+
+			template_values = {
+				'MobilePageTag': 'Done',
+				'UserLoggedIn': 'Logged In',
+				'UserNickName': cgi.escape(CurrentUser.dispname),
+				'UserID': CurrentUser.key().id(),
+				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_UserDoneItems,
+				'htmltag_today': datetime.datetime.date(datetime.datetime.now()),
+			}
+			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_calit2_fp_done.html')
+			self.write(template.render(path, template_values))
+
+		else:
+			self.write(func+" "+template)		
 
 def main():
 	application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
@@ -581,6 +606,7 @@ def main():
 										(r'/ajax/allpage_edititem.+', edititem),
 										('/ajax/getjson_usertodoitems', getjson_usertodoitems),
 										('/ajax/getjson_userdoneitems', getjson_userdoneitems),
+										(r'/ajax/render/.*', render),
 										('/ajax/admin_runpatch/.+', admin_runpatch),
 									  ('/ajax/.+',ajax_error)],
                                        debug=True)
