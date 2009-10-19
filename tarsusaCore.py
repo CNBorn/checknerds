@@ -158,6 +158,9 @@ def get_dailyroutine(userid):
 	ThisUser = tarsusaUser.get_by_id(int(userid))
 	# Show His Daily Routine.
 	
+	# the return result
+	Item_List = []		
+	
 	tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", ThisUser.user)
 	tarsusaItemCollection_DoneDailyRoutine = tarsusaRoutineLogItem 
 
@@ -182,7 +185,9 @@ def get_dailyroutine(userid):
 		# http://code.google.com/p/googleappengine/issues/detail?id=179
 		# if this is realized, the code below next line will be used.
 
-		tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC ", ThisUser.user, each_tarsusaItemCollection_DailyRoutine.key().id())
+		#OCt 19
+		#shoudl be changed in to multiple gql, with each gets the latest doneroutine item for only one dailyroutine item.
+		tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT 1", ThisUser.user, each_tarsusaItemCollection_DailyRoutine.key().id())
 		
 		## traversed RoutineDaily
 		
@@ -214,21 +219,22 @@ def get_dailyroutine(userid):
 			except:
 				pass
 
-			
-		## Output the message for DailyRoutine
-		template_tag_donealldailyroutine = ''				
-		if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
-			template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
-		elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
-			template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
-		
-		Item_List = []		
 		#'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-		for each_tarsusaItem in tarsusaItemCollection_DailyRoutine:
-			this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'expectdate': each_tarsusaItem.expectdate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
-			Item_List.append(this_item)
+		this_item = {'id' : str(each_tarsusaItemCollection_DailyRoutine.key().id()), 'name' : each_tarsusaItemCollection_DailyRoutine.name, 'date' : each_tarsusaItemCollection_DailyRoutine.date, 'donedate': each_tarsusaItemCollection_DailyRoutine.donedate, 'expectdate': each_tarsusaItemCollection_DailyRoutine.expectdate, 'comment' : each_tarsusaItemCollection_DailyRoutine.comment, 'routine' : each_tarsusaItemCollection_DailyRoutine.routine, 'category' : each_tarsusaItemCollection_DailyRoutine.done, 'done':DoneThisItemToday}
+		#originally, done should be done for item, but here done refers to daily done for a daily routine item.
+		Item_List.append(this_item)
 
-		return Item_List
+
+			
+	## Output the message for DailyRoutine
+	template_tag_donealldailyroutine = ''				
+	if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
+		template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
+	elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
+		template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
+	
+
+	return Item_List
 
 def get_ItemsDueToday(userid):
 	#Get User's Items that are due today.

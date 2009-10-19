@@ -581,6 +581,8 @@ class render(tarsusaRequestHandler):
 				tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
 			elif func == "undone":
 				tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False)
+			elif func == "dailyroutine":
+				tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
 
 			template_values = {
 				'UserNickName': cgi.escape(CurrentUser.dispname),
