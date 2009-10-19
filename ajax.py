@@ -585,9 +585,10 @@ class render(tarsusaRequestHandler):
 			template_values = {
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
-				'tarsusaItemCollection_UserDoneItems': tarsusaItemCollection_AjaxUserItems,
+				'func': func,
+				'tarsusaItemCollection_AjaxUserItems': tarsusaItemCollection_AjaxUserItems,
 			}
-			path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_calit2_fp_done.html')
+			path = os.path.join(os.path.dirname(__file__), 'pages/calit2_ajaxpage_fp_render_items.html')
 			self.write(template.render(path, template_values))
 
 		else:

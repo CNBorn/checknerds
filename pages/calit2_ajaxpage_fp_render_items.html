@@ -1,0 +1,17 @@
+	<ul>
+		{% for tarsusaItem_eachItem in tarsusaItemCollection_AjaxUserItems %}
+			{% ifequal tarsusaItem_eachItem.done 0 %}
+				<li class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+				<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_eachItem.key.id}}')">
+				<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
+				 | <span class="date">{{ tarsusaItem_eachItem.expectdate|escape }}</span>
+				 </li>
+			{% else %}
+				<li class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+				<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
+				 | <span class="date">@{{ tarsusaItem_eachItem.donedate|escape }}</span>
+				 </li>
+			{% endifequal %}
+	{% endfor %}	
+	</ul>
+
