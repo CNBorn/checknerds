@@ -23,6 +23,7 @@ from modules import *
 from base import *
 
 import time, datetime
+import random
 
 import memcache
 
@@ -346,6 +347,18 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
 	#---
 
 	return Item_List
+
+def get_LatestUser(count=8):
+	'''Get the Latest User List who registered on CheckNerds.'''
+	#Changed from Displaying all tarsusaUser (Very Slow performance)
+	#to display just random users.
+	#tarsusaPeopleCollection = db.GqlQuery("SELECT * FROM tarsusaUser")
+	LastestTime = int(time.mktime(datetime.datetime.now().timetuple()))
+	BeginningTime = int(time.mktime(datetime.datetime(2008,10,22).timetuple()))
+	ChoosenTime = datetime.datetime.fromtimestamp(random.randint(BeginningTime, LastestTime))
+	ChoosenTimeMax = ChoosenTime + datetime.timedelta(days=random.randint(1,15)) 
+	tarsusaLatestPeople = db.GqlQuery("SELECT * FROM tarsusaUser WHERE datejoinin > :1 and datejoinin < :2 ORDER by datejoinin DESC LIMIT 8", ChoosenTime, ChoosenTimeMax)
+	return tarsusaLatestPeople
 
 def get_UserNonPrivateItems(userid, public='public', maxdisplayitems=30):
 	#Get users non-private items.

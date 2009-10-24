@@ -12,8 +12,19 @@
 
 						<div id="singleleft">
 							<h2 class="posttitle">{{ UserNickName }}的朋友动态</h2>
-								<div id="div_friendstats" style="padding-top:10px; padding-left: 10px;">
-								{{UserFriendsActivities}}
+							<div id="div_friendstats" style="padding-top:10px; padding-left: 10px;">
+								<ul class="mbt">
+									{% if not UserFriendsActivities %}
+										<li>暂无友邻公开项目</li>
+									{% endif %}
+									{% for each_friend_item in UserFriendsActivities %}
+									{% ifequal each_friend_item.category "done" %}						
+									<li class="mbtl"><a href="/user/{{each_friend_item.userid}}"><img src="{{each_friend_item.avatar}}" width=48 height=48></a></li><li class="mbtr"><span class="starb"><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a><span class="pl"> 完成了 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></span></span></li>
+									{% else %}
+									<li class="mbtl"><a href="/user/{{each_friend_item.userid}}"><img src="{{each_friend_item.avatar}}" width=48 height=48></a></li><li class="mbtr"><span class="starb"><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a><span class="pl"> 要做 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></span></span></li>
+									{% endifequal %}
+									{% endfor %}
+								</ul>
 								</div>
 								
 						</div>
@@ -59,7 +70,20 @@
 						<p>
 							<div id="tablem2">
 								<div id="in_tablem2">
-									{{ UserFriends }}
+								{% for UsersFriend in UserFriends %}
+								{% if UsersFriend.avatar %}
+								<dl class="obu"><dt><a href="/user/{{UsersFriend.key.id}}"><img src="/image?avatar={{UsersFriend.key.id}}" width=32 height=32></a></dt>
+								{% else %}	
+								<dl class="obu"><dt><a href="/user/{{UsersFriend.key.id}}"><img src="'/img/default_avatar.jpg'" width=32 height=32></a></dt>								
+									
+								{% endif %}
+								<dd>{{UsersFriend.dispname}}</a><br />
+								<a href="#;" onclick="if (confirm('Are you sure to remove {{UsersFriend.user.nickname}}')) {location.href = '/RemoveFriend/{{UsersFriend.key.id}}';}" class="x">x</a></dd></dl>
+								{% endfor %}
+
+	
+								
+								
 								</div>
 							</div>
 							<br />
