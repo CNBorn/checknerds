@@ -512,6 +512,8 @@ class admin_runpatch(tarsusaRequestHandler):
 
 class render(tarsusaRequestHandler):
 	def get(self):
+		''' New Ajax Functions suites for multiple usage for new Calit2 Template. '''
+
 		func = self.request.get("func")
 		templatename = self.request.get("template")
 

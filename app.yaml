@@ -134,5 +134,4 @@ handlers:
   script: gaeunit.py
 
 - url: /.*
-  static_files: pages/404.html
-  upload: /pages/404.html
+  script: errorpages.py
