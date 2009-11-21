@@ -2,7 +2,7 @@
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 1.0, codename Nevada
+# version 1.0, codename California
 # - userpage.py
 # 
 # Author: CNBorn
@@ -15,20 +15,17 @@ import os
 import urllib
 import cgi
 import wsgiref.handlers
-from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 
 import time
 import datetime
-import string
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
 
 import memcache
 import tarsusaCore
 import patcher
-
 
 import PyRSS2Gen
 
