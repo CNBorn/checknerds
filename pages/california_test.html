@@ -20,9 +20,41 @@ Planning to have a js function here to handle the tab->activetab issue.
 $('#content').load('/ajax/frontpage_getfriendstats');
 $('#tab_dailyroutine').
 $('#content').load('/ajax/render/?func=done&template=calit2');
-*/
+ */
+
+$(function(){     
+
+function showLoadingPanel() {
+    $("#loadingpanel").fadeIn('normal');
+}
+
+function hideLoadingPanel() {
+    $("#loadingpanel").fadeOut('normal');
+}
+
+
+$('#tab_undone').click(function() {
+    showLoadingPanel();
+    $('#content').load('/ajax/render/?func=undone&template=calit2');
+    $('#coutent').show('normal');
+    hideLoadingPanel();
+    return false;
+});
+
+
+});
+
+
 $(document).ready(function() {
 //$(function() {
+/*
+$("#loadingpanel").ajaxStart(function()
+{
+    $(this).show(); //这里设置LoadingPanel的显示.最好使用鼠标位置取得坐标，然后绝对定位，这样不管Scroll到哪都能看到Loading
+});
+ */
+
+//hideLoadingPanel();
 
 function addItem() {
 $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
@@ -76,9 +108,14 @@ $("#toggle").click(function () {
 		<h1><a href="index.html">CheckNerds<span class="fade"> r</span>1.1</a></h1>
 		<p id="slogan">{{htmltag_today}}</p>
 	</div>
-	
+
+
+    <div id="loadingpanel">
+        <img src="img/calit2/loading.gif">    
+    </div>
+
 	<div id="navitabs">
-		<a id="tab_undone" class="activenavitab" href="#" onclick="$('#content').load('/ajax/render/?func=undone&template=calit2');">未完成</a><span class="hide"> | </span>
+        <a id="tab_undone" class="activenavitab" href="javascript:void(0);">未完成</a><span class="hide"> | </span>
 		<a id="tab_dailyroutine" class="navitab" href="#" onclick="$('#content').load('/ajax/render/?func=dailyroutine&template=calit2');">每日</a><span class="hide"> | </span>
 		<a id="tab_done" class="navitab" href="#" onclick="$('#content').load('/ajax/render/?func=done&template=calit2');">已做</a>
 	</div>
