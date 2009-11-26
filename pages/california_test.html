@@ -121,7 +121,7 @@ $("#inputName").keypress(function (e) {
 function addItem() {
 $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
    function(data){     
-	$('#content').load('/ajax/render/?func=undone&template=calit2');
+	$('#itemlist').load('/ajax/render/?func=undone&template=calit2');
 	$("#inputName").val("");
 	$("#add_public").val("");
 	$("#add_routine").val("");
@@ -169,7 +169,7 @@ $("#toggle").click(function () {
         <a href="/guestbook">意见反馈</a>
 		</p>
 
-        <h1><a href="index.html">CheckNerds</a></h1>
+        <h1>CheckNerds</h1>
 	</div>
 
 
@@ -177,6 +177,7 @@ $("#toggle").click(function () {
 
 
 <div id="wrap">
+	{% if UserLoggedIn %}													 
     <div id="loadingpanel">
         <img src="img/calit2/loading.gif">    
     </div>
@@ -187,9 +188,7 @@ $("#toggle").click(function () {
 		<a id="tab_dailyroutine" class="navitab" href="javascript:void(0);">每日</a><span class="hide"> | </span>
 		<a id="tab_done" class="navitab" href="javascript:void(0);">已做</a>
         <a id="tab_friends" class="navitab" href="javascript:void(0);">友邻</a>
-		{% if UserLoggedIn %}													 
 		<a id="tab_settings" class="navitab" href="javascript:void(0);">设置</a>
-		{% endif %}
 		<a id="tab_log" class="navitab" href="javascript:void(0);">记录</a>
 	</div>
 
@@ -222,16 +221,33 @@ $("#toggle").click(function () {
 
 	<div id="sidebar">
 
-		<h2>Sample updates</h2>
-		<p><strong>April 24, 2008</strong><br />
-New version released: 1024px v3.0, with minor fixes and additional styles.</p>
+		<h2>{{htmltag_today}}</h2>
+        <img src='/image?avatar={{UserID}}' align=center width=64 height=64>
+        <br />
+        <br />
+        <p>New version released: 1024px v3.0, with minor fixes and additional styles.</p>
 <ul>
     <li>xxxxx</li>
     <li>xxxxx</li>
     <li>xxxxx</li>
 		</ul>
+	
+        
 
 	</div>
+    
+    {% else %}
+    <div id="album">
+        <img src="/img/calit2/chk002.jpg"> 
+        <div id="album1">
+            受够了繁琐的项目管理？面对任务列表上的诸多任务不知所措？如何能把自己每天要做的事情培养成一种习惯？<BR><BR>
+			CheckNerds是一个简单的任务管理网站。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，CheckNerds都游刃有余<BR><BR>
+			更为重要的是CheckNerds可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
+            想太多无益，请立即开始吧！        </div>
+
+    </div>
+
+    {% endif %}
 
 	<div id="footer">
 		<p>CheckNerds, Online todo-list app. Powered by Google App Engine.<br />

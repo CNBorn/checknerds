@@ -40,7 +40,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 
 
 /* Main wrap */
-#header {top:0px; margin:0px auto;width:1010px;background-color:#88bb55;float: none;}
+#header {top:0px; margin:0px auto 0px auto;width:1011px;background-color:#88bb55;float: none;}
 #wrap {color:#404040; margin:6px auto; padding:0; width:970px;}
 #toplinks {font-size:1em; padding:20px 20px 0px 0px; text-align:right; float: right;}
 #toplinks a {color:white;}
@@ -71,6 +71,10 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 
 /* Item List(inside Content) */
 #itemlist {display: block; margin: 5px 0px 5px 0px;}
+
+/* Album (inside Content) */
+#album {width: 750px; display: block; margin: 5px 0px 5px 0px;}
+#album1 {background:url(/img/calit2/darkbg.png); width: 290px; height: 320px; float: left; display: block; padding: 10px; position:absolute; top:75px; left:180px;text-color:white}
 
 /* Footer */
 #footer {border-top:4px solid #dadada; clear:both; color:gray; font-size:0.9em; line-height:1.6em; margin:0 auto; padding:8px 0; text-align:right;}
