@@ -48,28 +48,51 @@ $('span#toggle').click(function(){
 });
 
 
+function tabs_RemoveActive() {
+    $('tab_undone').removeClass('activenavitab');
+    $('tab_dailyroutine').removeClass('activenavitab');
+    $('tab_done').removeClass('activenavitab');
+    $('tab_friends').removeClass('activenavitab');
+    $('tab_settings').removeClass('activenavitab');
+    $('tab_log').removeClass('activenavitab');
+    
+    $('tab_undone').addClass('navitab');
+    $('tab_dailyroutine').addClass('navitab');
+    $('tab_done').addClass('navitab');
+    $('tab_friends').addClass('navitab');
+    $('tab_settings').addClass('navitab');
+    $('tab_log').addClass('navitab');
+
+}
+
 //Functions for Tabs.
 $('#tab_undone').click(function() {
-    $('#content').load('/ajax/render/?func=undone&template=calit2');
+    tabs_RemoveActive();
+    $(this).addClass('activenavitab');
+    $('#itemlist').load('/ajax/render/?func=undone&template=calit2');
     showLoadingPanel();
-    $('#coutent').show('normal');
+    $('#itemlist').show('normal');
     hideLoadingPanel();
     return false;
 });
 
 
 $('#tab_dailyroutine').click(function() {
-    $('#content').load('/ajax/render/?func=dailyroutine&template=calit2');
+    tabs_RemoveActive();
+    $(this).addClass('activenavitab');
+    $('#itemlist').load('/ajax/render/?func=dailyroutine&template=calit2');
     showLoadingPanel();
-    $('#coutent').show('normal');
+    $('#itemlist').show('normal');
     hideLoadingPanel();
     return false;
 });
 
 $('#tab_done').click(function() {
-    $('#content').load('/ajax/render/?func=done&template=calit2');
+    tabs_RemoveActive();
+    $(this).addClass('activenavitab');
+    $('#itemlist').load('/ajax/render/?func=done&template=calit2');
     showLoadingPanel();
-    $('#coutent').show('normal');
+    $('#itemlist').show('normal');
     hideLoadingPanel();
     return false;
 });
@@ -133,38 +156,47 @@ $("#toggle").click(function () {
 </script>
 
 <body>
-<div id="wrap">
 
 	<div id="header">
 		<p id="toplinks">
 		{% if UserLoggedIn %}													 
-			<a href="/user/{{UserID}}/setting">设置</a> | 
             <a href="/Logout/">登出</a> | 
 		{% else %}
 			<a href="/Login/">使用Google帐户登录</a><small><a href="/docs/why_google_account">(?)</a></small> | 
 		{% endif %}
-		
 		<a href="/docs/">文档中心</a> | 
         <a href="/about">关于</a> | 
         <a href="/guestbook">意见反馈</a>
 		</p>
 
-		<h1><a href="index.html">CheckNerds<span class="fade"> r</span>1.1</a></h1>
-		<p id="slogan">{{htmltag_today}}</p>
+        <h1><a href="index.html">CheckNerds</a></h1>
 	</div>
 
 
+
+
+
+<div id="wrap">
     <div id="loadingpanel">
         <img src="img/calit2/loading.gif">    
     </div>
 
 	<div id="navitabs">
+        <span class="slogan">{{UserNickName}}</span>
         <a id="tab_undone" class="activenavitab" href="javascript:void(0);">未完成</a><span class="hide"> | </span>
 		<a id="tab_dailyroutine" class="navitab" href="javascript:void(0);">每日</a><span class="hide"> | </span>
 		<a id="tab_done" class="navitab" href="javascript:void(0);">已做</a>
+        <a id="tab_friends" class="navitab" href="javascript:void(0);">友邻</a>
+		{% if UserLoggedIn %}													 
+		<a id="tab_settings" class="navitab" href="javascript:void(0);">设置</a>
+		{% endif %}
+		<a id="tab_log" class="navitab" href="javascript:void(0);">记录</a>
 	</div>
 
-    <div id="additem">
+
+
+    <div id="content">
+        <div id="additem">
         <input type="text" id="inputName" name="name" style="width:90%;
        padding: 5px 3px 5px 10px; float: left; height: 18px; color: rgb(105, 105, 105); font-size: 1.2em;">
         <span id="toggle" title="toggle">&darr;</span>
@@ -181,21 +213,23 @@ $("#toggle").click(function () {
 			<option value="publicOnlyforFriends">仅对朋友公开</option>
 		</select>
         预计完成<input type="text" class="sl" name="inputDate" id="inputDate" style="width: 80px"  value="" /></p>
-	</div>
+        </div>
 
+        <div id="itemlist"></div>
 
-	<div id="content">
-		<p class="box"><strong>Now</strong> Loading...<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=paypal%40andreasviklund%2ecom&amp;item_name=Donations%20for%20andreasviklund%2ecom&amp;item_number=2007&amp;no_shipping=0&amp;cn=Comments%20%28optional%29&amp;tax=0&amp;currency_code=USD&amp;lc=SE&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8">donation</a> of any amount through PayPal. All donations are used to develop new templates and to keep the template site online. Top donors will get their name and link listed on the site (if wanted). Advertising options are also available. Contact me for more information!</p>
+		<p class="box"><strong>Now</strong> Loading...<a href="">donation</a> of any amount through PayPal.</p>
 	</div>
 
 	<div id="sidebar">
-		<h2>Action:</h2>
-		<ul>
-		</ul>
 
 		<h2>Sample updates</h2>
 		<p><strong>April 24, 2008</strong><br />
 New version released: 1024px v3.0, with minor fixes and additional styles.</p>
+<ul>
+    <li>xxxxx</li>
+    <li>xxxxx</li>
+    <li>xxxxx</li>
+		</ul>
 
 	</div>
 
