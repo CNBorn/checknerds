@@ -30,9 +30,9 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 
 /* Navitabs menu */
 #navitabs {clear:both;line-height: 3em;margin: 0px 5px 15px auto;}
-.navitab {background:#f0f0f0 url(/img/calit2/corner.gif) top right no-repeat; border-bottom:1px solid #fff; border-left:1px solid #fff; font-size:1.1em; margin:0 0 4px; padding:4px 8px; text-decoration:none;}
+.navitab {background:#f0f0f0 url(/img/calit2/corner.gif) top right no-repeat; border-bottom:1px solid #fff; border-left:1px solid #fff; font-size:1.3em; margin:0 0 4px; padding:4px 8px; text-decoration:none;}
 .navitab:hover {background:#e0e0e0 url(/img/calit2/corner.gif) top right no-repeat; border-bottom:1px solid #fff; text-decoration:none;}
-.activenavitab {background:#505050 url(/img/calit2/corner.gif) top right no-repeat; color:#fff; font-size:1.1em; margin:0 0 5px; padding:4px 8px 5px; text-decoration:none;}
+.activenavitab {background:#505050 url(/img/calit2/corner.gif) top right no-repeat; color:#fff; font-size:1.3em; margin:0 0 5px; padding:4px 8px 5px; text-decoration:none;}
 .activenavitab:hover {color:#fff; text-decoration:none;}
 #navitabs a.navitab {font-weight:400;}
 
@@ -62,9 +62,9 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #content {float:right; line-height:1.5em; margin:0; padding:0; text-align:left; width:750px;}
 #contentalt {float:left; line-height:1.5em; margin-right:20px; padding:0; text-align:left; width:750px;}
 #content h3,#contentalt h3 {margin:10px 0 8px;}
-#content ul li {font-size:1.2em;list-style: none;margin: 0px 0 0px -80px;}
-#content ul li.even {background-color: #fff;border-bottom-width: 1px;border-bottom-style: dashed;border-bottom-color: #d0d0d0;}
-#content ul li.odd {background-color: #fafafb;border-bottom-width: 1px;border-bottom-style: dashed;border-bottom-color: #e0e0e0;}
+#content ul li {font-size:1.6em;list-style: none;margin: 0px 0 0px -80px;line-height:2.2em;}
+#content ul li.even {background-color: #fff;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #d0d0d0;}
+#content ul li.odd {background-color: #fafafb;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e0e0e0;}
 #content ul li:hover {background: #FFF url(/img/calit2/tr_bck.gif) repeat}
 
 
@@ -72,6 +72,15 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #footer {border-top:4px solid #dadada; clear:both; color:gray; font-size:0.9em; line-height:1.6em; margin:0 auto; padding:8px 0; text-align:right;}
 #footer p {margin:0; padding:0;}
 #footer a {color:#808080;}
+
+/*Toggle Button*/
+span.down {
+    background: #bbb;
+    border-top: solid 2px #777;
+    border-left: solid 2px #777;
+    border-bottom:solid 2px  #eaeaea;
+    border-right: solid 2px #eaeaea;
+    }
 
 /* Additional classes */
 .box {background:#88bb55; border:1px solid #c8c8c8; color:#fff; font-size:0.9em; line-height:1.4em; padding:10px 10px 10px 13px;}
@@ -87,3 +96,4 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 .gray {color:gray;}
 .photo {background:#fff; border:1px solid #bababa; margin:6px 18px 2px 5px; padding:2px;}
 .hide {display:none;}
+.date {color:gray;font-size:0.8em;}
