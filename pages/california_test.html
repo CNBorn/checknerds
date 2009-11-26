@@ -22,9 +22,22 @@ $('#tab_dailyroutine').
 $('#content').load('/ajax/render/?func=done&template=calit2');
  */
 
-$(function(){     
+$(function(){
+
+
+        //Common function for centering a div.
+        //http://stackoverflow.com/questions/210717/what-is-the-best-way-to-center-a-div-on-the-screen-using-jquery/
+jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top", ( $(window).height() - this.height() ) / 3+$(window).scrollTop() + "px");
+    this.css("left", ( $(window).width() - this.width() ) / 2+$(window).scrollLeft() + "px");
+    return this;
+}
+
+
 
 function showLoadingPanel() {
+    $("#loadingpanel").center();
     $("#loadingpanel").fadeIn('normal');
 }
 
@@ -33,15 +46,34 @@ function hideLoadingPanel() {
 }
 
 
+hideLoadingPanel();
+
 $('#tab_undone').click(function() {
-    showLoadingPanel();
     $('#content').load('/ajax/render/?func=undone&template=calit2');
+    showLoadingPanel();
     $('#coutent').show('normal');
     hideLoadingPanel();
     return false;
 });
 
 
+$('#tab_dailyroutine').click(function() {
+    $('#content').load('/ajax/render/?func=dailyroutine&template=calit2');
+    showLoadingPanel();
+    $('#coutent').show('normal');
+    hideLoadingPanel();
+    return false;
+});
+
+$('#tab_done').click(function() {
+    $('#content').load('/ajax/render/?func=done&template=calit2');
+    showLoadingPanel();
+    $('#coutent').show('normal');
+    hideLoadingPanel();
+    return false;
+});
+
+//End of the $ function.
 });
 
 
@@ -54,7 +86,6 @@ $("#loadingpanel").ajaxStart(function()
 });
  */
 
-//hideLoadingPanel();
 
 function addItem() {
 $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
@@ -116,8 +147,8 @@ $("#toggle").click(function () {
 
 	<div id="navitabs">
         <a id="tab_undone" class="activenavitab" href="javascript:void(0);">未完成</a><span class="hide"> | </span>
-		<a id="tab_dailyroutine" class="navitab" href="#" onclick="$('#content').load('/ajax/render/?func=dailyroutine&template=calit2');">每日</a><span class="hide"> | </span>
-		<a id="tab_done" class="navitab" href="#" onclick="$('#content').load('/ajax/render/?func=done&template=calit2');">已做</a>
+		<a id="tab_dailyroutine" class="navitab" href="javascript:void(0);">每日</a><span class="hide"> | </span>
+		<a id="tab_done" class="navitab" href="javascript:void(0);">已做</a>
 	</div>
 
 	<div id="additem">
