@@ -12,7 +12,7 @@
 <script type="text/javascript" src="/js/datepicker.js"></script>
 <!-- from former CheckNerds -->
 	<link rel="stylesheet" type="text/css" href="{{PrefixCSSdir}}css/calit2.css" title="1024px" media="screen,projection" />
-	<title>CheckNerds California test</title>
+	<title>CheckNerds Beta</title>
 </head>
 <script type="text/javascript">
 /*
@@ -69,7 +69,7 @@ function tabs_RemoveActive() {
 $('#tab_undone').click(function() {
     tabs_RemoveActive();
     $(this).addClass('activenavitab');
-    $('#itemlist').load('/ajax/render/?func=undone&template=calit2');
+    $('#itemlist').load('/ajax/render/?func=undone&template=calit2', initHover);
     showLoadingPanel();
     $('#itemlist').show('normal');
     hideLoadingPanel();
@@ -80,7 +80,7 @@ $('#tab_undone').click(function() {
 $('#tab_dailyroutine').click(function() {
     tabs_RemoveActive();
     $(this).addClass('activenavitab');
-    $('#itemlist').load('/ajax/render/?func=dailyroutine&template=calit2');
+    $('#itemlist').load('/ajax/render/?func=dailyroutine&template=calit2', initHover);
     showLoadingPanel();
     $('#itemlist').show('normal');
     hideLoadingPanel();
@@ -90,9 +90,9 @@ $('#tab_dailyroutine').click(function() {
 $('#tab_done').click(function() {
     tabs_RemoveActive();
     $(this).addClass('activenavitab');
-    $('#itemlist').load('/ajax/render/?func=done&template=calit2');
+    $('#itemlist').load('/ajax/render/?func=done&template=calit2',initHover);
     showLoadingPanel();
-    $('#itemlist').show('normal');
+    //$('#itemlist').show('normal');
     hideLoadingPanel();
     return false;
 });
@@ -134,13 +134,20 @@ $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val()
 }
 
 
+function initHover(){
+//MouseOver Effect
+    $("span.slogan").mouseover(function(){
+    var tag_mouseover = false;
+    setTimeout(function(){ 
+        $("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');
+        //tag_mouseover = true;
+        }, 1500);
+});
 
-
-
-
-
-
-
+$("#itemlist li").hover(function(){
+    $("#sidebar").load('/ajax/sidebar/?obj=item&id=318&template=calit2')
+});
+}
 
 //End of the $ function.
 });
@@ -150,7 +157,7 @@ $(document).ready(function() {
 $("#additem_more").toggle("fast");
 $("#toggle").click(function () {
       $("#additem_more").toggle("fast");
-    });   
+      });   
 })
 
 </script>

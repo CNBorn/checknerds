@@ -2,43 +2,50 @@
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 1.0, codename Nevada
+# version 1.1, codename California
 # - ajax.py
 # Author: CNBorn, 2008-2009
-# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+# http://cnborn.net, http://twitter.com/CNBorn
 #
 # Ajax Pages & Functions Complex
 #
 # **************************************************************** 
 
-
-#from django.conf import settings
-#settings._target = None
 import os
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-
 import cgi
+import datetime
 import wsgiref.handlers
+import urllib
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 
-import datetime, time
-import string
 from google.appengine.ext.webapp import template
-from google.appengine.api import images
+from django.utils import simplejson
 
 from modules import *
 from base import *
 import logging
 
-
-import urllib
-import random
-from django.utils import simplejson
-
 import tarsusaCore
 import memcache
+
+
+def user_loggingin(function):
+    '''
+    Decorator:
+        to check with UserLoggingIn
+    '''
+    def user_loggingin_warpper(tRequestHandler, *args, **kw):
+        if tRequestHandler.chk_login():
+            #CurrentUser = tRequestHadler.get_user_db()
+            return function(tRequestHandler, *args, **kw)
+        else:
+            return tRequestHandler.write("") #Write Nothing
+    return user_loggingin_warpper
+
+
+
 
 class getdailyroutine(tarsusaRequestHandler):
 
@@ -544,6 +551,39 @@ class render(tarsusaRequestHandler):
                 pass
 
 
+class sidebar(tarsusaRequestHandler):
+    @user_loggingin
+    def get(self):
+        ''' Ajax Functions suites for multiple usage for Calit2 template in sidebar.'''
+        CurrentUser = self.get_user_db()
+        template_values = {}
+
+        obj = self.request.get("obj")
+        template_name = self.request.get("template")
+
+        if obj == 'user':
+            #Cache is a MUST!
+            UserInTemplate = CurrentUser
+            template_values['UserInTemplate'] = UserInTemplate
+        elif obj == 'item':
+            try:
+                itemid = self.request.get("id")
+                ItemInTemplate = tarsusaItem.get_by_id(int(itemid))
+                template_values['ItemInTemplate'] = ItemInTemplate
+            except:
+                self.write("")
+
+        template_values['UserNickName'] = cgi.escape(CurrentUser.dispname)
+        template_values['UserID'] = CurrentUser.key().id()
+        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_sidebar_%s.html' % (template_name, obj))
+        try:
+            self.write(template.render(path, template_values))
+        except:
+            ''' Get a unknown func by malicious user.'''
+            self.write("")
+
+
+
 def main():
     application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
                                         ('/ajax/frontpage_getdailyroutine_yesterday', getdailyroutine_yesterday),
@@ -557,6 +597,7 @@ def main():
                                         ('/ajax/getjson_usertodoitems', getjson_usertodoitems),
                                         ('/ajax/getjson_userdoneitems', getjson_userdoneitems),
                                         (r'/ajax/render/.*', render),
+                                        (r'/ajax/sidebar/.*', sidebar),
                                         ('/ajax/admin_runpatch/.+', admin_runpatch),
                                       ('/ajax/.+',ajax_error)],
                                        debug=True)
