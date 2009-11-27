@@ -11,6 +11,9 @@
 <link rel="stylesheet" media="screen" type="text/css" href="/css/datepicker.css" />
 <script type="text/javascript" src="/js/datepicker.js"></script>
 <!-- from former CheckNerds -->
+<script type="text/javascript" src="/js/jquery.hoverIntent.minified.js"></script>
+
+
 	<link rel="stylesheet" type="text/css" href="{{PrefixCSSdir}}css/calit2.css" title="1024px" media="screen,projection" />
 	<title>CheckNerds Beta</title>
 </head>
@@ -135,18 +138,34 @@ $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val()
 
 
 function initHover(){
-//MouseOver Effect
-    $("span.slogan").mouseover(function(){
-    var tag_mouseover = false;
-    setTimeout(function(){ 
-        $("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');
-        //tag_mouseover = true;
-        }, 1500);
-});
 
-$("#itemlist li").hover(function(){
-    $("#sidebar").load('/ajax/sidebar/?obj=item&id=318&template=calit2')
-});
+    function sidebarshow(){$("#sidebar").show();}
+    function sidebarloaduser(){$("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');}
+    function sidebarloaditem(){$("#sidebar").load('/ajax/sidebar/?obj=item&id=' + $(this).attr('itemid') + '&template=calit2');}
+
+
+var config = {    
+     sensitivity: 3, // number = sensitivity threshold (must be 1 or higher)    
+     interval: 200, // number = milliseconds for onMouseOver polling interval    
+     over:sidebarloaduser,
+     timeout: 500, // number = milliseconds delay before onMouseOut    
+     out: sidebarshow,
+};
+
+$("#navitabs").hoverIntent( config );
+
+//MouseOver Effect
+var config2 = {    
+     sensitivity: 3, // number = sensitivity threshold (must be 1 or higher)    
+     interval: 250, // number = milliseconds for onMouseOver polling interval    
+     over:sidebarloaditem,
+     timeout: 500, // number = milliseconds delay before onMouseOut    
+     out: sidebarshow,
+};
+
+$("#itemlist li").hoverIntent( config2 );
+
+
 }
 
 //End of the $ function.
