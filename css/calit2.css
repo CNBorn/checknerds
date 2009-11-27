@@ -8,7 +8,7 @@ body {background:url(/img/calit2/background.gif) repeat-y top center #fff; color
 a {color:#88bb55; font-weight:700; text-decoration:none;}
 a:hover {text-decoration:underline;}
 a img {border:0;}
-p {margin:0 0 18px 10px;}
+p {margin:0 0 18px 0px;}
 ul,ol,dl {font-size:0.9em; margin:2px 0 16px 35px;}
 ul ul,ol ol {margin:4px 0 4px 35px;}
 blockquote {border:1px solid #dadada; font-size:0.9em; margin:20px 10px; padding:8px;}
@@ -73,8 +73,9 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #itemlist {display: block; margin: 5px 0px 5px 0px;}
 
 /* Album (inside Content) */
-#album {width: 750px; display: block; margin: 5px 0px 5px 0px;}
-#album1 {background:url(/img/calit2/darkbg.png); width: 290px; height: 320px; float: left; display: block; padding: 10px; position:absolute; top:75px; left:180px;text-color:white}
+#album {width: 750px; margin: 5px 0px 5px 0px;}
+#album1 {background:url(/img/calit2/darkbg.png); width: 290px; height: 320px; float: left; padding: 10px; position:relative; top:-370px; left:35px;}
+#album1 p {font-size:1.2em; line-height: 1.5em; color:white; margin:0 0 18px 0px;}
 
 /* Footer */
 #footer {border-top:4px solid #dadada; clear:both; color:gray; font-size:0.9em; line-height:1.6em; margin:0 auto; padding:8px 0; text-align:right;}

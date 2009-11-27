@@ -565,6 +565,9 @@ class sidebar(tarsusaRequestHandler):
             #Cache is a MUST!
             UserInTemplate = CurrentUser
             template_values['UserInTemplate'] = UserInTemplate
+            cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser.key().id())
+            template_values['tarsusaItemCollection_Statstics'] = cachedUserItemStats
+
         elif obj == 'item':
             try:
                 itemid = self.request.get("id")
@@ -575,6 +578,7 @@ class sidebar(tarsusaRequestHandler):
 
         template_values['UserNickName'] = cgi.escape(CurrentUser.dispname)
         template_values['UserID'] = CurrentUser.key().id()
+        template_values['htmltag_today'] = datetime.date.today() 
         path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_sidebar_%s.html' % (template_name, obj))
         try:
             self.write(template.render(path, template_values))

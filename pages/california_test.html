@@ -103,6 +103,7 @@ $('#tab_done').click(function() {
 //Functions to run during loading..
 hideLoadingPanel();
 $('#tab_undone').click();
+$("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');
 
 
 
@@ -139,22 +140,23 @@ $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val()
 
 function initHover(){
 
+    //MouseOver Effect
+    //Using jQuery hoverIntent plugin.
+    //To offer the hover/pause function.
     function sidebarshow(){$("#sidebar").show();}
     function sidebarloaduser(){$("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');}
     function sidebarloaditem(){$("#sidebar").load('/ajax/sidebar/?obj=item&id=' + $(this).attr('itemid') + '&template=calit2');}
 
-
 var config = {    
-     sensitivity: 3, // number = sensitivity threshold (must be 1 or higher)    
-     interval: 200, // number = milliseconds for onMouseOver polling interval    
+     sensitivity: 3, 
+     interval: 200,
      over:sidebarloaduser,
-     timeout: 500, // number = milliseconds delay before onMouseOut    
+     timeout: 500,
      out: sidebarshow,
 };
 
 $("#navitabs").hoverIntent( config );
 
-//MouseOver Effect
 var config2 = {    
      sensitivity: 3, // number = sensitivity threshold (must be 1 or higher)    
      interval: 250, // number = milliseconds for onMouseOver polling interval    
@@ -242,42 +244,25 @@ $("#toggle").click(function () {
 
         <div id="itemlist"></div>
 
-		<p class="box"><strong>Now</strong> Loading...<a href="">donation</a> of any amount through PayPal.</p>
+		<p class="box">This is a <strong>Beta</strong> version of CheckNerds</p>
 	</div>
 
-	<div id="sidebar">
-
-		<h2>{{htmltag_today}}</h2>
-        <img src='/image?avatar={{UserID}}' align=center width=64 height=64>
-        <br />
-        <br />
-        <p>New version released: 1024px v3.0, with minor fixes and additional styles.</p>
-<ul>
-    <li>xxxxx</li>
-    <li>xxxxx</li>
-    <li>xxxxx</li>
-		</ul>
-	
-        
-
-	</div>
+	<div id="sidebar"></div>
     
     {% else %}
     <div id="album">
         <img src="/img/calit2/chk002.jpg"> 
         <div id="album1">
-            受够了繁琐的项目管理？面对任务列表上的诸多任务不知所措？如何能把自己每天要做的事情培养成一种习惯？<BR><BR>
+            <p>受够了繁琐的项目管理？面对任务列表上的诸多任务不知所措？如何能把自己每天要做的事情培养成一种习惯？<BR><BR>
 			CheckNerds是一个简单的任务管理网站。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，CheckNerds都游刃有余<BR><BR>
-			更为重要的是CheckNerds可以提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<BR><BR>
-            想太多无益，请立即开始吧！        </div>
-
+            想太多无益，请立即开始吧！</p>
+        </div>
     </div>
 
     {% endif %}
 
 	<div id="footer">
-		<p>CheckNerds, Online todo-list app. Powered by Google App Engine.<br />
-&copy; 2008-2009 <a href="http://cnborn.net">CNBorn</a> | Design by Stylish <a href="http://www.stylishtemplate.com/">Website Templates</a>, Mod by CNBorn</p>
+		<p>&copy; 2008-2009. Powered by Google App Engine, by <a href="http://cnborn.net">CNBorn</a> | Design by <a href="http://www.stylishtemplate.com/">Stylish</a>, CNBorn</p>
 	</div>
 
 </div>
