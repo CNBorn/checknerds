@@ -3,7 +3,7 @@
 			{% ifequal tarsusaItem_eachItem.routine 'none' %}
 				{% ifequal tarsusaItem_eachItem.done 0 %}
 					<li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
-					<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_eachItem.key.id}}')">
+					<input type="checkbox" name="checkboxname" onchange="doneItem('/doneItem/{{tarsusaItem_eachItem.id}}')">
 					<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
 					<span class="date">{{ tarsusaItem_eachItem.expectdate|escape }}</span>
 					 </li>
@@ -16,7 +16,7 @@
 			{% else %}		 
 				<li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
 				{% ifequal tarsusaItem_eachItem.done 0 %}
-				<input type="checkbox" name="checkboxname" onchange="ajax_doneItem('/doneItem/{{tarsusaItem_eachItem.key.id}}')">
+				<input type="checkbox" name="checkboxname" onchange="doneItem('/doneItem/{{tarsusaItem_eachItem.id}}')">
 				{% endifequal %}
 				<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
 				<span class="date">@every {{tarsusaItem_eachItem.routine}}</span>
@@ -24,4 +24,26 @@
 			{% endifequal %}
 	{% endfor %}	
 	</ul>
+    <script type="text/javascript"> 
+function undoneItem(strLink){
+        $.ajax({type: "GET", url: strLink ,success: function(msg){}}); 
+        return false;
+    }
+
+function tab_flick() {
+    $("#tab_done").animate({ 
+        background: "#000000",
+        opacity: 0.4,
+        }, 500 ).animate({
+        opacity: 1.0}, 500);
+    $("#tab_done").css({background:""});
+}
+
+function doneItem(strLink){
+    $.ajax({type: "GET", url: strLink ,success: function(msg){} }); 
+    $('#tab_undone').click();
+    tab_flick();
+    return false;
+    }
+</script>
 

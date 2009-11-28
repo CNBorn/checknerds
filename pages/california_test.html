@@ -52,19 +52,19 @@ $('span#toggle').click(function(){
 
 
 function tabs_RemoveActive() {
-    $('tab_undone').removeClass('activenavitab');
+    $('tab_undone').addClass('navitab');
     $('tab_dailyroutine').removeClass('activenavitab');
     $('tab_done').removeClass('activenavitab');
     $('tab_friends').removeClass('activenavitab');
     $('tab_settings').removeClass('activenavitab');
     $('tab_log').removeClass('activenavitab');
     
-    $('tab_undone').addClass('navitab');
+   /* $('tab_undone').addClass('navitab');
     $('tab_dailyroutine').addClass('navitab');
     $('tab_done').addClass('navitab');
     $('tab_friends').addClass('navitab');
     $('tab_settings').addClass('navitab');
-    $('tab_log').addClass('navitab');
+    $('tab_log').addClass('navitab');*/
 
 }
 
@@ -136,7 +136,6 @@ $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val()
    , "success" 
 );
 }
-
 
 function initHover(){
 
