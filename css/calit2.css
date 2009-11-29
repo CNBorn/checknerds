@@ -41,7 +41,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 
 /* Main wrap */
 #header {top:0px; margin:0px auto 0px auto;width:1011px;background-color:#88bb55;float: none;}
-#wrap {color:#404040; margin:6px auto; padding:0; width:970px;}
+#wrap {color:#404040; margin:6px auto; padding:0; width:970px;min-height: 500px;}
 #toplinks {font-size:1em; padding:20px 20px 0px 0px; text-align:right; float: right;}
 #toplinks a {color:white;}
 
@@ -74,12 +74,12 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #itemlist {display: block; margin: 5px 0px 5px 0px;}
 
 /* Album (inside Content) */
-#album {width: 750px; margin: 5px 0px 5px 0px;}
-#album1 {background:url(/img/calit2/darkbg.png); width: 290px; height: 320px; float: left; padding: 10px; position:relative; top:-370px; left:35px;}
+#album {width: 750px; margin: 5px 0px 5px 0px;min-height:385px;}
+#album1 {background:url(/img/calit2/darkbg.png); width: 290px; height: 320px; float: left; padding: 10px; position:relative; top:-370px; left:35px;z-index:99;}
 #album1 p {font-size:1.2em; line-height: 1.5em; color:white; margin:0 0 18px 0px;}
 
 /* Footer */
-#footer {border-top:4px solid #dadada; clear:both; color:gray; font-size:0.9em; line-height:1.6em; margin:0 auto; padding:8px 0; text-align:right;}
+#footer {border-top:4px solid #dadada; clear:both; color:gray; font-size:0.9em; line-height:1.6em; margin:5px auto; padding:8px 0; text-align:right;}
 #footer p {margin:0; padding:0;}
 #footer a {color:#808080;}
 
