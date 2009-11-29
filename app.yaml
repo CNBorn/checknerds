@@ -101,7 +101,7 @@ handlers:
 - url: /flushcache
   script: miscellaneous.py
 
-- url: /california
+- url: /beta
   script: miscellaneous.py
 
 - url: /backend/.+

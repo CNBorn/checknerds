@@ -293,7 +293,7 @@ def main():
                                        ('/labs.+', LabsPage),
                                        ('/statstics',StatsticsPage),
                                        ('/flushcache', FlushCache),
-                                       ('/california', CaliforniaPage),
+                                       ('/beta', CaliforniaPage),
                                        ('/guestbook', GuestbookPage)],
                                        debug=True)
     wsgiref.handlers.CGIHandler().run(application)

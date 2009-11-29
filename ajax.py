@@ -31,18 +31,18 @@ import tarsusaCore
 import memcache
 
 
-def user_loggingin(function):
+def userloggedin_or_403(function):
     '''
     Decorator:
         to check with UserLoggingIn
     '''
-    def user_loggingin_warpper(tRequestHandler, *args, **kw):
+    def user_loggedin_warpper(tRequestHandler, *args, **kw):
         if tRequestHandler.chk_login():
             #CurrentUser = tRequestHadler.get_user_db()
             return function(tRequestHandler, *args, **kw)
         else:
-            return tRequestHandler.write("") #Write Nothing
-    return user_loggingin_warpper
+        	return tRequestHandler.response_status(403,'You are not logged in.',False)
+    return user_loggedin_warpper
 
 
 
@@ -518,41 +518,34 @@ class admin_runpatch(tarsusaRequestHandler):
         #self.redirect('/')
 
 class render(tarsusaRequestHandler):
+    @userloggedin_or_403
     def get(self):
-        ''' New Ajax Functions suites for multiple usage for new Calit2 Template. '''
-
+        ''' New Ajax Functions suites for multiple usage for new calit2 Template. '''
         func = self.request.get("func")
-        templatename = self.request.get("template")
+        #template_name = self.request.get("template")
+        template_name = "calit2"
 
-        # New CheckLogin code built in tarsusaRequestHandler 
-        if self.chk_login():
-            CurrentUser = self.get_user_db()
+        CurrentUser = self.get_user_db()
 
-            if func == "done":
-                tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
-            elif func == "undone":
-                tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False)
-            elif func == "dailyroutine":
-                tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
+        if func == "done":
+            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
+        elif func == "undone":
+            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False)
+        elif func == "dailyroutine":
+            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
 
-            template_values = {
-                'UserNickName': cgi.escape(CurrentUser.dispname),
-                'UserID': CurrentUser.key().id(),
-                'func': func,
-                'tarsusaItemCollection_AjaxUserItems': tarsusaItemCollection_AjaxUserItems,
-            }
-            path = os.path.join(os.path.dirname(__file__), 'pages/calit2_ajaxpage_fp_render_items.html')
-            self.write(template.render(path, template_values))
-
-        else:
-            try:
-                self.write(func+" "+template)
-            except:
-                pass
+        template_values = {
+            'UserNickName': cgi.escape(CurrentUser.dispname),
+            'UserID': CurrentUser.key().id(),
+            'func': func,
+            'tarsusaItemCollection_AjaxUserItems': tarsusaItemCollection_AjaxUserItems,
+        }
+        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_content_%s.html' % (template_name, "itemlist"))
+        self.write(template.render(path, template_values))
 
 
 class sidebar(tarsusaRequestHandler):
-    @user_loggingin
+    @userloggedin_or_403
     def get(self):
         ''' Ajax Functions suites for multiple usage for Calit2 template in sidebar.'''
         CurrentUser = self.get_user_db()
