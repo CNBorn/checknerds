@@ -68,6 +68,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 
 /* Add Item (inside Content) */
 #additem {display: block; margin: 5px 0px 5px 0px;}
+#additem_more {display: block;margin: 45px 0px 5px 0px;}
 
 /* Item List(inside Content) */
 #itemlist {display: block; margin: 5px 0px 5px 0px;}
@@ -83,13 +84,22 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #footer a {color:#808080;}
 
 /*Toggle Button*/
-span.down {
-    background: #bbb;
-    border-top: solid 2px #777;
-    border-left: solid 2px #777;
-    border-bottom:solid 2px  #eaeaea;
-    border-right: solid 2px #eaeaea;
-    }
+#toggle{
+    width: 45px;
+    height: 28px;
+    background: #E0E0E0;
+    text-align: center;
+    line-height: 28px;
+    font-size: 1.4em;
+    float: right;
+    display: block;
+    margin:0px 1px 0px 1px; padding:2px;
+}
+#toggle.down {
+    background:#505050 ; 
+    color: #FFF;
+    text-decoration:none;
+}
 
 /* Additional classes */
 .box {background:#88bb55; border:1px solid #c8c8c8; color:#fff; font-size:0.9em; line-height:1.4em; padding:10px 10px 10px 13px;}

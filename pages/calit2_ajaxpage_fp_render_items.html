@@ -3,12 +3,13 @@
 			{% ifequal tarsusaItem_eachItem.routine 'none' %}
 				{% ifequal tarsusaItem_eachItem.done 0 %}
 					<li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
-					<input type="checkbox" name="checkboxname" onchange="doneItem('/doneItem/{{tarsusaItem_eachItem.id}}')">
+					<input type="checkbox" name="cbdone" onchange="doneItem('/doneItem/{{tarsusaItem_eachItem.id}}')">
 					<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
 					<span class="date">{{ tarsusaItem_eachItem.expectdate|escape }}</span>
 					 </li>
 				{% else %}
 					<li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+					<input type="checkbox" name="cbundone" checked=false onchange="undoneItem('/undoneItem/{{tarsusaItem_eachItem.id}}')">
 					<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
 					<span class="date">@{{ tarsusaItem_eachItem.donedate|escape }}</span>
 					 </li>
@@ -26,23 +27,26 @@
 	</ul>
     <script type="text/javascript"> 
 function undoneItem(strLink){
-        $.ajax({type: "GET", url: strLink ,success: function(msg){}}); 
+        $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_undone") }); 
+        $('#tab_done').click();
         return false;
     }
 
-function tab_flick() {
-    $("#tab_done").animate({ 
+function tab_flick(strdivname) {
+    divname = "#" + strdivname;
+    $(divname).animate({ 
         background: "#000000",
         opacity: 0.4,
         }, 500 ).animate({
         opacity: 1.0}, 500);
-    $("#tab_done").css({background:""});
+    $(divname).css({background:""});
 }
 
 function doneItem(strLink){
-    $.ajax({type: "GET", url: strLink ,success: function(msg){} }); 
+    //$.ajax({type: "GET", url: strLink ,success: function(){$('#tab_undone').click();}}); 
+    //tab_flick("tab_done");
+    $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_done")}); 
     $('#tab_undone').click();
-    tab_flick();
     return false;
     }
 </script>

@@ -15,15 +15,9 @@
 
 
 	<link rel="stylesheet" type="text/css" href="{{PrefixCSSdir}}css/calit2.css" title="1024px" media="screen,projection" />
-	<title>CheckNerds Beta</title>
+	<title>CheckNerds(beta)</title>
 </head>
 <script type="text/javascript">
-/*
-Planning to have a js function here to handle the tab->activetab issue.
-$('#content').load('/ajax/frontpage_getfriendstats');
-$('#tab_dailyroutine').
-$('#content').load('/ajax/render/?func=done&template=calit2');
- */
 
 $(function(){
 //Common function for centering a div.
@@ -46,56 +40,53 @@ function hideLoadingPanel() {
 
 
 //Controls the Toggle.
-$('span#toggle').click(function(){
+$('#toggle').click(function(){
     $(this).toggleClass("down");
 });
 
 
 function tabs_RemoveActive() {
-    $('tab_undone').addClass('navitab');
-    $('tab_dailyroutine').removeClass('activenavitab');
-    $('tab_done').removeClass('activenavitab');
-    $('tab_friends').removeClass('activenavitab');
-    $('tab_settings').removeClass('activenavitab');
-    $('tab_log').removeClass('activenavitab');
-    
-   /* $('tab_undone').addClass('navitab');
-    $('tab_dailyroutine').addClass('navitab');
-    $('tab_done').addClass('navitab');
-    $('tab_friends').addClass('navitab');
-    $('tab_settings').addClass('navitab');
-    $('tab_log').addClass('navitab');*/
-
+    var tab_list = ['#tab_undone', '#tab_dailyroutine', '#tab_done', '#tab_friends', '#tab_log'];
+    for (i=0;i<=tab_list.length - 1;i++){
+        if ($(tab_list[i]).hasClass("activenavitab")){
+            $(tab_list[i]).removeClass('activenavitab');
+        }
+        if (!$(tab_list[i]).hasClass("navitab")){
+            $(tab_list[i]).addClass('navitab');
+        }
+    }
 }
+
+function tabs_MakeActive(obj_div)
+{
+    tabs_RemoveActive();
+    str_divname = "#" + obj_div.id;
+    $(str_divname).removeClass("navitab");
+    $(str_divname).addClass('activenavitab');
+}
+
 
 //Functions for Tabs.
 $('#tab_undone').click(function() {
-    tabs_RemoveActive();
-    $(this).addClass('activenavitab');
+    tabs_MakeActive(this);
     $('#itemlist').load('/ajax/render/?func=undone&template=calit2', initHover);
     showLoadingPanel();
-    $('#itemlist').show('normal');
     hideLoadingPanel();
     return false;
 });
 
-
 $('#tab_dailyroutine').click(function() {
-    tabs_RemoveActive();
-    $(this).addClass('activenavitab');
+    tabs_MakeActive(this);
     $('#itemlist').load('/ajax/render/?func=dailyroutine&template=calit2', initHover);
     showLoadingPanel();
-    $('#itemlist').show('normal');
     hideLoadingPanel();
     return false;
 });
 
 $('#tab_done').click(function() {
-    tabs_RemoveActive();
-    $(this).addClass('activenavitab');
+    tabs_MakeActive(this);
     $('#itemlist').load('/ajax/render/?func=done&template=calit2',initHover);
     showLoadingPanel();
-    //$('#itemlist').show('normal');
     hideLoadingPanel();
     return false;
 });
@@ -174,10 +165,17 @@ $("#itemlist li").hoverIntent( config2 );
 
 
 $(document).ready(function() {
-$("#additem_more").toggle("fast");
-$("#toggle").click(function () {
-      $("#additem_more").toggle("fast");
-      });   
+    $("#additem_more").toggle("fast");
+    $('#toggle').html("&darr;");
+
+    $("#toggle").toggle(function(){
+        $("#additem_more").show("fast");
+        $('#toggle').html("&empty;");
+        },function(){
+        $("#additem_more").hide("fast");
+        $('#toggle').html("&darr;");
+        });
+        
 })
 
 </script>
@@ -185,7 +183,8 @@ $("#toggle").click(function () {
 <body>
 
 	<div id="header">
-		<p id="toplinks">
+        <p id="toplinks">
+        (beta) | 
 		{% if UserLoggedIn %}													 
             <a href="/Logout/">登出</a> | 
             <a href="/">设置</a> | 
@@ -211,11 +210,10 @@ $("#toggle").click(function () {
 
 	<div id="navitabs">
         <span class="slogan">{{UserNickName}}</span>
-        <a id="tab_undone" class="activenavitab" href="javascript:void(0);">未完成</a><span class="hide"> | </span>
+        <a id="tab_undone" class="navitab activenavitab" href="javascript:void(0);">未完成</a><span class="hide"> | </span>
 		<a id="tab_dailyroutine" class="navitab" href="javascript:void(0);">每日</a><span class="hide"> | </span>
 		<a id="tab_done" class="navitab" href="javascript:void(0);">已做</a>
         <a id="tab_friends" class="navitab" href="javascript:void(0);">友邻</a>
-		<a id="tab_settings" class="navitab" href="javascript:void(0);">设置</a>
 		<a id="tab_log" class="navitab" href="javascript:void(0);">记录</a>
 	</div>
 
@@ -223,23 +221,28 @@ $("#toggle").click(function () {
 
     <div id="content">
         <div id="additem">
-        <input type="text" id="inputName" name="name" style="width:90%;
-       padding: 5px 3px 5px 10px; float: left; height: 18px; color: rgb(105, 105, 105); font-size: 1.2em;">
-        <span id="toggle" title="toggle">&darr;</span>
-
-		<p id="additem_more">内容<textarea name="comment" id="add_comment" rows="2" style="width:315px" wrap="PHYSICAL"></textarea><br />
-		类别<input type="text" name="tags" id="add_tags" style="width: 180px" value="">
-		<select name="routine" id="add_routine">
-			<option value="none" selected="selected" >非坚持性任务</option>
-			<option value="daily">每天</option>
-        </select>
-		<select name="public" id="add_public">
-			<option selected="selected" value="private">不公开</option>
-			<option value="public">完全公开</option>
-			<option value="publicOnlyforFriends">仅对朋友公开</option>
-		</select>
-        预计完成<input type="text" class="sl" name="inputDate" id="inputDate" style="width: 80px"  value="" /></p>
+            <input type="text" id="inputName" name="name" style="width:90%;
+           padding: 5px 3px 5px 10px; float: left; height: 18px; color: rgb(105, 105, 105); font-size: 1.2em;">
+           <div id="toggle">&darr;</div>
         </div>
+
+            <div id="additem_more">
+                <table width="100%">
+                    <tr><td>内容</td><td><textarea name="comment" id="add_comment" rows="2" style="width:90%;" wrap="PHYSICAL"></textarea></td></tr>
+                <tr><td>类别</td><td><input type="text" name="tags" id="add_tags" style="width:45%" value=""></td></tr>
+                <tr><td></td><td>  
+                <select name="routine" id="add_routine">
+                    <option value="none" selected="selected">非坚持性任务</option>
+                    <option value="daily">每天</option>
+                </select>                                
+                <select name="public" id="add_public">
+                    <option selected="selected" value="private">不公开</option>
+                    <option value="public">完全公开</option>
+                    <option value="publicOnlyforFriends">仅对朋友公开</option>
+                </select>
+        </td></tr>
+        <tr><td>预计完成</td><td><input type="text" class="sl" name="inputDate" id="inputDate" style="width: 80px"  value="" /></td></tr></table>
+            </div>
 
         <div id="itemlist"></div>
 
