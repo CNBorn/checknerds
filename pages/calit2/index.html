@@ -78,20 +78,43 @@ $('#tab_done').click(function() {
     return false;
 });
 
-//Functions to run during loading..
-hideLoadingPanel();
-$('#tab_undone').click();
-$("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');
+$('#tab_friends').click(function() {
+    tabs_MakeActive(this);
+    $('#itemlist').load('/ajax/render/?func=friends&template=calit2',initHover);
+    showLoadingPanel();
+    hideLoadingPanel();
+    return false;
+});
 
 
+$(document).ready(function(){
+   //Functions to run during loading..
+   showLoadingPanel();
+   $("#additem_more").toggle("fast");
+   $('#toggle').html("&darr;");
+
+   $("#toggle").toggle(function(){
+       $("#additem_more").show("fast");
+       $('#toggle').html("&empty;");
+       },function(){
+       $("#additem_more").hide("fast");
+       $('#toggle').html("&darr;");
+       });
+    
+   $('#tab_undone').click();
+   $("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');
+   hideLoadingPanel();
+   return false;
+});
 
 
 //Enter to submit.
 $("#inputName").keypress(function (e) {  
-    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {  
+    if (((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) && ($("#inputName").val() != '')) {  
         showLoadingPanel();
         addItem();  
         e.preventDefault();
+        hideLoadingPanel();
         return false;  
     } else {  
         return true;  
@@ -149,21 +172,6 @@ $("#itemlist li").hoverIntent( config2 );
 
 //End of the $ function.
 });
-
-
-$(document).ready(function() {
-    $("#additem_more").toggle("fast");
-    $('#toggle').html("&darr;");
-
-    $("#toggle").toggle(function(){
-        $("#additem_more").show("fast");
-        $('#toggle').html("&empty;");
-        },function(){
-        $("#additem_more").hide("fast");
-        $('#toggle').html("&darr;");
-        });
-        
-})
 
 </script>
 {% endblock extrajs %}

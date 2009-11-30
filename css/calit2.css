@@ -32,7 +32,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #navitabs {clear:both;line-height: 3em;margin: 0px 5px 15px 5px;}
 .navitab {background:#f0f0f0 url(/img/calit2/corner.gif) top right no-repeat; border-bottom:1px solid #fff; border-left:1px solid #fff; font-size:1.3em; margin:0 0 4px; padding:4px 16px; text-decoration:none;}
 .navitab:hover {background:#e0e0e0 url(/img/calit2/corner.gif) top right no-repeat; border-bottom:1px solid #fff; text-decoration:none;}
-.activenavitab {background:#505050 url(/img/calit2/corner.gif) top right no-repeat; color:#fff; font-size:1.3em; margin:0 0 5px; padding:4px 18px; text-decoration:none;}
+.activenavitab {background:#505050 url(/img/calit2/corner.gif) top right no-repeat; color:#fff; font-size:1.3em; margin:0 0 5px; padding:4px 16px; text-decoration:none;}
 .activenavitab:hover {color:#fff; text-decoration:none;}
 #navitabs a.navitab {font-weight:400;}
 

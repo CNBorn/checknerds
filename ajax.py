@@ -527,19 +527,25 @@ class render(tarsusaRequestHandler):
 
         CurrentUser = self.get_user_db()
 
-        if func == "done":
-            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
-        elif func == "undone":
-            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False)
-        elif func == "dailyroutine":
-            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
-
         template_values = {
             'UserNickName': cgi.escape(CurrentUser.dispname),
             'UserID': CurrentUser.key().id(),
             'func': func,
-            'tarsusaItemCollection_AjaxUserItems': tarsusaItemCollection_AjaxUserItems,
         }
+
+        if func == "done":
+            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
+            template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+        elif func == "undone":
+            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False)
+            template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+        elif func == "dailyroutine":
+            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
+            template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+        elif func == "friends":
+            UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id())
+            template_values['UserFriendsActivities'] = UserFriendsItem_List
+ 
         path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_content_%s.html' % (template_name, "itemlist"))
         self.write(template.render(path, template_values))
 

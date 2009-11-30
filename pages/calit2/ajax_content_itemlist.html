@@ -1,5 +1,6 @@
 	<ul>
-		{% for tarsusaItem_eachItem in tarsusaItemCollection_AjaxUserItems %}
+    {% if tarsusaItemCollection_AjaxUserItems %}
+        {% for tarsusaItem_eachItem in tarsusaItemCollection_AjaxUserItems %}
 			{% ifequal tarsusaItem_eachItem.routine 'none' %}
 				{% ifequal tarsusaItem_eachItem.done 0 %}
 					<li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
@@ -23,7 +24,24 @@
 				<span class="date">@every {{tarsusaItem_eachItem.routine}}</span>
 				</li>
 			{% endifequal %}
-	{% endfor %}	
+            {% endfor %}
+
+    {% else %}
+
+        {% if not UserFriendsActivities %}
+            <li>暂无友邻公开项目</li>
+        {% endif %}
+        {% for each_friend_item in UserFriendsActivities %}
+            {% ifequal each_friend_item.category "done" %}						
+                <li class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}"><a href="/user/{{each_friend_item.userid}}"><img src="{{each_friend_item.avatar}}" width=32 height=32></a><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a> 完成了 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></li>
+            {% else %}
+                <li class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}"><a href="/user/{{each_friend_item.userid}}"><img src="{{each_friend_item.avatar}}" width=32 height=32></a><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a> 要做 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></li>
+            {% endifequal %}
+        {% endfor %}
+
+    {% endif %}
+
+
 	</ul>
     <script type="text/javascript"> 
 function undoneItem(strLink){
