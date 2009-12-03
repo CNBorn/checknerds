@@ -74,7 +74,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 5622 times in query history.
+# Used 5637 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -112,7 +112,7 @@ indexes:
   - name: donedate
     direction: desc
 
-# Used 1776 times in query history.
+# Used 1790 times in query history.
 - kind: tarsusaItem
   properties:
   - name: done
@@ -179,7 +179,7 @@ indexes:
   - name: user
   - name: date
 
-# Used 8560 times in query history.
+# Used 8570 times in query history.
 - kind: tarsusaItem
   properties:
   - name: routine
@@ -208,7 +208,7 @@ indexes:
   - name: user
   - name: date
 
-# Used 3588 times in query history.
+# Used 3603 times in query history.
 - kind: tarsusaItem
   properties:
   - name: user
@@ -271,7 +271,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 3853 times in query history.
+# Used 3868 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: routine
@@ -280,7 +280,7 @@ indexes:
   - name: donedate
     direction: desc
 
-# Used 90 times in query history.
+# Used 92 times in query history.
 - kind: tarsusaRoutineLogItem
   properties:
   - name: routineid

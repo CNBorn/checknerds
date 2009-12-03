@@ -158,84 +158,90 @@ def get_dailyroutine(userid):
 
     ThisUser = tarsusaUser.get_by_id(int(userid))
     # Show His Daily Routine.
-    
-    # the return result
-    Item_List = []      
-    
-    tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", ThisUser.user)
-    tarsusaItemCollection_DoneDailyRoutine = tarsusaRoutineLogItem 
+ 
+ 
+    cached_user_dailyroutine = memcache.get_item("dailyroutine_items", int(userid))
+    if cached_user_dailyroutine is not None:
+        return cached_user_dailyroutine
+    else:
 
-    # GAE datastore has a gqlquery.count limitation. So right here solve this manully.
-    tarsusaItemCollection_DailyRoutine_count = 0
-    for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
-        tarsusaItemCollection_DailyRoutine_count += 1
-
-    Today_DoneRoutine = 0
-
-    for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
+        # the return result
+        Item_List = []      
         
-        #This query should effectively read out all dailyroutine done by today.
-        #for the result will be traversed below, therefore it should be as short as possible.
-        #MARK FOR FUTURE IMPROVMENT
-        
+        tarsusaItemCollection_DailyRoutine = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", ThisUser.user)
+        tarsusaItemCollection_DoneDailyRoutine = tarsusaRoutineLogItem 
+
         # GAE datastore has a gqlquery.count limitation. So right here solve this manully.
-        #tarsusaItemCollection_DailyRoutine_count
-        # Refer to code above.
-        
-        # LIMIT and OFFSET don't currently support bound parameters.
-        # http://code.google.com/p/googleappengine/issues/detail?id=179
-        # if this is realized, the code below next line will be used.
+        tarsusaItemCollection_DailyRoutine_count = 0
+        for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
+            tarsusaItemCollection_DailyRoutine_count += 1
 
-        #OCt 19
-        #shoudl be changed in to multiple gql, with each gets the latest doneroutine item for only one dailyroutine item.
-        tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT 1", ThisUser.user, each_tarsusaItemCollection_DailyRoutine.key().id())
-        
-        ## traversed RoutineDaily
-        
-        ## Check whether this single item is done.
-        DoneThisItemToday = False
-                
-        for tarsusaItem_DoneDailyRoutine in tarsusaItemCollection_DoneDailyRoutine:
-            if datetime.datetime.date(tarsusaItem_DoneDailyRoutine.donedate) == datetime.datetime.date(datetime.datetime.now()):
-                #Check if the user had done all his routine today.
-                Today_DoneRoutine += 1
-                DoneThisItemToday = True
+        Today_DoneRoutine = 0
 
-                # This routine have been done today.
-                
-                # Due to solve this part, I have to change tarsusaItemModel to db.Expando
-                # I hope there is not so much harm for performance.
-                each_tarsusaItemCollection_DailyRoutine.donetoday = 1
-                each_tarsusaItemCollection_DailyRoutine.put()
-
-            else:
-                ## The Date from RoutineLogItem isn't the same of Today's date
-                pass
-        
-        if DoneThisItemToday == False:
-            ## Problem solved by Added this tag. DoneThisItemToday
-            try:
-                del each_tarsusaItemCollection_DailyRoutine.donetoday
-                each_tarsusaItemCollection_DailyRoutine.put()
-            except:
-                pass
-
-        #'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-        this_item = {'id' : str(each_tarsusaItemCollection_DailyRoutine.key().id()), 'name' : each_tarsusaItemCollection_DailyRoutine.name, 'date' : each_tarsusaItemCollection_DailyRoutine.date, 'donedate': each_tarsusaItemCollection_DailyRoutine.donedate, 'expectdate': each_tarsusaItemCollection_DailyRoutine.expectdate, 'comment' : each_tarsusaItemCollection_DailyRoutine.comment, 'routine' : each_tarsusaItemCollection_DailyRoutine.routine, 'category' : each_tarsusaItemCollection_DailyRoutine.done, 'done':DoneThisItemToday}
-        #originally, done should be done for item, but here done refers to daily done for a daily routine item.
-        Item_List.append(this_item)
-
-
+        for each_tarsusaItemCollection_DailyRoutine in tarsusaItemCollection_DailyRoutine:
             
-    ## Output the message for DailyRoutine
-    template_tag_donealldailyroutine = ''               
-    if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
-        template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
-    elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
-        template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
-    
+            #This query should effectively read out all dailyroutine done by today.
+            #for the result will be traversed below, therefore it should be as short as possible.
+            #MARK FOR FUTURE IMPROVMENT
+            
+            # GAE datastore has a gqlquery.count limitation. So right here solve this manully.
+            #tarsusaItemCollection_DailyRoutine_count
+            # Refer to code above.
+            
+            # LIMIT and OFFSET don't currently support bound parameters.
+            # http://code.google.com/p/googleappengine/issues/detail?id=179
+            # if this is realized, the code below next line will be used.
 
-    return Item_List
+            #OCt 19
+            #shoudl be changed in to multiple gql, with each gets the latest doneroutine item for only one dailyroutine item.
+            tarsusaItemCollection_DoneDailyRoutine = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT 1", ThisUser.user, each_tarsusaItemCollection_DailyRoutine.key().id())
+            
+            ## traversed RoutineDaily
+            
+            ## Check whether this single item is done.
+            DoneThisItemToday = False
+                    
+            for tarsusaItem_DoneDailyRoutine in tarsusaItemCollection_DoneDailyRoutine:
+                if datetime.datetime.date(tarsusaItem_DoneDailyRoutine.donedate) == datetime.datetime.date(datetime.datetime.now()):
+                    #Check if the user had done all his routine today.
+                    Today_DoneRoutine += 1
+                    DoneThisItemToday = True
+
+                    # This routine have been done today.
+                    
+                    # Due to solve this part, I have to change tarsusaItemModel to db.Expando
+                    # I hope there is not so much harm for performance.
+                    each_tarsusaItemCollection_DailyRoutine.donetoday = 1
+                    each_tarsusaItemCollection_DailyRoutine.put()
+
+                else:
+                    ## The Date from RoutineLogItem isn't the same of Today's date
+                    pass
+            
+            if DoneThisItemToday == False:
+                ## Problem solved by Added this tag. DoneThisItemToday
+                try:
+                    del each_tarsusaItemCollection_DailyRoutine.donetoday
+                    each_tarsusaItemCollection_DailyRoutine.put()
+                except:
+                    pass
+
+            #'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
+            this_item = {'id' : str(each_tarsusaItemCollection_DailyRoutine.key().id()), 'name' : each_tarsusaItemCollection_DailyRoutine.name, 'date' : each_tarsusaItemCollection_DailyRoutine.date, 'donedate': each_tarsusaItemCollection_DailyRoutine.donedate, 'expectdate': each_tarsusaItemCollection_DailyRoutine.expectdate, 'comment' : each_tarsusaItemCollection_DailyRoutine.comment, 'routine' : each_tarsusaItemCollection_DailyRoutine.routine, 'category' : each_tarsusaItemCollection_DailyRoutine.done, 'done':DoneThisItemToday}
+            #originally, done should be done for item, but here done refers to daily done for a daily routine item.
+            Item_List.append(this_item)
+
+
+                
+        ## Output the message for DailyRoutine
+        '''template_tag_donealldailyroutine = ''               
+        if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
+            template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
+        elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
+            template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'''
+        memcache.set_item("dailyroutine_items", Item_List, int(userid))
+
+        return Item_List
 
 def get_ItemsDueToday(userid):
     #Get User's Items that are due today.
@@ -563,6 +569,7 @@ def DoneItem(ItemId, UserId, Misc):
             tItem.donedate = datetime.datetime.now()
             tItem.done = True
             tItem.put()
+            memcache.event('doneitem', int(UserId))
         else:
             ## if this item is a routine item.
             NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
@@ -580,11 +587,14 @@ def DoneItem(ItemId, UserId, Misc):
             yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
             if DoneYesterdaysDailyRoutine == False:
                 tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday + one_day ,datetime.datetime.now())
+                memcache.event('doneroutineitem_daily_today', int(UserId))
             else:
                 tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
+                memcache.event('doneroutineitem_daily_yesterday', int(UserId))
 
             if not tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count() >= 1:
                 NewlyDoneRoutineItem.put()
+                memcache.event('refresh_dailyroutine', int(UserId))
             
             return 0
             #self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())

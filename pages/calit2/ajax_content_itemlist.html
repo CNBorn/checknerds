@@ -33,9 +33,9 @@
         {% endif %}
         {% for each_friend_item in UserFriendsActivities %}
             {% ifequal each_friend_item.category "done" %}						
-                <li class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}"><a href="/user/{{each_friend_item.userid}}"><img src="{{each_friend_item.avatar}}" width=32 height=32></a><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a> 完成了 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></li>
+                <li class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}"><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a> 完成了 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></li>
             {% else %}
-                <li class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}"><a href="/user/{{each_friend_item.userid}}"><img src="{{each_friend_item.avatar}}" width=32 height=32></a><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a> 要做 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></li>
+                <li class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}"><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a> 要做 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></li>
             {% endifequal %}
         {% endfor %}
 
