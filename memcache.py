@@ -33,7 +33,7 @@ refresh_roles = {
         'donepublicitem' : ('itemstats', 'itemlist', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony', 'donelog'),
         'doneroutineitem_daily_today' : ('dailyroutine_items','dailyroutine_today', 'donelog'),
         'doneroutineitem_daily_yesterday' : ('dailyroutine_items','dailytouine_yesterday', 'donelog'),
-        'refresh_dailyroutine': ('dailyroutine_items','donelog'), #this is a clean one, unused right now.
+        'refresh_dailyroutine': ('dailyroutine_items','donelog'), #this is a clean one,.
         'undoneitem' : ('itemstats', 'itemlist', 'donelog'),
         'undonepublicitem' : ('itemstats', 'itemlist', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony', 'donelog'),
         'undoneroutineitem_daily_today' : ('dailyroutine_items','dailyroutine_today', 'donelog'),
@@ -62,6 +62,8 @@ def event(key, CurrentUserid):
     
     return True
 
+#I think it is nonsense to see alot memcache missing info here.
+'''
 def get(key):
     
     item = memcache.get(key)
@@ -79,15 +81,16 @@ def set(key, value, time=0):
     else:
         logging.error('SET Memcache item %s FAILED!' % key)
         return False
+'''
 
 def get_item(key, CurrentUserID):
     itemoperate = ("%s_%s" % (str(CurrentUserID), key))
     item = memcache.get(itemoperate)
     if item == None:
-        logging.debug('NONE Memcache item %s' % itemoperate)
+        #logging.debug('NONE Memcache item %s' % itemoperate)
         return None
     else:
-        logging.debug('HIT Memcache item %s' % itemoperate)
+        #logging.debug('HIT Memcache item %s' % itemoperate)
         return item
 
 def set_item(key, value, CurrentUserID, time=0):
@@ -96,9 +99,9 @@ def set_item(key, value, CurrentUserID, time=0):
     
     itemoperate = ("%s_%s" % (str(CurrentUserID), key))
     if memcache.set(itemoperate, value, time):
-        logging.debug('SET Memcache item %s' % itemoperate)
+        #logging.debug('SET Memcache item %s' % itemoperate)
         return True
     else:
-        logging.debug('FAILED SET Memcache item %s' % itemoperate)
+        #logging.debug('FAILED SET Memcache item %s' % itemoperate)
         return False
 

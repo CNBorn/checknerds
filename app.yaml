@@ -101,6 +101,9 @@ handlers:
 - url: /flushcache
   script: miscellaneous.py
 
+- url: /cron_flushcache
+  script: miscellaneous.py
+
 - url: /beta
   script: miscellaneous.py
 

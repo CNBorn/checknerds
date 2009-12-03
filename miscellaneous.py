@@ -251,8 +251,17 @@ class LabsPage(tarsusaRequestHandler):
 class FlushCache(tarsusaRequestHandler):
     def get(self):
         memcache.flush_all()
-        logging.info("Memcache Flushed.")
+        logging.info("Memcache Flushed by force.")
         self.redirect('/')
+
+class cron_flushcache(tarsusaRequestHandler):
+    def get(self):
+        memcache.flush_all()
+        logging.info("memcache flushed by cron.")
+        return True
+
+#I will evantully add a memcache-api-reset function here.
+
 
 class CaliforniaPage(tarsusaRequestHandler):
     def get(self):
@@ -293,6 +302,7 @@ def main():
                                        ('/labs.+', LabsPage),
                                        ('/statstics',StatsticsPage),
                                        ('/flushcache', FlushCache),
+                                       ('/cron_flushcache', cron_flushcache),
                                        ('/beta', CaliforniaPage),
                                        ('/guestbook', GuestbookPage)],
                                        debug=True)
