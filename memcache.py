@@ -63,12 +63,11 @@ def event(key, CurrentUserid):
     return True
 
 #I think it is nonsense to see alot memcache missing info here.
-'''
 def get(key):
     
     item = memcache.get(key)
     if item == None:
-        logging.debug('NONE Memcache item %s' % key)
+        #logging.debug('NONE Memcache item %s' % key)
         return None
     else:
         return item
@@ -76,12 +75,11 @@ def get(key):
 def set(key, value, time=0):
     
     if memcache.set(key, value, time):
-        logging.debug('SET Memcache item %s' % key)
+        #logging.debug('SET Memcache item %s' % key)
         return True
     else:
-        logging.error('SET Memcache item %s FAILED!' % key)
+        #logging.error('SET Memcache item %s FAILED!' % key)
         return False
-'''
 
 def get_item(key, CurrentUserID):
     itemoperate = ("%s_%s" % (str(CurrentUserID), key))
