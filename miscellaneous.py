@@ -269,27 +269,18 @@ class CaliforniaPage(tarsusaRequestHandler):
         # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
             CurrentUser = self.get_user_db()
-            import tarsusaCore
-            tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), False, maxitems=25)
-
-            tarsusaUserFriends = tarsusaCore.get_UserFriends(CurrentUser.key().id())
             
             template_values = {
                     'PrefixCSSdir': "/",
                     'UserLoggedIn': 'Logged In',
                     'UserNickName': cgi.escape(CurrentUser.dispname),
                     'UserID': CurrentUser.key().id(),
-                    'tarsusaItemCollection_UserToDoItems': tarsusaItemCollection_UserTodoItems,
-                    'tarsusaUserFriends': tarsusaUserFriends,
-                    'htmltag_today': datetime.date.today(),
             }
             path = os.path.join(os.path.dirname(__file__), 'pages/calit2/index.html')
         
         else:           
             template_values = {
                 'PrefixCSSdir': "/",
-                'UserNickName': "访客",
-                'AnonymousVisitor': "Yes",
             }
             path = os.path.join(os.path.dirname(__file__), 'pages/calit2/welcome.html')
     
