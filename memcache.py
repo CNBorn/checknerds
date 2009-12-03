@@ -37,13 +37,13 @@ refresh_roles = {
 		'undonepublicitem' : ('itemstats', 'itemlist', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony', 'donelog'),
 		'undoneroutineitem_daily_today' : ('dailyroutine_today', 'donelog'),
 		'undoneroutineitem_daily_yesterday' : ('dailytouine_yesterday', 'donelog'),
-		'addfriend' : ('friendstats', 'mainpage_friends'),
-		'removefriend' : ('friendstats', 'mainpage_friends'),
+		'addfriend' : ('friendstats', 'mainpage_friends','friendstatus'),
+		'removefriend' : ('friendstats', 'mainpage_friends','friendstatus'),
 		}
 
 def event(key, CurrentUserid):
 
-	logging.info('memcache - user %s : %s event' % (CurrentUserid, key))
+	logging.info('memcache - user %s : %s' % (CurrentUserid, key))
 
 	for role in refresh_roles:
 		if re.match(role, key):
@@ -56,8 +56,8 @@ def event(key, CurrentUserid):
 					#2=DELETE_SUCCESSFUL
 					logging.debug("deleted: %s_%s" % (CurrentUserid, obj))
 				else:
-					logging.debug('not delete' + ("%s_%s" % (CurrentUserid, obj)))
-
+					#logging.debug('not delete' + ("%s_%s" % (CurrentUserid, obj)))
+                    pass
 	
 	return True
 
