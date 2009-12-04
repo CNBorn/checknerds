@@ -435,7 +435,7 @@ class Image(webapp.RequestHandler):
                     self.output_avatar(usravatardata, False)
             except AttributeError:
                 #Not found avatar in DB.
-                avatardata = urlfetch.fetch("http://www.checknerds.com/img/default_avatar.jpg", headers={}).content
+                avatardata = urlfetch.fetch("http://www.checknerds.com/img/default_avatar.jpg", headers={'Content-Type': "image/jpg"}).content
                 memcache.set('img_useravatar' + self.request.get("avatar"), avatardata, 16384)
                 self.output_avatar(avatardata, False)
                 #self.error(404)
