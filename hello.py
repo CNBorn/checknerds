@@ -18,7 +18,7 @@ import string
 
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
-
+from google.appengine.api import urlfetch
 import memcache
 import tarsusaCore
 
@@ -426,14 +426,19 @@ class Image(webapp.RequestHandler):
         else:
             # Request it from BigTable
             AvatarUser = tarsusaUser.get_by_id(int(self.request.get("avatar")))          
-            
-            if AvatarUser.avatar:
-                if not memcache.set('img_useravatar' + self.request.get("avatar"), AvatarUser.avatar, 7200):
-                    logging.error("Memcache set failed: When Loading avatar_image")
-                self.output_avatar(usravatardata)
-            else:
-                self.error(404)
+
+
+            try:
+                if AvatarUser.avatar:
+                    if not memcache.set('img_useravatar' + self.request.get("avatar"), AvatarUser.avatar, 7200):
+                        logging.error("Memcache set failed: When Loading avatar_image")
+                    self.output_avatar(usravatardata)
+            except AttributeError:
+                #Not found avatar in DB.
+                self.output_avatar(urlfetch.fetch("http://www.checknerds.com/img/default_avatar.jpg", headers={}).content)
+                #self.error(404)
                 #should read the default img pic and write it out.
+
 
 class DashboardPage(tarsusaRequestHandler):
     def get(self):
