@@ -547,6 +547,12 @@ def get_count_UserItemStats(userid):
 
     return template_values 
 
+def get_item_by_id(itemid):
+    #test with fetched item with memcache
+    #but first should testing with memcache model set.
+    item_fetched = tarsusaItem.get_by_id(int(itemid))
+
+
 def DoneItem(ItemId, UserId, Misc):
     #DoneItem function specially designed for API calls.    
     #Duplicated Code from tarsusaItemCore, refactor needed in the future.

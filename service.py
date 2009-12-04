@@ -17,7 +17,7 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 from modules import *
-from base import *
+from base import * 
 
 import time, datetime
 import os
@@ -28,272 +28,272 @@ import memcache
 import logging
 
 def api_auth_and_limit(function):
-	'''
-	to check with API Authentication & Limitation
-		first py decorator i implemented, learnt from ihere blog.
-	'''
-	def api_auth_and_limit_wrapper(tRequestHandler, *args, **kw):
-		if tRequestHandler.verify_api() == True and tRequestHandler.verify_api_limit() == True:
-			return function(tRequestHandler, *args, **kw)
-		elif tRequestHandler.verify_api() == False:
-			return tRequestHandler.response_status(403,'API Authentication failed.',False)
-		else:
-			#thus tRequestHandler.verify_api_limit() == True
-			return tRequestHandler.response_status(403, 'API Limitation exceed.', False)
-	return api_auth_and_limit_wrapper
-	
+    '''
+    to check with API Authentication & Limitation
+        first py decorator i implemented, learnt from ihere blog.
+    '''
+    def api_auth_and_limit_wrapper(tRequestHandler, *args, **kw):
+        if tRequestHandler.verify_api() == True and tRequestHandler.verify_api_limit() == True:
+            return function(tRequestHandler, *args, **kw)
+        elif tRequestHandler.verify_api() == False:
+            return tRequestHandler.response_status(403,'API Authentication failed.',False)
+        else:
+            #thus tRequestHandler.verify_api_limit() == True
+            return tRequestHandler.response_status(403, 'API Limitation exceed.', False)
+    return api_auth_and_limit_wrapper
+    
 class api_getuser(tarsusaRequestHandler):
-	
-	#First CheckNerds API: Get User information.
+    
+    #First CheckNerds API: Get User information.
 
-	def get(self):
-		self.write('<h1>please use POST</h1>')
-	
-	@api_auth_and_limit
-	def post(self):
-		#Should use log to monitor API usage.
-		#Also there should be limitation for the apicalls/per hour.
-		apiappid = self.request.get('apiappid') 
-		apiservicekey = self.request.get('servicekey')
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-		userid = self.request.get('userid')
+    def get(self):
+        self.write('<h1>please use POST</h1>')
+    
+    @api_auth_and_limit
+    def post(self):
+        #Should use log to monitor API usage.
+        #Also there should be limitation for the apicalls/per hour.
+        apiappid = self.request.get('apiappid') 
+        apiservicekey = self.request.get('servicekey')
+        apiuserid = self.request.get('apiuserid') 
+        apikey = self.request.get('apikey')
+        userid = self.request.get('userid')
 
-		ThisUser = tarsusaUser.get_by_id(int(userid))
-		user_info = {'id' : str(ThisUser.key().id()), 'name' : ThisUser.dispname, 'datejoinin' : str(ThisUser.datejoinin), 'website' : ThisUser.website, 'avatar' : 'http://www.checknerds.com/image?avatar=' + str(ThisUser.key().id())}
-		
-		self.write(user_info)
+        ThisUser = tarsusaUser.get_by_id(int(userid))
+        user_info = {'id' : str(ThisUser.key().id()), 'name' : ThisUser.dispname, 'datejoinin' : str(ThisUser.datejoinin), 'website' : ThisUser.website, 'avatar' : 'http://www.checknerds.com/image?avatar=' + str(ThisUser.key().id())}
+        
+        self.write(user_info)
 
 class api_getuserfriends(tarsusaRequestHandler):
-	
-	#CheckNerds API: Get User Friends information.
+    
+    #CheckNerds API: Get User Friends information.
 
-	def get(self):
-		self.write('<h1>please use POST</h1>')
-	
-	@api_auth_and_limit
-	def post(self):
-		#Should use log to monitor API usage.
-		#Also there should be limitation for the apicalls/per hour.
-		apiappid = self.request.get('apiappid') 
-		apiservicekey = self.request.get('servicekey')
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-		userid = self.request.get('userid')
+    def get(self):
+        self.write('<h1>please use POST</h1>')
+    
+    @api_auth_and_limit
+    def post(self):
+        #Should use log to monitor API usage.
+        #Also there should be limitation for the apicalls/per hour.
+        apiappid = self.request.get('apiappid') 
+        apiservicekey = self.request.get('servicekey')
+        apiuserid = self.request.get('apiuserid') 
+        apikey = self.request.get('apikey')
+        userid = self.request.get('userid')
 
-		ThisUser = tarsusaUser.get_by_id(int(userid))
-		if ThisUser:
-			ThisUsersFriendsLists = tarsusaCore.get_UserFriends(ThisUser.key().id())
-			self.write(ThisUsersFriendsLists)
-		else:
-			return self.response_status(403,'No Such User',False)
+        ThisUser = tarsusaUser.get_by_id(int(userid))
+        if ThisUser:
+            ThisUsersFriendsLists = tarsusaCore.get_UserFriends(ThisUser.key().id())
+            self.write(ThisUsersFriendsLists)
+        else:
+            return self.response_status(403,'No Such User',False)
 
 #APIs to be added:
-#	AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
+#   AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
 
 class api_getuseritem(tarsusaRequestHandler):
-	
-	#CheckNerds API: Get User Items.
-	#Parameters: apiuserid, apikey, userid, routine, public, maxitems
+    
+    #CheckNerds API: Get User Items.
+    #Parameters: apiuserid, apikey, userid, routine, public, maxitems
 
-	def get(self):
-		self.write('<h1>please use POST</h1>')
+    def get(self):
+        self.write('<h1>please use POST</h1>')
 
-	@api_auth_and_limit
-	def post(self):
-		apiappid = self.request.get('apiappid') 
-		apiservicekey = self.request.get('servicekey')
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-		userid = self.request.get('userid')
+    @api_auth_and_limit
+    def post(self):
+        apiappid = self.request.get('apiappid') 
+        apiservicekey = self.request.get('servicekey')
+        apiuserid = self.request.get('apiuserid') 
+        apikey = self.request.get('apikey')
+        userid = self.request.get('userid')
 
-		done = self.request.get('done')
-		#logging.info(done == True)
-		#logging.info(done == 'True')
-		#Confirmed it is 'True' in text 
-		if done == 'True':
-			done = True
-		elif done == 'False':
-			done = False
-		else:
-			done = None
-		logging.info(done)
+        done = self.request.get('done')
+        #logging.info(done == True)
+        #logging.info(done == 'True')
+        #Confirmed it is 'True' in text 
+        if done == 'True':
+            done = True
+        elif done == 'False':
+            done = False
+        else:
+            done = None
+        logging.info(done)
 
-		routine = self.request.get('routine')
-		if routine == '':
-			routine='none'
-		
-		#logging.info(routine)
-		
-		#!!!!!
-		#Below Settings should be changed 
-		#When user can check other users ITEMs!
-		#
-		public = self.request.get('public')
-		if public == '':
-			public = 'none'
-			#'none' means it doesn't matter, display all items.
-		#logging.info(public)
-		
-		maxitems = self.request.get('maxitems')
-		if maxitems == None or maxitems == '':
-			count = 10
-		else:
-			count = int(maxitems)
-			if count > 100:
-				count = 100
-		
-		#logging.info(maxitems)
-		
-		#'''
-		beforedate = self.request.get('beforedate')
-		#	enddate='',
+        routine = self.request.get('routine')
+        if routine == '':
+            routine='none'
+        
+        #logging.info(routine)
+        
+        #!!!!!
+        #Below Settings should be changed 
+        #When user can check other users ITEMs!
+        #
+        public = self.request.get('public')
+        if public == '':
+            public = 'none'
+            #'none' means it doesn't matter, display all items.
+        #logging.info(public)
+        
+        maxitems = self.request.get('maxitems')
+        if maxitems == None or maxitems == '':
+            count = 10
+        else:
+            count = int(maxitems)
+            if count > 100:
+                count = 100
+        
+        #logging.info(maxitems)
+        
+        #'''
+        beforedate = self.request.get('beforedate')
+        #   enddate='',
 
-		afterdate = self.request.get('afterdate')
-		#	startdate='',
+        afterdate = self.request.get('afterdate')
+        #   startdate='',
 
-		#	startdonedate=''
-		#	enddonedate=''
-		#'''
+        #   startdonedate=''
+        #   enddonedate=''
+        #'''
 
-		if apiuserid == userid:
-			#Get APIUser's Items
+        if apiuserid == userid:
+            #Get APIUser's Items
 
-			#I think there are still problem concerning different paras.
-			#for example, if you don't want sort by routine, then you should ignore it.
-			#but for a get_tarsusaItemCollection with all para in it, you are not ignoring it.
-			
-			#It can only get todo or done items.
-			tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, startdate=afterdate, enddate=beforedate, maxitems=count, public=public)
-			logging.info(tarsusaItemCollection_UserDoneItems)
-			self.write(tarsusaItemCollection_UserDoneItems)	
-		else:
-			#trying to Get Other Users Items
-			return self.response_status(403, '<h1>Currently You can\'t get other user\'s items.</h1>', False)
-		
+            #I think there are still problem concerning different paras.
+            #for example, if you don't want sort by routine, then you should ignore it.
+            #but for a get_tarsusaItemCollection with all para in it, you are not ignoring it.
+            
+            #It can only get todo or done items.
+            tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, startdate=afterdate, enddate=beforedate, maxitems=count, public=public)
+            logging.info(tarsusaItemCollection_UserDoneItems)
+            self.write(tarsusaItemCollection_UserDoneItems) 
+        else:
+            #trying to Get Other Users Items
+            return self.response_status(403, '<h1>Currently You can\'t get other user\'s items.</h1>', False)
+        
 class api_doneitem(tarsusaRequestHandler):
-	
-	#CheckNerds API: DoneItem.
-	#Parameters: apiuserid, apikey, itemid
+    
+    #CheckNerds API: DoneItem.
+    #Parameters: apiuserid, apikey, itemid
 
-	def get(self):	
-		self.write('<h1>please use POST</h1>')
+    def get(self):  
+        self.write('<h1>please use POST</h1>')
 
-	@api_auth_and_limit
-	def post(self):
-	
-		#Actual function.
-		itemid = self.request.get('itemid')
-		apiappid = self.request.get('apiappid') 
-		apiservicekey = self.request.get('servicekey')
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-		userid = self.request.get('userid')
+    @api_auth_and_limit
+    def post(self):
+    
+        #Actual function.
+        itemid = self.request.get('itemid')
+        apiappid = self.request.get('apiappid') 
+        apiservicekey = self.request.get('servicekey')
+        apiuserid = self.request.get('apiuserid') 
+        apikey = self.request.get('apikey')
+        userid = self.request.get('userid')
 
-		APIUser = tarsusaUser.get_by_id(int(apiuserid))
-		ThisItem = tarsusaItem.get_by_id(int(itemid))
-		
-		if ThisItem is None:
-			return self.response_status(404,"No such Item.", False)
+        APIUser = tarsusaUser.get_by_id(int(apiuserid))
+        ThisItem = tarsusaItem.get_by_id(int(itemid))
+        
+        if ThisItem is None:
+            return self.response_status(404,"No such Item.", False)
 
-		if int(apiuserid) == ThisItem.usermodel.key().id():
-			#Get APIUser's Items
-			Misc = ''
-			#Misc could be set to 'y' to done a yesterday's routineitem
-			self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
-			#Should be 200 status in future, currently just 0(success), 1(failed)
+        if int(apiuserid) == ThisItem.usermodel.key().id():
+            #Get APIUser's Items
+            Misc = ''
+            #Misc could be set to 'y' to done a yesterday's routineitem
+            self.write(tarsusaCore.DoneItem(itemid, apiuserid, Misc))
+            #Should be 200 status in future, currently just 0(success), 1(failed)
 
-		else:
-			#Trying to manipulate Other Users Items, very badass.
-			return self.response_status(403, '<h1>You can\'t manipulate other user\'s items.</h1>', False)
-	
+        else:
+            #Trying to manipulate Other Users Items, very badass.
+            return self.response_status(403, '<h1>You can\'t manipulate other user\'s items.</h1>', False)
+    
 class api_undoneitem(tarsusaRequestHandler):
-	
-	#CheckNerds API: UndoneItem.
-	#Parameters: apiuserid, apikey, itemid
+    
+    #CheckNerds API: UndoneItem.
+    #Parameters: apiuserid, apikey, itemid
 
-	def get(self):	
-		self.write('<h1>please use POST</h1>')
+    def get(self):  
+        self.write('<h1>please use POST</h1>')
 
-	@api_auth_and_limit
-	def post(self):
+    @api_auth_and_limit
+    def post(self):
 
-		#Actual function.
-		itemid = self.request.get('itemid')
-		apiappid = self.request.get('apiappid') 
-		apiservicekey = self.request.get('servicekey')
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-		userid = self.request.get('userid')
-	
-		APIUser = tarsusaUser.get_by_id(int(apiuserid))
-		ThisItem = tarsusaItem.get_by_id(int(itemid))
-		
-		if ThisItem is None:
-			return self.response_status(404, "No such Item.", False)
+        #Actual function.
+        itemid = self.request.get('itemid')
+        apiappid = self.request.get('apiappid') 
+        apiservicekey = self.request.get('servicekey')
+        apiuserid = self.request.get('apiuserid') 
+        apikey = self.request.get('apikey')
+        userid = self.request.get('userid')
+    
+        APIUser = tarsusaUser.get_by_id(int(apiuserid))
+        ThisItem = tarsusaItem.get_by_id(int(itemid))
+        
+        if ThisItem is None:
+            return self.response_status(404, "No such Item.", False)
 
-		if int(apiuserid) == ThisItem.usermodel.key().id():
-			#Get APIUser's Items
-			Misc = ''
-			#Misc could be set to 'y' to done a yesterday's routineitem
-			self.write(tarsusaCore.UndoneItem(itemid, apiuserid, Misc))
-			#Should be 200 status in future, currently just 0(success), 1(failed)
+        if int(apiuserid) == ThisItem.usermodel.key().id():
+            #Get APIUser's Items
+            Misc = ''
+            #Misc could be set to 'y' to done a yesterday's routineitem
+            self.write(tarsusaCore.UndoneItem(itemid, apiuserid, Misc))
+            #Should be 200 status in future, currently just 0(success), 1(failed)
 
-		else:
-			#Trying to manipulate Other Users Items, very badass.
-			return self.response_status(403, '<h1>You can\'t manipulate other user\'s items.</h1>', False)
+        else:
+            #Trying to manipulate Other Users Items, very badass.
+            return self.response_status(403, '<h1>You can\'t manipulate other user\'s items.</h1>', False)
 
 #To be added: api_checkAppModel
 
 class api_additem(tarsusaRequestHandler):
-	
-	#CheckNerds API: AddItem.
-	#Parameters: apiappid, apiservicekey, apiuserid, apikey
-	#			 item_name, item_comment, item_routine, item_public, item_date, item_tags 
-	#newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine'), self.request.get('public'), self.request.get('inputDate'), self.request.get('tags'))
+    
+    #CheckNerds API: AddItem.
+    #Parameters: apiappid, apiservicekey, apiuserid, apikey
+    #            item_name, item_comment, item_routine, item_public, item_date, item_tags 
+    #newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine'), self.request.get('public'), self.request.get('inputDate'), self.request.get('tags'))
 
-	def get(self):	
-		self.write('<h1>please use POST</h1>')
+    def get(self):  
+        self.write('<h1>please use POST</h1>')
 
-	@api_auth_and_limit
-	def post(self):
-		
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-		
-		#Actual function.
-		apiappid = self.request.get('apiappid') 
-		apiservicekey = self.request.get('servicekey')
-		apiuserid = self.request.get('apiuserid') 
-		apikey = self.request.get('apikey')
-	
-		APIUser = tarsusaUser.get_by_id(int(apiuserid))
+    @api_auth_and_limit
+    def post(self):
+        
+        apiuserid = self.request.get('apiuserid') 
+        apikey = self.request.get('apikey')
+        
+        #Actual function.
+        apiappid = self.request.get('apiappid') 
+        apiservicekey = self.request.get('servicekey')
+        apiuserid = self.request.get('apiuserid') 
+        apikey = self.request.get('apikey')
+    
+        APIUser = tarsusaUser.get_by_id(int(apiuserid))
 
-		#To Add APIUser's a new Item
-		item_name = self.request.get('name')
-		item_comment = self.request.get('comment')
-		item_routine = self.request.get('routine')
-		item_public = self.request.get('public')
-		item_date = self.request.get('date')
-		item_tags = self.request.get('tags')
+        #To Add APIUser's a new Item
+        item_name = self.request.get('name')
+        item_comment = self.request.get('comment')
+        item_routine = self.request.get('routine')
+        item_public = self.request.get('public')
+        item_date = self.request.get('date')
+        item_tags = self.request.get('tags')
 
-		newlyadd = tarsusaCore.AddItem(apiuserid, item_name, item_comment, item_routine, item_public, item_date, item_tags)
-		
-		#Should be 200 status in future, currently just 0(success), 1(failed)
-		self.response.set_status(200)
-		return newlyadd
+        newlyadd = tarsusaCore.AddItem(apiuserid, item_name, item_comment, item_routine, item_public, item_date, item_tags)
+        
+        #Should be 200 status in future, currently just 0(success), 1(failed)
+        self.response.set_status(200)
+        return newlyadd
 
 def main():
-	application = webapp.WSGIApplication([
-									   ('/service/user.+', api_getuser),
-									   ('/service/item.+', api_getuseritem),
-									   ('/service/done.+', api_doneitem),
-									   ('/service/undone.+', api_undoneitem),
-									   ('/service/additem.+', api_additem),
-									   ('/service/friends.+', api_getuserfriends)],
+    application = webapp.WSGIApplication([
+                                       ('/service/user.+', api_getuser),
+                                       ('/service/item.+', api_getuseritem),
+                                       ('/service/done.+', api_doneitem),
+                                       ('/service/undone.+', api_undoneitem),
+                                       ('/service/additem.+', api_additem),
+                                       ('/service/friends.+', api_getuserfriends)],
                                        debug=True)
 
-	wsgiref.handlers.CGIHandler().run(application)
+    wsgiref.handlers.CGIHandler().run(application)
 
 if __name__ == "__main__":
       main()

@@ -564,7 +564,7 @@ class sidebar(tarsusaRequestHandler):
             #Cache is a MUST!
             UserInTemplate = CurrentUser
             template_values['UserInTemplate'] = UserInTemplate
-            cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser.key().id())
+            cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser.key().id()) #Cached inside.
             template_values['tarsusaItemCollection_Statstics'] = cachedUserItemStats
 
         elif obj == 'item':
