@@ -1,0 +1,79 @@
+
+
+<h2>{{ ItemInTemplate.name|escape }}</h2>
+        <ul>
+            <li><img src='/image?avatar={{UserFriendInTemplate.key.id}}' align=center width=64 height=64></li>
+        <br />
+        <br />
+            <li>id:&nbsp;{{UserFriendInTemplate.dispname|escape}}</li>
+            <li>{{ UserFriendInTemplate.datejoinin  }}加入</li>
+            {% if UserFriendInTemplate.website %}
+                <li>网址:&nbsp;<a href="{{UserFriendInTemplate.website|escape}}" target="_blank">{{UserFriendInTemplate.website|escape}}</a></li>
+            {% endif %}
+                <br />
+		</ul>
+     
+
+<p><ul>
+    {% if tarsusaItemDone %}
+        已经完成于{{ ItemInTemplate.donedate }} &nbsp;							
+        
+    {% else %}
+        {% if not tarsusaRoutineItem %}
+            <li>尚未完成</li>
+            {% if ItemInTemplate.expired %}
+                <span style="color: #F00000">已过期</span>
+            {% endif %}
+        {% else %}
+            <li>
+            {% ifequal ItemInTemplate.routine "daily" %}
+                每日任务
+            {% endifequal %}
+            {% ifequal ItemInTemplate.routine "weekly" %}
+                每周任务
+            {% endifequal %}
+            {% ifequal ItemInTemplate.routine "monthly" %}
+                每月任务
+            {% endifequal %}
+            {% ifequal ItemInTemplate.routine "seasonly" %}
+                每季度任务
+            {% endifequal %}
+            {% ifequal ItemInTemplate.routine "yearly" %}
+                每年任务
+            </li>
+            {% endifequal %}	
+            
+        {% endif %}
+
+    {% endif %}	
+    
+    
+    <li>分类：{{tarsusaItemTags}}</li>
+    <li>
+    {% ifequal ItemInTemplate.public "private" %}
+        不公开
+    {% endifequal %}
+    {% ifequal ItemInTemplate.public "publicOnlyforFriends" %}
+        仅对朋友公开
+    {% endifequal %}
+    {% ifequal ItemInTemplate.public "public" %}
+        完全公开
+    {% endifequal %}
+    </li>
+    说明:&nbsp; {{ ItemInTemplate.comment }}<br />
+创建： &nbsp; {{ItemInTemplate.date }}<br />
+预期完成： &nbsp; 
+    {% if not ItemInTemplate.expectdate %}
+        没有完成期限限制
+    {% else %}
+        {{ItemInTemplate.expectdate}}
+    {% endif %}
+    <br />
+
+</ul></p>
+
+
+
+
+
+

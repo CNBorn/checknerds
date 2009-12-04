@@ -554,31 +554,41 @@ class sidebar(tarsusaRequestHandler):
     @userloggedin_or_403
     def get(self):
         ''' Ajax Functions suites for multiple usage for Calit2 template in sidebar.'''
-        CurrentUser = self.get_user_db()
+        current_user = self.get_user_db()
         template_values = {}
 
-        obj = self.request.get("obj")
+        operation_name = self.request.get("obj")
         template_name = self.request.get("template")
 
-        if obj == 'user':
+        if operation_name == 'user':
             #Cache is a MUST!
-            UserInTemplate = CurrentUser
-            template_values['UserInTemplate'] = UserInTemplate
-            cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser.key().id()) #Cached inside.
-            template_values['tarsusaItemCollection_Statstics'] = cachedUserItemStats
+            template_values['UserInTemplate'] = current_user
+            cached_useritem_stats = tarsusaCore.get_count_UserItemStats(current_user.key().id()) #Cached inside.
+            template_values['tarsusaItemCollection_Statstics'] = cached_useritem_stats
 
-        elif obj == 'item':
-            try:
-                itemid = self.request.get("id")
-                ItemInTemplate = tarsusaItem.get_by_id(int(itemid))
-                template_values['ItemInTemplate'] = ItemInTemplate
-            except:
-                self.write("")
+        elif operation_name == 'item':
+            #try:
+            itemid = self.request.get("id")
+            item_in_template = tarsusaItem.get_by_id(int(itemid))
+            if item_in_template.user == current_user.user:
+                #current_user's item
+                template_values['ItemInTemplate'] = item_in_template
 
-        template_values['UserNickName'] = cgi.escape(CurrentUser.dispname)
-        template_values['UserID'] = CurrentUser.key().id()
+            else:
+                #user's friend's item
+                operation_name = 'friends' #switched to another template
+                user_friend_in_template = item_in_template.usermodel
+                template_values['ItemInTemplate'] = item_in_template
+                template_values['UserFriendInTemplate'] = user_friend_in_template
+
+            ##except:
+            #    self.write("")
+
+
+        template_values['UserNickName'] = cgi.escape(current_user.dispname)
+        template_values['UserID'] = current_user.key().id()
         template_values['htmltag_today'] = datetime.date.today() 
-        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_sidebar_%s.html' % (template_name, obj))
+        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_sidebar_%s.html' % (template_name, operation_name))
         try:
             self.write(template.render(path, template_values))
         except:
