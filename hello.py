@@ -396,7 +396,7 @@ class SignOutPage(tarsusaRequestHandler):
         self.redirect(self.get_logout_url(True))
 
 class Image(webapp.RequestHandler):
-    def output_avatar(self, avatardata):
+    def output_avatar(self, avatardata, memcached):
         # set the cache headers
         #lastmod = self.avatar.updated // don't have this field.
         fmt = '%a, %d %b %Y %H:%M:%S GMT'
@@ -406,9 +406,10 @@ class Image(webapp.RequestHandler):
         self.response.headers.add_header('Last-Modified', datetime.datetime.now().strftime(fmt)) #lastmod.strftime(fmt)
 
         if self.request.headers.has_key('If-Modified-Since'):
-            dt = self.request.headers['If-Modified-Since'].split(';')[0]
-            since = int(time.mktime(datetime.datetime.strptime(dt, '%a, %d %b %Y %H:%M:%S %Z').timetuple()))
-            if since > int(time.mktime((datetime.datetime.now()).timetuple())): #should be > lastmod
+            #dt = self.request.headers['If-Modified-Since'].split(';')[0]
+            #since = int(time.mktime(datetime.datetime.strptime(dt, '%a, %d %b %Y %H:%M:%S %Z').timetuple()))
+            #if since > int(time.mktime((datetime.datetime.now()).timetuple())): #should be > lastmod
+            if memcached:
                 self.response.set_status(304)
             else:
                 self.response.out.write(avatardata)
@@ -422,20 +423,21 @@ class Image(webapp.RequestHandler):
         usravatardata = memcache.get('img_useravatar' + self.request.get("avatar"))
         
         if usravatardata is not None:
-            self.output_avatar(usravatardata)
+            self.output_avatar(usravatardata, True)
         else:
             # Request it from BigTable
             AvatarUser = tarsusaUser.get_by_id(int(self.request.get("avatar")))          
 
-
             try:
                 if AvatarUser.avatar:
-                    if not memcache.set('img_useravatar' + self.request.get("avatar"), AvatarUser.avatar, 7200):
+                    if not memcache.set('img_useravatar' + self.request.get("avatar"), AvatarUser.avatar, 16384):
                         logging.error("Memcache set failed: When Loading avatar_image")
-                    self.output_avatar(usravatardata)
+                    self.output_avatar(usravatardata, False)
             except AttributeError:
                 #Not found avatar in DB.
-                self.output_avatar(urlfetch.fetch("http://www.checknerds.com/img/default_avatar.jpg", headers={}).content)
+                avatardata = urlfetch.fetch("http://www.checknerds.com/img/default_avatar.jpg", headers={}).content
+                memcache.set('img_useravatar' + self.request.get("avatar"), avatardata, 16384)
+                self.output_avatar(avatardata, False)
                 #self.error(404)
                 #should read the default img pic and write it out.
 
