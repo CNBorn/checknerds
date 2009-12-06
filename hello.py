@@ -400,10 +400,13 @@ class Image(webapp.RequestHandler):
         # set the cache headers
         #lastmod = self.avatar.updated // don't have this field.
         fmt = '%a, %d %b %Y %H:%M:%S GMT'
-        self.response.headers.add_header('Content-Type', "image/jpg")
+        self.response.headers['Content-Type'] = 'image/jpeg'
+        #self.response.headers.add_header('Content-Type', "image/jpg")
         self.response.headers.add_header('Cache-Control', 'max-age=86400')
         self.response.headers.add_header('Expires', (datetime.datetime.now() + datetime.timedelta(days=1)).strftime(fmt))
         self.response.headers.add_header('Last-Modified', datetime.datetime.now().strftime(fmt)) #lastmod.strftime(fmt)
+        self.response.headers.add_header('Content-Transfer-Encoding', 'binary')
+        #self.resposne.headers.add_header('Charset',"binary")
 
         if self.request.headers.has_key('If-Modified-Since'):
             #dt = self.request.headers['If-Modified-Since'].split(';')[0]
@@ -432,12 +435,16 @@ class Image(webapp.RequestHandler):
                 if AvatarUser.avatar:
                     if not memcache.set('img_useravatar' + self.request.get("avatar"), AvatarUser.avatar, 16384):
                         logging.error("Memcache set failed: When Loading avatar_image")
-                    self.output_avatar(usravatardata, False)
+                    self.output_avatar(AvatarUser.avatar, False)
             except AttributeError:
                 #Not found avatar in DB.
-                avatardata = urlfetch.fetch("http://www.checknerds.com/img/default_avatar.jpg", headers={'Content-Type': "image/jpg"}).content
-                memcache.set('img_useravatar' + self.request.get("avatar"), avatardata, 16384)
-                self.output_avatar(avatardata, False)
+                avatardata = urlfetch.fetch("http://www.checknerds.com/img/default_avatar.jpg", headers={'Content-Type': "image/jpg"})
+                if avatardata.status_code == 200:
+                    avatardata = avatardata.content
+                    memcache.set('img_useravatar' + self.request.get("avatar"), avatardata, 16384)
+                    self.output_avatar(avatardata, False)
+                else:
+                    self.redirect("/img/default_avatar.jpg")
                 #self.error(404)
                 #should read the default img pic and write it out.
 
