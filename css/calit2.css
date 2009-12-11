@@ -75,8 +75,10 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 
 /* Album (inside Content) */
 #album {width: 750px; margin: 5px 0px 5px 0px;min-height:385px;}
-#album1 {background:url(/img/calit2/darkbg.png); width: 290px; height: 320px; float: left; padding: 10px; position:relative; top:-370px; left:35px;z-index:99;}
-#album1 p {font-size:1.2em; line-height: 1.5em; color:white; margin:0 0 18px 0px;}
+#album_textcontainer {float: left;z-index:9999; width: 750px; margin: 5px 0px 5px 0px;min-height:385px;}
+#album_text {background:url(/img/calit2/darkbg.png); width: 290px; height: 320px; float: left; padding: 10px; position:relative; top:10px; left:35px;z-index:99;}
+#album_text p {font-size:1.2em; line-height: 1.5em; color:white; margin:0 0 18px 0px;}
+#album_text a {font-size:1.2em; line-height: 1.5em; color:white; margin:0 0 18px 0px;}
 
 /* Footer */
 #footer {border-top:4px solid #dadada; clear:both; color:gray; font-size:0.9em; line-height:1.6em; margin:5px auto; padding:8px 0; text-align:right;}
