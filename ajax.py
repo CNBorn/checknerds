@@ -522,6 +522,11 @@ class render(tarsusaRequestHandler):
     def get(self):
         ''' New Ajax Functions suites for multiple usage for new calit2 Template. '''
         func = self.request.get("func")
+        
+        maxitems = self.request.get("maxitems")
+        if maxitems != '':
+            maxitems = int(maxitems)
+        
         #template_name = self.request.get("template")
         template_name = "calit2"
 
@@ -534,10 +539,10 @@ class render(tarsusaRequestHandler):
         }
 
         if func == "done":
-            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True)
+            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True, maxitems=maxitems)
             template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
         elif func == "undone":
-            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False)
+            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False, maxitems=maxitems)
             template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
         elif func == "dailyroutine":
             tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())

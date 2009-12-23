@@ -250,7 +250,7 @@ class api_additem(tarsusaRequestHandler):
     #CheckNerds API: AddItem.
     #Parameters: apiappid, apiservicekey, apiuserid, apikey
     #            item_name, item_comment, item_routine, item_public, item_date, item_tags 
-    #newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine'), self.request.get('public'), self.request.get('inputDate'), self.request.get('tags'))
+    #Return:    Success: 200 status
 
     def get(self):  
         self.write('<h1>please use POST</h1>')
@@ -282,6 +282,7 @@ class api_additem(tarsusaRequestHandler):
         #Should be 200 status in future, currently just 0(success), 1(failed)
         self.response.set_status(200)
         return newlyadd
+        #return self.response_status(200, '<h1>You can\'t manipulate other user\'s items.</h1>', False)
 
 def main():
     application = webapp.WSGIApplication([
