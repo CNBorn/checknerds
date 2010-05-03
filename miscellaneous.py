@@ -2,10 +2,10 @@
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 1.0, codename Nevada
+# version 1.0, codename California
 # - miscellaneous.py
-# Copyright (C) CNBorn, 2008
-# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
+# Copyright (C) CNBorn, 2008-2010
+# http://cnborn.net, http://twitter.com/CNBorn
 #
 # **************************************************************** 
 
@@ -27,8 +27,9 @@ from google.appengine.api import images
 from modules import *
 from base import *
 
-from google.appengine.api import memcache
+import memcache
 import logging
+import tarsusaCore
 
 class GuestbookPage(tarsusaRequestHandler):
     def get(self):
@@ -279,12 +280,30 @@ class CaliforniaPage(tarsusaRequestHandler):
             path = os.path.join(os.path.dirname(__file__), 'pages/calit2/index.html')
         
         else:           
-            template_values = {
-                'PrefixCSSdir': "/",
-            }
-            path = os.path.join(os.path.dirname(__file__), 'pages/calit2/welcome.html')
-    
-        self.response.out.write(template.render(path, template_values)) 
+            #WelcomePage for Non-registered Users.
+
+            IsCachedWelcomePage = memcache.get_item('strCachedWelcomePage', 'global')
+            
+            if IsCachedWelcomePage:
+                strCachedWelcomePage = IsCachedWelcomePage
+            else:
+                TotalUserCount = tarsusaCore.get_count_tarsusaUser()
+                TotaltarsusaItem = tarsusaCore.get_count_tarsusaItem()
+
+                template_values = {
+                    'PrefixCSSdir': "/",
+                    'UserNickName': "访客",
+                    'AnonymousVisitor': "Yes",
+                    'htmltag_TotalUser': TotalUserCount,
+                    'htmltag_TotaltarsusaItem': TotaltarsusaItem,
+                }
+
+                #Manupilating Templates 
+                path = os.path.join(os.path.dirname(__file__), 'pages/calit2/welcome.html')
+                strCachedWelcomePage = template.render(path, template_values)
+                memcache.set_item("strCachedWelcomePage", strCachedWelcomePage, 'global')
+
+        self.response.out.write(strCachedWelcomePage)
 
 def main():
     application = webapp.WSGIApplication([('/about',AboutPage),
