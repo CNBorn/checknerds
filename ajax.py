@@ -194,16 +194,18 @@ class getdailyroutine_yesterday(tarsusaRequestHandler):
 
 
 class get_fp_bottomcontents(tarsusaRequestHandler):
+    '''用户登录后，下方的已完成和未完成事项列表'''
+
     ##Constantly Encountering 405 Error:
     ##Thanks for BenBen's solution: http://www.119797.com/program/gae-405/
     def head(self, *args):
         return self.get(*args)
         
+    @userloggedin_or_403
     def get(self):
-        if self.chk_login():
-            CurrentUser = self.get_user_db()
-        
+        CurrentUser = self.get_user_db()
         cachedUserItemlist = memcache.get_item("itemlist", CurrentUser.key().id())
+
         if cachedUserItemlist is not None:
             strcachedUserItemlist = cachedUserItemlist
         else:   
