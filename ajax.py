@@ -383,42 +383,33 @@ class edititem(tarsusaRequestHandler):
 
 
 class getjson_userdoneitems(tarsusaRequestHandler):
-    ### JSON Referrences: http://code.google.com/apis/opensocial/articles/appengine-0.8.html
-    #                     http://www.ibm.com/developerworks/cn/opensource/os-eclipse-mashup-google-pt2/
-    #                     http://www.cnblogs.com/leleroyn/archive/2008/06/17/1224039.html
+    '''JSON - 用户已完成事项'''
+
+    @userloggedin_or_403
     def get(self):
-        if users.get_current_user() != None:
-
-            # code below are comming from GAE example
-            q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-            CurrentUser = q.get()   
-
-            CountTotalItems = 0
-            tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
-            UserDoneItems = []
-            for UserDoneItem in tarsusaItemCollection_UserDoneItems:
-                item = {'id' : str(UserDoneItem.key().id()), 'name' : UserDoneItem.name, 'date' : str(UserDoneItem.date), 'comment' : UserDoneItem.comment}
+        UserDoneItems = []
+        CurrentUser = self.get_user_db()
+        tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
+        for UserDoneItem in tarsusaItemCollection_UserDoneItems:
+            item = {'id' : str(UserDoneItem.key().id()), 'name' : UserDoneItem.name, 'date' : str(UserDoneItem.date), 'comment' : UserDoneItem.comment}
             UserDoneItems.append(item)
-            
+        
         self.response.out.write(simplejson.dumps(UserDoneItems))
 
 
 class getjson_usertodoitems(tarsusaRequestHandler):
-    
+    '''JSON - 用户未完成事项'''
+
+    @userloggedin_or_403
     def get(self):
-        if users.get_current_user() != None:
-
-            # code below are comming from GAE example
-            q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-            CurrentUser = q.get()   
-
-            CountTotalItems = 0
-            tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", users.get_current_user())
-            UserTodoItems = []
-            for UserTodoItem in tarsusaItemCollection_UserTodoItems:
-                item = {'id' : str(UserTodoItem.key().id()), 'name' : UserTodoItem.name, 'date' : str(UserTodoItem.date), 'comment' : UserTodoItem.comment}
+        UserTodoItems = []
+        CurrentUser = self.get_user_db()
+        
+        tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", users.get_current_user())
+        for UserTodoItem in tarsusaItemCollection_UserTodoItems:
+            item = {'id' : str(UserTodoItem.key().id()), 'name' : UserTodoItem.name, 'date' : str(UserTodoItem.date), 'comment' : UserTodoItem.comment}
             UserTodoItems.append(item)
-            
+        
         self.response.out.write(simplejson.dumps(UserTodoItems))
             
 class ajax_error(tarsusaRequestHandler):
