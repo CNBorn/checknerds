@@ -1,5 +1,5 @@
 cron:
 - description: AppAPIQuota reset - flushcache
   url: /cron_flushcache
-  schedule: every 3 hours
+  schedule: every 24 hours
 

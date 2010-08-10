@@ -251,12 +251,14 @@ class LabsPage(tarsusaRequestHandler):
 
 class FlushCache(tarsusaRequestHandler):
     def get(self):
+        from google.appengine.api import memcache 
         memcache.flush_all()
         logging.info("Memcache Flushed by force.")
         self.redirect('/')
 
 class cron_flushcache(tarsusaRequestHandler):
     def get(self):
+        from google.appengine.api import memcache 
         memcache.flush_all()
         logging.info("memcache flushed by cron.")
         return True
