@@ -567,7 +567,7 @@ def DoneItem(ItemId, UserId, Misc):
 
     tItem = tarsusaItem.get_by_id(int(ItemId))
     
-    if tItem.usermodel.key().id() == int(UserId):
+    if tItem is not None and tItem.usermodel.key().id() == int(UserId):
         ## Check User Permission to done this Item
 
         if tItem.routine == 'none':
@@ -602,11 +602,11 @@ def DoneItem(ItemId, UserId, Misc):
                 NewlyDoneRoutineItem.put()
                 memcache.event('refresh_dailyroutine', int(UserId))
             
-            return 0
+            return True
             #self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())
 
     else:
-        return 1
+        return False
 
 def UndoneItem(ItemId, UserId, Misc):
     #UndoneItem function specially designed for API calls.  
