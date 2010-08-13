@@ -280,6 +280,7 @@ class CaliforniaPage(tarsusaRequestHandler):
                     'UserID': CurrentUser.key().id(),
             }
             path = os.path.join(os.path.dirname(__file__), 'pages/calit2/index.html')
+            strCachedWelcomePage = template.render(path, template_values)
         
         else:           
             #WelcomePage for Non-registered Users.
