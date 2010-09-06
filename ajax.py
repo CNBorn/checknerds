@@ -516,9 +516,10 @@ class render(tarsusaRequestHandler):
         ''' New Ajax Functions suites for multiple usage for new calit2 Template. '''
         func = self.request.get("func")
         
-        maxitems = self.request.get("maxitems")
-        if maxitems != '':
-            maxitems = int(maxitems)
+        try:
+            maxitems = int(self.request.get("maxitems"))
+        except:
+            maxitems = 100
         
         #template_name = self.request.get("template")
         template_name = "calit2"
