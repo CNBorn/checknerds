@@ -710,58 +710,60 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', 
     except:
         item_comment = ''
 
+    #try:
+    #going to find out why it goes wrong.
+
+    # The following code works on GAE platform.
+    # it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
+    item2beadd_name = cgi.escape(rawName)               
+
     try:
-        # The following code works on GAE platform.
-        # it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
-        item2beadd_name = cgi.escape(rawName)               
-
-        try:
-            item2beadd_comment = cgi.escape(item_comment)
-        except:
-            item2beadd_comment = ''
-                            
-        try:
-            tarsusaItem_Tags = cgi.escape(rawTags).split(",")
-        except:
-            tarsusaItem_Tags = None 
-
-        #routine is a must provided in template, by type=hidden
-        item2beadd_routine = cgi.escape(rawRoutine)
-
-        first_tarsusa_item = tarsusaItem(user=CurrentUser.user, name=item2beadd_name, comment=item2beadd_comment, routine=rawRoutine)
-        first_tarsusa_item.public = rawPublic
-        first_tarsusa_item.done = False
-
-        # DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
-        # The easiest way to convert this to a datetime seems to be;
-        #datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
-        # the '*' operator unpacks the tuple, producing the argument list.  
-        # also learned sth from: http://bytes.com/forum/thread603681.html
-
-        # Logic: If the expectdate is the same day as today, It is none.
-        try:
-            expectdatetime = None
-            expectdate = datetime.date(*time.strptime(rawInputDate,"%Y-%m-%d")[:3])
-            if expectdate == datetime.datetime.date(datetime.datetime.today()):
-                expectdatetime == None
-            else:
-                currenttime = datetime.datetime.time(datetime.datetime.now())
-                expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
-        except:
-            expectdatetime = None
-        first_tarsusa_item.expectdate =  expectdatetime
-
-        ## the creation date will be added automatically by GAE datastore               
-        first_tarsusa_item.usermodel = CurrentUser              
-        #first_tarsusa_item.put()
-        try:
-            tarsusaItem_Tags = cgi.escape(rawTags).split(",")
-        except:
-            tarsusaItem_Tags = None
-
+        item2beadd_comment = cgi.escape(item_comment)
     except:
-        #Something is wrong when adding the item.
-        self.write("sth is wrong.")
+        item2beadd_comment = ''
+                        
+    try:
+        tarsusaItem_Tags = cgi.escape(rawTags).split(",")
+    except:
+        tarsusaItem_Tags = None 
+
+    #routine is a must provided in template, by type=hidden
+    item2beadd_routine = cgi.escape(rawRoutine)
+
+    first_tarsusa_item = tarsusaItem(user=CurrentUser.user, name=item2beadd_name, comment=item2beadd_comment, routine=rawRoutine)
+    first_tarsusa_item.public = rawPublic
+    first_tarsusa_item.done = False
+
+    # DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
+    # The easiest way to convert this to a datetime seems to be;
+    #datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
+    # the '*' operator unpacks the tuple, producing the argument list.  
+    # also learned sth from: http://bytes.com/forum/thread603681.html
+
+    # Logic: If the expectdate is the same day as today, It is none.
+    try:
+        expectdatetime = None
+        expectdate = datetime.date(*time.strptime(rawInputDate,"%Y-%m-%d")[:3])
+        if expectdate == datetime.datetime.date(datetime.datetime.today()):
+            expectdatetime == None
+        else:
+            currenttime = datetime.datetime.time(datetime.datetime.now())
+            expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
+    except:
+        expectdatetime = None
+    first_tarsusa_item.expectdate =  expectdatetime
+
+    ## the creation date will be added automatically by GAE datastore               
+    first_tarsusa_item.usermodel = CurrentUser              
+    #first_tarsusa_item.put()
+    try:
+        tarsusaItem_Tags = cgi.escape(rawTags).split(",")
+    except:
+        tarsusaItem_Tags = None
+
+    #except:
+    #    #Something is wrong when adding the item.
+    #    self.write("sth is wrong.")
 
     #memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
     if item2beadd_routine == 'daily':
