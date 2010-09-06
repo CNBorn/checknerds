@@ -121,7 +121,8 @@ class AddItemProcess(tarsusaRequestHandler):
 			if self.chk_login():
 				CurrentUser = self.get_user_db()
 
-				item2beadd_name = cgi.escape(self.request.get('name'))                          
+				item2beadd_name = cgi.escape(self.request.get('name'))
+				item2beadd_comment = cgi.escape(self.request.get('comment'))
 				#Error handler to be suit in the lite mobile add page.
 																					
 				newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine'), self.request.get('public'), self.request.get('inputDate'), self.request.get('tags'))
