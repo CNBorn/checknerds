@@ -125,7 +125,7 @@ class AddItemProcess(tarsusaRequestHandler):
 				item2beadd_comment = cgi.escape(self.request.get('comment'))
 				#Error handler to be suit in the lite mobile add page.
 																					
-				newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine'), self.request.get('public'), self.request.get('inputDate'), self.request.get('tags'))
+				newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine','none'), self.request.get('public', 'private'), self.request.get('inputDate'), self.request.get('tags'))
 	
 				#Added mobile redirect
 				if self.referer[-6:] == "/m/add":
