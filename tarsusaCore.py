@@ -729,6 +729,8 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
 
     #routine is a must provided in template, by type=hidden
     item2beadd_routine = cgi.escape(rawRoutine)
+    if item2beadd_routine not in ["none", "daily", "weekly", "monthly", "seasonly", "yearly"]:
+        item2beadd_routine = "none"
 
     first_tarsusa_item = tarsusaItem(user=CurrentUser.user, name=item2beadd_name, comment=item2beadd_comment, routine=item2beadd_routine)
     first_tarsusa_item.public = rawPublic

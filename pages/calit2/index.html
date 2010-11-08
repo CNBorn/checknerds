@@ -128,8 +128,6 @@ $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val()
    function(data){     
 	$('#itemlist').load('/ajax/render/?func=undone&template=calit2');
 	$("#inputName").val("");
-	$("#add_public").val("");
-	$("#add_routine").val("");
 	$("#add_comment").val("");
 	$("#add_tags").val("");
 	$("#inputDate").val("");
