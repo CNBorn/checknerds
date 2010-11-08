@@ -697,7 +697,7 @@ def UndoneItem(ItemId, UserId, Misc):
         #Authentication failed.
         return 1
 
-def AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', rawInputDate='', rawTags=None):
+def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='private', rawInputDate='', rawTags=None):
     
     CurrentUser = tarsusaUser.get_by_id(int(UserId))
 
@@ -730,7 +730,7 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', 
     #routine is a must provided in template, by type=hidden
     item2beadd_routine = cgi.escape(rawRoutine)
 
-    first_tarsusa_item = tarsusaItem(user=CurrentUser.user, name=item2beadd_name, comment=item2beadd_comment, routine=rawRoutine)
+    first_tarsusa_item = tarsusaItem(user=CurrentUser.user, name=item2beadd_name, comment=item2beadd_comment, routine=item2beadd_routine)
     first_tarsusa_item.public = rawPublic
     first_tarsusa_item.done = False
 
