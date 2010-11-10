@@ -839,7 +839,10 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
 
     #ShardingCounter
     shardingcounter.increment("tarsusaItem")
-    return first_tarsusa_item.key().id()
+    item_id = first_tarsusa_item.key().id()
+    item = first_tarsusa_item
+    memcache.set("item:%s" % item_id, item)
+    return item_id
 
 def RemoveItem(ItemId, UserId, Misc):
     tItem = tarsusaItem.get_by_id(int(ItemId))
