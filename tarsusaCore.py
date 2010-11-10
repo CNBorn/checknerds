@@ -166,6 +166,16 @@ def get_undone_items(user_id, maxitems=100):
 
     return undone_items
 
+
+def get_item(item_id):
+    cached_item = memcache.get("item:%s" % item_id)
+    if cached_item:
+        return cached_item
+    else:
+        item = tarsusaItem.get_by_id(int(item_id))
+        memcache.set("item:%s" % item_id, item)
+        return item
+
 def get_dailyroutine(userid):
 
     ThisUser = tarsusaUser.get_by_id(int(userid))

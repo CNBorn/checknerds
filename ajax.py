@@ -575,7 +575,7 @@ class sidebar(tarsusaRequestHandler):
         elif operation_name == 'item':
             #try:
             itemid = self.request.get("id")
-            item_in_template = tarsusaItem.get_by_id(int(itemid))
+            item_in_template = tarsusaCore.get_item(itemid)
             if item_in_template.user == current_user.user:
                 #current_user's item
                 template_values['ItemInTemplate'] = item_in_template
