@@ -53,6 +53,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #sidebar ul ul {line-height:1.2em; margin:4px 0 3px 15px; padding:0;}
 #sidebar ul ul li a {font-weight:400;}
 #sidebar h2 {margin:3px 0 8px;}
+#sidebar.fixed { position: fixed; top: 0; }
 
 /* Additem Div content */
 #additem {float:right; line-height:1.5em; margin:0 0 5px 0; padding:0; text-align:left; width:750px;}
