@@ -533,13 +533,22 @@ class render(tarsusaRequestHandler):
         }
 
         if func == "done":
+
             tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True, maxitems=maxitems)
             template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
             template_kind = "done_list"
+
         elif func == "undone":
-            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False, maxitems=maxitems)
-            template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+
+            cached_userundoneitem = memcache.get_item("itemlist", CurrentUser.key().id())
+            if cached_userundoneitem:
+                undone_items = cached_userundoneitem
+            else:
+                undone_items = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False, maxitems=maxitems)
+                memcache.set_item("itemlist", undone_items, CurrentUser.key().id())
+            template_values['undone_items'] = undone_items
             template_kind = "undone_list"
+
         elif func == "dailyroutine":
             tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
             template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems

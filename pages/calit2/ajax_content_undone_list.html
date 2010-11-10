@@ -1,12 +1,12 @@
 <ul>
-{% if tarsusaItemCollection_AjaxUserItems %}
-    {% for tarsusaItem_eachItem in tarsusaItemCollection_AjaxUserItems %}
-        <li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
-        <input type="checkbox" name="cbdone" onchange="doneItem('/doneItem/{{tarsusaItem_eachItem.id}}')">
-        {{ tarsusaItem_eachItem.name|escape }}
+{% if undone_items %}
+    {% for eachitem in undone_items %}
+        <li itemid="{{ eachitem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+        <input type="checkbox" name="cbdone" onchange="doneItem('/doneItem/{{eachitem.id}}')">
+        {{ eachitem.name|escape }}
         <span class="date">
-        {% ifnotequal tarsusaItem_eachItem.expectdate None %}
-        {{ tarsusaItem_eachItem.expectdate|escape }}
+        {% ifnotequal eachitem.expectdate None %}
+        {{ eachitem.expectdate|escape }}
         {% endifnotequal %}
         </span>
         </li>
