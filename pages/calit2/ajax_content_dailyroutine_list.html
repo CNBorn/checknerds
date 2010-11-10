@@ -1,52 +1,21 @@
-	<ul>
-    {% if tarsusaItemCollection_AjaxUserItems %}
-        {% for tarsusaItem_eachItem in tarsusaItemCollection_AjaxUserItems %}
-			{% ifequal tarsusaItem_eachItem.routine 'none' %}
-				{% ifequal tarsusaItem_eachItem.done 0 %}
-					<li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
-					<input type="checkbox" name="cbdone" onchange="doneItem('/doneItem/{{tarsusaItem_eachItem.id}}')">
-					<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
-					<span class="date">{{ tarsusaItem_eachItem.expectdate|escape }}</span>
-					 </li>
-				{% else %}
-					<li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
-					<input type="checkbox" name="cbundone" checked=false onchange="undoneItem('/undoneItem/{{tarsusaItem_eachItem.id}}')">
-					<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
-					<span class="date">@{{ tarsusaItem_eachItem.donedate|escape }}</span>
-					 </li>
-			    {% endifequal %}
-			{% else %}		 
-				<li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
-				{% ifequal tarsusaItem_eachItem.done 0 %}
-				<input type="checkbox" name="checkboxname" onchange="doneItem('/doneItem/{{tarsusaItem_eachItem.id}}')">
-				{% endifequal %}
-				<a href="/item/{{ tarsusaItem_eachItem.id }}">{{ tarsusaItem_eachItem.name|escape }}</a>
-				<span class="date">@every {{tarsusaItem_eachItem.routine}}</span>
-				</li>
-			{% endifequal %}
-            {% endfor %}
+<ul>
+{% if dailyroutine_items %}
+    {% for dailyroutine_item in dailyroutine_items %}
+        <li itemid="{{ dailyroutine_item.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+        {% ifequal dailyroutine_item.done False %}
+        <input type="checkbox" name="checkboxname" onchange="doneItem('/doneItem/{{dailyroutine_item.id}}')">
+        {% endifequal %}
+        <span class="item">{{ dailyroutine_item.name|escape }}</span>
+        <span class="date">每日</span>
+        </li>
+    {% endfor %}
+{% endif %}
+</ul>
 
-    {% else %}
-
-        {% if not UserFriendsActivities %}
-            <li>暂无友邻公开项目</li>
-        {% endif %}
-        {% for each_friend_item in UserFriendsActivities %}
-            {% ifequal each_friend_item.category "done" %}						
-            <li itemid="{{ each_friend_item.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}"><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a> 完成了 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></li>
-            {% else %}
-                <li itemid="{{ each_friend_item.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}"><a href="/user/{{each_friend_item.userid}}">{{each_friend_item.userdispname}}</a> 要做 <a href="/item/{{each_friend_item.id}}">{{each_friend_item.name}}</a></li>
-            {% endifequal %}
-        {% endfor %}
-
-    {% endif %}
-
-
-	</ul>
-    <script type="text/javascript"> 
-function undoneItem(strLink){
-        $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_undone") }); 
-        $('#tab_done').click();
+<script type="text/javascript"> 
+    function undoneItem(strLink){
+        $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_dailyroutine") }); 
+        $('#tab_dailyroutine').click();
         return false;
     }
 
@@ -61,10 +30,8 @@ function tab_flick(strdivname) {
 }
 
 function doneItem(strLink){
-    //$.ajax({type: "GET", url: strLink ,success: function(){$('#tab_undone').click();}}); 
-    //tab_flick("tab_done");
-    $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_done")}); 
-    $('#tab_undone').click();
+    $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_dailyroutine")}); 
+    $('#tab_dailyroutine').click();
     return false;
     }
 </script>

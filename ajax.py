@@ -533,7 +533,6 @@ class render(tarsusaRequestHandler):
         }
 
         if func == "done":
-
             tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True, maxitems=maxitems)
             template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
             template_kind = "done_list"
@@ -544,9 +543,10 @@ class render(tarsusaRequestHandler):
             template_kind = "undone_list"
 
         elif func == "dailyroutine":
-            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
-            template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+            dailyroutine_items = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
+            template_values['dailyroutine_items'] = dailyroutine_items
             template_kind = "dailyroutine_list"
+
         elif func == "friends":
             UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id())
             template_values['UserFriendsActivities'] = UserFriendsItem_List
