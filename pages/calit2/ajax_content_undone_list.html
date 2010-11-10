@@ -3,7 +3,7 @@
     {% for eachitem in undone_items %}
         <li itemid="{{ eachitem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
         <input type="checkbox" name="cbdone" onchange="doneItem('/doneItem/{{eachitem.id}}')">
-        {{ eachitem.name|escape }}
+        <span class="item">{{ eachitem.name|escape }}</span>
         <span class="date">
         {% ifnotequal eachitem.expectdate None %}
         {{ eachitem.expectdate|escape }}
