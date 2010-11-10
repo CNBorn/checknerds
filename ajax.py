@@ -539,13 +539,7 @@ class render(tarsusaRequestHandler):
             template_kind = "done_list"
 
         elif func == "undone":
-
-            cached_userundoneitem = memcache.get_item("itemlist", CurrentUser.key().id())
-            if cached_userundoneitem:
-                undone_items = cached_userundoneitem
-            else:
-                undone_items = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False, maxitems=maxitems)
-                memcache.set_item("itemlist", undone_items, CurrentUser.key().id())
+            undone_items = tarsusaCore.get_undone_items(CurrentUser.key().id(), maxitems)
             template_values['undone_items'] = undone_items
             template_kind = "undone_list"
 
