@@ -156,7 +156,6 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 
 
 def get_undone_items(user_id, maxitems=100):
-
     cached_userundoneitems = memcache.get_item("itemlist", user_id)
     if cached_userundoneitems:
         undone_items = cached_userundoneitems
@@ -623,9 +622,11 @@ def DoneItem(ItemId, UserId, Misc):
             if not tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count() >= 1:
                 NewlyDoneRoutineItem.put()
                 memcache.event('refresh_dailyroutine', int(UserId))
-            
-            return True
-            #self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())
+    
+        memcache.set("item:%s" % ItemId, tItem)
+
+        return True
+        #self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())
 
     else:
         return False
@@ -657,6 +658,7 @@ def UndoneItem(ItemId, UserId, Misc):
             #-----  
             memcache.event('undoneitem', int(UserId))
             #return 0 indicates it's ok.
+            memcache.set("item:%s" % ItemId, tItem)
             return 0
 
         else:
