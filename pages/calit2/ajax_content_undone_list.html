@@ -1,0 +1,42 @@
+<ul>
+{% if tarsusaItemCollection_AjaxUserItems %}
+    {% for tarsusaItem_eachItem in tarsusaItemCollection_AjaxUserItems %}
+        <li itemid="{{ tarsusaItem_eachItem.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+        <input type="checkbox" name="cbdone" onchange="doneItem('/doneItem/{{tarsusaItem_eachItem.id}}')">
+        {{ tarsusaItem_eachItem.name|escape }}
+        <span class="date">
+        {% ifnotequal tarsusaItem_eachItem.expectdate None %}
+        {{ tarsusaItem_eachItem.expectdate|escape }}
+        {% endifnotequal %}
+        </span>
+        </li>
+    {% endfor %}
+{% endif %}
+</ul>
+
+    <script type="text/javascript"> 
+function undoneItem(strLink){
+        $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_undone") }); 
+        $('#tab_done').click();
+        return false;
+    }
+
+function tab_flick(strdivname) {
+    divname = "#" + strdivname;
+    $(divname).animate({ 
+        background: "#000000",
+        opacity: 0.4,
+        }, 500 ).animate({
+        opacity: 1.0}, 500);
+    $(divname).css({background:""});
+}
+
+function doneItem(strLink){
+    //$.ajax({type: "GET", url: strLink ,success: function(){$('#tab_undone').click();}}); 
+    //tab_flick("tab_done");
+    $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_done")}); 
+    $('#tab_undone').click();
+    return false;
+    }
+</script>
+

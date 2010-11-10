@@ -535,17 +535,21 @@ class render(tarsusaRequestHandler):
         if func == "done":
             tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True, maxitems=maxitems)
             template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+            template_kind = "done_list"
         elif func == "undone":
             tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=False, maxitems=maxitems)
             template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+            template_kind = "undone_list"
         elif func == "dailyroutine":
             tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
             template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+            template_kind = "dailyroutine_list"
         elif func == "friends":
             UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id())
             template_values['UserFriendsActivities'] = UserFriendsItem_List
+            template_kind = "friends_list"
  
-        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_content_%s.html' % (template_name, "itemlist"))
+        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_content_%s.html' % (template_name, template_kind))
         self.write(template.render(path, template_values))
 
 
