@@ -576,11 +576,11 @@ class sidebar(tarsusaRequestHandler):
             #try:
             itemid = self.request.get("id")
             item_in_template = tarsusaCore.get_item(itemid)
-            if item_in_template.user == current_user.user:
+            if item_in_template and item_in_template.user == current_user.user:
                 #current_user's item
                 template_values['ItemInTemplate'] = item_in_template
 
-            else:
+            elif item_in_template:
                 #user's friend's item
                 operation_name = 'friends' #switched to another template
                 user_friend_in_template = item_in_template.usermodel

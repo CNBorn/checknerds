@@ -158,11 +158,9 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 def get_undone_items(user_id, maxitems=100):
     cached_userundoneitems = memcache.get_item("itemlist", user_id)
     if cached_userundoneitems:
-        undone_items = cached_userundoneitems
-    else:
-        undone_items = get_tarsusaItemCollection(user_id, done=False, maxitems=maxitems)
-        memcache.set_item("itemlist", undone_items, user_id)
-
+        return cached_userundoneitems
+    undone_items = get_tarsusaItemCollection(user_id, done=False, maxitems=maxitems)
+    memcache.set_item("itemlist", undone_items, user_id)
     return undone_items
 
 
@@ -170,10 +168,13 @@ def get_item(item_id):
     cached_item = memcache.get("item:%s" % item_id)
     if cached_item:
         return cached_item
-    else:
+    try:
         item = tarsusaItem.get_by_id(int(item_id))
-        memcache.set("item:%s" % item_id, item)
-        return item
+    except:
+        return None
+    memcache.set("item:%s" % item_id, item)
+    return item
+
 
 def get_dailyroutine(userid):
 
