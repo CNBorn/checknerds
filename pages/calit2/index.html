@@ -56,7 +56,7 @@ function tabs_MakeActive(obj_div)
 //Functions for Tabs.
 $('#tab_undone').click(function() {
     tabs_MakeActive(this);
-    $('#itemlist').load('/ajax/render/?func=undone&maxitems=1000&template=calit2', initHover);
+    $('#itemlist').load('/ajax/render/?func=undone&maxitems=100&template=calit2', initHover);
     showLoadingPanel();
     hideLoadingPanel();
     return false;
@@ -72,7 +72,7 @@ $('#tab_dailyroutine').click(function() {
 
 $('#tab_done').click(function() {
     tabs_MakeActive(this);
-    $('#itemlist').load('/ajax/render/?func=done&maxitems=1000&template=calit2',initHover);
+    $('#itemlist').load('/ajax/render/?func=done&maxitems=100&template=calit2',initHover);
     showLoadingPanel();
     hideLoadingPanel();
     return false;
