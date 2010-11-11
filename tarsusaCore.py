@@ -570,7 +570,7 @@ def DoneItem(ItemId, UserId, Misc):
     if Misc == 'y':
         DoneYesterdaysDailyRoutine = True
 
-    tItem = tarsusaItem.get_by_id(int(ItemId))
+    tItem = get_item(ItemId)
     
     if tItem is not None and tItem.usermodel.key().id() == int(UserId):
         ## Check User Permission to done this Item
@@ -628,8 +628,7 @@ def UndoneItem(ItemId, UserId, Misc):
     if Misc == 'y':
         UndoneYesterdaysDailyRoutine = True
 
-    ## Please be awared that ItemId here is a string!
-    tItem = tarsusaItem.get_by_id(int(ItemId))
+    tItem = get_item(ItemId)
 
     if tItem.usermodel.key().id() == int(UserId):
         ## Check User Permission to undone this Item
@@ -829,8 +828,9 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
     return item_id
 
 def RemoveItem(ItemId, UserId, Misc):
-    tItem = tarsusaItem.get_by_id(int(ItemId))
-    if tItem is not None:
+    tItem = get_item(ItemId)
+
+    if tItem:
 
         if tItem.usermodel.key().id() == int(UserId):
             ## Check User Permission to undone this Item

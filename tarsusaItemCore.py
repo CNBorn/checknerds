@@ -39,7 +39,6 @@ class DoneItem(tarsusaRequestHandler):
             ItemId = self.request.path[10:-2]           
             DoneYesterdaysDailyRoutine = True
 
-        tItem = tarsusaCore.get_item(ItemId)
 
         # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
@@ -70,9 +69,6 @@ class UnDoneItem(tarsusaRequestHandler):
             ItemId = self.request.path[12:-2]           
             UndoneYesterdaysDailyRoutine = True
         
-        ## Please be awared that ItemId here is a string!
-        tItem = tarsusaCore.get_item(ItemId)
-        
         # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
             CurrentUser = self.get_user_db()
@@ -93,21 +89,12 @@ class UnDoneItem(tarsusaRequestHandler):
 class RemoveItem(tarsusaRequestHandler):
     def get(self):
         ItemId = self.request.path[12:]
-        ## Please be awared that ItemId here is a string!
-        tItem = tarsusaCore.get_item(ItemId)
-            
-        # Permission check is very important.
-        # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
             CurrentUser = self.get_user_db()
-            
             remove_status = tarsusaCore.RemoveItem(ItemId, CurrentUser.key().id(),'')
+            self.redirect(self.referer)
+        self.redirect('/')
 
-        else:
-            self.redirect('/')
-
-
-        self.redirect(self.referer)
 
 class AddItemProcess(tarsusaRequestHandler):
     def post(self):
