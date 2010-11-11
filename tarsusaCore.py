@@ -526,54 +526,37 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
         return None #This User don't have any friends.
 
 def get_count_UserItemStats(userid):    
-    #tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
-    #'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
+
     CurrentUser = tarsusaUser.get_by_id(int(userid))
 
-    # Count User's Todos and Dones
     cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())
-    if cachedUserItemStats is not None:
-        template_values = cachedUserItemStats
-    else:
-        # Count User's Todos and Dones
-        tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())                
-        tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", users.get_current_user())               
+    if cachedUserItemStats:
+        return cachedUserItemStats
 
-        # For Count number, It is said that COUNT in GAE is not satisfied and accuracy.
-        # SO there is implemented a stupid way.
-        UserTotalItems = tarsusaItemCollection_UserDoneItems.count() + tarsusaItemCollection_UserTodoItems.count()
-        UserToDoItems = 0
-        UserDoneItems = 0
+    tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())                
+    tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", users.get_current_user())               
 
-        UserDonePercentage = 0.00
+    count_done_items = 0
+    count_todo_items = 0
+    percentage_done = 0.00
 
-        UserDoneItems = tarsusaItemCollection_UserDoneItems.count() 
-        UserToDoItems = tarsusaItemCollection_UserTodoItems.count()
+    count_done_items = tarsusaItemCollection_UserDoneItems.count() 
+    count_todo_items = tarsusaItemCollection_UserTodoItems.count()
+    count_total_items = count_done_items + count_todo_items
 
-        if UserTotalItems != 0:
-            UserDonePercentage = UserDoneItems *100 / UserTotalItems 
-        else:
-            UserDonePercentage = 0.00
+    if count_total_items != 0:
+        percentage_done = count_done_items * 100 / count_total_items
 
-        template_values = {
-            'UserTotalItems': UserTotalItems,
-            'UserToDoItems': UserToDoItems,
-            'UserDoneItems': UserDoneItems,
-            'UserDonePercentage': UserDonePercentage,
-        }
-        
-        #Changed since r111,
-        #Now cache the Results from DB.
-        memcache.set_item("itemstats", template_values, CurrentUser.key().id())
+    result = {
+        'UserTotalItems': count_total_items,
+        'UserToDoItems': count_todo_items,
+        'UserDoneItems': count_done_items,
+        'UserDonePercentage': percentage_done,
+    }
+    
+    memcache.set_item("itemstats", result, CurrentUser.key().id())
 
-
-    return template_values 
-
-def get_item_by_id(itemid):
-    #test with fetched item with memcache
-    #but first should testing with memcache model set.
-    item_fetched = tarsusaItem.get_by_id(int(itemid))
-
+    return result 
 
 def DoneItem(ItemId, UserId, Misc):
     #DoneItem function specially designed for API calls.    
