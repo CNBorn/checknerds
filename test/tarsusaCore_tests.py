@@ -20,52 +20,28 @@ import logging
 class tarsusaCoreTest(unittest.TestCase):
 
     def setUp(self):
+        self.user = modules.tarsusaUser(urlname='Bar')
+        self.user.put()
+        self.item1 = modules.tarsusaItem(name="Item1", done=False, routine="none", usermodel=self.user)
+        self.item1.put()
+        self.item2 = modules.tarsusaItem(name="Item2", done=False, routine="none", usermodel=self.user)
+        self.item2.put()
 
-        # Populate test entities.
-        entity = modules.tarsusaUser(urlname='Bar')
-        self.setup_key = entity.put()
-
-        NewtarsusaItem = modules.tarsusaItem(name="Item1", done=False, routine="none", usermodel=entity)
-        NewtarsusaItem.put()
-        NewtarsusaItem2 = modules.tarsusaItem(name="Item2", done=False, routine="none", usermodel=entity)
-        NewtarsusaItem2.put()
-
+    def tearDown(self):
+        self.item1.delete()
+        self.item2.delete()
+        self.user.delete()
    
     def test_tarsusaCore_gettarsusaItemCollection(self):
-        #entity = model.MyEntity(name='Foo')
-        tarsusaItemCollection_UserTodoItems = tarsusaCore.get_tarsusaItemCollection(userid=1, done=False)
-        self.assertEqual(tarsusaItemCollection_UserTodoItems, "")
+        todo_items = tarsusaCore.get_tarsusaItemCollection(userid=self.user.key().id(), done=False)
+        self.assertEqual(len(todo_items), 2)
     
-    def test_tarsusaCore_gettarsusaDailyRoutine(self):
-        DailyRoutine = tarsusaCore.get_dailyroutine(userid=1)
-
-    def test_tarsusaCore_getitemsdueToday(self):
-        DueToday = tarsusaCore.get_ItemsDueToday(userid=1)
-
-    def test_tarsusaCore_getuserdonelog(self):
-        Donelog = tarsusaCore.get_UserDonelog(userid=1)
-    
-    def test_tarsusaCore_getuserNonPrivateItems(self):
-        NonPrivateItems = tarsusaCore.get_UserNonPrivateItems(userid=1)
-
-    def test_tarsusaCore_getUserFriends(self):
-        UserFriendList = tarsusaCore.get_UserFriends(userid=1)
-
-    def test_tarsusaCore_getUserFriendStats(self):
-        UserFriendStats = tarsusaCore.get_UserFriendStats(userid=1)
-
     def test_tarsusaCore_countUserItemStats(self):
-        UserItemStats = tarsusaCore.get_count_UserItemStats(userid=1)
-        #print tarsusaCore.get_count_UserItemStats(userid=1)
-        #print UserItemStats
-        
-        self.assertEqual(UserItemStats, {'UserTotalItems': 6, 'UserToDoItems': 6, 'UserDoneItems': 0, 'UserDonePercentage': 0})
+        UserItemStats = tarsusaCore.get_count_UserItemStats(userid=self.user.key().id())
+        self.assertEqual(UserItemStats, {'UserTotalItems': 2, 'UserToDoItems': 2, 'UserDoneItems': 0, 'UserDonePercentage': 0})
 
     def test_tarsusaCore_doneItem(self):
-        user1 = tarsusaUser(urlname="Bar")
-        user1.put()
-        self.assertEqual(user1.user, "")
-        DoneItem = tarsusaCore.DoneItem(ItemId="20", UserId=1, Misc='')
+        DoneItem = tarsusaCore.DoneItem(ItemId=self.item1.key().id(), UserId=self.user.key().id(), Misc='')
         self.assertEqual(DoneItem, True)
 
     def test_tarsusaCore_AddItem(self):
@@ -74,10 +50,3 @@ class tarsusaCoreTest(unittest.TestCase):
         #AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', rawInputDate='', rawTags=None):
         pass
 
-    def test_tarsusaCore_get_latest_user(self):
-        import tarsusaCore
-        a = tarsusaCore.get_LatestUser(count=8)
-        self.assertEqual(a, "*")
-
-    def test_tarsusaCore_Removeitem(self):
-        RemoveItem = tarsusaCore.RemoveItem(ItemId="2", UserId="1", Misc='')
