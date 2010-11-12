@@ -2,12 +2,8 @@
 
 # ****************************************************************
 # CheckNerds - www.checknerds.com
-# version 1.0, codename Nevada
 # - tarsusaCore.py
-# Author: CNBorn, 2008-2009
-# http://blog.donews.com/CNBorn, http://twitter.com/CNBorn
-#
-# Provides inner-API functions
+# http://cnborn.net, http://twitter.com/CNBorn
 #
 # ****************************************************************
 
@@ -572,17 +568,14 @@ def DoneItem(ItemId, UserId, Misc):
 
     tItem = get_item(ItemId)
     
-    if tItem is not None and tItem.usermodel.key().id() == int(UserId):
-        ## Check User Permission to done this Item
+    if tItem and tItem.usermodel.key().id() == int(UserId):
 
         if tItem.routine == 'none':
-            ## if this item is not a routine item.
             tItem.donedate = datetime.datetime.now()
             tItem.done = True
             tItem.put()
             memcache.event('doneitem', int(UserId))
         else:
-            ## if this item is a routine item.
             NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
             NewlyDoneRoutineItem.user = users.get_current_user()
             NewlyDoneRoutineItem.routineid = int(ItemId)
@@ -937,7 +930,6 @@ def verify_AppModel(apiappid, apiservicekey):
 
 def verify_UserApi(userid, userapikey):
     import hashlib
-    import service
     #To Verify UserApi, the Authentication process.
     
     #To check whether this user is existed.
