@@ -696,12 +696,10 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
     
     CurrentUser = tarsusaUser.get_by_id(int(UserId))
 
-    #Check if comment property's length is exceed 500
     try:
+        item_comment = rawComment
         if len(rawComment)>500:
             item_comment = rawComment[:500]
-        else:
-            item_comment = rawComment
     except:
         item_comment = ''
 
