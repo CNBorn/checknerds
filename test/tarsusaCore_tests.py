@@ -59,5 +59,7 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual("private", add_item.public)
         tarsusaCore.delete_item(add_item_id, self.user.key().id())
 
-
+    def test_tarsusaCore_getlatest_user(self):
+        people_list = tarsusaCore.get_LatestUser()
+        self.assertEqual(1, people_list.count())
 
