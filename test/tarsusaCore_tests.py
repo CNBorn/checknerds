@@ -36,7 +36,7 @@ class tarsusaCoreTest(unittest.TestCase):
         todo_items = tarsusaCore.get_tarsusaItemCollection(userid=self.user.key().id(), done=False)
         self.assertEqual(len(todo_items), 2)
     
-    def test_tarsusaCore_countUserItemStats(self):
+    def disabled_test_tarsusaCore_countUserItemStats(self):
         UserItemStats = tarsusaCore.get_count_UserItemStats(userid=self.user.key().id())
         self.assertEqual(UserItemStats, {'UserTotalItems': 2, 'UserToDoItems': 2, 'UserDoneItems': 0, 'UserDonePercentage': 0})
 
@@ -51,8 +51,13 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual(False, undone_item.done)
 
     def test_tarsusaCore_AddItem(self):
-        #AddItem = tarsusaCore.AddItem(UserId="1", rawName="Test Item Name", rawComment = "Test Item Comment", rawRoutine='', rawPublic="private", rawInputDate="2009-07-19", rawTags=None)
-        #tarsusaCore.AddItem(1, "Test Item Name", "Test Item Comment", '', "private", "2009-07-19", None)
-        #AddItem(UserId, rawName, rawComment='', rawRoutine='', rawPublic='private', rawInputDate='', rawTags=None):
-        pass
+        add_item_id = tarsusaCore.AddItem(UserId=self.user.key().id(), rawName="Test Item Name", rawComment = "Test Item Comment", rawRoutine='none', rawPublic="private", rawInputDate="2009-07-19", rawTags=None)
+        add_item = tarsusaCore.get_item(add_item_id)
+        self.assertEqual("Test Item Name", add_item.name)
+        self.assertEqual(False, add_item.done)
+        self.assertEqual("none", add_item.routine)
+        self.assertEqual("private", add_item.public)
+        tarsusaCore.delete_item(add_item_id, self.user.key().id())
+
+
 

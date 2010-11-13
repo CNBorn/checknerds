@@ -546,6 +546,12 @@ def get_count_UserItemStats(userid):
 
     return result 
 
+def delete_item(item_id, user_id):
+    item = get_item(item_id)
+    memcache.set_item("itemstats", False, user_id)
+    memcache.set("item:%s" % item_id, False)
+    item.delete()
+
 def DoneItem(ItemId, UserId, Misc):
     #DoneItem function specially designed for API calls.    
     #Duplicated Code from tarsusaItemCore, refactor needed in the future.
@@ -807,6 +813,8 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
 
     #ShardingCounter
     shardingcounter.increment("tarsusaItem")
+    user_id = CurrentUser.key().id()
+    memcache.set_item("itemstats", False, user_id)
     item_id = first_tarsusa_item.key().id()
     item = first_tarsusa_item
     memcache.set("item:%s" % item_id, item)
