@@ -33,56 +33,34 @@ import logging
 
 class DoneItem(tarsusaRequestHandler):
     def get(self):
-        ItemId = self.request.path[10:]
-        DoneYesterdaysDailyRoutine = False
-        if ItemId[-2:] == '/y':
-            ItemId = self.request.path[10:-2]           
-            DoneYesterdaysDailyRoutine = True
-
-
-        # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
+            ItemId = self.request.path[10:]
+            DoneYesterdaysDailyRoutine = False
+            if ItemId[-2:] == '/y':
+                ItemId = self.request.path[10:-2]           
+                DoneYesterdaysDailyRoutine = True
+
             CurrentUser = self.get_user_db()
-    
-            if DoneYesterdaysDailyRoutine == True:
+            Misc = ''
+            if DoneYesterdaysDailyRoutine:
                 Misc = 'y'
-            else:
-                Misc = ''
-
-            #self.write(tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc))
             tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc)
-
-        else:
-            #self.redirect('/')
-            self.redirect(self.referer)
         
         self.redirect(self.referer)
 
 class UnDoneItem(tarsusaRequestHandler):
     def get(self):
-
-        # Permission check is very important.
-
-        ItemId = self.request.path[12:]
-        UndoneYesterdaysDailyRoutine = False
-        if ItemId[-2:] == '/y':
-            ItemId = self.request.path[12:-2]           
-            UndoneYesterdaysDailyRoutine = True
-        
-        # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
+            ItemId = self.request.path[12:]
+            UndoneYesterdaysDailyRoutine = False
+            if ItemId[-2:] == '/y':
+                ItemId = self.request.path[12:-2]           
+                UndoneYesterdaysDailyRoutine = True
             CurrentUser = self.get_user_db()
-            
-            if UndoneYesterdaysDailyRoutine == True:
+            Misc = ''
+            if UndoneYesterdaysDailyRoutine:
                 Misc = 'y'
-            else:
-                Misc = ''
-
             tarsusaCore.UndoneItem(int(ItemId), CurrentUser.key().id(), Misc)
-
-        else:
-            #self.redirect('/')
-            self.redirect(self.referer)
 
         self.redirect(self.referer)
 

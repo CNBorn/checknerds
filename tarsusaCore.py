@@ -553,9 +553,6 @@ def delete_item(item_id, user_id):
     item.delete()
 
 def DoneItem(ItemId, UserId, Misc):
-    #DoneItem function specially designed for API calls.    
-    #Duplicated Code from tarsusaItemCore, refactor needed in the future.
-    
     ## This function won't check permission for login, for external API usage.
     #Instead, you need to provide a userid, and the function will check wheather this user have the permission to do so.
     #Which indicates that you definately need a permission check mechanism when you calling this function from outside.
