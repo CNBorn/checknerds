@@ -81,25 +81,18 @@ def set(key, value, time=0):
         #logging.error('SET Memcache item %s FAILED!' % key)
         return False
 
-def get_item(key, CurrentUserID):
-    itemoperate = ("%s_%s" % (str(CurrentUserID), key))
-    item = memcache.get(itemoperate)
-    if item == None:
-        #logging.debug('NONE Memcache item %s' % itemoperate)
+def get_item(key, user_id):
+    mc_key = ("%s:%s" % (key, str(user_id)))
+    item = memcache.get(mc_key)
+    if not item:
         return None
-    else:
-        #logging.debug('HIT Memcache item %s' % itemoperate)
-        return item
+    return item
 
-def set_item(key, value, CurrentUserID, time=0):
-    if str(CurrentUserID) == 'global':
+def set_item(key, value, user_id, time=0):
+    if str(user_id) == 'global':
         time += 300
-    
-    itemoperate = ("%s_%s" % (str(CurrentUserID), key))
-    if memcache.set(itemoperate, value, time):
-        #logging.debug('SET Memcache item %s' % itemoperate)
+    mc_key = ("%s:%s" % (key, str(user_id)))
+    if memcache.set(mc_key, value, time):
         return True
-    else:
-        #logging.debug('FAILED SET Memcache item %s' % itemoperate)
-        return False
+    return False
 
