@@ -44,6 +44,12 @@ class tarsusaCoreTest(unittest.TestCase):
         DoneItem = tarsusaCore.DoneItem(ItemId=self.item1.key().id(), UserId=self.user.key().id(), Misc='')
         self.assertEqual(DoneItem, True)
 
+    def test_tarsusaCore_undone_item(self):
+        undone_item = self.item1
+        tarsusaCore.DoneItem(ItemId=undone_item.key().id(), UserId=self.user.key().id(), Misc='')
+        tarsusaCore.UndoneItem(ItemId=undone_item.key().id(), UserId=self.user.key().id(), Misc='')
+        self.assertEqual(False, undone_item.done)
+
     def test_tarsusaCore_AddItem(self):
         #AddItem = tarsusaCore.AddItem(UserId="1", rawName="Test Item Name", rawComment = "Test Item Comment", rawRoutine='', rawPublic="private", rawInputDate="2009-07-19", rawTags=None)
         #tarsusaCore.AddItem(1, "Test Item Name", "Test Item Comment", '', "private", "2009-07-19", None)
