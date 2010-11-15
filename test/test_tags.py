@@ -27,8 +27,6 @@ class TagTest(unittest.TestCase):
         self.key2.delete()
    
     def test_get_tag_list(self):
-        print self.item1.tags
-        print self.item2.tags
         self.assertEqual(2, len(get_tag_list(self.user.key().id())))
         self.assertEqual(True, u'inbox' in get_tag_list(self.user.key().id()))
         self.assertEqual(True, u'work' in get_tag_list(self.user.key().id()))

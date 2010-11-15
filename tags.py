@@ -1,19 +1,6 @@
 # -*- coding: utf-8 -*-
-import cgi
-import wsgiref.handlers
-from google.appengine.api import users
-from google.appengine.ext import webapp
 from google.appengine.ext import db
-
-import datetime
-import string
-from google.appengine.ext.webapp import template
-from google.appengine.api import images
-
-from modules import *
-from base import *
-import logging
-import urllib
+from modules import tarsusaUser, Tag
 
 def get_tag_list(user_id):
 
