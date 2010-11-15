@@ -579,13 +579,11 @@ def DoneItem(ItemId, UserId, Misc):
             yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
             if done_lastday_routine:
                 new_routinelog_item.donedate = yesterday
-
-            if not done_lastday_routine:
-                is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday + one_day ,datetime.datetime.now())
-                memcache.event('doneroutineitem_daily_today', user_id)
-            else:
                 is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
                 memcache.event('doneroutineitem_daily_yesterday', user_id)
+            else: 
+                is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday + one_day ,datetime.datetime.now())
+                memcache.event('doneroutineitem_daily_today', user_id)
 
             if is_already_done.count() < 1:
                 new_routinelog_item.put()
