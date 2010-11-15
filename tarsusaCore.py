@@ -575,10 +575,10 @@ def DoneItem(ItemId, UserId, Misc):
             new_routinelog_item.user = users.get_current_user()
             new_routinelog_item.routineid = int(item_id)
             
-            if done_lastday_routine:
-                new_routinelog_item.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
             one_day = datetime.timedelta(days=1)
             yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
+            if done_lastday_routine:
+                new_routinelog_item.donedate = yesterday
 
             if not done_lastday_routine:
                 is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday + one_day ,datetime.datetime.now())
