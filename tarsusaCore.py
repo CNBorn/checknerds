@@ -553,55 +553,48 @@ def delete_item(item_id, user_id):
     item.delete()
 
 def DoneItem(ItemId, UserId, Misc):
-    ## This function won't check permission for login, for external API usage.
-    #Instead, you need to provide a userid, and the function will check wheather this user have the permission to do so.
-    #Which indicates that you definately need a permission check mechanism when you calling this function from outside.
 
-    DoneYesterdaysDailyRoutine = False
+    done_lastday_routine = False
     if Misc == 'y':
-        DoneYesterdaysDailyRoutine = True
+        done_lastday_routine = True
 
-    tItem = get_item(ItemId)
+    item = get_item(ItemId)
+    item_id = int(ItemId)
+    user_id = int(UserId)
     
-    if tItem and tItem.usermodel.key().id() == int(UserId):
+    if item and item.usermodel.key().id() == user_id:
 
-        if tItem.routine == 'none':
-            tItem.donedate = datetime.datetime.now()
-            tItem.done = True
-            tItem.put()
-            memcache.event('doneitem', int(UserId))
-        else:
-            NewlyDoneRoutineItem = tarsusaRoutineLogItem(routine=tItem.routine)
-            NewlyDoneRoutineItem.user = users.get_current_user()
-            NewlyDoneRoutineItem.routineid = int(ItemId)
+        if item.routine == 'none':
+            item.donedate = datetime.datetime.now()
+            item.done = True
+            item.put()
+            memcache.event('doneitem', user_id)
+
+        if item.routine == "daily":
+            new_routinelog_item = tarsusaRoutineLogItem(routine=item.routine)
+            new_routinelog_item.user = users.get_current_user()
+            new_routinelog_item.routineid = int(item_id)
             
-            if DoneYesterdaysDailyRoutine == True:
-                NewlyDoneRoutineItem.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
-            #NewlyDoneRoutineItem.routine = tItem.routine
-            # The done date will be automatically added by GAE datastore.           
-
-            #To Check whether this routine item was done today.
-            #Prevention to add duplicate tarsusaRoutineLogItem.
+            if done_lastday_routine:
+                new_routinelog_item.donedate = datetime.datetime.now() - datetime.timedelta(days=1)
             one_day = datetime.timedelta(days=1)
             yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
-            if DoneYesterdaysDailyRoutine == False:
-                tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday + one_day ,datetime.datetime.now())
-                memcache.event('doneroutineitem_daily_today', int(UserId))
+
+            if not done_lastday_routine:
+                is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday + one_day ,datetime.datetime.now())
+                memcache.event('doneroutineitem_daily_today', user_id)
             else:
-                tarsusaRoutineLogItemCollection_CheckWhetherBeDone = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", int(ItemId), yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
-                memcache.event('doneroutineitem_daily_yesterday', int(UserId))
+                is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
+                memcache.event('doneroutineitem_daily_yesterday', user_id)
 
-            if not tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count() >= 1:
-                NewlyDoneRoutineItem.put()
-                memcache.event('refresh_dailyroutine', int(UserId))
+            if is_already_done.count() < 1:
+                new_routinelog_item.put()
+                memcache.event('refresh_dailyroutine', user_id)
     
-        memcache.set("item:%s" % ItemId, tItem)
-
+        memcache.set("item:%s" % item_id, item)
         return True
-        #self.write(tarsusaRoutineLogItemCollection_CheckWhetherBeDone.count())
 
-    else:
-        return False
+    return False
 
 def UndoneItem(ItemId, UserId, Misc):
     #UndoneItem function specially designed for API calls.  
