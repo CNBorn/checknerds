@@ -1,24 +1,7 @@
 # -*- coding: utf-8 -*-
-#
-# **************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 1.0, codename California
-# - memcache.py
-# Copyright (C) CNBorn, 2008-2009
-# http://cnborn.net, http://twitter.com/CNBorn
-#
-# **************************************************************** 
-
-import datetime
-import string
 from google.appengine.api import memcache
 
-from modules import *
-from base import *
-import logging
-import re
-
-#Learnt from Plog.
 refresh_roles = {
         'additem' : ('itemstats', 'itemlist', 'tag'),
         'addpublicitem' : ('itemstats', 'itemlist', 'tag', 'mainpage', 'mainpage_publicitems', 'mainpage_publicitems_anony'),
@@ -43,49 +26,25 @@ refresh_roles = {
         }
 
 def event(key, CurrentUserid):
-
-    logging.info('memcache - user %s : %s' % (CurrentUserid, key))
-
-    for role in refresh_roles:
-        if re.match(role, key):
-            for obj in refresh_roles[role]:
-                memkeydel_status = memcache.delete("%s:%s" % (obj, CurrentUserid)) 
-                if memkeydel_status == 1:
-                    #1=DELETE_ITEM_MISSING
-                    logging.debug('missing: ' + ("%s_%s" % (CurrentUserid, obj)))
-                elif memkeydel_status == 2:
-                    #2=DELETE_SUCCESSFUL
-                    logging.debug("deleted: %s_%s" % (CurrentUserid, obj))
-                else:
-                    #logging.debug('not delete' + ("%s_%s" % (CurrentUserid, obj)))
-                    pass
-    
+    if key not in refresh_roles.keys(): return False
+    for obj in refresh_roles[key]:
+        memkeydel_status = memcache.delete("%s:%s" % (obj, CurrentUserid)) 
     return True
 
-#I think it is nonsense to see alot memcache missing info here.
 def get(key):
-    
     item = memcache.get(key)
     if item == None:
-        #logging.debug('NONE Memcache item %s' % key)
         return None
-    else:
-        return item
+    return item
 
 def set(key, value, time=0):
-    
     if memcache.set(key, value, time):
-        #logging.debug('SET Memcache item %s' % key)
         return True
-    else:
-        #logging.error('SET Memcache item %s FAILED!' % key)
-        return False
+    return False
 
 def get_item(key, user_id):
     mc_key = ("%s:%s" % (key, str(user_id)))
-    item = memcache.get(mc_key)
-    if not item:
-        return None
+    item = memcache.get(mc_key, None)
     return item
 
 def set_item(key, value, user_id, time=0):
