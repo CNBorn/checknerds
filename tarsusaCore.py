@@ -573,7 +573,7 @@ def DoneItem(ItemId, UserId, Misc):
         if item.routine == "daily":
             new_routinelog_item = tarsusaRoutineLogItem(routine=item.routine)
             new_routinelog_item.user = users.get_current_user()
-            new_routinelog_item.routineid = int(item_id)
+            new_routinelog_item.routineid = item_id
             
             one_day = datetime.timedelta(days=1)
             yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))

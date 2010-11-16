@@ -49,7 +49,7 @@ def event(key, CurrentUserid):
     for role in refresh_roles:
         if re.match(role, key):
             for obj in refresh_roles[role]:
-                memkeydel_status = memcache.delete("%s_%s" % (CurrentUserid, obj)) 
+                memkeydel_status = memcache.delete("%s:%s" % (obj, CurrentUserid)) 
                 if memkeydel_status == 1:
                     #1=DELETE_ITEM_MISSING
                     logging.debug('missing: ' + ("%s_%s" % (CurrentUserid, obj)))
