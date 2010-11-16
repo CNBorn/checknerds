@@ -14,6 +14,7 @@ from google.appengine.api import images
 from modules import *
 import base
 import tarsusaCore
+from tarsusaCore import get_item, AddItem
 import modules
 
 import logging
@@ -22,10 +23,8 @@ class tarsusaCoreTest(unittest.TestCase):
     def setUp(self):
         self.user = modules.tarsusaUser(urlname='Bar')
         self.user.put()
-        self.item1 = modules.tarsusaItem(name="Item1", done=False, routine="none", usermodel=self.user)
-        self.item1.put()
-        self.item2 = modules.tarsusaItem(name="Item2", done=False, routine="none", usermodel=self.user)
-        self.item2.put()
+        self.item1 = get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', ''))
+        self.item2 = get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', ''))
         self.routine_item = modules.tarsusaItem(name="routine_item", done=False, routine="daily", usermodel=self.user)
         self.routine_item.put()
 
