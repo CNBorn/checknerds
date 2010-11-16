@@ -2,12 +2,11 @@ import unittest
 
 from tarsusaCore import *
 from modules import tarsusaItem, tarsusaUser
-from tags import get_tag_list
+from tags import get_tag_list, get_tag_item_ids_list
 
 class TagTest(unittest.TestCase):
 
     def setUp(self):
-
         self.key1 = Tag(name="inbox")
         self.key2 = Tag(name="work")
         self.key1.put()
@@ -31,4 +30,9 @@ class TagTest(unittest.TestCase):
         self.assertEqual(True, u'inbox' in get_tag_list(self.user.key().id()))
         self.assertEqual(True, u'work' in get_tag_list(self.user.key().id()))
 
- 
+    def test_get_tag_item_ids_list(self):
+        self.assertEqual(1, len(get_tag_item_ids_list(self.key1.name, self.user.key().id())))
+        self.assertEqual(True, self.item1.key().id() in get_tag_item_ids_list(self.key1.name, self.user.key().id()))
+        self.assertEqual(1, len(get_tag_item_ids_list(self.key2.name, self.user.key().id())))
+        self.assertEqual(True, self.item2.key().id() in get_tag_item_ids_list(self.key2.name, self.user.key().id()))
+
