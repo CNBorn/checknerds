@@ -717,6 +717,8 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
         item2beadd_routine = "none"
 
     first_tarsusa_item = tarsusaItem(user=CurrentUser.user, name=item2beadd_name, comment=item2beadd_comment, routine=item2beadd_routine)
+    if rawPublic not in ['private', 'public', 'publicOnlyforFriends']:
+        rawPublic = 'private'
     first_tarsusa_item.public = rawPublic
     first_tarsusa_item.done = False
 

@@ -25,8 +25,7 @@ class tarsusaCoreTest(unittest.TestCase):
         self.user.put()
         self.item1 = get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', ''))
         self.item2 = get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', ''))
-        self.routine_item = modules.tarsusaItem(name="routine_item", done=False, routine="daily", usermodel=self.user)
-        self.routine_item.put()
+        self.routine_item = get_item(AddItem(self.user.key().id(), "routine_item", '', 'daily', 'private', ''))
 
     def tearDown(self):
         self.item1.delete()
@@ -80,6 +79,11 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual("none", add_item.routine)
         self.assertEqual("private", add_item.public)
         tarsusaCore.delete_item(add_item_id, self.user.key().id())
+
+        add_item_success = tarsusaCore.AddItem(UserId=self.user.key().id(), rawName="xxx", rawComment="xxx", rawRoutine="should_not_broken", rawPublic="should_not_broken")
+        self.assertNotEqual(False, add_item_success)
+        tarsusaCore.delete_item(add_item_success, self.user.key().id())
+
 
     def test_tarsusaCore_getlatest_user(self):
         people_list = tarsusaCore.get_LatestUser()
