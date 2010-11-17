@@ -685,128 +685,75 @@ def UndoneItem(ItemId, UserId, Misc):
 
 def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='private', rawInputDate='', rawTags=None):
     
-    CurrentUser = tarsusaUser.get_by_id(int(UserId))
+    user = tarsusaUser.get_by_id(int(UserId))
+    item_comment = cgi.escape(rawComment)[:500]
+    item_name = cgi.escape(rawName)               
+    item_routine = cgi.escape(rawRoutine)
+    if item_routine not in ["none", "daily", "weekly", "monthly", "seasonly", "yearly"]:
+        item_routine = "none"
+    item_public = cgi.escape(rawPublic)
+    if item_public not in ['private', 'public', 'publicOnlyforFriends']:
+        item_public = 'private'
 
-    try:
-        item_comment = rawComment
-        if len(rawComment)>500:
-            item_comment = rawComment[:500]
-    except:
-        item_comment = ''
+    item = tarsusaItem(user=user.user, name=item_name, comment=item_comment, routine=item_routine)
+    item.public = item_public
+    item.usermodel = user              
+    item.done = False
 
-    #try:
-    #going to find out why it goes wrong.
-
-    # The following code works on GAE platform.
-    # it is weird that under GAE, it should be without .decode, but on localhost, it should add them!
-    item2beadd_name = cgi.escape(rawName)               
-
-    try:
-        item2beadd_comment = cgi.escape(item_comment)
-    except:
-        item2beadd_comment = ''
-                        
-    try:
-        tarsusaItem_Tags = cgi.escape(rawTags).split(",")
-    except:
-        tarsusaItem_Tags = None 
-
-    #routine is a must provided in template, by type=hidden
-    item2beadd_routine = cgi.escape(rawRoutine)
-    if item2beadd_routine not in ["none", "daily", "weekly", "monthly", "seasonly", "yearly"]:
-        item2beadd_routine = "none"
-
-    first_tarsusa_item = tarsusaItem(user=CurrentUser.user, name=item2beadd_name, comment=item2beadd_comment, routine=item2beadd_routine)
-    if rawPublic not in ['private', 'public', 'publicOnlyforFriends']:
-        rawPublic = 'private'
-    first_tarsusa_item.public = rawPublic
-    first_tarsusa_item.done = False
-
-    # DATETIME CONVERTION TRICKS from http://hi.baidu.com/huazai_net/blog/item/8acb142a13bf879f023bf613.html
-    # The easiest way to convert this to a datetime seems to be;
-    #datetime.date(*time.strptime("8/8/2008", "%d/%m/%Y")[:3])
-    # the '*' operator unpacks the tuple, producing the argument list.  
-    # also learned sth from: http://bytes.com/forum/thread603681.html
-
-    # Logic: If the expectdate is the same day as today, It is none.
-    try:
-        expectdatetime = None
-        expectdate = datetime.date(*time.strptime(rawInputDate,"%Y-%m-%d")[:3])
-        if expectdate == datetime.datetime.date(datetime.datetime.today()):
-            expectdatetime == None
-        else:
+    item_expectdate = None
+    if rawInputDate != '':
+        raw_expectdate = datetime.date(*time.strptime(rawInputDate,"%Y-%m-%d")[:3])
+        if raw_expectdate != datetime.datetime.date(datetime.datetime.today()):
             currenttime = datetime.datetime.time(datetime.datetime.now())
-            expectdatetime = datetime.datetime(expectdate.year, expectdate.month, expectdate.day, currenttime.hour, currenttime.minute, currenttime.second, currenttime.microsecond)
-    except:
-        expectdatetime = None
-    first_tarsusa_item.expectdate =  expectdatetime
+            item_raw_expectdate = datetime.datetime(raw_expectdate.year, raw_expectdate.month, \
+                             raw_expectdate.day, currenttime.hour, currenttime.minute, \
+                             currenttime.second, currenttime.microsecond)
+    item.expectdate = item_expectdate
 
-    ## the creation date will be added automatically by GAE datastore               
-    first_tarsusa_item.usermodel = CurrentUser              
-    #first_tarsusa_item.put()
-    try:
-        tarsusaItem_Tags = cgi.escape(rawTags).split(",")
-    except:
-        tarsusaItem_Tags = None
-
-    #except:
-    #    #Something is wrong when adding the item.
-    #    self.write("sth is wrong.")
-
-    #memcache related. Clear ajax_DailyroutineTodayCache after add a daily routine item
-    if item2beadd_routine == 'daily':
-        memcache.event('addroutineitem_daily', CurrentUser.key().id())
+    if item_routine == 'daily':
+        memcache.event('addroutineitem_daily', user.key().id())
     else:
-        memcache.event('additem', CurrentUser.key().id())
-    
-    if cgi.escape(rawPublic) != 'private':
-        memcache.event('addpublicitem', CurrentUser.key().id())
+        memcache.event('additem', user.key().id())
+    if item_public != 'private':
+        memcache.event('addpublicitem', user.key().id())
 
-    if tarsusaItem_Tags != None:
+    try:
+        item_tags = cgi.escape(rawTags).split(",")
+    except:
+        item_tags = None 
 
-        for each_tag_in_tarsusaitem in tarsusaItem_Tags:
-            
-            ## It seems that these code above will create duplicated tag model.
-            ## TODO: I am a little bit worried when the global tags are exceed 1000 items. 
-            catlist = db.GqlQuery("SELECT * FROM Tag WHERE name = :1 LIMIT 1", each_tag_in_tarsusaitem)
-            try:
-                each_cat = catlist[0]
-            
-            except:             
-                try:
-                    #added this line for Localhost GAE runtime...
-                    each_cat = Tag(name=each_tag_in_tarsusaitem.decode('utf-8'))            
-                    each_cat.put()
-                except:
-                    each_cat = Tag(name=each_tag_in_tarsusaitem)
-                    each_cat.put()
+    if item_tags:
 
-            first_tarsusa_item.tags.append(each_cat.key())
-            # To Check whether this user is using this tag before.
-            tag_AlreadyUsed = False
-            for check_whether_used_tag in CurrentUser.usedtags:
-                item_check_whether_used_tag = db.get(check_whether_used_tag)
-                if item_check_whether_used_tag != None:
-                    if each_cat.key() == check_whether_used_tag or each_cat.name == item_check_whether_used_tag.name:
-                        tag_AlreadyUsed = True
-                else:
-                    if each_cat.key() == check_whether_used_tag:
-                        tag_AlreadyUsed = True
+        for each_tag_name in item_tags:
+
+            tag = db.Query(Tag).filter("name =", each_tag_name).get()
+            if not tag: 
+                tag = Tag(name=each_tag_name)
+                tag.put()
+
+            item.tags.append(tag.key())
                 
-            if tag_AlreadyUsed == False:
-                CurrentUser.usedtags.append(each_cat.key())     
+            if not is_user_has_tag(tag.name, user):
+                user.usedtags.append(tag.key())     
     
-    first_tarsusa_item.put()
-    CurrentUser.put()
+    item.put()
+    user.put()
 
-    #ShardingCounter
+    user_id = user.key().id()
+    item_id = item.key().id()
     shardingcounter.increment("tarsusaItem")
-    user_id = CurrentUser.key().id()
     memcache.set_item("itemstats", False, user_id)
-    item_id = first_tarsusa_item.key().id()
-    item = first_tarsusa_item
     memcache.set("item:%s" % item_id, item)
     return item_id
+
+def is_user_has_tag(tag_name, user):
+    tag = db.Query(Tag).filter("name =", tag_name).get()
+    for check_whether_used_tag in user.usedtags:
+        item_check_whether_used_tag = db.get(check_whether_used_tag)
+        if item_check_whether_used_tag:
+            if tag.key() == check_whether_used_tag or tag.name == item_check_whether_used_tag.name:
+                return True
+    return False
 
 def RemoveItem(ItemId, UserId, Misc):
     tItem = get_item(ItemId)
