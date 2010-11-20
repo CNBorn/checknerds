@@ -16,6 +16,7 @@ import base
 import tarsusaCore
 from tarsusaCore import get_item, AddItem
 import modules
+import memcache
 
 import logging
 class tarsusaCoreTest(unittest.TestCase):
@@ -32,6 +33,7 @@ class tarsusaCoreTest(unittest.TestCase):
         self.item2.delete()
         self.routine_item.delete()
         self.user.delete()
+        memcache.flush_all()
    
     def test_tarsusaCore_gettarsusaItemCollection(self):
         todo_items = tarsusaCore.get_tarsusaItemCollection(userid=self.user.key().id(), done=False)

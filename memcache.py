@@ -62,3 +62,6 @@ def delete_item(key, user_id):
     mc_key = ("%s:%s" % (key, str(user_id)))
     memcache.delete(mc_key)
     return True
+
+def flush_all():
+    return memcache.flush_all()
