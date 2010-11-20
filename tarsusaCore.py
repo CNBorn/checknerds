@@ -546,12 +546,6 @@ def get_count_UserItemStats(userid):
 
     return result 
 
-def delete_item(item_id, user_id):
-    item = get_item(item_id)
-    memcache.set_item("itemstats", False, user_id)
-    memcache.set("item:%s" % item_id, False)
-    item.delete()
-
 def DoneItem(ItemId, UserId, Misc):
 
     done_lastday_routine = False
@@ -755,51 +749,35 @@ def is_user_has_tag(tag_name, user):
                 return True
     return False
 
-def RemoveItem(ItemId, UserId, Misc):
-    tItem = get_item(ItemId)
-
-    if tItem:
-
-        if tItem.usermodel.key().id() == int(UserId):
-            ## Check User Permission to undone this Item
-
-            if tItem.public != 'none':
-                memcache.event('deletepublicitem', int(UserId))
-
-            if tItem.routine == 'none':
-                ## if this item is not a routine item.
-                tItem.delete()
-                
-                memcache.event('deleteitem', int(UserId))
-
-            else:
-                ## Del a RoutineLog item!
-                ## All its doneRoutineLogWillBeDeleted!
-
-                ## wether there will be another log for this? :-) for record nerd?
-
-                ## This is a daily routine, and we are going to delete it.
-                ## For DailyRoutine, now I just count the matter of deleting today's record.
-                ## the code for handling the whole deleting routine( delete all concerning routine log ) will be added in future
-                
-                # GAE can not make dateProperty as query now! There is a BUG for GAE!
-                # http://blog.csdn.net/kernelspirit/archive/2008/07/17/2668223.aspx
-                tarsusaRoutineLogItemCollection_ToBeDeleted = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1", int(ItemId))
-                for result in tarsusaRoutineLogItemCollection_ToBeDeleted:
-                    result.delete()
-
-                tItem.delete()
-                
-                memcache.event('deleteroutineitem_daily', int(UserId))
-
-            #ShardingCounter
-            shardingcounter.increment("tarsusaItem", "minus")
-
-            return True
-
-    return False
-        
+def remove_item(item_id, user_id):
+    item = get_item(item_id)
+    if not item:
+        return False
+    if item.usermodel.key().id() != user_id:
+        return False
     
+    item_id = int(item_id)
+    user_id = int(user_id)
+
+    if item.public != 'none':
+        memcache.event('deletepublicitem', user_id)
+
+    if item.routine == 'none':
+        item.delete()
+        memcache.event('deleteitem', user_id)
+
+    else:
+        routinelog_list = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1", item_id)
+        db.delete(routinelog_list)
+        item.delete()
+        memcache.event('deleteroutineitem_daily', user_id)
+
+    shardingcounter.increment("tarsusaItem", "minus")
+
+    memcache.delete_item("itemstats", user_id)
+    memcache.delete("item:%s" % item_id)
+
+    return True
 
 
 def get_count_tarsusaUser():
