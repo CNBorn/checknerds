@@ -55,3 +55,10 @@ def set_item(key, value, user_id, time=0):
         return True
     return False
 
+def delete(key):
+    return memcache.delete(key)
+
+def delete_item(key, user_id):
+    mc_key = ("%s:%s" % (key, str(user_id)))
+    memcache.delete(mc_key)
+    return True
