@@ -65,6 +65,12 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual(datetime.datetime.now().date() - datetime.timedelta(days=1), routine_log_item.donedate.date())
         routine_log_item.delete()
 
+    def test_tarsusaCore_remove_item(self):
+        remove_status = tarsusaCore.remove_item(item_id=self.item1.id,user_id=self.user.key().id())
+        self.assertEqual(True, remove_status)
+        should_be_none = db.Query(tarsusaItem).filter("name =", "item1").get()
+        self.assertEqual(None, should_be_none)
+
     def test_tarsusaCore_undone_item(self):
         undone_item = self.item1
         tarsusaCore.DoneItem(ItemId=undone_item.key().id(), UserId=self.user.key().id(), Misc='')
