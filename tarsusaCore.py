@@ -795,14 +795,9 @@ def RemoveItem(ItemId, UserId, Misc):
             #ShardingCounter
             shardingcounter.increment("tarsusaItem", "minus")
 
-            return 0
+            return True
 
-        else:
-            #Authentication Failed.
-            return 1
-    else:
-        #Authentication Failed.
-        return 1
+    return False
         
     
 
