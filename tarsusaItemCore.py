@@ -66,13 +66,12 @@ class UnDoneItem(tarsusaRequestHandler):
 
 class RemoveItem(tarsusaRequestHandler):
     def get(self):
-        ItemId = self.request.path[12:]
+        item_id = self.request.path[12:]
         if self.chk_login():
-            CurrentUser = self.get_user_db()
-            remove_status = tarsusaCore.RemoveItem(ItemId, CurrentUser.key().id(),'')
+            current_user = self.get_user_db()
+            remove_status = tarsusaCore.remove_item(item_id, current_user.key().id())
             self.redirect(self.referer)
         self.redirect('/')
-
 
 class AddItemProcess(tarsusaRequestHandler):
     def post(self):
