@@ -533,8 +533,8 @@ class render(tarsusaRequestHandler):
         }
 
         if func == "done":
-            tarsusaItemCollection_AjaxUserItems = tarsusaCore.get_tarsusaItemCollection(CurrentUser.key().id(), done=True, maxitems=maxitems)
-            template_values['tarsusaItemCollection_AjaxUserItems'] = tarsusaItemCollection_AjaxUserItems
+            done_items = tarsusaCore.get_done_items(CurrentUser.key().id(), maxitems)
+            template_values['done_items'] = done_items
             template_kind = "done_list"
 
         elif func == "undone":
