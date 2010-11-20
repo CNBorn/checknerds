@@ -159,6 +159,13 @@ def get_undone_items(user_id, maxitems=100):
     memcache.set_item("itemlist", undone_items, user_id)
     return undone_items
 
+def get_done_items(user_id, maxitems=100):
+    cached_userdoneitems = memcache.get_item("doneitemlist", user_id)
+    if cached_userdoneitems:
+        return cached_userdoneitems
+    done_items = get_tarsusaItemCollection(user_id, done=True, maxitems=maxitems)
+    memcache.set_item("doneitemlist", done_items, user_id)
+    return done_items
 
 def get_item(item_id):
     cached_item = memcache.get("item:%s" % item_id)
