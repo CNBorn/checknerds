@@ -17,7 +17,7 @@ blockquote p {margin:0;}
 /* Headers */
 h1 {color:#FFF; font-size:2.6em; letter-spacing:-3px; margin:0px 0 12px 25px;padding: 15px 0 15px 0;}
 h1 a {color:#FFF; text-transform:none;}
-h2 {border-bottom:4px solid #dadada; color:#88bb55; font-size:1.4em; letter-spacing:-1px; margin:0 0 10px; padding:0 2px 2px 5px;}
+h2 {border-bottom:4px solid #dadada; color:#88bb55; font-size:1.4em; letter-spacing:-1px; margin:10px 0 0 10px; padding:0 2px 2px 5px;}
 h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight:700; margin:10px 0 8px; padding:1px 2px 2px 3px;}
 
 /* Toptabs menu */
@@ -67,6 +67,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #content ul li.even {background-color: #fff;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #d0d0d0;}
 #content ul li.odd {background-color: #fafafb;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e0e0e0;}
 #content ul li:hover {background: #FFF url(/img/calit2/tr_bck.gif) repeat}
+#content p {padding-left: 15px;}
 
 /* Add Item (inside Content) */
 #additem {display: block; margin: 5px 0px 5px 0px;}

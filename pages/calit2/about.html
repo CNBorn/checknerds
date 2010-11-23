@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %} CheckNerds - 关于 {% endblock title %}
+
+{% block content-holder %}
+<div id="content">
+    <h3>关于CheckNerds</h3>
+    <p style="padding-left: 15px;">
+        CheckNerds是一个非常简单的时间管理程序。使用它，您可以方便地管理所有您要完成的事情。无论是将杂乱的事项分门别类地整理，还是提醒您优先处理即将到期的任务，都游刃有余。更为重要的，是CheckNerds提醒您每天都必须完成的工作，并且记录您完成这些工作的情况。<br />
+        使用起来非常方便简单：创建项目、然后在项目完成时打上“√ "。如果您有需要持之以恒坚持完成的一些项目，并需要把它们完成的情况记录下来的话，CheckNerds可以完全满足您的需求！
+        想要了解详细的CheckNerds介绍，您可<a href="http://cnborn.net/blog/2008/10/obsession-with-time-introducing-checknerds.html" target="_blank">点击这里</a><br /><br />
+        想太多无益，请立即开始吧！<br />
+        <small>当前版本：{{devVersion}}</small>
+    </p>
+    
+    <h3>浏览器兼容性说明</h3>
+    <p>
+        推荐您使用<a href="http://www.firefox.com">Mozilla Firefox</a>以获得最佳、最安全的浏览体验。<br />
+        CheckNerds 移动版推荐使用 Opera Mini 以及 移动版Safari浏览器进行浏览<br />
+    </p>
+
+    <h3>开发者</h3>
+    <p>
+        <img src="http://otho.douban.com/icon/u1087031-3.jpg">CNBorn，英语专业毕业，迷恋自由软件和Python。<br />
+        Blog: <a href="http://cnborn.net/blog">CNBorn|我不是大牛</a><br />
+        Twitter: <a href="http://twitter.com/CNBorn">http://twitter.com/CNBorn</a><br />
+    </p>
+
+</div>
+{% endblock content-holder %}

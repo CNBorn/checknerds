@@ -120,11 +120,7 @@ class BlogPage(tarsusaRequestHandler):
 
 class AboutPage(tarsusaRequestHandler):
     def get(self):
-        
-        import os
         strdevVersion = os.environ['CURRENT_VERSION_ID']
-
-        # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
             CurrentUser = self.get_user_db()        
             template_values = {
@@ -133,15 +129,13 @@ class AboutPage(tarsusaRequestHandler):
                     'UserID': CurrentUser.key().id(),
                     'devVersion': strdevVersion,
             }
-        
         else:           
             template_values = {
                 'UserNickName': "访客",
                 'AnonymousVisitor': "Yes",
                 'devVersion': strdevVersion,
             }
-    
-        path = os.path.join(os.path.dirname(__file__), 'pages/about.html')
+        path = os.path.join(os.path.dirname(__file__), 'pages/calit2/about.html')
         self.response.out.write(template.render(path, template_values))
 
 class StatsticsPage(tarsusaRequestHandler):
