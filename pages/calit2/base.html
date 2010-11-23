@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="/css/calit2.css" title="1024px" media="screen,projection" />
     <title>{% block title%} {% endblock %}</title>
 </head>
-
 <body>
 	<div id="header">
         <p id="toplinks">
@@ -23,13 +22,13 @@
 		</p>
         <h1><a href="/beta"><img src="img/calit2/logo.png"></a></h1>
 	</div>
-<div id="wrap">
-    {% block content-holder %}
-    {% endblock content-holder %} 
-	<div id="footer">
-		<p>&copy; 2008-2009, <a href="http://cnborn.net">CNBorn</a>. Powered by Google App Engine | Design by <a href="http://www.stylishtemplate.com/">Stylish</a>, CNBorn</p>
-	</div>
-</div>
+    <div id="wrap">
+        {% block content-holder %}
+        {% endblock content-holder %} 
+        <div id="footer">
+            <p>&copy; 2008-2010, <a href="http://cnborn.net">CNBorn</a>. Powered by Google App Engine</p>
+        </div>
+    </div>
 </body>
 
 <script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
