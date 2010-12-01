@@ -150,6 +150,16 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 
     return Item_List
 
+def create_user(user):
+    CurrentUser = tarsusaUser(user=user, urlname=cgi.escape(user.nickname()))
+    CurrentUser.put()
+    CurrentUser.userid = CurrentUser.key().id()
+    CurrentUser.dispname = user.nickname()
+    CurrentUser.put()
+    logging.info("New User, id:" + str(CurrentUser.key().id()) + " name:" + CurrentUser.dispname)
+    shardingcounter.increment("tarsusaUser")
+    return CurrentUser
+
 
 def get_undone_items(user_id, maxitems=100):
     cached_userundoneitems = memcache.get_item("itemlist", user_id)

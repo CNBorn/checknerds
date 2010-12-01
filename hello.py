@@ -29,122 +29,7 @@ import datetime
 
 class MainPage(tarsusaRequestHandler):
     def get(self):
-    
-        if users.get_current_user() != None:
-            CurrentUser = self.get_user_db()
-            
-            if CurrentUser == None:
-                # Create a User
-                CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=cgi.escape(users.get_current_user().nickname()))
-                CurrentUser.put()
-
-                ## Added userid property.
-                CurrentUser.userid = CurrentUser.key().id()
-                CurrentUser.dispname = users.get_current_user().nickname()
-                CurrentUser.put()
-                
-                logging.info("New User, id:" + str(CurrentUser.key().id()) + " name:" + CurrentUser.dispname)
-
-                #ShardingCounter
-                import shardingcounter
-                shardingcounter.increment("tarsusaUser")
-
-            
-            else:
-                ## DB Model Patch
-                ## These code for registered user whose information are not fitted into the new model setting.
-                
-                #Run DB Model Patch when User Logged in.
-                #DBPatcher.chk_dbmodel_update(CurrentUser)
-                #Run this at every ViewItem event
-
-                ## Added userid here.
-                if CurrentUser.userid == None:
-                    CurrentUser.userid = CurrentUser.key().id()
-                    CurrentUser.put()
-                    
-
-            
-            ## Check usedtags as the evaluation for Tags Model
-            ## TEMP CODE!
-            UserTags = '<a href=/tag/>未分类项目</a>&nbsp;'.decode('utf-8')
-
-            if CurrentUser.usedtags:
-                CheckUsedTags = []
-                for each_cate in CurrentUser.usedtags:
-                    ## After adding code with avoiding add duplicated tag model, it runs error on live since there are some items are depending on the duplicated ones.
-                    
-                    try:
-                            
-                        ## Caution! Massive CPU consumption.
-                        ## Due to former BUG, there might be duplicated tags in usertags.
-                        ## TO Solve this.
-
-                        DuplicatedTags = False
-                        for each_cate_vaild in CheckUsedTags:
-                            if each_cate.name == each_cate_vaild:
-                                DuplicatedTags = True
-
-                        CheckUsedTags.append(each_cate.name)
-
-                        if DuplicatedTags != True:
-                            try:
-                                ## Since I have deleted some tags in CheckNerds manually, 
-                                ## so there will be raise such kind of errors, in which the tag will not be found.
-                                each_tag =  db.get(each_cate)
-                                UserTags += '<a href="/tag/' + cgi.escape(each_tag.name) +  '">' + cgi.escape(each_tag.name) + '</a>&nbsp;'
-                            except:
-                                ## Tag model can not be found.
-                                pass
-
-                    except:
-                        pass
-                        UserTags += 'Error, On MainPage Tags Section.'
-
-
-            template_values = {
-                'UserLoggedIn': 'Logged In',
-                
-                'UserNickName': cgi.escape(CurrentUser.dispname),
-                'UserID': CurrentUser.key().id(),
-                
-                'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-
-                'UserTags': UserTags,
-
-
-            }
-
-            #Manupilating Templates 
-            path = os.path.join(os.path.dirname(__file__), 'pages/index.html')
-            self.response.out.write(template.render(path, template_values))
-            
-        else:
-            #WelcomePage for Non-registered Users.
-            IsCachedWelcomePage = memcache.get_item('strCachedWelcomePage', 'global')
-            
-            if IsCachedWelcomePage:
-                strCachedWelcomePage = IsCachedWelcomePage
-            else:
-                
-                TotalUserCount = tarsusaCore.get_count_tarsusaUser()
-                TotaltarsusaItem = tarsusaCore.get_count_tarsusaItem()
-
-                ## Homepage for Non-Registered Users.
-
-                template_values = {
-                    'UserNickName': "访客",
-                    'AnonymousVisitor': "Yes",
-                    'htmltag_TotalUser': TotalUserCount,
-                    'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-                }
-
-                #Manupilating Templates 
-                path = os.path.join(os.path.dirname(__file__), 'pages/welcome.html')
-                strCachedWelcomePage = template.render(path, template_values)
-                memcache.set_item("strCachedWelcomePage", strCachedWelcomePage, 'global')
-
-            self.response.out.write(strCachedWelcomePage)
+        self.redirect('/beta')
 
 class ViewItem(tarsusaRequestHandler):
     def get(self):
@@ -446,14 +331,8 @@ class Image(webapp.RequestHandler):
                 #self.error(404)
                 #should read the default img pic and write it out.
 
-
-class DashboardPage(tarsusaRequestHandler):
-    def get(self):
-        self.write('ok')
-    
 class NotFoundPage(tarsusaRequestHandler):
     def get(self):
-        
         self.redirect('/page/404.html')
 
 def main():
@@ -462,7 +341,6 @@ def main():
                                        ('/image', Image),
                                        ('/Login.+',LoginPage),
                                        ('/Logout.+',SignOutPage),
-                                       ('/dashboard', DashboardPage),
                                        ('.*',NotFoundPage)],
                                        debug=True)
 

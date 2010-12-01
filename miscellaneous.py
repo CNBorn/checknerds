@@ -17,12 +17,9 @@ import wsgiref.handlers
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
+from google.appengine.ext.webapp import template
 
 import datetime
-import string
-from google.appengine.ext.webapp import template
-from google.appengine.api import images
-
 
 from modules import *
 from base import *
@@ -197,8 +194,6 @@ class cron_flushcache(tarsusaRequestHandler):
         logging.info("memcache flushed by cron.")
         return True
 
-#I will evantully add a memcache-api-reset function here.
-
 
 class CaliforniaPage(tarsusaRequestHandler):
     def get(self):
@@ -206,6 +201,8 @@ class CaliforniaPage(tarsusaRequestHandler):
         # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
             CurrentUser = self.get_user_db()
+            if not CurrentUser:
+                CurrentUser = tarsusaCore.create_user(users.get_current_user())
             
             template_values = {
                     'PrefixCSSdir': "/",
@@ -218,7 +215,6 @@ class CaliforniaPage(tarsusaRequestHandler):
         
         else:           
             #WelcomePage for Non-registered Users.
-
             IsCachedWelcomePage = memcache.get_item('strCachedWelcomePage', 'global')
             
             if IsCachedWelcomePage:
@@ -244,7 +240,6 @@ class CaliforniaPage(tarsusaRequestHandler):
 
 def main():
     application = webapp.WSGIApplication([('/about',AboutPage),
-                                       ('/blog',BlogPage),
                                        ('/docs.+', DocsPage),
                                        ('/labs.+', LabsPage),
                                        ('/statstics',StatsticsPage),
