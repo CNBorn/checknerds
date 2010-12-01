@@ -34,8 +34,8 @@ function tab_flick(strdivname) {
 function doneItem(strLink){
     //$.ajax({type: "GET", url: strLink ,success: function(){$('#tab_undone').click();}}); 
     //tab_flick("tab_done");
-    $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_done")}); 
-    $('#tab_undone').click();
+    $.ajax({type: "GET", url: strLink ,success: function(){$('input[onchange*=' + strLink + ']').parent().remove();}}); 
+    //$('#tab_undone').click();
     return false;
     }
 </script>
