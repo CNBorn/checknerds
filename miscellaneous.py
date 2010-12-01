@@ -33,90 +33,30 @@ import tarsusaCore
 
 class GuestbookPage(tarsusaRequestHandler):
     def get(self):
-        strAboutPageTitle = "CheckNerds项目 - Guestbook"
+        strAboutPageTitle = "Guestbook"
         strAboutPageContent = '''<br /><iframe src="http://spreadsheets.google.com/embeddedform?key=pWd4_W1-LSL4xnGNRuHq6JA" width="95%" height="735" frameborder="0" marginheight="0" marginwidth="0">正在加载...</iframe><BR>
         
         '''
-        ## Get Current User.
-        # code below are comming from GAE example
-        q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-        CurrentUser = q.get()
-    
-
-        try:
-
-            template_values = {
-                    'UserLoggedIn': 'Logged In',
-                    'UserNickName': cgi.escape(users.get_current_user().nickname()),
-                    'UserID': CurrentUser.key().id(),
-                    'singlePageTitle': strAboutPageTitle,
-                    'singlePageContent': strAboutPageContent,
-            }
-        
-        except:
-
-            
-            template_values = {
-                
-                'UserNickName': "访客",
-                'AnonymousVisitor': "Yes",
-                'singlePageTitle': strAboutPageTitle,
-                'singlePageContent': strAboutPageContent,
-
-            }
-
-
-    
-        path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
-        self.response.out.write(template.render(path, template_values))
-
-class BlogPage(tarsusaRequestHandler):
-    def get(self):
-        
-        #from google.appengine.api import urlfetch
-        # GAE中对远程网页的获取不能通过urllib，只能通过google自己的urlfetch   
-
-        #url = "http://feed.feedsky.com/cnborn"
-        #result = urlfetch.fetch(url)
-        
-        #if result.status_code == 200:
-            
-            #import xml.sax
-            #from xml.dom import minidom
-            #xmldoc = minidom.parseString(result.content.decode('utf-8')))
-
-            #parser = rss_parser()
-            #strAboutPageContent = result.content.decode('utf-8')
-
-
-        #strAboutPageContent = '''Coming soon.<BR><BR>''' #+ d.entries[0].title + d.entries[0].link + d.entries[0].description + d.entries[0].date + d.entries[0].date_parsed + d.entries[0].id
-
-        strAboutPageContent = '''<div id="twitter_div"><ul id="twitter_update_list"></ul></div>
-                                <script type="text/javascript" src="http://twitter.com/javascripts/blogger.js"></script>
-                                <script type="text/javascript" src="http://twitter.com/statuses/user_timeline/checknerds.json?callback=twitterCallback2&amp;count=10"></script>'''
-
-        strAboutPageTitle = "CheckNerds - Recent Updates (powered by Twitter)"
-        
         if self.chk_login():
-            CurrentUser = self.get_user_db()
+            CurrentUser = self.get_user_db()        
             template_values = {
                     'UserLoggedIn': 'Logged In',
-                    'UserNickName': cgi.escape(users.get_current_user().nickname()),
+                    'UserNickName': cgi.escape(CurrentUser.dispname),
                     'UserID': CurrentUser.key().id(),
                     'singlePageTitle': strAboutPageTitle,
                     'singlePageContent': strAboutPageContent,
             }
+        
         else:
-            template_values = {             
+            template_values = {
                 'UserNickName': "访客",
                 'AnonymousVisitor': "Yes",
                 'singlePageTitle': strAboutPageTitle,
                 'singlePageContent': strAboutPageContent,
             }
 
-    
-        path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
-        self.response.out.write(template.render(path, template_values))
+        path = os.path.join(os.path.dirname(__file__), 'pages/calit2/simple_page.html')
+        self.write(template.render(path, template_values))
 
 class AboutPage(tarsusaRequestHandler):
     def get(self):
