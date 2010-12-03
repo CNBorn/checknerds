@@ -229,30 +229,6 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
         self.response.out.write(strcachedUserItemlist)
 
 
-class get_fp_itemstats(tarsusaRequestHandler):
-    def get(self):
-        
-        # New CheckLogin code built in tarsusaRequestHandler 
-        if self.chk_login():
-            CurrentUser = self.get_user_db()
-            
-            cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser.key().id())
-            #tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
-            #'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
-
-            template_values = {
-                'UserLoggedIn': 'Logged In',
-                'UserNickName': cgi.escape(CurrentUser.dispname),
-                'UserID': CurrentUser.key().id(),
-                'tarsusaItemCollection_Statstics': cachedUserItemStats,
-                'htmltag_today': datetime.datetime.date(datetime.datetime.now()),
-            }
-        
-            #Manupilating Templates 
-            path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_itemstats.html')
-            self.response.out.write(template.render(path, template_values))
-        else:
-            pass
 
 class get_fp_friendstats(tarsusaRequestHandler):
     def get(self):
@@ -608,7 +584,6 @@ def main():
                                         ('/ajax/frontpage_getdailyroutine_yesterday', getdailyroutine_yesterday),
                                         ('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
                                         ('/ajax/frontpage_getfriendstats', get_fp_friendstats),
-                                        ('/ajax/frontpage_getitemstats', get_fp_itemstats),
                                         ('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
                                         ('/ajax/frontpage_recentregistereduserforanonymous',get_fp_RecentRegisteredUserForAnonymous),
                                         (r'/ajax/allpage_additem.+', additem),
