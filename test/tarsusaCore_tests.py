@@ -34,7 +34,17 @@ class tarsusaCoreTest(unittest.TestCase):
         self.routine_item.delete()
         self.user.delete()
         memcache.flush_all()
-   
+        query = [x.delete() for x in modules.tarsusaRoutineLogItem.all()]
+
+    def test_get_dailyroutine(self):
+        dailyroutine_items = tarsusaCore.get_dailyroutine(self.user.key().id())
+        self.assertEqual(1, len(dailyroutine_items))
+        self.assertEqual("routine_item", dailyroutine_items[0]['name'])
+        self.assertFalse(dailyroutine_items[0]['done'])
+        tarsusaCore.DoneItem(ItemId=self.routine_item.key().id(), UserId=self.user.key().id(), Misc="")
+        dailyroutine_items = tarsusaCore.get_dailyroutine(self.user.key().id())
+        self.assertTrue(dailyroutine_items[0]['done'])
+
     def test_tarsusaCore_gettarsusaItemCollection(self):
         todo_items = tarsusaCore.get_tarsusaItemCollection(userid=self.user.key().id(), done=False)
         self.assertEqual(len(todo_items), 2)
