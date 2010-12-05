@@ -229,39 +229,6 @@ class get_fp_bottomcontents(tarsusaRequestHandler):
         self.response.out.write(strcachedUserItemlist)
 
 
-
-class get_fp_friendstats(tarsusaRequestHandler):
-    def get(self):
-
-        # New CheckLogin code built in tarsusaRequestHandler 
-        if self.chk_login():
-            CurrentUser = self.get_user_db()
-            
-            cachedUserFriendsActivities = memcache.get_item("friendstats", CurrentUser.key().id())
-            if cachedUserFriendsActivities is not None:
-                template_values = {
-                                'UserLoggedIn': 'Logged In',
-                                'UserFriendsActivities': cachedUserFriendsActivities,
-                }
-            else:
-                
-                ## SHOW YOUR FRIENDs Recent Activities
-                ## Show only 9 items because we don't want to see a very long frontpage.
-                UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id(),"","",9)
-                
-                template_values = {
-                    'UserLoggedIn': 'Logged In',
-                    'UserFriendsActivities': UserFriendsItem_List,
-                }
-                
-                if not memcache.set_item("friendstats" ,UserFriendsItem_List, CurrentUser.key().id()):
-                    logging.error('Cache set failed: Users_FriendStats')
-
-            #Manupilating Templates 
-            path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_friendstats.html')
-            self.response.out.write(template.render(path, template_values))
-
-
 class additem(tarsusaRequestHandler):
     def get(self):
 
