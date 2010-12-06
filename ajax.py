@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# **************************************************************** 
+# ************************************************************* 
 # CheckNerds - www.checknerds.com
 # version 1.1, codename California
 # - ajax.py
-# Author: CNBorn, 2008-2009
+# Author: CNBorn, 2008-2010
 # http://cnborn.net, http://twitter.com/CNBorn
-#
-# Ajax Pages & Functions Complex
-#
-# **************************************************************** 
+# ************************************************************* 
 
 import os
 import cgi
@@ -43,9 +40,6 @@ def userloggedin_or_403(function):
         else:
         	return tRequestHandler.response_status(403,'You are not logged in.',False)
     return user_loggedin_warpper
-
-
-
 
 class getdailyroutine_yesterday(tarsusaRequestHandler):
     def post(self):

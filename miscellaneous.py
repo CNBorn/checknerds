@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# **************************************************************** 
+# ************************************************************* 
 # CheckNerds - www.checknerds.com
 # version 1.0, codename California
 # - miscellaneous.py
 # Copyright (C) CNBorn, 2008-2010
 # http://cnborn.net, http://twitter.com/CNBorn
-#
-# **************************************************************** 
+# ************************************************************* 
 
 import os
 import sys
@@ -73,55 +72,6 @@ class AboutPage(tarsusaRequestHandler):
                 'devVersion': strdevVersion,
             }
         path = os.path.join(os.path.dirname(__file__), 'pages/calit2/about.html')
-        self.response.out.write(template.render(path, template_values))
-
-class StatsticsPage(tarsusaRequestHandler):
-    def get(self):
-        
-        # Show statstics information.
-
-        if self.chk_login():
-            CurrentUser = self.get_user_db()
-        else:
-            self.redirect('/')
-        
-        TotalUserCount = db.GqlQuery("SELECT * FROM tarsusaUser").count()
-        TotaltarsusaItem = db.GqlQuery("SELECT * FROM tarsusaItem").count()
-        
-        htmltag = ''
-        htmltag += 'Uptime: ' + str(datetime.datetime.now() - datetime.datetime(2008,8,26,20,0,0))
-        htmltag += '<br />Project Started Since: ' + str(datetime.date.today() - datetime.date(2008, 7, 19)) + ' ago.'
-        htmltag += '<br />User Account: ' + str(TotalUserCount)
-        htmltag += '<br />Total Items: ' + str(TotaltarsusaItem)
-
-        try:
-            htmltag += '<br /><br /><b>memcached stats:</b>'
-            stats = memcache.get_stats()    
-            htmltag += "<br /><b>Cache Hits:</b>" + str(stats['hits'])
-            htmltag += "<br /><b>Cache Misses:</b>" +str(stats['misses'])                   
-            htmltag += "<br /><b>Total Requested Cache bytes:</b>" +str(stats['byte_hits'])
-            htmltag += "<br /><b>Total Cache items:</b>" +str(stats['items'])
-            htmltag += "<br /><b>Total Cache bytes:</b>" +str(stats['bytes'])
-            htmltag += "<br /><b>Oldest Cache items:</b>" +str(stats['oldest_item_age'])
-        except:
-            pass
-
-        template_values = {
-            'UserLoggedIn': 'Logged In',                
-            'UserNickName': cgi.escape(self.login_user.nickname()),
-            'UserID': CurrentUser.key().id(),   
-            
-            'singlePageTitle': 'Statstics',
-            'singlePageContent': htmltag,
-
-            'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-            'htmltag_TotalUser': TotalUserCount,
-            'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-
-        }
-        
-        #Manupilating Templates 
-        path = os.path.join(os.path.dirname(__file__), 'pages/simple_page.html')
         self.response.out.write(template.render(path, template_values))
 
 class DocsPage(tarsusaRequestHandler):
@@ -198,7 +148,6 @@ class cron_flushcache(tarsusaRequestHandler):
 class CaliforniaPage(tarsusaRequestHandler):
     def get(self):
 
-        # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
             CurrentUser = self.get_user_db()
             template_values = {
@@ -239,7 +188,6 @@ def main():
     application = webapp.WSGIApplication([('/about',AboutPage),
                                        ('/docs.+', DocsPage),
                                        ('/labs.+', LabsPage),
-                                       ('/statstics',StatsticsPage),
                                        ('/flushcache', FlushCache),
                                        ('/cron_flushcache', cron_flushcache),
                                        ('/beta', CaliforniaPage),
