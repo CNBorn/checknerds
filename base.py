@@ -14,7 +14,7 @@ from google.appengine.ext import db
 
 import cgi
 from modules import tarsusaUser, Tag, AppModel 
-import tarsusaCore, memcache
+#import tarsusaCore#, memcache
 
 class tarsusaRequestHandler(webapp.RequestHandler):
     def __init__(self):

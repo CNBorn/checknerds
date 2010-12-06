@@ -499,7 +499,6 @@ def main():
     application = webapp.WSGIApplication([
                                         ('/ajax/frontpage_getdailyroutine_yesterday', getdailyroutine_yesterday),
                                         ('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
-                                        ('/ajax/frontpage_getfriendstats', get_fp_friendstats),
                                         ('/ajax/frontpage_introbottomcontentsforanonymous',get_fp_IntroductionBottomForAnonymous),
                                         ('/ajax/frontpage_recentregistereduserforanonymous',get_fp_RecentRegisteredUserForAnonymous),
                                         (r'/ajax/allpage_additem.+', additem),
