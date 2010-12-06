@@ -1,27 +1,21 @@
 # -*- coding: utf-8 -*-
 
-# **************************************************************** 
+# ************************************************************** 
 # CheckNerds - www.checknerds.com
 # version 1.1, codename California
 # - base.py
-# Author: CNBorn, 2008-2009
+# Author: CNBorn, 2008-2010
 # http://cnborn.net, http://twitter.com/CNBorn
-#
-# Basic Fundamental Objects 
-#
-# **************************************************************** 
+# ************************************************************** 
+
 from google.appengine.ext import webapp
 from google.appengine.api import users
 from google.appengine.ext import db
 
-from modules import tarsusaUser, Tag, AppModel 
-#from modules import *
 import cgi
-#import logging
+from modules import tarsusaUser, Tag, AppModel 
+import tarsusaCore, memcache
 
-#import tarsusaCore, memcache
-
-# {{{ Base class
 class tarsusaRequestHandler(webapp.RequestHandler):
     def __init__(self):
         pass
@@ -69,36 +63,11 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         self.is_login = (self.login_user != None)
 
         if self.is_login:
-            # added register code here
             CurrentUser = self.get_user_db()
-            
-            if CurrentUser == None:
-                # Create a User
-                CurrentUser = tarsusaUser(user=users.get_current_user(), urlname=cgi.escape(users.get_current_user().nickname()))
-                CurrentUser.put()
-
-                ## Added userid property.
-                CurrentUser.userid = CurrentUser.key().id()
-                CurrentUser.dispname = users.get_current_user().nickname()
-                CurrentUser.put()
-            
-            else:
-                ## DB Model Patch
-                ## These code for registered user whose information are not fitted into the new model setting.
-                
-                #Run DB Model Patch when User Logged in.
-                #DBPatcher.chk_dbmodel_update(CurrentUser)
-                #Run this at every ViewItem event
-
-                ## Added userid here.
-                if CurrentUser.userid == None:
-                    CurrentUser.userid = CurrentUser.key().id()
-                    CurrentUser.put()                   
-            
+            if not CurrentUser:
+                CurrentUser = tarsusaCore.create_user(users.get_current_user())
             return True
-        else:
-            #self.redirect(redirect_url)
-            return False
+        return False
 
     def get_user_db(self):
         q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())

@@ -201,9 +201,6 @@ class CaliforniaPage(tarsusaRequestHandler):
         # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
             CurrentUser = self.get_user_db()
-            if not CurrentUser:
-                CurrentUser = tarsusaCore.create_user(users.get_current_user())
-            
             template_values = {
                     'PrefixCSSdir': "/",
                     'UserLoggedIn': 'Logged In',
