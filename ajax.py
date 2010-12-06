@@ -47,51 +47,6 @@ def userloggedin_or_403(function):
 
 
 
-class getdailyroutine(tarsusaRequestHandler):
-
-    def post(self):
-        if self.chk_login():
-            CurrentUser = self.get_user_db()
-        else:
-            self.redirect('/')
-
-        cachedUserDailyroutineToday = memcache.get_item("dailyroutine_today", CurrentUser.key().id())
-        #if cachedUserDailyroutineToday is not None:
-        if cachedUserDailyroutineToday == True:
-            strcachedUserDailyroutineToday = cachedUserDailyroutineToday
-        else:           
-            tarsusaItemCollection_DailyRoutine = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
-            
-            ## Output the message for DailyRoutine
-            '''
-            template_tag_donealldailyroutine = ''               
-            if Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) and Today_DoneRoutine != 0:
-                template_tag_donealldailyroutine = '<img src="img/favb16.png">恭喜，你完成了今天要做的所有事情！'
-            elif Today_DoneRoutine == int(tarsusaItemCollection_DailyRoutine_count) - 1:
-                template_tag_donealldailyroutine = '只差一项，加油！'
-            elif int(tarsusaItemCollection_DailyRoutine_count) == 0:
-                template_tag_donealldailyroutine = '还没有添加每日计划？赶快添加吧！<br />只要在添加项目时，将“性质”设置为“每天要做的”就可以了！'
-'''
-
-            template_values = {
-            'UserLoggedIn': 'Logged In',                
-            'UserNickName': cgi.escape(CurrentUser.dispname),
-            'UserID': CurrentUser.key().id(),                   
-            'tarsusaItemCollection_DailyRoutine': tarsusaItemCollection_DailyRoutine,
-            #'htmltag_DoneAllDailyRoutine': template_tag_donealldailyroutine,
-            'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
-            }
-
-            #Manupilating Templates 
-            path = os.path.join(os.path.dirname(__file__), 'pages/ajaxpage_dailyroutine.html')
-            strcachedUserDailyroutineToday = template.render(path, template_values)
-            if not memcache.set_item("dailyroutinetoday", strcachedUserDailyroutineToday, CurrentUser.key().id()):
-                logging.error('Cache set failed: ajax_ShowUserDailyRoutineToday')
-
-        self.write(strcachedUserDailyroutineToday)
-        
-
-
 class getdailyroutine_yesterday(tarsusaRequestHandler):
     def post(self):
         
@@ -547,7 +502,7 @@ class sidebar(tarsusaRequestHandler):
 
 
 def main():
-    application = webapp.WSGIApplication([('/ajax/frontpage_getdailyroutine', getdailyroutine),
+    application = webapp.WSGIApplication([
                                         ('/ajax/frontpage_getdailyroutine_yesterday', getdailyroutine_yesterday),
                                         ('/ajax/frontpage_bottomcontents', get_fp_bottomcontents),
                                         ('/ajax/frontpage_getfriendstats', get_fp_friendstats),
