@@ -3,6 +3,9 @@ version: california
 runtime: python
 api_version: 1
 
+derived_file_type:
+- python_precompiled
+
 handlers:
 - url: /img
   static_dir: img
