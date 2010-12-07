@@ -14,7 +14,9 @@ from google.appengine.ext import db
 
 import cgi
 from modules import tarsusaUser, Tag, AppModel 
-#import tarsusaCore#, memcache
+import logging
+
+import shardingcounter
 
 class tarsusaRequestHandler(webapp.RequestHandler):
     def __init__(self):
@@ -65,9 +67,19 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         if self.is_login:
             CurrentUser = self.get_user_db()
             if not CurrentUser:
-                CurrentUser = tarsusaCore.create_user(users.get_current_user())
+                CurrentUser = self.create_user(users.get_current_user())
             return True
         return False
+
+    def create_user(self, user):
+        CurrentUser = tarsusaUser(user=user, urlname=cgi.escape(user.nickname()))
+        CurrentUser.put()
+        CurrentUser.userid = CurrentUser.key().id()
+        CurrentUser.dispname = user.nickname()
+        CurrentUser.put()
+        logging.info("New User, id:" + str(CurrentUser.key().id()) + " name:" + CurrentUser.dispname)
+        shardingcounter.increment("tarsusaUser")
+        return CurrentUser
 
     def get_user_db(self):
         q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
@@ -87,7 +99,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         
         #logging.info(apiservicekey)        
         
-        verified = tarsusaCore.verify_AppModel(int(apiappid), apiservicekey)
+        verified = verify_AppModel(int(apiappid), apiservicekey)
         
         apiuserid = self.request.get('apiuserid') 
         apikey = self.request.get('apikey')
@@ -105,7 +117,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
             #self.error(403)
             return False
         #--- verified AppApi Part.
-        if tarsusaCore.verify_UserApi(int(apiuserid), apikey) == False:
+        if verify_UserApi(int(apiuserid), apikey) == False:
             self.write("403 UserID Authentication Failed.")
             return False
         
