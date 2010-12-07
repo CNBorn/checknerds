@@ -9,12 +9,24 @@
         {{ eachitem.expectdate|escape }}
         {% endifnotequal %}
         </span>
+        <span class="option">
+            <a href="javascript:void(0);" onclick="if (confirm('确认删除？{{eachitem.name|escape}}')){delete_item('/removeItem/{{eachitem.id}}');}">x</a>
+        </span>
         </li>
     {% endfor %}
 {% endif %}
 </ul>
 
-    <script type="text/javascript"> 
+<script type="text/javascript"> 
+    function delete_item(link){
+        $.ajax({type: "GET", url: link ,success: function(){
+                var item = $('a[onclick*=' + link + ']').parent().parent();
+                item.fadeOut("fast", function(){item.remove();});
+                }
+        }); 
+        return false; 
+    }
+
 function undoneItem(strLink){
         $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_undone") }); 
         $('#tab_done').click();
@@ -31,11 +43,13 @@ function tab_flick(strdivname) {
     $(divname).css({background:""});
 }
 
-function doneItem(strLink){
-    //$.ajax({type: "GET", url: strLink ,success: function(){$('#tab_undone').click();}}); 
+function doneItem(link){
     //tab_flick("tab_done");
-    $.ajax({type: "GET", url: strLink ,success: function(){$('input[onchange*=' + strLink + ']').parent().remove();}}); 
-    //$('#tab_undone').click();
+    $.ajax({type: "GET", url: link ,success: function(){
+            var item = $('input[onchange*=' + link + ']').parent();
+            item.fadeOut("fast", function(){item.remove();});
+           }
+    });
     return false;
     }
 </script>

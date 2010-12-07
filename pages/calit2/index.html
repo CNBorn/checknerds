@@ -143,8 +143,8 @@ $("#inputName").keypress(function (e) {
 function addItem() {
 $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
    function(data){     
-	//$('#itemlist').load('/ajax/render/?func=undone&template=calit2');
-	$('#itemlist ul').prepend('<li itemid="'+ data + '" class="even"><input type="checkbox" name="cbdone" onchange="doneItem('  + "'/doneItem/" + data + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"> </span> </li>');
+   //$('#itemlist ul').prependTo('<li itemid="'+ data + '" class="even"><input type="checkbox" name="cbdone" onchange="doneItem('  + "'/doneItem/" + data + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"> </span> </li>').fadeIn("fast");
+   $('<li itemid="'+ data + '" class="even"><input type="checkbox" name="cbdone" onchange="doneItem('  + "'/doneItem/" + data + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"> </span> </li>').hide().prependTo('#itemlist ul').fadeIn("fast");
 	$("#inputName").val("");
 	$("#add_comment").val("");
 	$("#add_tags").val("");
