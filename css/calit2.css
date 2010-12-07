@@ -2,7 +2,6 @@
 Original design: 1024px (v3.0 - Apr 24, 2008) - A free xhtml/css website template by Andreas Viklund and stylishtemplate.com.
 For more information, see http://andreasviklund.com/templates/1024px/
 */
-
 /* General tags */
 body {background:url(/img/calit2/background.gif) repeat-y top center #fff; color:#404040; font:76% Verdana,Tahoma,Arial,sans-serif; line-height:1.3em; margin:0 auto; padding:0;}
 a {color:#88bb55; font-weight:700; text-decoration:none;}
@@ -122,4 +121,9 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 .photo {background:#fff; border:1px solid #bababa; margin:6px 18px 2px 5px; padding:2px;}
 .hide {display:none;}
 .date {color:gray;font-size:0.8em;}
+#content .option {color:#f0f0f0;font-size:0.8em;float:right}
+#content .options a, .options a:hover {text-decoration:none;color:#f0f0f0;}
 span.slogan {display:block; float: left; color:grey; width:195px; font-size:1.3em; font-weight:700; letter-spacing:-1px; line-height:1.2em; margin:10px 20px 0px 0px;}
+
+
+
