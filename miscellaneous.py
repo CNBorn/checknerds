@@ -166,7 +166,7 @@ class CaliforniaPage(tarsusaRequestHandler):
             if IsCachedWelcomePage:
                 strCachedWelcomePage = IsCachedWelcomePage
             else:
-                TotalUserCount = tarsusaCore.get_count_tarsusaUser()
+                TotalUserCount = tarsusaUser.count()
                 TotaltarsusaItem = tarsusaItem.count()
 
                 template_values = {

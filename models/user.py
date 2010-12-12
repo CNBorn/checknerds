@@ -5,6 +5,7 @@ sys.path.append("../")
 
 from google.appengine.ext import db
 import memcache
+import shardingcounter
 
 class tarsusaUser(db.Model):
     user = db.UserProperty()
@@ -41,6 +42,10 @@ class tarsusaUser(db.Model):
     @staticmethod
     def get_user(user_id):
         return get_user(user_id)
+
+    @staticmethod 
+    def count():
+        return shardingcounter.get_count("tarsusaUser")
 
 def get_user(user_id):
     cached_user = memcache.get("user:%s" % user_id)
