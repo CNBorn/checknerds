@@ -1,5 +1,9 @@
+import sys
+sys.path.append("../")
+
 from google.appengine.ext import db
 
+import memcache
 
 
 class tarsusaRoutineLogItem(db.Model):
@@ -40,6 +44,22 @@ class tarsusaUser(db.Model):
     def get_latestusers(count=8):
         result = db.GqlQuery("SELECT * FROM tarsusaUser ORDER by datejoinin DESC LIMIT 8")
         return result
+
+    @staticmethod
+    def get_user(user_id):
+        return get_user(user_id)
+
+def get_user(user_id):
+    cached_user = memcache.get("user:%s" % user_id)
+    if cached_user:
+        return cached_user
+    try:
+        user = tarsusaUser.get_by_id(int(user_id))
+    except:
+        return None
+    memcache.set("user:%s" % user_id, user)
+    return user
+
 
 class tarsusaItem(db.Expando):
     usermodel = db.ReferenceProperty(tarsusaUser)

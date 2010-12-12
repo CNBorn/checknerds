@@ -178,20 +178,9 @@ def get_item(item_id):
     memcache.set("item:%s" % item_id, item)
     return item
 
-def get_user(user_id):
-    cached_user = memcache.get("user:%s" % user_id)
-    if cached_user:
-        return cached_user
-    try:
-        user = tarsusaUser.get_by_id(int(user_id))
-    except:
-        return None
-    memcache.set("user:%s" % user_id, user)
-    return user
-
 def get_dailyroutine(userid):
 
-    this_user = get_user(userid)
+    this_user = tarsusaUser.get_user(userid)
  
     cached_user_dailyroutine = memcache.get_item("dailyroutine_items", int(userid))
     if cached_user_dailyroutine is not None:
