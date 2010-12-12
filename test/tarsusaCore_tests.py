@@ -77,8 +77,8 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual(datetime.datetime.now().date() - datetime.timedelta(days=1), routine_log_item.donedate.date())
         routine_log_item.delete()
 
-    def test_tarsusaCore_remove_item(self):
-        remove_status = tarsusaCore.remove_item(item_id=self.item1.key().id(),user_id=self.user.key().id())
+    def test_tarsusaCore_delete_item(self):
+        remove_status = self.item1.delete_item(user_id=self.user.key().id())
         self.assertEqual(True, remove_status)
         should_be_none = db.Query(tarsusaItem).filter("name =", "item1").get()
         self.assertEqual(None, should_be_none)
@@ -103,11 +103,12 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual(False, add_item.done)
         self.assertEqual("none", add_item.routine)
         self.assertEqual("private", add_item.public)
-        tarsusaCore.remove_item(add_item_id, self.user.key().id())
+        add_item.delete_item(self.user.key().id())
 
         add_item_success = tarsusaCore.AddItem(UserId=self.user.key().id(), rawName="xxx", rawComment="xxx", rawRoutine="should_not_broken", rawPublic="should_not_broken")
         self.assertNotEqual(False, add_item_success)
-        tarsusaCore.remove_item(add_item_success, self.user.key().id())
+        item = tarsusaItem.get_item(add_item_success)
+        item.delete_item(self.user.key().id())
 
 
     def test_tarsusaCore_getlatest_user(self):

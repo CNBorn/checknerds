@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+self -*- coding: utf-8 -*-
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
@@ -69,7 +69,8 @@ class RemoveItem(tarsusaRequestHandler):
         item_id = self.request.path[12:]
         if self.chk_login():
             current_user = self.get_user_db()
-            remove_status = tarsusaCore.remove_item(item_id, current_user.key().id())
+            item = tarsusaItem.get_item(item_id)
+            remove_status = item.delete_item(current_user.key().id())
             self.redirect(self.referer)
         self.redirect('/')
 

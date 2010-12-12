@@ -677,35 +677,6 @@ def is_user_has_tag(tag_name, user):
                 return True
     return False
 
-def remove_item(item_id, user_id):
-    item = tarsusaItem.get_item(item_id)
-    if not item:
-        return False
-    if item.usermodel.key().id() != user_id:
-        return False
-    
-    item_id = int(item_id)
-    user_id = int(user_id)
-
-    if item.public != 'none':
-        memcache.event('deletepublicitem', user_id)
-
-    if item.routine == 'none':
-        item.delete()
-        memcache.event('deleteitem', user_id)
-
-    else:
-        routinelog_list = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1", item_id)
-        db.delete(routinelog_list)
-        item.delete()
-        memcache.event('deleteroutineitem_daily', user_id)
-
-    shardingcounter.increment("tarsusaItem", "minus")
-
-    memcache.delete_item("itemstats", user_id)
-    memcache.delete("item:%s" % item_id)
-
-    return True
 
 
 def get_count_tarsusaUser():

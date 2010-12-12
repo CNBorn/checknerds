@@ -7,6 +7,7 @@ from google.appengine.ext import db
 from models.user import tarsusaUser
 
 import memcache
+import shardingcounter
 
 class tarsusaItem(db.Expando):
     usermodel = db.ReferenceProperty(tarsusaUser)
@@ -33,4 +34,30 @@ class tarsusaItem(db.Expando):
         memcache.set("item:%s" % item_id, item)
         return item
 
+    def delete_item(self, user_id):
+        if self.usermodel.key().id() != user_id:
+            return False
+        
+        item_id = int(self.key().id())
+        user_id = int(user_id)
+
+        if self.public != 'none':
+            memcache.event('deletepublicitem', user_id)
+
+        if self.routine == 'none':
+            self.delete()
+            memcache.event('deleteitem', user_id)
+
+        else:
+            routinelog_list = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1", item_id)
+            db.delete(routinelog_list)
+            self.delete()
+            memcache.event('deleteroutineitem_daily', user_id)
+
+        shardingcounter.increment("tarsusaItem", "minus")
+
+        memcache.delete_item("itemstats", user_id)
+        memcache.delete("item:%s" % item_id)
+
+        return True
 
