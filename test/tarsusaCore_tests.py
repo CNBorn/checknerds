@@ -14,7 +14,7 @@ from google.appengine.api import images
 from modules import *
 import base
 import tarsusaCore
-from tarsusaCore import get_item, AddItem
+from tarsusaCore import AddItem
 import modules
 import memcache
 
@@ -24,9 +24,9 @@ class tarsusaCoreTest(unittest.TestCase):
     def setUp(self):
         self.user = modules.tarsusaUser(urlname='Bar')
         self.user.put()
-        self.item1 = get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', ''))
-        self.item2 = get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', ''))
-        self.routine_item = get_item(AddItem(self.user.key().id(), "routine_item", '', 'daily', 'private', ''))
+        self.item1 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', ''))
+        self.item2 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', ''))
+        self.routine_item = tarsusaItem.get_item(AddItem(self.user.key().id(), "routine_item", '', 'daily', 'private', ''))
 
     def tearDown(self):
         self.item1.delete()
@@ -98,7 +98,7 @@ class tarsusaCoreTest(unittest.TestCase):
 
     def test_tarsusaCore_AddItem(self):
         add_item_id = tarsusaCore.AddItem(UserId=self.user.key().id(), rawName="Test Item Name", rawComment = "Test Item Comment", rawRoutine='none', rawPublic="private", rawInputDate="2009-07-19", rawTags=None)
-        add_item = tarsusaCore.get_item(add_item_id)
+        add_item = tarsusaItem.get_item(add_item_id)
         self.assertEqual("Test Item Name", add_item.name)
         self.assertEqual(False, add_item.done)
         self.assertEqual("none", add_item.routine)

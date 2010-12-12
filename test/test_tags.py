@@ -14,8 +14,8 @@ class TagTest(unittest.TestCase):
 
         self.user = tarsusaUser(urlname='Bar')
         self.user.put()
-        self.item1 = get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', '', rawTags="inbox"))
-        self.item2 = get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', '', rawTags="work"))
+        self.item1 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', '', rawTags="inbox"))
+        self.item2 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', '', rawTags="work"))
 
     def tearDown(self):
         self.item1.delete()

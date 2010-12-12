@@ -167,17 +167,6 @@ def get_done_items(user_id, maxitems=100):
     memcache.set_item("doneitemlist", done_items, user_id)
     return done_items
 
-def get_item(item_id):
-    cached_item = memcache.get("item:%s" % item_id)
-    if cached_item:
-        return cached_item
-    try:
-        item = tarsusaItem.get_by_id(int(item_id))
-    except:
-        return None
-    memcache.set("item:%s" % item_id, item)
-    return item
-
 def get_dailyroutine(userid):
 
     this_user = tarsusaUser.get_user(userid)
@@ -491,7 +480,7 @@ def DoneItem(ItemId, UserId, Misc):
     if Misc == 'y':
         done_lastday_routine = True
 
-    item = get_item(ItemId)
+    item = tarsusaItem.get_item(ItemId)
     item_id = int(ItemId)
     user_id = int(UserId)
     
@@ -540,7 +529,7 @@ def UndoneItem(ItemId, UserId, Misc):
     if Misc == 'y':
         UndoneYesterdaysDailyRoutine = True
 
-    tItem = get_item(ItemId)
+    tItem = tarsusaItem.get_item(ItemId)
 
     if tItem.usermodel.key().id() == int(UserId):
         ## Check User Permission to undone this Item
@@ -689,7 +678,7 @@ def is_user_has_tag(tag_name, user):
     return False
 
 def remove_item(item_id, user_id):
-    item = get_item(item_id)
+    item = tarsusaItem.get_item(item_id)
     if not item:
         return False
     if item.usermodel.key().id() != user_id:
