@@ -678,7 +678,6 @@ def is_user_has_tag(tag_name, user):
     return False
 
 
-
 def get_count_tarsusaUser():
     #Added Jun, 18th 2009 's statstics of CheckNerds along with the newly implermented shardingCounter
     #Disabled since Jul 20, 2009. Added the Number directly into shardingDatabase.
@@ -686,11 +685,7 @@ def get_count_tarsusaUser():
     return shardingcounter.get_count("tarsusaUser")
 
 
-def get_count_tarsusaItem():
-    #Added Jun, 18th 2009 's statstics of CheckNerds along with the newly implermented shardingCounter
-    #Disabled since Jul 20, 2009. Added the Number directly into shardingDatabase.
-    #return 995 + shardingcounter.get_count("tarsusaItem")
-    return shardingcounter.get_count("tarsusaItem")
+
 
 def verify_AppModel(apiappid, apiservicekey):
     import hashlib

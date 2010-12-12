@@ -167,7 +167,7 @@ class CaliforniaPage(tarsusaRequestHandler):
                 strCachedWelcomePage = IsCachedWelcomePage
             else:
                 TotalUserCount = tarsusaCore.get_count_tarsusaUser()
-                TotaltarsusaItem = tarsusaCore.get_count_tarsusaItem()
+                TotaltarsusaItem = tarsusaItem.count()
 
                 template_values = {
                     'PrefixCSSdir': "/",

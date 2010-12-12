@@ -33,6 +33,10 @@ class tarsusaItem(db.Expando):
             return None
         memcache.set("item:%s" % item_id, item)
         return item
+    
+    @staticmethod
+    def count():
+        return shardingcounter.get_count("tarsusaItem")
 
     def delete_item(self, user_id):
         if self.usermodel.key().id() != user_id:
@@ -60,4 +64,5 @@ class tarsusaItem(db.Expando):
         memcache.delete("item:%s" % item_id)
 
         return True
+
 
