@@ -1,4 +1,3 @@
-
 from google.appengine.ext import db
 
 
@@ -25,13 +24,8 @@ class tarsusaUser(db.Model):
 
     apikey = db.StringProperty()
     
-    #notification = db.StringProperty()
-    notify_dailybriefing = db.BooleanProperty()
     notify_dailybriefing_time = db.TimeProperty()
     notify_addedasfriend = db.BooleanProperty()
-
-    # fields to be appended:
-    #   Twitter,    
     
     def __unicode__(self):
         if self.dispname:
@@ -42,11 +36,13 @@ class tarsusaUser(db.Model):
     def __str__(self):
         return self.__unicode__().encode('utf-8')
 
+    @classmethod
+    def get_latestusers(count=8):
+        result = db.GqlQuery("SELECT * FROM tarsusaUser ORDER by datejoinin DESC LIMIT 8")
+        return result
 
 class tarsusaItem(db.Expando):
-    # if user is a referenceProperty of tarsusaUser, that would be make more sense.
-    # therefore a lot of the functions can be implemented.
-    usermodel = db.ReferenceProperty(tarsusaUser) # Added since Rev.75
+    usermodel = db.ReferenceProperty(tarsusaUser)
     user = db.UserProperty()
     name = db.StringProperty()
     comment = db.StringProperty(multiline=True)
@@ -70,28 +66,6 @@ class Tag(db.Model):
     #   self.count += 1
         #return tarsusaItem.gql('WHERE tags = :1', self.key())
     #   return User.gql('WHERE usedtags = :1', self.key())
-
-
-
-
-## Many to Many model design styles.
-## http://blog.ericsk.org/archives/1009
-
-
-#class Post(db.Model):
-#    title = db.StringProperty(required=True)
-#    body = db.TextProperty(required=True)
-#    post_at = db.DateTimeProperty(auto_now_add=True)
-#    categories = db.ListProperty(db.Key)
-
-#class Category(db.Model):
-#    name = db.StringProperty(required=True)
-#    description = db.TextProperty()
-   
-#    @property
-#    def posts(self):
-#        return Post.gql('WHERE categories = :1', self.key())
-
 
 class AppModel(db.Model):
     """Applications that uses CheckNerds API"""

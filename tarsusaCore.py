@@ -325,9 +325,6 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
 
     return Item_List
 
-def get_LatestUser(count=8):
-    tarsusaLatestPeople = db.GqlQuery("SELECT * FROM tarsusaUser ORDER by datejoinin DESC LIMIT 8")
-    return tarsusaLatestPeople
 
 def get_UserNonPrivateItems(userid, public='public', maxdisplayitems=30):
     #Get users non-private items.

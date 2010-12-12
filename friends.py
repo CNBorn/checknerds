@@ -47,7 +47,7 @@ class FindFriendPage(tarsusaRequestHandler):
             ## SHOW YOUR FRIENDs Recent Activities
             UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id())
 
-            tarsusaLatestPeople = tarsusaCore.get_LatestUser()
+            tarsusaLatestPeople = tarsusaUser.get_latestusers()
             
             tarsusaUserFriendCollection = map(lambda each_FriendKey: db.get(each_FriendKey), CurrentUser.friends)
             

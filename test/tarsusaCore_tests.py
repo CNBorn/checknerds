@@ -111,6 +111,6 @@ class tarsusaCoreTest(unittest.TestCase):
 
 
     def test_tarsusaCore_getlatest_user(self):
-        people_list = tarsusaCore.get_LatestUser()
+        people_list = tarsusaUser.get_latestusers()
         self.assertEqual(1, people_list.count())
 
