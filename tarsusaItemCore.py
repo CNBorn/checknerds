@@ -1,4 +1,4 @@
-self -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 # **************************************************************** 
 # CheckNerds - www.checknerds.com
