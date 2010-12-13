@@ -266,18 +266,6 @@ class ViewItem(tarsusaRequestHandler):
             ## Can't find this Item by this id.
             self.redirect('/')
 
-class LoginPage(tarsusaRequestHandler):
-    def get(self):
-        self.redirect(self.get_login_url(True))
-        #Only / have user registration code right now, but here will lead user to different pages.
-        # disabled these code temporily
-
-        #self.redirect(users.create_login_url('/'))
-
-class SignOutPage(tarsusaRequestHandler):
-    def get(self):
-        self.redirect(self.get_logout_url(True))
-
 class Image(webapp.RequestHandler):
     def output_avatar(self, avatardata, memcached):
         # set the cache headers
@@ -339,8 +327,6 @@ def main():
     application = webapp.WSGIApplication([('/', MainPage),
                                        ('/item/\\d+',ViewItem),
                                        ('/image', Image),
-                                       ('/Login.+',LoginPage),
-                                       ('/Logout.+',SignOutPage),
                                        ('.*',NotFoundPage)],
                                        debug=True)
 

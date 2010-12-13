@@ -45,10 +45,10 @@ handlers:
   script: miscellaneous.py
 
 - url: /Login.+
-  script: hello.py
+  script: views/auth.py
 
 - url: /Logout.+
-  script: hello.py
+  script: views/auth.py
 
 - url: /additem
   script: tarsusaItemCore.py
@@ -82,9 +82,6 @@ handlers:
 
 - url: /FindFriend
   script: friends.py
-
-- url: /dashboard
-  script: hello.py
 
 - url: /donelog.*
   script: userpage.py
