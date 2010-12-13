@@ -24,7 +24,7 @@ handlers:
   upload: /css/(.*)\.css
 
 - url: /
-  script: hello.py
+  script: views/main.py
 
 - url: /about
   script: miscellaneous.py
@@ -96,7 +96,7 @@ handlers:
   script: tag.py
 
 - url: /image.*
-  script: hello.py
+  script: views/image.py
 
 - url: /flushcache
   script: miscellaneous.py
