@@ -69,7 +69,7 @@ handlers:
   script: mobile.py
 
 - url: /item/.*
-  script: hello.py
+  script: views/item.py
 
 - url: /doneItem/.*
   script: tarsusaItemCore.py

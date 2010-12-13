@@ -1,29 +1,21 @@
 # -*- coding: utf-8 -*-
 
-#from django.conf import settings
-#settings._target = None
 import os
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+import sys
+sys.path.append("../")
 
-import urllib
 import cgi
 import wsgiref.handlers
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 
-import time
-import string
 
 from google.appengine.ext.webapp import template
-from google.appengine.api import images
-from google.appengine.api import urlfetch
-import memcache
 import tarsusaCore
 
-from modules import *
-from base import *
-import logging
+from modules import tarsusaItem, tarsusaUser
+from base import tarsusaRequestHandler
 
 import datetime
 
@@ -31,9 +23,9 @@ import datetime
 class ViewItem(tarsusaRequestHandler):
     def get(self):
         postid = self.request.path[6:]
-        tItem = tarsusaItem.get_by_id(int(postid))
+        tItem = tarsusaItem.get_item(int(postid))
 
-        if tItem != None:  ## If this Item existed in Database.
+        if tItem:
 
             # code below are comming from GAE example
             q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", tItem.user)
@@ -54,7 +46,6 @@ class ViewItem(tarsusaRequestHandler):
             ## Check Their nickname here.
             if users.get_current_user() == None:
                 UserNickName = "访客"
-                AnonymousVisitor = True 
             else:
                 UserNickName = users.get_current_user().nickname()
 
@@ -263,14 +254,10 @@ class ViewItem(tarsusaRequestHandler):
             ## Can't find this Item by this id.
             self.redirect('/')
 
-class NotFoundPage(tarsusaRequestHandler):
-    def get(self):
-        self.redirect('/page/404.html')
-
 def main():
     application = webapp.WSGIApplication([
                                        ('/item/\\d+',ViewItem),
-                                       ('.*',NotFoundPage)],
+                                       ],
                                        debug=True)
 
     wsgiref.handlers.CGIHandler().run(application)
