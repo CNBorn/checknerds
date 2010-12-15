@@ -144,53 +144,12 @@ class cron_flushcache(tarsusaRequestHandler):
         logging.info("memcache flushed by cron.")
         return True
 
-
-class CaliforniaPage(tarsusaRequestHandler):
-    def get(self):
-
-        if self.chk_login():
-            CurrentUser = self.get_user_db()
-            template_values = {
-                    'PrefixCSSdir': "/",
-                    'UserLoggedIn': 'Logged In',
-                    'UserNickName': cgi.escape(CurrentUser.dispname),
-                    'UserID': CurrentUser.key().id(),
-            }
-            path = os.path.join(os.path.dirname(__file__), 'pages/calit2/index.html')
-            strCachedWelcomePage = template.render(path, template_values)
-        
-        else:           
-            #WelcomePage for Non-registered Users.
-            IsCachedWelcomePage = memcache.get_item('strCachedWelcomePage', 'global')
-            
-            if IsCachedWelcomePage:
-                strCachedWelcomePage = IsCachedWelcomePage
-            else:
-                TotalUserCount = tarsusaUser.count()
-                TotaltarsusaItem = tarsusaItem.count()
-
-                template_values = {
-                    'PrefixCSSdir': "/",
-                    'UserNickName': "访客",
-                    'AnonymousVisitor': "Yes",
-                    'htmltag_TotalUser': TotalUserCount,
-                    'htmltag_TotaltarsusaItem': TotaltarsusaItem,
-                }
-
-                #Manupilating Templates 
-                path = os.path.join(os.path.dirname(__file__), 'pages/calit2/welcome.html')
-                strCachedWelcomePage = template.render(path, template_values)
-                memcache.set_item("strCachedWelcomePage", strCachedWelcomePage, 'global')
-
-        self.response.out.write(strCachedWelcomePage)
-
 def main():
     application = webapp.WSGIApplication([('/about',AboutPage),
                                        ('/docs.+', DocsPage),
                                        ('/labs.+', LabsPage),
                                        ('/flushcache', FlushCache),
                                        ('/cron_flushcache', cron_flushcache),
-                                       ('/beta', CaliforniaPage),
                                        ('/guestbook', GuestbookPage)],
                                        debug=True)
     wsgiref.handlers.CGIHandler().run(application)
