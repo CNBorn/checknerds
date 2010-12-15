@@ -201,7 +201,8 @@ def jsonized(item):
             'expectdate': item.expectdate, \
             'comment' : item.comment, \
             'routine' : item.routine, \
-            'category' : item.done
+            'category' : item.done, \
+            'done': item.done
            }
 
 def get_items_duetoday(userid):

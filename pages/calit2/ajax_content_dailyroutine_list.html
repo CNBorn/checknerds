@@ -6,7 +6,7 @@
         <input type="checkbox" name="checkboxname" onchange="doneItem('/doneItem/{{dailyroutine_item.id}}')">
         {% endifequal %}
         <span class="item">{{ dailyroutine_item.name|escape }}</span>
-        <span class="date">每日</span>
+        <span class="date"></span>
         </li>
     {% endfor %}
 {% endif %}
