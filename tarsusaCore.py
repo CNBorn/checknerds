@@ -19,6 +19,7 @@ from modules import *
 from base import *
 
 import time, datetime
+from datetime import timedelta
 import random
 
 import memcache
@@ -192,33 +193,29 @@ def get_dailyroutine(userid):
     memcache.set_item("dailyroutine_items", item_list, int(userid))
     return item_list
 
-def get_ItemsDueToday(userid):
-    #Get User's Items that are due today.
+def jsonized(item):
+    return {'id' : str(item.key().id()), \
+            'name' : item.name, \
+            'date' : item.date, \
+            'donedate': item.donedate, \
+            'expectdate': item.expectdate, \
+            'comment' : item.comment, \
+            'routine' : item.routine, \
+            'category' : item.done
+           }
+
+def get_items_duetoday(userid):
     
-    #This is designed to be a inner-callfunction.
-    #Not intended as a API for other users.
-    
-    ThisUser = tarsusaUser.get_by_id(int(userid))
-    Item_List = []
+    this_user = tarsusaUser.get_user(userid)
 
-    one_day = datetime.timedelta(days=1)
-    #yesterday = datetime.date.today() - one_day
-    yesterday = datetime.datetime.combine(datetime.date.today() - one_day,datetime.time(0))
-    endday = datetime.datetime.combine(datetime.date.today()+ one_day+ one_day, datetime.time(0))
+    today = datetime.date.today()
+    end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
 
-    tarsusaItemCollection_DueToday = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate >=:2 and expectdate <=:3 ORDER BY expectdate DESC", ThisUser.user, yesterday, endday)
+    items_due_today = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2", \
+            this_user.user, end_of_today)
 
-    try:
-        for each_tarsusaItem in tarsusaItemCollection_DueToday:
-            if each_tarsusaItem.date != each_tarsusaItem.expectdate:
-                this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'date' : each_tarsusaItem.date, 'donedate': each_tarsusaItem.donedate, 'expectdate': each_tarsusaItem.expectdate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'category' : each_tarsusaItem.done}
-                Item_List.append(this_item)
+    return [jsonized(item) for item in items_due_today] + get_dailyroutine(userid)
 
-        #print Item_List
-        return Item_List
-    except NameError:
-        logging.info("tarsusaCore.get_ItemsDueToday got nothing.")
-        return None
     
 def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
 
