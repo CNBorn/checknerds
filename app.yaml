@@ -137,4 +137,4 @@ handlers:
   script: gaeunit.py
 
 - url: /.*
-  script: errorpages.py
+  script: /views/errorpages.py
