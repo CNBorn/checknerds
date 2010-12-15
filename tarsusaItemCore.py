@@ -31,6 +31,15 @@ from modules import *
 from base import *
 import logging
 
+from ajax import userloggedin_or_403
+
+class DueToday(tarsusaRequestHandler):
+    @userloggedin_or_403
+    def get(self):
+        item_id = self.request.path[10:]
+        tarsusaItem.get_item(item_id).set_duetoday()
+        self.redirect(self.referer)
+
 class DoneItem(tarsusaRequestHandler):
     def get(self):
         if self.chk_login():
@@ -198,6 +207,7 @@ class EditItemProcess(tarsusaRequestHandler):
 def main():
     application = webapp.WSGIApplication([('/doneItem/\\d+',DoneItem),
                                        ('/undoneItem/\\d+',UnDoneItem),
+                                       ('/duetoday/\\d+',DueToday),
                                        ('/removeItem/\\d+', RemoveItem),
                                        ('/additem',AddItemProcess),
                                        ('/edititem/\\d+', EditItemProcess), 

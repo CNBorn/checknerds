@@ -59,6 +59,9 @@ handlers:
 - url: /removeItem/.*
   script: tarsusaItemCore.py
 
+- url: /duetoday/.*
+  script: tarsusaItemCore.py
+
 - url: /AddFriend/.*
   script: friends.py
 

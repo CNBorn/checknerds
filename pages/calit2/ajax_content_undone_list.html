@@ -10,6 +10,7 @@
         {% endifnotequal %}
         </span>
         <span class="option">
+            <a href="javascript:void(0);" onclick="doneItem('/duetoday/{{eachitem.id}}');">t</a>
             <a href="javascript:void(0);" onclick="if (confirm('确认删除？{{eachitem.name|escape}}')){delete_item('/removeItem/{{eachitem.id}}');}">x</a>
         </span>
         </li>
@@ -51,7 +52,8 @@ function doneItem(link){
            }
     });
     return false;
-    }
+}
+
 </script>
 
 <script type="text/javascript">

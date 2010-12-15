@@ -405,7 +405,6 @@ class admin_runpatch(tarsusaRequestHandler):
 class render(tarsusaRequestHandler):
     @userloggedin_or_403
     def get(self):
-        ''' New Ajax Functions suites for multiple usage for new calit2 Template. '''
         func = self.request.get("func")
         
         try:
@@ -413,38 +412,38 @@ class render(tarsusaRequestHandler):
         except:
             maxitems = 100
         
-        #template_name = self.request.get("template")
         template_name = "calit2"
 
-        CurrentUser = self.get_user_db()
+        user = self.get_user_db()
+        user_id = user.key().id()
 
         template_values = {
-            'UserNickName': cgi.escape(CurrentUser.dispname),
-            'UserID': CurrentUser.key().id(),
+            'UserNickName': cgi.escape(user.dispname),
+            'UserID': user_id,
             'func': func,
         }
 
         if func == "done":
-            done_items = tarsusaCore.get_done_items(CurrentUser.key().id(), maxitems)
+            done_items = tarsusaCore.get_done_items(user_id, maxitems)
             template_values['done_items'] = done_items
             template_kind = "done_list"
 
         elif func == "undone":
-            undone_items = tarsusaCore.get_undone_items(CurrentUser.key().id(), maxitems)
+            undone_items = tarsusaCore.get_undone_items(user_id, maxitems)
             template_values['undone_items'] = undone_items
             template_kind = "undone_list"
 
         elif func == "dailyroutine":
-            dailyroutine_items = tarsusaCore.get_dailyroutine(CurrentUser.key().id())
+            dailyroutine_items = tarsusaCore.get_items_duetoday(user_id)
             template_values['dailyroutine_items'] = dailyroutine_items
             template_kind = "dailyroutine_list"
 
         elif func == "friends":
-            UserFriendsItem_List = tarsusaCore.get_UserFriendStats(CurrentUser.key().id())
+            UserFriendsItem_List = tarsusaCore.get_UserFriendStats(user_id)
             template_values['UserFriendsActivities'] = UserFriendsItem_List
             template_kind = "friends_list"
  
-        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_content_%s.html' % (template_name, template_kind))
+        path = 'pages/%s/ajax_content_%s.html' % (template_name, template_kind)
         self.write(template.render(path, template_values))
 
 
