@@ -3,6 +3,7 @@ import sys
 sys.path.append("../")
 
 import datetime
+from datetime import timedelta
 
 from models import tarsusaItem, tarsusaUser
 from tarsusaCore import AddItem
@@ -32,3 +33,9 @@ class tarsusaItemTest(unittest.TestCase):
         end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
         self.item1.set_duetoday()
         self.assertEqual(end_of_today, self.item1.expectdate)
+
+    def test_item_set_duetomorrow(self):
+        tomorrow = datetime.date.today() + timedelta(days=1)
+        end_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 23,59,59)
+        self.item1.set_duetomorrow()
+        self.assertEqual(end_of_tomorrow, self.item1.expectdate)
