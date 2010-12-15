@@ -6,6 +6,7 @@ sys.path.append("../")
 from google.appengine.ext import db
 from models.user import tarsusaUser
 
+import datetime
 import memcache
 import shardingcounter
 
@@ -64,5 +65,12 @@ class tarsusaItem(db.Expando):
         memcache.delete("item:%s" % item_id)
 
         return True
+
+
+    def set_duetoday(self):
+        today = datetime.date.today()
+        end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
+        self.expectdate = end_of_today
+        self.save()
 
 
