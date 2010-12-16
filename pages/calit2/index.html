@@ -142,10 +142,13 @@ $("#inputName").keypress(function (e) {
 
 function addItem() {
 $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
-   function(data){     
-   //$('#itemlist ul').prependTo('<li itemid="'+ data + '" class="even"><input type="checkbox" name="cbdone" onchange="doneItem('  + "'/doneItem/" + data + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"> </span> </li>').fadeIn("fast");
-   $('<li itemid="'+ data + '" class="even"><input type="checkbox" name="cbdone" onchange="doneItem('  + "'/doneItem/" + data + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"> </span> </li>').hide().prependTo('#itemlist ul').fadeIn("fast");
-	$("#inputName").val("");
+        function(data){
+        var item_name = $("#inputName").val();
+        var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + data + "');}" + '">x</a>';
+        $('<li itemid="'+ data + '" class="even"><input type="checkbox" name="cbdone" onchange="doneItem('  + "'/doneItem/" + data + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"></span><span class="option"><a href="javascript:void(0);" onclick="doneItem("' + "'/duetoday/" + data + "'" + ');">t</a>' + delete_link + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
+
+        $("#inputName").val("");
+
 	$("#add_comment").val("");
 	$("#add_tags").val("");
 	$("#inputDate").val("");
