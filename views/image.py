@@ -7,10 +7,12 @@ from base import tarsusaRequestHandler
 
 import wsgiref.handlers
 import memcache
-
+import datetime
+import logging
+from google.appengine.api import urlfetch
 from models import tarsusaUser
 
-class Image(webapp.RequestHandler):
+class Image(tarsusaRequestHandler):
     def output_avatar(self, avatardata, memcached):
         # set the cache headers
         #lastmod = self.avatar.updated // don't have this field.
@@ -36,14 +38,11 @@ class Image(webapp.RequestHandler):
  
     
     def get(self):
-        #get 'avatar' is avatar_id
-        #Add memcached here to improve the performence.
         usravatardata = memcache.get('img_useravatar' + self.request.get("avatar"))
         
         if usravatardata is not None:
             self.output_avatar(usravatardata, True)
         else:
-            # Request it from BigTable
             AvatarUser = tarsusaUser.get_user(int(self.request.get("avatar")))          
 
             try:
@@ -52,7 +51,6 @@ class Image(webapp.RequestHandler):
                         logging.error("Memcache set failed: When Loading avatar_image")
                     self.output_avatar(AvatarUser.avatar, False)
             except AttributeError:
-                #Not found avatar in DB.
                 avatardata = urlfetch.fetch("http://www.checknerds.com/img/default_avatar.jpg", headers={'Content-Type': "image/jpg"})
                 if avatardata.status_code == 200:
                     avatardata = avatardata.content
@@ -60,8 +58,6 @@ class Image(webapp.RequestHandler):
                     self.output_avatar(avatardata, False)
                 else:
                     self.redirect("/img/default_avatar.jpg")
-                #self.error(404)
-                #should read the default img pic and write it out.
 
 def main():
     application = webapp.WSGIApplication([
