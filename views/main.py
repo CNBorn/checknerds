@@ -8,7 +8,7 @@ from base import tarsusaRequestHandler
 
 import cgi
 import wsgiref.handlers
-
+import memcache
 
 class MainPage(tarsusaRequestHandler):
 
