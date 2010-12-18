@@ -79,12 +79,14 @@ class tarsusaItem(db.Expando):
         end_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 23,59,59)
         self.expectdate = end_of_tomorrow
         self.save()
-
+    
+    @property
     def is_duetoday(self):
         today = datetime.date.today()
         end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
         return self.expectdate == end_of_today
 
+    @property
     def is_duetomorrow(self):
         tomorrow = datetime.date.today() + timedelta(days=1)
         end_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 23,59,59)
