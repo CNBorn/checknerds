@@ -127,8 +127,8 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
             # There is some chances that ThisItem do not have any tags.
             ItemTags = None
             pass
-
-        this_item = {'id' : str(each_tarsusaItem.key().id()), 'name' : each_tarsusaItem.name, 'done': each_tarsusaItem.done, 'date' : each_tarsusaItem.date, 'expectdate': each_tarsusaItem.expectdate, 'donedate': each_tarsusaItem.donedate, 'comment' : each_tarsusaItem.comment, 'routine' : each_tarsusaItem.routine, 'public' : each_tarsusaItem.public, 'tags' : ItemTags}
+        this_item = jsonized(each_tarsusaItem)
+        this_item['tags'] = ItemTags
         Item_List.append(this_item)
     #print Item_List
 
@@ -202,7 +202,9 @@ def jsonized(item):
             'comment' : item.comment, \
             'routine' : item.routine, \
             'category' : item.done, \
-            'done': item.done
+            'done': item.done,
+            'is_duetoday': item.is_duetoday,
+            'is_duetomorrow': item.is_duetomorrow
            }
 
 def get_items_duetoday(userid):

@@ -9,6 +9,7 @@ from base import tarsusaRequestHandler
 import cgi
 import wsgiref.handlers
 import memcache
+from models import tarsusaUser, tarsusaItem
 
 class MainPage(tarsusaRequestHandler):
 

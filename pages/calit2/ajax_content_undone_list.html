@@ -5,9 +5,12 @@
         <input type="checkbox" name="cbdone" onchange="doneItem('/doneItem/{{eachitem.id}}')">
         <span class="item">{{ eachitem.name|escape }}</span>
         <span class="date">
-        {% ifnotequal eachitem.expectdate None %}
-        {{ eachitem.expectdate|escape }}
-        {% endifnotequal %}
+        {% if eachitem.is_duetoday %}
+        今天
+        {% endif %}
+        {% if eachitem.is_duetomorrow %}
+        明天
+        {% endif %}
         </span>
         <span class="option">
             <a href="javascript:void(0);" onclick="doneItem('/duetoday/{{eachitem.id}}');">t</a>
