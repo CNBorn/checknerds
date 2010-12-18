@@ -186,8 +186,9 @@ def get_dailyroutine(userid):
         for this_routine_log in routine_logs:
             if datetime.datetime.date(this_routine_log.donedate) == datetime.date.today():
                 done_item_today = True
-        
-        this_item = {'id' : str(routine_item.key().id()), 'name' : routine_item.name, 'date' : routine_item.date, 'donedate': routine_item.donedate, 'expectdate': routine_item.expectdate, 'comment' : routine_item.comment, 'routine' : routine_item.routine, 'category' : routine_item.done, 'done':done_item_today}
+
+        this_item = jsonized(routine_item) 
+        this_item['done'] = done_item_today
         item_list.append(this_item)
 
     memcache.set_item("dailyroutine_items", item_list, int(userid))
