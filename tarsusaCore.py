@@ -217,7 +217,12 @@ def get_items_duetoday(userid):
     items_due_today = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2", \
             this_user.user, end_of_today)
 
-    return [jsonized(item) for item in items_due_today] + get_dailyroutine(userid)
+    results = [jsonized(item) for item in items_due_today] + get_dailyroutine(userid)
+    results = sorted(results, key=lambda item:item['date'])
+    return sorted(results, key=lambda item:item['done'])
+
+
+
 
     
 def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
