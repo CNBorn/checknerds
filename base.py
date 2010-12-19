@@ -17,6 +17,7 @@ from modules import tarsusaUser, Tag, AppModel
 import logging
 
 import shardingcounter
+import memcache
 
 class tarsusaRequestHandler(webapp.RequestHandler):
     def __init__(self):
