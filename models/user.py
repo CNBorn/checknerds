@@ -6,6 +6,7 @@ sys.path.append("../")
 from google.appengine.ext import db
 import memcache
 import shardingcounter
+from models.tag import Tag
 
 class tarsusaUser(db.Model):
     user = db.UserProperty()
@@ -49,6 +50,15 @@ class tarsusaUser(db.Model):
 
     def get_dailyroutine_items(self):
         return db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", self.user)
+
+    def has_tag(self, tag_name):
+        tag = db.Query(Tag).filter("name =", tag_name).get()
+        for check_whether_used_tag in self.usedtags:
+            item_check_whether_used_tag = db.get(check_whether_used_tag)
+            if item_check_whether_used_tag:
+                if tag.key() == check_whether_used_tag or tag.name == item_check_whether_used_tag.name:
+                    return True
+        return False
 
 def get_user(user_id):
     cached_user = memcache.get("user:%s" % user_id)

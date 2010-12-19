@@ -637,7 +637,7 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
 
             item.tags.append(tag.key())
                 
-            if not is_user_has_tag(tag.name, user):
+            if not user.has_tag(tag.name):
                 user.usedtags.append(tag.key())     
     
     item.put()
@@ -649,16 +649,6 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
     memcache.delete_item("itemstats", user_id)
     memcache.set("item:%s" % item_id, item)
     return item_id
-
-def is_user_has_tag(tag_name, user):
-    tag = db.Query(Tag).filter("name =", tag_name).get()
-    for check_whether_used_tag in user.usedtags:
-        item_check_whether_used_tag = db.get(check_whether_used_tag)
-        if item_check_whether_used_tag:
-            if tag.key() == check_whether_used_tag or tag.name == item_check_whether_used_tag.name:
-                return True
-    return False
-
 
 
 def verify_AppModel(apiappid, apiservicekey):

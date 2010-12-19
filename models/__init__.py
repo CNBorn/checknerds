@@ -4,18 +4,7 @@ sys.path.append("../")
 from google.appengine.ext import db
 from models.user import tarsusaUser
 from models.item import tarsusaItem, tarsusaRoutineLogItem
-
-class Tag(db.Model):
-    name = db.StringProperty()
-    count = db.IntegerProperty()
-
-    #design inspried by ericsk
-
-    #@property
-    #def posts(self):
-    #   self.count += 1
-        #return tarsusaItem.gql('WHERE tags = :1', self.key())
-    #   return User.gql('WHERE usedtags = :1', self.key())
+from models.tag import Tag
 
 class AppModel(db.Model):
     """Applications that uses CheckNerds API"""
