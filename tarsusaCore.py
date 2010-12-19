@@ -456,47 +456,11 @@ def get_count_UserItemStats(userid):
     return result 
 
 def DoneItem(ItemId, UserId, Misc=''):
-
-    done_lastday_routine = False
-    if Misc == 'y':
-        done_lastday_routine = True
-
     item = tarsusaItem.get_item(ItemId)
-    item_id = int(ItemId)
-    user_id = int(UserId)
-    
-    if item and item.usermodel.key().id() == user_id:
+    user = tarsusaUser.get_user(UserId)
+    return item.done_item(user, Misc)
 
-        if item.routine == 'none':
-            item.donedate = datetime.datetime.now()
-            item.done = True
-            item.put()
-            memcache.event('doneitem', user_id)
-
-        if item.routine == "daily":
-            new_routinelog_item = tarsusaRoutineLogItem(routine=item.routine)
-            new_routinelog_item.user = users.get_current_user()
-            new_routinelog_item.routineid = item_id
-            
-            one_day = datetime.timedelta(days=1)
-            yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
-            if done_lastday_routine:
-                new_routinelog_item.donedate = yesterday
-                is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
-                memcache.event('doneroutineitem_daily_yesterday', user_id)
-            else: 
-                is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday + one_day ,datetime.datetime.now())
-                memcache.event('doneroutineitem_daily_today', user_id)
-
-            if is_already_done.count() < 1:
-                new_routinelog_item.put()
-                memcache.event('refresh_dailyroutine', user_id)
-    
-        memcache.set("item:%s" % item_id, item)
-        return True
-
-    return False
-
+  
 def UndoneItem(ItemId, UserId, Misc):
     #UndoneItem function specially designed for API calls.  
     #Duplicated Code from tarsusaItemCore, refactor needed in the future.

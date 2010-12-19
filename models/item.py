@@ -116,6 +116,44 @@ class tarsusaItem(db.Expando):
             'is_duetomorrow': self.is_duetomorrow
            }
 
+
+    def done_item(self, user, misc=''):
+        item_id = self.key().id()
+        user_id = user.key().id()
+        if self.usermodel.key().id() != user_id:
+            return False
+
+        done_lastday_routine = False
+        if misc == 'y':
+            done_lastday_routine = True
+
+        if self.routine == 'none':
+            self.donedate = datetime.datetime.now()
+            self.done = True
+            self.put()
+            memcache.event('doneitem', user_id)
+
+        if self.routine == "daily":
+            new_routinelog_item = tarsusaRoutineLogItem(routine=self.routine, user=user.user, routineid=item_id)
+            
+            one_day = datetime.timedelta(days=1)
+            yesterday = datetime.datetime.combine(datetime.date.today() - one_day, datetime.time(0))
+            if done_lastday_routine:
+                new_routinelog_item.donedate = yesterday
+                is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday - one_day , datetime.datetime.combine(datetime.date.today(), datetime.time(0)) - datetime.timedelta(seconds=1))
+                memcache.event('doneroutineitem_daily_yesterday', user_id)
+            else: 
+                is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday + one_day ,datetime.datetime.now())
+                memcache.event('doneroutineitem_daily_today', user_id)
+
+            if is_already_done.count() < 1:
+                new_routinelog_item.put()
+                memcache.event('refresh_dailyroutine', user_id)
+    
+        memcache.set("item:%s" % item_id, self)
+        return True
+
+
 class tarsusaRoutineLogItem(db.Model):
     user = db.UserProperty()
     routineid = db.IntegerProperty()
