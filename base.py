@@ -82,8 +82,15 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         return CurrentUser
 
     def get_user_db(self):
+        user_db_id = users.get_current_user().user_id()
+        cached_user = memcache.get("userdb:%s" % userdb_id)
+        if cached_user:
+            return cached_user
+        
         q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-        return q.get()
+        result = q.get()
+        memcache.set("userdb:%s" % userdb_id, result)
+        return result
 
     def verify_api(self):
                 
