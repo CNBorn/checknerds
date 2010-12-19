@@ -13,7 +13,7 @@ from google.appengine.api import users
 from google.appengine.ext import db
 
 import cgi
-from modules import tarsusaUser, Tag, AppModel 
+from models import tarsusaUser, Tag, AppModel 
 import logging
 
 import shardingcounter
