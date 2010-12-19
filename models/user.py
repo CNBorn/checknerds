@@ -47,6 +47,9 @@ class tarsusaUser(db.Model):
     def count():
         return shardingcounter.get_count("tarsusaUser")
 
+    def get_dailyroutine_items(self):
+        return db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", self.user)
+
 def get_user(user_id):
     cached_user = memcache.get("user:%s" % user_id)
     if cached_user:

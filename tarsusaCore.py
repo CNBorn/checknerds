@@ -173,8 +173,8 @@ def get_dailyroutine(userid):
     if cached_user_dailyroutine is not None:
         return cached_user_dailyroutine
 
-    item_list = []      
-    all_routine_items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", this_user.user)
+    item_list = []
+    all_routine_items = this_user.get_dailyroutine_items()
     for routine_item in all_routine_items:
         this_item = routine_item.jsonized()
         this_item['done'] = routine_item.done_today()
@@ -456,7 +456,7 @@ def get_count_UserItemStats(userid):
 
     return result 
 
-def DoneItem(ItemId, UserId, Misc):
+def DoneItem(ItemId, UserId, Misc=''):
 
     done_lastday_routine = False
     if Misc == 'y':

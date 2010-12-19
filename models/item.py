@@ -94,7 +94,6 @@ class tarsusaItem(db.Expando):
 
     def done_today(self):
         assert self.routine == "daily"
-        #tarsusaRoutineLogItem.filter(user=self.usermodel.user, routine="daily", routineid=self.key().id())
         routine_logkey = db.GqlQuery("SELECT __key__ FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT 1", self.usermodel.user, self.key().id())
         for this_routine_log in routine_logkey:
             if datetime.datetime.date(tarsusaRoutineLogItem.get_item(this_routine_log.id()).donedate) == datetime.date.today():
