@@ -174,8 +174,7 @@ def get_dailyroutine(userid):
         return cached_user_dailyroutine
 
     item_list = []
-    all_routine_items = this_user.get_dailyroutine_items()
-    for routine_item in all_routine_items:
+    for routine_item in this_user.get_dailyroutine_items():
         this_item = routine_item.jsonized()
         this_item['done'] = routine_item.done_today()
         item_list.append(this_item)
