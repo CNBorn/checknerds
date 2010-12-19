@@ -219,7 +219,7 @@ def get_items_duetoday(userid):
             this_user.user, end_of_today)
 
     results = [jsonized(item) for item in items_due_today] + get_dailyroutine(userid)
-    results = sorted(results, key=lambda item:item['date'])
+    results = sorted(results, key=lambda item:item['date'], reverse=True)
     return sorted(results, key=lambda item:item['done'])
 
 
