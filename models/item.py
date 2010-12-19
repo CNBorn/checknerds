@@ -92,6 +92,16 @@ class tarsusaItem(db.Expando):
         end_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 23,59,59)
         return self.expectdate == end_of_tomorrow
 
+    def done_today(self):
+        assert self.routine == "daily"
+        #tarsusaRoutineLogItem.filter(user=self.usermodel.user, routine="daily", routineid=self.key().id())
+        routine_logkey = db.GqlQuery("SELECT __key__ FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT 1", self.usermodel.user, self.key().id())
+        for this_routine_log in routine_logkey:
+            if datetime.datetime.date(tarsusaRoutineLogItem.get_by_id(this_routine_log.id()).donedate) == datetime.date.today():
+                return True
+        return False
+
+
     def jsonized(self):
         return {
             'id' : str(self.key().id()), 
@@ -106,3 +116,9 @@ class tarsusaItem(db.Expando):
             'is_duetoday': self.is_duetoday,
             'is_duetomorrow': self.is_duetomorrow
            }
+
+class tarsusaRoutineLogItem(db.Model):
+    user = db.UserProperty()
+    routineid = db.IntegerProperty()
+    routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
+    donedate = db.DateTimeProperty(auto_now_add=True)

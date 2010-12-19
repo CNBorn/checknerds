@@ -15,7 +15,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.ext import search
 import logging
-from modules import *
+from models import *
 from base import *
 
 import time, datetime
@@ -27,9 +27,6 @@ import memcache
 import shardingcounter
 
 import service
-
-## Caution!
-## These funtions here won't check permission for login!
 
 def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddate='', startdonedate='', enddonedate='', sort='asc', maxitems=9, omittopbottom=False, public='none'):
     
@@ -179,16 +176,8 @@ def get_dailyroutine(userid):
     item_list = []      
     all_routine_items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", this_user.user)
     for routine_item in all_routine_items:
-
-        routine_logs = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT 1", this_user.user, routine_item.key().id())
-        
-        done_item_today = False
-        for this_routine_log in routine_logs:
-            if datetime.datetime.date(this_routine_log.donedate) == datetime.date.today():
-                done_item_today = True
-
         this_item = routine_item.jsonized()
-        this_item['done'] = done_item_today
+        this_item['done'] = routine_item.done_today()
         item_list.append(this_item)
 
     memcache.set_item("dailyroutine_items", item_list, int(userid))

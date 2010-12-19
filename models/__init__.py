@@ -2,19 +2,8 @@ import sys
 sys.path.append("../")
 
 from google.appengine.ext import db
-
-import memcache
-
 from models.user import tarsusaUser
-from models.item import tarsusaItem
-
-class tarsusaRoutineLogItem(db.Model):
-    
-    user = db.UserProperty()
-    routineid = db.IntegerProperty()
-    routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
-    donedate = db.DateTimeProperty(auto_now_add=True)
-
+from models.item import tarsusaItem, tarsusaRoutineLogItem
 
 class Tag(db.Model):
     name = db.StringProperty()
