@@ -30,7 +30,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         self.is_login = (self.login_user != None)
         
         if self.is_login:
-            self.user = tarsusaUser.all().filter('user = ', self.login_user).get() or tarsusaUser(user = self.login_user)
+            self.user = self.get_user_db()
         else:
             self.user = None
 
@@ -83,7 +83,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         return CurrentUser
 
     def get_user_db(self):
-        user_db_id = users.get_current_user().user_id()
+        userdb_id = users.get_current_user().user_id()
         cached_user = memcache.get("userdb:%s" % userdb_id)
         if cached_user:
             return cached_user
