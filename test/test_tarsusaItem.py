@@ -45,7 +45,7 @@ class tarsusaItemTest(unittest.TestCase):
         self.item1.set_duetoday()
         items_duetoday = get_items_duetoday(self.user.key().id())
         ids_items_duetoday = [x['id'] for x in items_duetoday]
-        self.assertEqual([str(self.item1.key().id()), str(self.routine_item.key().id())], ids_items_duetoday)
+        self.assertEqual(set([str(self.item1.key().id()), str(self.routine_item.key().id())]), set(ids_items_duetoday))
         self.assertEqual(True, self.item1.is_duetoday)
 
     def test_items_duetomorrow(self):

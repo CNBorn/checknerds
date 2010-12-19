@@ -127,7 +127,7 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
             # There is some chances that ThisItem do not have any tags.
             ItemTags = None
             pass
-        this_item = jsonized(each_tarsusaItem)
+        this_item = each_tarsusaItem.jsonized()
         this_item['tags'] = ItemTags
         Item_List.append(this_item)
     #print Item_List
@@ -187,26 +187,13 @@ def get_dailyroutine(userid):
             if datetime.datetime.date(this_routine_log.donedate) == datetime.date.today():
                 done_item_today = True
 
-        this_item = jsonized(routine_item) 
+        this_item = routine_item.jsonized()
         this_item['done'] = done_item_today
         item_list.append(this_item)
 
     memcache.set_item("dailyroutine_items", item_list, int(userid))
     return item_list
 
-def jsonized(item):
-    return {'id' : str(item.key().id()), \
-            'name' : item.name, \
-            'date' : item.date, \
-            'donedate': item.donedate, \
-            'expectdate': item.expectdate, \
-            'comment' : item.comment, \
-            'routine' : item.routine, \
-            'category' : item.done, \
-            'done': item.done,
-            'is_duetoday': item.is_duetoday,
-            'is_duetomorrow': item.is_duetomorrow
-           }
 
 def get_items_duetoday(userid):
     
@@ -218,7 +205,7 @@ def get_items_duetoday(userid):
     items_due_today = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2", \
             this_user.user, end_of_today)
 
-    results = [jsonized(item) for item in items_due_today] + get_dailyroutine(userid)
+    results = [item.jsonized() for item in items_due_today] + get_dailyroutine(userid)
     results = sorted(results, key=lambda item:item['date'], reverse=True)
     return sorted(results, key=lambda item:item['done'])
 

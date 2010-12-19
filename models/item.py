@@ -91,3 +91,18 @@ class tarsusaItem(db.Expando):
         tomorrow = datetime.date.today() + timedelta(days=1)
         end_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 23,59,59)
         return self.expectdate == end_of_tomorrow
+
+    def jsonized(self):
+        return {
+            'id' : str(self.key().id()), 
+            'name' : self.name, 
+            'date' : self.date, 
+            'donedate': self.donedate, 
+            'expectdate': self.expectdate, 
+            'comment' : self.comment, 
+            'routine' : self.routine, 
+            'category' : self.done, 
+            'done': self.done,
+            'is_duetoday': self.is_duetoday,
+            'is_duetomorrow': self.is_duetomorrow
+           }
