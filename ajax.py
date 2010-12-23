@@ -15,6 +15,7 @@ import wsgiref.handlers
 import urllib
 from google.appengine.api import users
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp.util import run_wsgi_appi
 from google.appengine.ext import db
 
 from google.appengine.ext.webapp import template
@@ -511,7 +512,7 @@ def main():
                                        debug=True)
 
 
-    wsgiref.handlers.CGIHandler().run(application)
+    run_wsgi_app(application)
 
 if __name__ == "__main__":
       main()

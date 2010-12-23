@@ -6,6 +6,9 @@ api_version: 1
 derived_file_type:
 - python_precompiled
 
+builtins:
+- appstats: on
+
 handlers:
 - url: /img
   static_dir: img
@@ -63,10 +66,10 @@ handlers:
   script: tarsusaItemCore.py
 
 - url: /AddFriend/.*
-  script: friends.py
+  script: views/friends.py
 
 - url: /RemoveFriend/.*
-  script: friends.py
+  script: views/friends.py
 
 - url: /i/.*
   script: mobile.py
@@ -84,7 +87,7 @@ handlers:
   script: tag.py
 
 - url: /FindFriend
-  script: friends.py
+  script: views/friends.py
 
 - url: /donelog.*
   script: userpage.py
