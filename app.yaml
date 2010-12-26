@@ -30,22 +30,19 @@ handlers:
   script: views/main.py
 
 - url: /about
-  script: miscellaneous.py
+  script: views/miscellaneous.py
 
 - url: /blog
-  script: miscellaneous.py
+  script: views/miscellaneous.py
 
 - url: /guestbook
-  script: miscellaneous.py
-
-- url: /statstics
-  script: miscellaneous.py
+  script: views/miscellaneous.py
 
 - url: /docs.+
-  script: miscellaneous.py
+  script: views/miscellaneous.py
 
 - url: /labs.+
-  script: miscellaneous.py
+  script: views/miscellaneous.py
 
 - url: /Login.+
   script: views/auth.py
@@ -105,10 +102,10 @@ handlers:
   script: views/image.py
 
 - url: /flushcache
-  script: miscellaneous.py
+  script: views/miscellaneous.py
 
 - url: /cron_flushcache
-  script: miscellaneous.py
+  script: views/miscellaneous.py
 
 - url: /backend/.+
   script: backend.py

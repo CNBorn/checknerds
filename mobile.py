@@ -29,7 +29,7 @@ from base import *
 
 import memcache
 import tarsusaCore
-import utilities
+from models.util import get_UserAgent
 
 class mMainPage(tarsusaRequestHandler):
 	def get(self):
@@ -54,7 +54,7 @@ class mMainPage(tarsusaRequestHandler):
 			}
 		
 			#Manupilating Templates	
-			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+			if get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
 				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_imainpage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:			
@@ -69,7 +69,7 @@ class mMainPage(tarsusaRequestHandler):
 			}
 			
 			#Manupilating Templates	
-			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+			if get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
 				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_iwelcomepage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
@@ -155,7 +155,7 @@ class mToDoPage(tarsusaRequestHandler):
 				template_values['nextpagestamp'] = next_timestamp
 		
 			#Manupilating Templates
-			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+			if get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
 				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_itodopage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
@@ -245,7 +245,7 @@ class mDonePage(tarsusaRequestHandler):
 
 
 			#Manupilating Templates
-			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+			if get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
 				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_idonepage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
@@ -347,7 +347,7 @@ class mDailyRoutinePage(tarsusaRequestHandler):
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
 			#Manupilating Templates	
-			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+			if get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
 				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_idailyroutinepage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
@@ -522,7 +522,7 @@ class mViewItemPage(tarsusaRequestHandler):
 						'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 						'RefererURL': self.referer,
 				}
-			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+			if get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
 				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_iviewitempage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:			
@@ -549,7 +549,7 @@ class mAddItemPage(tarsusaRequestHandler):
 							'addItemToday': strAddItemToday.decode("utf-8"),
 							}
 			
-			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+			if get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
 				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_iadditempage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
@@ -605,7 +605,7 @@ class mEditItemPage(tarsusaRequestHandler):
 			}			
 
 			#Manupilating Templates	
-			if utilities.get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
+			if get_UserAgent(os.environ['HTTP_USER_AGENT']) == 'iPod':
 				path = os.path.join(os.path.dirname(__file__), 'pages/iPod/mobile_iedititempage.html')
 				self.response.out.write(template.render(path, template_values))
 			else:
