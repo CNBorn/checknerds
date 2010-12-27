@@ -84,6 +84,28 @@ class tarsusaUser(db.Model):
                     items.append(each_item.key().id())
         return items
 
+    @property
+    def avatarpath(self):
+        if self.avatar:
+            return '/image?avatar=%s' % self.key().id()
+        return '/img/default_avatar.jpg'
+
+    def get_friends(self):
+        friend_list = self.friends
+        results = []
+        if friend_list: 
+            for each_key in friend_list:
+                friend = db.get(each_key)
+                each_result = {'id': str(friend.key().id())}
+                each_result['avatarpath'] = friend.avatarpath
+                #These code is here due to DB Model change since Rev.76
+                try:                                
+                    each_result['name'] = cgi.escape(friend.dispname)
+                except:
+                    each_result['name'] = cgi.escape(friend.user.nickname())
+                results.append(each_result)
+        return results
+
 
 def get_user(user_id):
     cached_user = memcache.get("user:%s" % user_id)
