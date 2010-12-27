@@ -60,6 +60,31 @@ class tarsusaUser(db.Model):
                     return True
         return False
 
+    def tag_list(self):
+        if self.usedtags:
+            tag_names = []
+            tags = []
+            for each_tag in self.usedtags:
+                tags.append(each_tag)
+                tag_names.append(db.get(each_tag).name)
+
+            tag_names = list(set(tag_names))
+            tags = list(set(tags))
+
+        return tag_names
+
+    def tag_item_ids_list(tag_name):
+        if not tag_name: return False
+        items = []
+        tag = db.Query(Tag).filter("name =", tag_name).get()
+        user_items = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 ORDER BY done, date DESC", self.user)
+        for each_item in user_items:
+            for each_tag in each_item.tags:
+                if db.get(each_tag).name == tag_name:
+                    items.append(each_item.key().id())
+        return items
+
+
 def get_user(user_id):
     cached_user = memcache.get("user:%s" % user_id)
     if cached_user:
