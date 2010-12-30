@@ -30,7 +30,7 @@ import service
 
 def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddate='', startdonedate='', enddonedate='', sort='asc', maxitems=9, omittopbottom=False, public='none'):
     
-    ThisUser = tarsusaUser.get_by_id(int(userid))
+    ThisUser = tarsusaUser.get_user(int(userid))
     Item_List = []
     
     #Get tarsusaItemCollection
@@ -211,7 +211,7 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
 
     #Have to add this limit for GAE's CPU limitation.
     MaxDisplayedDonelogDays = maxdisplaydonelogdays
-    ThisUser = tarsusaUser.get_by_id(int(userid))
+    ThisUser = tarsusaUser.get_user(int(userid))
     
     #---
     Item_List = []
@@ -240,7 +240,7 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
             DisplayedDonelogDays += 1
 
         ## Get what the name of this RoutinetarsusaItem is.
-        ThisRoutineBelongingstarsusaItem = tarsusaItem.get_by_id(each_RoutineLogItem.routineid)
+        ThisRoutineBelongingstarsusaItem = tarsusaItem.get_item(each_RoutineLogItem.routineid)
     
         this_item = {'id' : str(ThisRoutineBelongingstarsusaItem.key().id()), 'name' : ThisRoutineBelongingstarsusaItem.name, 'date' : str(ThisRoutineBelongingstarsusaItem.date), 'donedate': each_RoutineLogItem.donedate, 'comment' : ThisRoutineBelongingstarsusaItem.comment, 'routine' : ThisRoutineBelongingstarsusaItem.routine, 'category' : 'doneroutine'}
         Item_List.append(this_item)
@@ -287,7 +287,7 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
 
 def get_UserNonPrivateItems(userid, public='public', maxdisplayitems=30):
     #Get users non-private items.
-    ViewUser = tarsusaUser.get_by_id(int(userid))
+    ViewUser = tarsusaUser.get_user(int(userid))
     
     #---
     Item_List = []
@@ -316,7 +316,7 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
 
     #Have to add this limit for GAE's CPU limitation.
     MaxDisplayedItems = maxdisplayitems
-    ThisUser = tarsusaUser.get_by_id(int(userid))
+    ThisUser = tarsusaUser.get_user(int(userid))
     
     #---
     userid = ThisUser.key().id()
@@ -393,7 +393,7 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
 
 def get_count_UserItemStats(userid):    
 
-    CurrentUser = tarsusaUser.get_by_id(int(userid))
+    CurrentUser = tarsusaUser.get_user(int(userid))
 
     cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())
     if cachedUserItemStats:
@@ -521,7 +521,7 @@ def UndoneItem(ItemId, UserId, Misc):
 
 def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='private', rawInputDate='', rawTags=None):
     
-    user = tarsusaUser.get_by_id(int(UserId))
+    user = tarsusaUser.get_user(int(UserId))
     item_comment = cgi.escape(rawComment)[:500]
     item_name = cgi.escape(rawName)               
     item_routine = cgi.escape(rawRoutine)
@@ -631,7 +631,7 @@ def verify_UserApi(userid, userapikey):
     #To Verify UserApi, the Authentication process.
     
     #To check whether this user is existed.
-    ThisUser = tarsusaUser.get_by_id(userid)
+    ThisUser = tarsusaUser.get_user(userid)
     if ThisUser == None:
         return False
 

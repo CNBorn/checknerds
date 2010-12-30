@@ -246,7 +246,7 @@ class ViewItem(tarsusaRequestHandler):
 
 
         
-            path = os.path.join(os.path.dirname(__file__), 'pages/viewitem.html')
+            path = os.path.join(os.path.dirname(__file__), '../pages/viewitem.html')
             self.response.out.write(template.render(path, template_values))
 
 
