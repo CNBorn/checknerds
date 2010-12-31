@@ -61,8 +61,8 @@ class tarsusaUser(db.Model):
         return False
 
     def tag_list(self):
+        tag_names = []
         if self.usedtags:
-            tag_names = []
             tags = []
             for each_tag in self.usedtags:
                 tags.append(each_tag)
@@ -73,7 +73,7 @@ class tarsusaUser(db.Model):
 
         return tag_names
 
-    def tag_item_ids_list(tag_name):
+    def tag_item_ids_list(self, tag_name):
         if not tag_name: return False
         items = []
         tag = db.Query(Tag).filter("name =", tag_name).get()

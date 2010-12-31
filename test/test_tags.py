@@ -2,7 +2,6 @@ import unittest
 
 from tarsusaCore import *
 from modules import tarsusaItem, tarsusaUser
-from tags import get_tag_list, get_tag_item_ids_list
 
 class TagTest(unittest.TestCase):
 
@@ -26,13 +25,13 @@ class TagTest(unittest.TestCase):
         self.key2.delete()
    
     def test_get_tag_list(self):
-        self.assertEqual(2, len(get_tag_list(self.user.key().id())))
-        self.assertEqual(True, u'inbox' in get_tag_list(self.user.key().id()))
-        self.assertEqual(True, u'work' in get_tag_list(self.user.key().id()))
+        self.assertEqual(2, len(self.user.tag_list()))
+        self.assertEqual(True, u'inbox' in self.user.tag_list())
+        self.assertEqual(True, u'work' in self.user.tag_list())
 
     def test_get_tag_item_ids_list(self):
-        self.assertEqual(1, len(get_tag_item_ids_list(self.key1.name, self.user.key().id())))
-        self.assertEqual(True, self.item1.key().id() in get_tag_item_ids_list(self.key1.name, self.user.key().id()))
-        self.assertEqual(1, len(get_tag_item_ids_list(self.key2.name, self.user.key().id())))
-        self.assertEqual(True, self.item2.key().id() in get_tag_item_ids_list(self.key2.name, self.user.key().id()))
+        self.assertEqual(1, len(self.user.tag_item_ids_list(self.key1.name)))
+        self.assertEqual(True, self.item1.key().id() in self.user.tag_item_ids_list(self.key1.name))
+        self.assertEqual(1, len(self.user.tag_item_ids_list(self.key2.name)))
+        self.assertEqual(True, self.item2.key().id() in self.user.tag_item_ids_list(self.key2.name))
 

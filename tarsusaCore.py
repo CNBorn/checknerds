@@ -26,7 +26,7 @@ import memcache
 
 import shardingcounter
 
-import service
+from views import service
 
 def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddate='', startdonedate='', enddonedate='', sort='asc', maxitems=9, omittopbottom=False, public='none'):
     
@@ -176,7 +176,7 @@ def get_dailyroutine(userid):
     item_list = []
     for routine_item in this_user.get_dailyroutine_items():
         this_item = routine_item.jsonized()
-        this_item['done'] = routine_item.done_today()
+        this_item['done'] = routine_item.has_done_today()
         item_list.append(this_item)
 
     memcache.set_item("dailyroutine_items", item_list, int(userid))

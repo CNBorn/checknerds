@@ -53,8 +53,8 @@ class tarsusaItemTest(unittest.TestCase):
         self.assertEqual(True, self.item1.is_duetomorrow)
 
     def test_item_done_today(self):
-        self.assertEqual(False, self.routine_item.done_today())
+        self.assertEqual(False, self.routine_item.has_done_today())
         from tarsusaCore import DoneItem
         DoneItem(self.routine_item.key().id(), self.routine_item.usermodel.key().id())
-        self.assertEqual(True, self.routine_item.done_today())
+        self.assertEqual(True, self.routine_item.has_done_today())
 
