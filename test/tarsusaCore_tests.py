@@ -14,7 +14,7 @@ from google.appengine.api import images
 from modules import *
 import base
 import tarsusaCore
-from tarsusaCore import AddItem
+from tarsusaCore import AddItem, get_UserDonelog
 import modules
 import memcache
 
@@ -110,6 +110,13 @@ class tarsusaCoreTest(unittest.TestCase):
         item = tarsusaItem.get_item(add_item_success)
         item.delete_item(self.user.key().id())
 
+    def test_tarsusaCore_getuserdonelog(self):
+        tarsusaCore.DoneItem(ItemId=self.routine_item.key().id(), UserId=self.user.key().id(), Misc="")
+        DoneItem = tarsusaCore.DoneItem(ItemId=self.item1.key().id(), UserId=self.user.key().id(), Misc='')
+
+        userdonelog = get_UserDonelog(userid=self.user.key().id())
+        self.assertEqual(self.item1.name, userdonelog[0]["name"])
+        self.assertEqual(self.routine_item.name, userdonelog[1]["name"])
 
     def test_tarsusaCore_getlatest_user(self):
         people_list = tarsusaUser.get_latestusers()
