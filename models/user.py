@@ -2,11 +2,14 @@
 
 import sys
 sys.path.append("../")
+import datetime
+from models.consts import ONE_DAY
 
 from google.appengine.ext import db
 import memcache
 import shardingcounter
 from models.tag import Tag
+
 
 class tarsusaUser(db.Model):
     user = db.UserProperty()
@@ -106,6 +109,15 @@ class tarsusaUser(db.Model):
                 results.append(each_result)
         return results
 
+    def get_doneitems_in(self, date):
+        yesterday_ofdate = datetime.datetime.combine(date - ONE_DAY, datetime.time(0))
+        nextday_ofdate = datetime.datetime.combine(date + ONE_DAY, datetime.time(0))
+        ItemCollection_ThisDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND donedate > :2 AND donedate <:3 AND done = True AND routine = 'none' ORDER BY donedate DESC", self.user, yesterday_ofdate, nextday_ofdate)
+        result = []
+        for each_doneItem_withinOneday in ItemCollection_ThisDayCreated:
+            result.append(each_doneItem_withinOneday.jsonized())
+        
+        return result
 
 def get_user(user_id):
     cached_user = memcache.get("user:%s" % user_id)

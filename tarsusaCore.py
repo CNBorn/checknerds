@@ -201,20 +201,6 @@ def get_items_duetoday(userid):
     return sorted(results, key=lambda item:item['done'])
 
 
-def _get_userdoneitems_inthatday(user_id, date):
-    ThisUser = get_user(int(user_id))
-    TheDay = date
-    yesterday_ofTheDay = datetime.datetime.combine(TheDay - ONE_DAY, datetime.time(0))
-    nextday_ofTheDay = datetime.datetime.combine(TheDay + ONE_DAY, datetime.time(0))
-
-    ItemCollection_ThisDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND donedate > :2 AND donedate <:3 AND done = True AND routine = 'none' ORDER BY donedate DESC", ThisUser.user, yesterday_ofTheDay, nextday_ofTheDay)
-
-    result = []
-    for each_doneItem_withinOneday in ItemCollection_ThisDayCreated:
-        result.append(each_doneItem_withinOneday.jsonized())
-
-    return result
-
 def check_have_thisitem_in_itemcollection(item, itemcollection):
     Duplicated_tarsusaItem_Inlist = False
     for check_for_duplicated_tarsusaItem in itemcollection:
@@ -231,8 +217,10 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
     #Have to add this limit for GAE's CPU limitation.
     MaxDisplayedDonelogDays = maxdisplaydonelogdays
     ThisUser = tarsusaUser.get_user(int(userid))
+    sort_backwards = False
+    if not lookingfor == 'next':
+        sort_backwards = True
     
-    #---
     DisplayedDonelogDays = 1 
 
     Item_List = []
@@ -261,25 +249,14 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
         this_item['donedate']= each_RoutineLogItem.donedate
         Item_List.append(this_item)
         
-        normalitems = _get_userdoneitems_inthatday(userid, DoneDateOfThisItem)
+        normalitems = ThisUser.get_doneitems_in(DoneDateOfThisItem)
         for each_item in normalitems:
             if not check_have_thisitem_in_itemcollection(each_item, Item_List):
                 Item_List.append(each_item) 
 
         Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
 
-    #sort the results order by donedate:
-    #Sort Algorithms from
-    #http://www.lixiaodou.cn/?p=12
-    length = len(Item_List)
-    for i in range(0,length):
-        for j in range(length-1,i,-1):
-                if Item_List[j]['donedate'] > Item_List[j-1]['donedate']:
-                    temp = Item_List[j]
-                    Item_List[j]=Item_List[j-1]
-                    Item_List[j-1]=temp
-    #---
-
+    Item_List.sort(key=lambda item:item['donedate'], reverse=sort_backwards)
     return Item_List
 
 
