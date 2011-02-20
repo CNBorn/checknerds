@@ -4,3 +4,4 @@ z.py
 *.pyc
 _multiprocessing.py
 .*.swp
+.*.swo
