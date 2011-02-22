@@ -85,6 +85,13 @@ $('#tab_friends').click(function() {
     hideLoadingPanel();
     return false;
 });
+$('#tab_log').click(function() {
+    tabs_MakeActive(this);
+    $('#itemlist').load('/ajax/render/?func=logs&template=calit2',initHover);
+    showLoadingPanel();
+    hideLoadingPanel();
+    return false;
+});
 
 
 $(document).ready(function(){

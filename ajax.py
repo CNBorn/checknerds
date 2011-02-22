@@ -26,6 +26,8 @@ from base import *
 import logging
 
 import tarsusaCore
+from tarsusaCore import get_UserDonelog
+from tarsusaCore import format_done_logs
 import memcache
 
 
@@ -443,6 +445,12 @@ class render(tarsusaRequestHandler):
             UserFriendsItem_List = tarsusaCore.get_UserFriendStats(user_id)
             template_values['UserFriendsActivities'] = UserFriendsItem_List
             template_kind = "friends_list"
+        
+        elif func == "logs":
+            done_items = get_UserDonelog(user_id)
+            formatted_done_items = format_done_logs(done_items)
+            template_values['done_items'] = formatted_done_items
+            template_kind = "done_log"
  
         path = 'pages/%s/ajax_content_%s.html' % (template_name, template_kind)
         self.write(template.render(path, template_values))

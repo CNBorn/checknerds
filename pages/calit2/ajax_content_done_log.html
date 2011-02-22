@@ -1,0 +1,42 @@
+<ul>
+{% if done_items %}
+{% for date, itemlist in done_items.items %}
+    <h3>{{ date }}</h3>
+    <ul> 
+        {% for each_item in itemlist %}
+            <li itemid="{{ each_item.id }}" class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+            <input type="checkbox" name="cbundone" checked=false onchange="undoneItem('/undoneItem/{{each_item.id}}')">
+            <span class="item">{{ each_item.name|escape }}</span>
+            <span class="date">@{{ each_item.donedate|escape }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+{% endif %}
+</ul>
+
+{% if previouspagestamp %}
+<a class="prev" href="/donelog/p/{{previouspagestamp}}">上一页</a>
+{% endif %}
+{% if nextpagestamp %}
+<a class="next" href="/donelog/{{nextpagestamp}}">下一页</a>
+{% endif %}
+
+<script type="text/javascript"> 
+function undoneItem(strLink){
+        $('#tab_done').click();
+        $.ajax({type: "GET", url: strLink ,success: tab_flick("tab_undone") }); 
+        return false;
+    }
+
+function tab_flick(strdivname) {
+    divname = "#" + strdivname;
+    $(divname).animate({ 
+        background: "#000000",
+        opacity: 0.4,
+        }, 500 ).animate({
+        opacity: 1.0}, 500);
+    $(divname).css({background:""});
+}
+
+</script>

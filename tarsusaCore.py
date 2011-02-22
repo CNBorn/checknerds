@@ -18,7 +18,6 @@ import logging
 
 from models import *
 from base import *
-from models.consts import ONE_DAY
 from models.user import get_user
 
 import time, datetime
@@ -259,6 +258,16 @@ def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogda
     Item_List.sort(key=lambda item:item['donedate'], reverse=sort_backwards)
     return Item_List
 
+def format_done_logs(done_items):
+    result = {}
+    previous_done_date = None
+    for each_item in done_items:
+        if each_item['donedate'].day != previous_done_date.day:
+            col_date = each_item['donedate'].strftime('%Y-%m-%d')
+            result.setdefault(col_date,[])
+        result[col_date].append(each_item)
+        previous_done_date = each_item['donedate'].day 
+    return result
 
 def get_UserNonPrivateItems(userid, public='public', maxdisplayitems=30):
     #Get users non-private items.

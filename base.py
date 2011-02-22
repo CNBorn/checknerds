@@ -4,9 +4,17 @@
 # CheckNerds - www.checknerds.com
 # version 1.1, codename California
 # - base.py
-# Author: CNBorn, 2008-2010
+# Author: CNBorn, 2008-2011
 # http://cnborn.net, http://twitter.com/CNBorn
 # ************************************************************** 
+import os
+import sys
+# Remove the standard version of Django
+#for k in [k for k in sys.modules if k.startswith('django')]:
+#    del sys.modules[k]
+#from google.appengine.dist import use_library
+#use_library('django', '1.0')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from google.appengine.ext import webapp
 from google.appengine.api import users
