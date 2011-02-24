@@ -482,8 +482,6 @@ def main():
                                         ('/ajax/frontpage_recentregistereduserforanonymous',get_fp_RecentRegisteredUserForAnonymous),
                                         (r'/ajax/allpage_additem.+', additem),
                                         (r'/ajax/allpage_edititem.+', edititem),
-                                        ('/ajax/getjson_usertodoitems', getjson_usertodoitems),
-                                        ('/ajax/getjson_userdoneitems', getjson_userdoneitems),
                                         (r'/ajax/render/.*', render),
                                         (r'/ajax/sidebar/.*', sidebar),
                                         ('/ajax/admin_runpatch/.+', admin_runpatch),
