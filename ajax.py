@@ -277,37 +277,6 @@ class edititem(tarsusaRequestHandler):
         else:
             self.write("您没有登录或没有权限编辑该项目")
 
-
-class getjson_userdoneitems(tarsusaRequestHandler):
-    '''JSON - 用户已完成事项'''
-
-    @userloggedin_or_403
-    def get(self):
-        UserDoneItems = []
-        CurrentUser = self.get_user_db()
-        tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())
-        for UserDoneItem in tarsusaItemCollection_UserDoneItems:
-            item = {'id' : str(UserDoneItem.key().id()), 'name' : UserDoneItem.name, 'date' : str(UserDoneItem.date), 'comment' : UserDoneItem.comment}
-            UserDoneItems.append(item)
-        
-        self.response.out.write(simplejson.dumps(UserDoneItems))
-
-
-class getjson_usertodoitems(tarsusaRequestHandler):
-    '''JSON - 用户未完成事项'''
-
-    @userloggedin_or_403
-    def get(self):
-        UserTodoItems = []
-        CurrentUser = self.get_user_db()
-        
-        tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", users.get_current_user())
-        for UserTodoItem in tarsusaItemCollection_UserTodoItems:
-            item = {'id' : str(UserTodoItem.key().id()), 'name' : UserTodoItem.name, 'date' : str(UserTodoItem.date), 'comment' : UserTodoItem.comment}
-            UserTodoItems.append(item)
-        
-        self.response.out.write(simplejson.dumps(UserTodoItems))
-            
 class ajax_error(tarsusaRequestHandler):
     def post(self):
         self.write("载入出错，请刷新重试")
