@@ -227,6 +227,8 @@ def format_items(items):
         if each_item['donedate']:
             each_item['donedate'] = each_item['donedate'].strftime('%Y-%m-%d')
         each_item['date'] = each_item['date'].strftime('%Y-%m-%d')
+        if each_item['expectdate']:
+            each_item['expectdate'] = each_item['expectdate'].strftime('%Y-%m-%d')
         result.append(each_item)
     return result
 
