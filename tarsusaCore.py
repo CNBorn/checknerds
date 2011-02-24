@@ -207,57 +207,6 @@ def check_have_thisitem_in_itemcollection(item, itemcollection):
             Duplicated_tarsusaItem_Inlist = True
     return Duplicated_tarsusaItem_Inlist
 
-def get_UserDonelog(userid, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
-
-    #Get user's donelog
-    #lookingfor = 'next' to get the records > startdate
-    #             'previous' to get the records <= startdate
-
-    #Have to add this limit for GAE's CPU limitation.
-    MaxDisplayedDonelogDays = maxdisplaydonelogdays
-    ThisUser = tarsusaUser.get_user(int(userid))
-    sort_backwards = False
-    if not lookingfor == 'next':
-        sort_backwards = True
-    
-    DisplayedDonelogDays = 1 
-
-    Item_List = []
-    userid = ThisUser.key().id()
-    if startdate != '':
-        if lookingfor == 'next':
-            tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 AND donedate > :2 ORDER BY donedate DESC", ThisUser.user, startdate)
-        else:
-            tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 AND donedate <= :2 ORDER BY donedate DESC", ThisUser.user, startdate)
-
-    else:
-        tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 ORDER BY donedate DESC", ThisUser.user)
-            
-    Donedate_of_previousRoutineLogItem = None  ## To display the routine item log by Daily.
-
-    for each_RoutineLogItem in tarsusaRoutineLogItemCollection:
-        
-        DoneDateOfThisItem = datetime.datetime.date(each_RoutineLogItem.donedate)
-        if DisplayedDonelogDays > MaxDisplayedDonelogDays:
-            break
-        
-        if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
-            DisplayedDonelogDays += 1
-
-        this_item = tarsusaItem.get_item(each_RoutineLogItem.routineid).jsonized()
-        this_item['donedate']= each_RoutineLogItem.donedate
-        Item_List.append(this_item)
-        
-        normalitems = ThisUser.get_doneitems_in(DoneDateOfThisItem)
-        for each_item in normalitems:
-            if not check_have_thisitem_in_itemcollection(each_item, Item_List):
-                Item_List.append(each_item) 
-
-        Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
-
-    Item_List.sort(key=lambda item:item['donedate'], reverse=sort_backwards)
-    return Item_List
-
 def format_done_logs(done_items):
     result = {}
     previous_done_date = None

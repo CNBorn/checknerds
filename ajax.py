@@ -26,10 +26,9 @@ from base import *
 import logging
 
 import tarsusaCore
-from tarsusaCore import get_UserDonelog
 from tarsusaCore import format_done_logs
 import memcache
-
+from models.user import get_user
 
 def userloggedin_or_403(function):
     '''
@@ -448,7 +447,8 @@ class render(tarsusaRequestHandler):
         
         elif func == "logs":
             from django.utils import simplejson as json
-            done_items = get_UserDonelog(user_id)
+            user = get_user(user_id)
+            done_items = user.get_donelog()
             formatted_done_items = format_done_logs(done_items)
             self.response.headers.add_header('Content-Type', "application/json")
             self.write(json.dumps(formatted_done_items))
