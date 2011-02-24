@@ -5,7 +5,12 @@
         {% ifequal dailyroutine_item.done 0 %}
         <input type="checkbox" name="checkboxname" onchange="doneItem('/doneItem/{{dailyroutine_item.id}}')">
         {% endifequal %}
-        <span class="item">{{ dailyroutine_item.name|escape }}</span>
+        {% ifequal dailyroutine_item.done 1 %}
+        <span class="doneitem">
+        {% else %}    
+        <span class="doneitem">
+        {% endifequal %}
+        {{ dailyroutine_item.name|escape }}</span>
         <span class="date"></span>
         </li>
     {% endfor %}
