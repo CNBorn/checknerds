@@ -447,10 +447,12 @@ class render(tarsusaRequestHandler):
             template_kind = "friends_list"
         
         elif func == "logs":
+            from django.utils import simplejson as json
             done_items = get_UserDonelog(user_id)
             formatted_done_items = format_done_logs(done_items)
-            template_values['done_items'] = formatted_done_items
-            template_kind = "done_log"
+            self.response.headers.add_header('Content-Type', "application/json")
+            self.write(json.dumps(formatted_done_items))
+            return 
  
         path = 'pages/%s/ajax_content_%s.html' % (template_name, template_kind)
         self.write(template.render(path, template_values))

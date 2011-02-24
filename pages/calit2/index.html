@@ -52,7 +52,31 @@ function tabs_MakeActive(obj_div)
     $(str_divname).addClass('activenavitab');
 }
 
-
+function render_donelog(msg)
+{
+    $('#itemlist').html('');
+    render = '';
+    index = 0;
+    render += "<ul>";
+    for(i in msg){
+        for(j in msg[i]){
+            console.log('date: ',i, 'key: ',j, ' value: ',msg[i][j]);
+            item = msg[i][j];
+            if(index % 2){
+                css = 'even' } else {
+                css = 'odd'
+                }
+            render += "<li itemid='" + item.id + "'";
+            render += " class='" + css + "'>";
+            render += "<span class='doneitem'>" + item.name + "</span>";
+            render += "<span class='date'>" + item.donedate + "</span>";
+            render += "</li>";
+            index++;
+        }
+    }
+    render += "</ul>";
+    $('#itemlist').html(render);
+}
 //Functions for Tabs.
 $('#tab_undone').click(function() {
     tabs_MakeActive(this);
@@ -87,12 +111,21 @@ $('#tab_friends').click(function() {
 });
 $('#tab_log').click(function() {
     tabs_MakeActive(this);
-    $('#itemlist').load('/ajax/render/?func=logs&template=calit2',initHover);
+    //$('#itemlist').load('/ajax/render/?func=logs&template=calit2',initHover);
     showLoadingPanel();
-    hideLoadingPanel();
+    $.ajax({
+       type: "GET",
+       url: "/ajax/render/?func=logs&template=calit2",
+       dataType: "json",
+       success: function(msg){
+       hideLoadingPanel();
+       //console.log(msg[1].children[0]);
+         var obj = $.parseJSON(msg);
+         render_donelog(msg);
+         }
+     });
     return false;
 });
-
 
 $(document).ready(function(){
    //Functions to run during loading..

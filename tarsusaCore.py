@@ -262,11 +262,14 @@ def format_done_logs(done_items):
     result = {}
     previous_done_date = None
     for each_item in done_items:
-        if each_item['donedate'].day != previous_done_date.day:
-            col_date = each_item['donedate'].strftime('%Y-%m-%d')
-            result.setdefault(col_date,[])
+        col_date = each_item['donedate'].strftime('%Y-%m-%d')
+        if not previous_done_date or \
+           each_item['donedate'] != previous_done_date:
+                result.setdefault(col_date,[])
+        each_item['donedate'] = col_date
+        each_item['date'] = each_item['date'].strftime('%Y-%m-%d')
         result[col_date].append(each_item)
-        previous_done_date = each_item['donedate'].day 
+        previous_done_date = each_item['donedate']
     return result
 
 def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems=15):
