@@ -111,17 +111,15 @@ $('#tab_friends').click(function() {
 });
 $('#tab_log').click(function() {
     tabs_MakeActive(this);
-    //$('#itemlist').load('/ajax/render/?func=logs&template=calit2',initHover);
     showLoadingPanel();
     $.ajax({
        type: "GET",
        url: "/ajax/render/?func=logs&template=calit2",
        dataType: "json",
        success: function(msg){
-       hideLoadingPanel();
-       //console.log(msg[1].children[0]);
-         var obj = $.parseJSON(msg);
          render_donelog(msg);
+         hideLoadingPanel();
+         initHover();
          }
      });
     return false;

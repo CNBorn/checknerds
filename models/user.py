@@ -10,7 +10,6 @@ import memcache
 import shardingcounter
 from models.tag import Tag
 
-
 class tarsusaUser(db.Model):
     user = db.UserProperty()
     userid = db.IntegerProperty()
@@ -163,6 +162,7 @@ class tarsusaUser(db.Model):
             if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
                 DisplayedDonelogDays += 1
 
+            from models import tarsusaItem
             this_item = tarsusaItem.get_item(each_RoutineLogItem.routineid).jsonized()
             this_item['donedate']= each_RoutineLogItem.donedate
             Item_List.append(this_item)
