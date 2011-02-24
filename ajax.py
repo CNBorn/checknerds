@@ -26,9 +26,10 @@ from base import *
 import logging
 
 import tarsusaCore
-from tarsusaCore import format_done_logs
+from tarsusaCore import format_done_logs, format_items
 import memcache
 from models.user import get_user
+from django.utils import simplejson as json
 
 def userloggedin_or_403(function):
     '''
@@ -394,15 +395,18 @@ class render(tarsusaRequestHandler):
             'func': func,
         }
 
+        user = get_user(user_id)
         if func == "done":
+            self.response.headers.add_header('Content-Type', "application/json")
             done_items = tarsusaCore.get_done_items(user_id, maxitems)
-            template_values['done_items'] = done_items
-            template_kind = "done_list"
+            self.write(json.dumps(format_items(done_items)))
+            return 
 
         elif func == "undone":
+            self.response.headers.add_header('Content-Type', "application/json")
             undone_items = tarsusaCore.get_undone_items(user_id, maxitems)
-            template_values['undone_items'] = undone_items
-            template_kind = "undone_list"
+            self.write(json.dumps(format_items(undone_items)))
+            return 
 
         elif func == "dailyroutine":
             dailyroutine_items = tarsusaCore.get_items_duetoday(user_id)
@@ -415,8 +419,6 @@ class render(tarsusaRequestHandler):
             template_kind = "friends_list"
         
         elif func == "logs":
-            from django.utils import simplejson as json
-            user = get_user(user_id)
             done_items = user.get_donelog()
             formatted_done_items = format_done_logs(done_items)
             self.response.headers.add_header('Content-Type', "application/json")

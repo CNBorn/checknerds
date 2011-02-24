@@ -52,6 +52,46 @@ function tabs_MakeActive(obj_div)
     $(str_divname).addClass('activenavitab');
 }
 
+function render_items(msg,type)
+{
+    $('#itemlist').html('');
+    render = '';
+    index = 0;
+    render += "<ul>";
+    for(j in msg){
+        item = msg[j];
+        if(index % 2){
+            css = 'even' } else {
+            css = 'odd'
+            }
+        render += "<li itemid='" + item.id + "'";
+        render += " class='" + css + "'>";
+        if(type == 'undone'){
+            render += "<input type='checkbox' onchange='doneItem(" + '"' + "/doneItem/" + item.id + '"' + ")'>";
+        }
+        if(type == 'done'){
+            item_style = "doneitem";
+        } else {
+            item_style = "item";
+        }
+        render += "<span class='" + item_style + "'>" + item.name + "</span>";
+
+        display_date = ''
+        if(item.isduetoday != null){ display_date = '今天'; }
+        if(item.isduetomorrow != null){ display_date = '明天'; }
+        if(display_date != ''){
+            render += "<span class='date'>" + display_date + "</span>";
+        }
+        if(type == "done"){
+            render += "<span class='date'>" + item.donedate + "</span>";
+        }
+        render += "</li>";
+        index++;
+    }
+    render += "</ul>";
+    $('#itemlist').html(render);
+}
+
 function render_donelog(msg)
 {
     $('#itemlist').html('');
@@ -60,7 +100,6 @@ function render_donelog(msg)
     render += "<ul>";
     for(i in msg){
         for(j in msg[i]){
-            console.log('date: ',i, 'key: ',j, ' value: ',msg[i][j]);
             item = msg[i][j];
             if(index % 2){
                 css = 'even' } else {
@@ -80,9 +119,17 @@ function render_donelog(msg)
 //Functions for Tabs.
 $('#tab_undone').click(function() {
     tabs_MakeActive(this);
-    $('#itemlist').load('/ajax/render/?func=undone&maxitems=100&template=calit2', initHover);
     showLoadingPanel();
-    hideLoadingPanel();
+    $.ajax({
+       type: "GET",
+       url: "/ajax/render/?func=undone&maxitems=100&template=calit2",
+       dataType: "json",
+       success: function(msg){
+         render_items(msg, "undone");
+         hideLoadingPanel();
+         initHover();
+         }
+     });
     return false;
 });
 
@@ -96,9 +143,17 @@ $('#tab_dailyroutine').click(function() {
 
 $('#tab_done').click(function() {
     tabs_MakeActive(this);
-    $('#itemlist').load('/ajax/render/?func=done&maxitems=100&template=calit2',initHover);
     showLoadingPanel();
-    hideLoadingPanel();
+    $.ajax({
+       type: "GET",
+       url: "/ajax/render/?func=done&maxitems=100&template=calit2",
+       dataType: "json",
+       success: function(msg){
+         render_items(msg, "done");
+         hideLoadingPanel();
+         initHover();
+         }
+     });
     return false;
 });
 
