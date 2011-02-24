@@ -119,6 +119,17 @@ class tarsusaUser(db.Model):
         
         return result
 
+    def get_public_items(self, public='public', count=30):
+        result = []
+        if public == 'public':
+            publicitem_collection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public = 'public' ORDER BY date DESC LIMIT 30", self.user)
+        elif public == 'publicOnlyforFriends':
+            publicitem_collection = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and public != 'private' ORDER BY public, date DESC LIMIT 30", self.user)
+        for each_item in publicitem_collection:
+            result.append(each_item.jsonized())
+        return result
+
+
 def get_user(user_id):
     cached_user = memcache.get("user:%s" % user_id)
     if cached_user:
