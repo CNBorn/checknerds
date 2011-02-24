@@ -58,6 +58,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 /* Additem Div content */
 #additem {float:right; line-height:1.5em; margin:0 0 5px 0; padding:0; text-align:left; width:750px;}
 .item {color:#88bb55; font-weight:700; text-decoration:none;}
+.doneitem {padding-left:15px;color:lightgrey; font-weight:350; text-decoration:line-through;}
 
 /* Main content */
 #content {float:right; line-height:1.5em; margin:0; padding:0; text-align:left; width:750px;}
@@ -74,7 +75,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #additem_more {display: block;margin: 45px 0px 5px 0px;}
 
 /* Item List(inside Content) */
-#itemlist {display: block; margin: 5px 0px 5px 0px;}
+#itemlist {display: block; margin: 45px 0px 5px 0px;}
 
 /* Album (inside Content) */
 #album {width: 750px; margin: 5px 0px 5px 0px;min-height:385px;}
@@ -120,7 +121,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 .gray {color:gray;}
 .photo {background:#fff; border:1px solid #bababa; margin:6px 18px 2px 5px; padding:2px;}
 .hide {display:none;}
-.date {color:gray;font-size:0.8em;}
+.date {color:lightgray;font-size:0.6em;padding-right:5px;float:right;}
 #content .option {color:#f0f0f0;font-size:0.8em;float:right}
 #content .options a, .options a:hover {text-decoration:none;color:#f0f0f0;}
 span.slogan {display:block; float: left; color:grey; width:195px; font-size:1.3em; font-weight:700; letter-spacing:-1px; line-height:1.2em; margin:10px 20px 0px 0px;}
