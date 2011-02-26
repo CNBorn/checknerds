@@ -446,12 +446,10 @@ class sidebar(tarsusaRequestHandler):
             template_values['tarsusaItemCollection_Statstics'] = cached_useritem_stats
 
         elif operation_name == 'item':
-            #try:
             itemid = self.request.get("id")
             item_in_template = tarsusaItem.get_item(itemid)
             if item_in_template and item_in_template.user == current_user.user:
-                #current_user's item
-                template_values['ItemInTemplate'] = item_in_template
+                pass
 
             elif item_in_template:
                 #user's friend's item
@@ -459,10 +457,6 @@ class sidebar(tarsusaRequestHandler):
                 user_friend_in_template = item_in_template.usermodel
                 template_values['ItemInTemplate'] = item_in_template
                 template_values['UserFriendInTemplate'] = user_friend_in_template
-
-            ##except:
-            #    self.write("")
-
 
         template_values['UserNickName'] = cgi.escape(current_user.dispname)
         template_values['UserID'] = current_user.key().id()
