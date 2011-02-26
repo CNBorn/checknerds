@@ -2,9 +2,9 @@
 
 # ************************************************************* 
 # CheckNerds - www.checknerds.com
-# version 1.1, codename California
+# version 1.2, codename Arizona
 # - ajax.py
-# Author: CNBorn, 2008-2010
+# Author: CNBorn, 2008-2011
 # http://cnborn.net, http://twitter.com/CNBorn
 # ************************************************************* 
 

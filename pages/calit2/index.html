@@ -58,6 +58,7 @@ function render_items(msg,type)
     render = '';
     index = 0;
     render += "<ul>";
+    item_collection = {}; 
     for(j in msg){
         item = msg[j];
         if(index % 2){
@@ -65,6 +66,7 @@ function render_items(msg,type)
             css = 'odd'
             }
         render += "<li itemid='" + item.id + "'";
+        item_collection[item.id] = item;
         render += " class='" + css + "'>";
         if(type == 'undone'){
             render += "<input type='checkbox' onchange='doneItem(" + '"' + "/doneItem/" + item.id + '"' + ")'>";
@@ -98,9 +100,11 @@ function render_donelog(msg)
     render = '';
     index = 0;
     render += "<ul>";
+    item_collection = {};
     for(i in msg){
         for(j in msg[i]){
             item = msg[i][j];
+            item_collection[item.id] = item;
             if(index % 2){
                 css = 'even' } else {
                 css = 'odd'
@@ -251,14 +255,63 @@ $.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val()
 }
 
 function initHover(){
-
     //MouseOver Effect
     //Using jQuery hoverIntent plugin.
     //To offer the hover/pause function.
     function sidebarshow(){$("#sidebar").show();}
     function sidebarloaduser(){$("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');}
-    function sidebarloaditem(){$("#sidebar").load('/ajax/sidebar/?obj=item&id=' + $(this).attr('itemid') + '&template=calit2');}
-    //function sidebarloadfriendsitem(){$("#sidebar").load('/ajax/sidebar/?obj=friends&itemid=' + $(this).attr('itemid') + '&template=calit2');}
+    function sidebarloaditem(){
+        var id = $(this).attr('itemid');
+        item = item_collection[id];
+
+        render = "";
+        render += "<h2>" + item.name + "</h2>";
+        render += "<p><ul>";
+        if(item.done){
+            render += "已经完成于" + item.donedate;
+        } else {
+            render += "<li>尚未完成</li>";
+            if(item.expired) {
+                render += "<span style='color:red'>已过期</span>";
+            }
+        }
+        routine_name = '';
+        if(item.routine == 'daily'){
+            routine_name = '每日任务';
+        }
+        if(item.routine == 'weekly'){
+            routine_name = '每周任务';
+        }
+        if(item.routine == 'monthly'){
+            routine_name = '每月任务';
+        }
+        if(item.routine == 'seasonly'){
+            routine_name = '每季度任务';
+        }
+        if(item.routine == 'yearly'){
+            routine_name = '每年任务';
+        }
+        if(routine_name != ''){
+            render += "<li>" + routine_name + "</li>";
+        }
+
+        public_name = '完全公开';
+        if(item.public == 'private'){
+            public_name = '不公开';
+        }
+        if(item.public == 'publicOnlyforFriends'){
+            public_name = '仅对朋友公开';
+        }
+        render += "<li>" + public_name + "</li>";
+
+        render += "说明:" + item.comment + "<br />";
+        render += "创建:" + item.date + "<br />";
+        if(item.expectdate){
+            render += "期限:" + item.expectdate + "<br />";
+        }
+        render += "</ul></p>";
+        $('#sidebar').html(render);
+    }
 
 var config = {    
      sensitivity: 3, 

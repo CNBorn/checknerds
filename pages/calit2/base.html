@@ -1,18 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<meta name="description" content="manage your Todo List online" />
+	<meta name="description" content="manage your todo List online" />
 	<meta name="keywords" content="GTD,todo,CheckNerds" />
 	<meta name="author" content="CNBorn" />
-    <link rel="stylesheet" type="text/css" href="/css/calit2.css" title="1024px" media="screen,projection" />
+    <link rel="stylesheet" type="text/css" href="/css/calit2.css" media="screen,projection" />
     <title>{% block title%} {% endblock %}</title>
 </head>
 <body>
 	<div id="header">
         <p id="toplinks">
         (beta) | 
-		{% if UserLoggedIn %}													 
+		{% if UserLoggedIn %}
             <a href="/Logout/">登出</a> | 
             <a href="/">设置</a> | 
 		{% else %}
@@ -26,13 +26,12 @@
         {% block content-holder %}
         {% endblock content-holder %} 
         <div id="footer">
-            <p>&copy; 2008-2010, <a href="http://cnborn.net">CNBorn</a>. Powered by Google App Engine</p>
+            <p>&copy; 2008-2011, <a href="http://cnborn.net">CNBorn</a>. Powered by Google App Engine</p>
         </div>
     </div>
 </body>
 
 <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.5.min.js"></script>
-<script type="text/javascript" src="/js/jquery.cycle.lite.1.0.min.js"></script>
 {% block include_js %} {% endblock %}
 {% block extrajs %} {% endblock extrajs %}
 <script type="text/javascript">
@@ -50,4 +49,3 @@
 </script>
 
 </html>
-
