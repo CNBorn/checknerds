@@ -122,7 +122,7 @@ $('#tab_undone').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=undone&maxitems=100&template=calit2",
+       url: "/ajax/render/?func=undone&maxitems=25&template=calit2",
        dataType: "json",
        success: function(msg){
          render_items(msg, "undone");
@@ -146,7 +146,7 @@ $('#tab_done').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=done&maxitems=100&template=calit2",
+       url: "/ajax/render/?func=done&maxitems=50&template=calit2",
        dataType: "json",
        success: function(msg){
          render_items(msg, "done");
