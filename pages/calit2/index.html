@@ -5,6 +5,16 @@
 {% endblock include_js %}
 {% block extrajs %}
 <script type="text/javascript">
+function doneItem(strLink){
+    $.ajax({type: "GET", 
+            url: strLink,
+            dataType: "json",
+            success: function(data){
+                var item_id = strLink.split("/",3)[2]; 
+                $("li[itemid=" +item_id+ "]").fadeOut('slow');
+            }        
+    });
+} 
 
 $(function(){
 //Common function for centering a div.
@@ -94,8 +104,7 @@ function render_items(msg,type)
     $('#itemlist').html(render);
 }
 
-function render_donelog(msg)
-{
+function render_donelog(msg){
     $('#itemlist').html('');
     render = '';
     index = 0;
@@ -120,6 +129,9 @@ function render_donelog(msg)
     render += "</ul>";
     $('#itemlist').html(render);
 }
+
+
+
 //Functions for Tabs.
 $('#tab_undone').click(function() {
     tabs_MakeActive(this);
@@ -235,23 +247,23 @@ $("#inputName").keypress(function (e) {
     }  
 });  
 
-
-
 function addItem() {
-$.post("/additem",	{ name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val() },
-        function(data){
-        var item_name = $("#inputName").val();
-        var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + data + "');}" + '">x</a>';
-        $('<li itemid="'+ data + '" class="even"><input type="checkbox" name="cbdone" onchange="doneItem('  + "'/doneItem/" + data + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"></span><span class="option"><a href="javascript:void(0);" onclick="doneItem("' + "'/duetoday/" + data + "'" + ');">t</a>' + delete_link + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
-
-        $("#inputName").val("");
-
-	$("#add_comment").val("");
-	$("#add_tags").val("");
-	$("#inputDate").val("");
-   }
-   , "success" 
-);
+    $.ajax({
+       type: "POST",
+       url: "/additem",
+       dataType: "json",
+       data: {name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val()},
+       success: function(data){
+           var id = data['r'];
+           var item_name = $("#inputName").val();
+           var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + id + "');}" + '">x</a>';
+           $('<li itemid="'+ id + '" class="even"><input type="checkbox" onchange="doneItem('  + "'/doneItem/" + id + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"></span><span class="option"><a href="javascript:void(0);" onclick="doneItem("' + "'/duetoday/" + id + "'" + ');">t</a>' + delete_link + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
+           $("#inputName").val("");
+           $("#add_comment").val("");
+           $("#add_tags").val("");
+           $("#inputDate").val("");
+         }
+     });
 }
 
 function initHover(){

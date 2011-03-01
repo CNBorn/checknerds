@@ -32,6 +32,7 @@ from base import *
 import logging
 
 from ajax import userloggedin_or_403
+from django.utils import simplejson as json
 
 class DueToday(tarsusaRequestHandler):
     @userloggedin_or_403
@@ -41,21 +42,23 @@ class DueToday(tarsusaRequestHandler):
         self.redirect(self.referer)
 
 class DoneItem(tarsusaRequestHandler):
+    @userloggedin_or_403
     def get(self):
-        if self.chk_login():
-            ItemId = self.request.path[10:]
-            DoneYesterdaysDailyRoutine = False
-            if ItemId[-2:] == '/y':
-                ItemId = self.request.path[10:-2]           
-                DoneYesterdaysDailyRoutine = True
+        ItemId = self.request.path[10:]
+        DoneYesterdaysDailyRoutine = False
+        if ItemId[-2:] == '/y':
+            ItemId = self.request.path[10:-2]           
+            DoneYesterdaysDailyRoutine = True
 
-            CurrentUser = self.get_user_db()
-            Misc = ''
-            if DoneYesterdaysDailyRoutine:
-                Misc = 'y'
-            tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc)
-        
-        self.redirect(self.referer)
+        CurrentUser = self.get_user_db()
+        Misc = ''
+        if DoneYesterdaysDailyRoutine:
+            Misc = 'y'
+        tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc)
+    
+        #self.redirect(self.referer)
+        self.response.headers.add_header('Content-Type', "application/json")
+        self.write(json.dumps({"r":"ok"}))
 
 class UnDoneItem(tarsusaRequestHandler):
     def get(self):
@@ -84,32 +87,23 @@ class RemoveItem(tarsusaRequestHandler):
         self.redirect('/')
 
 class AddItemProcess(tarsusaRequestHandler):
+    @userloggedin_or_403
     def post(self):
-        if self.request.get('cancel') != "取消":
-            
-            # Permission check is very important.
-            # New CheckLogin code built in tarsusaRequestHandler 
-            if self.chk_login():
-                CurrentUser = self.get_user_db()
+        CurrentUser = self.get_user_db()
+        item2beadd_name = cgi.escape(self.request.get('name'))
+        item2beadd_comment = cgi.escape(self.request.get('comment'))
+        #Error handler to be suit in the lite mobile add page.
+        item_id = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine','none'), self.request.get('public', 'private'), self.request.get('inputDate'), self.request.get('tags'))
 
-                item2beadd_name = cgi.escape(self.request.get('name'))
-                item2beadd_comment = cgi.escape(self.request.get('comment'))
-                #Error handler to be suit in the lite mobile add page.
-                                                                                    
-                newlyadd = tarsusaCore.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine','none'), self.request.get('public', 'private'), self.request.get('inputDate'), self.request.get('tags'))
-    
-                #Added mobile redirect
-                if self.referer[-6:] == "/m/add":
-                    self.redirect("/m/todo")
+        #Added mobile redirect
+        if self.referer[-6:] == "/m/add":
+            self.redirect("/m/todo")
 
-                #Return the newly add item's id
-                self.write(newlyadd)
-    
-            else:
-                #self.redirect('/')
-                return False    
+        #Return the newly add item's id
+        self.response.headers.add_header('Content-Type', "application/json")
+        self.write(json.dumps({"r":item_id}))
 
-    
+
 class EditItemProcess(tarsusaRequestHandler):
     def post(self): 
 
