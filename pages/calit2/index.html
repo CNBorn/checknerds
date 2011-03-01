@@ -11,7 +11,14 @@ function doneItem(strLink){
             dataType: "json",
             success: function(data){
                 var item_id = strLink.split("/",3)[2]; 
-                $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                var action_type = strLink.split("/",3)[1]; 
+                if(action_type == 'duetoday'){
+                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                }
+                else{
+                    $("li[itemid=" +item_id+ "] input").fadeOut('slow');
+                    $("li[itemid=" +item_id+ "] span.item").removeClass().addClass("doneitem");
+                }
             } 
     });
 } 
@@ -69,6 +76,8 @@ function render_items(msg,type)
     index = 0;
     render += "<ul>";
     item_collection = {}; 
+
+
     for(j in msg){
         item = msg[j];
         if(index % 2){
@@ -85,6 +94,14 @@ function render_items(msg,type)
             item_style = "doneitem";
         }
         render += "<span class='" + item_style + "'>" + item.name + "</span>";
+
+        duetoday_link = '<a href="javascript:void(0);" onclick="doneItem(' + "'/duetoday/" + item.id + "'" + ')">今日完成</a>';
+        delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item.name + "')){delete_item('" + "/removeItem/" + item.id + "');}" + '">删除</a>';
+
+        render += "<span class='option'>" + delete_link + "</span>";
+        if(!item.done && type != 'daily'){
+            render += "<span class='option'>" + duetoday_link + "</span>";
+        }
 
         display_date = ''
         if(item.isduetoday != null){ display_date = '今天'; }
@@ -156,7 +173,7 @@ $('#tab_dailyroutine').click(function() {
        url: "/ajax/render/?func=dailyroutine&template=calit2",
        dataType: "json",
        success: function(msg){
-         render_items(msg, "undone");
+         render_items(msg, "daily");
          hideLoadingPanel();
          initHover();
          }
@@ -263,8 +280,9 @@ function addItem() {
        success: function(data){
            var id = data['r'];
            var item_name = $("#inputName").val();
-           var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + id + "');}" + '">x</a>';
-           $('<li itemid="'+ id + '" class="even"><input type="checkbox" onchange="doneItem('  + "'/doneItem/" + id + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"></span><span class="option"><a href="javascript:void(0);" onclick="doneItem(' + "'/duetoday/" + id + "'" + ')">t</a>' + delete_link + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
+           var duetoday_link = '<a href="javascript:void(0);" onclick="doneItem(' + "'/duetoday/" + id + "'" + ')">今日完成</a>';
+           var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + id + "');}" + '">删除</a>';
+           $('<li itemid="'+ id + '" class="even"><input type="checkbox" onchange="doneItem('  + "'/doneItem/" + id + "'" + ')"><span class="item">' + $("#inputName").val() + '</span><span class="option">'+ delete_link +"</span><span class='option'>" +duetoday_link  + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
            $("#inputName").val("");
            $("#add_comment").val("");
            $("#add_tags").val("");

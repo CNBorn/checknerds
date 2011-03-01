@@ -217,6 +217,8 @@ def format_done_logs(done_items):
                 result.setdefault(col_date,[])
         each_item['donedate'] = col_date
         each_item['date'] = each_item['date'].strftime('%Y-%m-%d')
+        if each_item['expectdate']:
+            each_item['expectdate'] = each_item['expectdate'].strftime('%Y-%m-%d')
         result[col_date].append(each_item)
         previous_done_date = each_item['donedate']
     return result
