@@ -51,7 +51,7 @@ class GuestbookPage(tarsusaRequestHandler):
                 'singlePageContent': strAboutPageContent,
             }
 
-        path = os.path.join(os.path.dirname(__file__), 'pages/calit2/simple_page.html')
+        path = os.path.join(os.path.dirname(__file__), '../pages/calit2/simple_page.html')
         self.write(template.render(path, template_values))
 
 class AboutPage(tarsusaRequestHandler):
@@ -71,7 +71,7 @@ class AboutPage(tarsusaRequestHandler):
                 'AnonymousVisitor': "Yes",
                 'devVersion': strdevVersion,
             }
-        path = os.path.join(os.path.dirname(__file__), 'pages/calit2/about.html')
+        path = os.path.join(os.path.dirname(__file__), '../pages/calit2/about.html')
         self.response.out.write(template.render(path, template_values))
 
 class DocsPage(tarsusaRequestHandler):
@@ -97,7 +97,7 @@ class DocsPage(tarsusaRequestHandler):
         pageid = self.request.path[len('/docs/'):]
         if pageid == '':
             pageid = 'index'
-        path = os.path.join(os.path.dirname(__file__), 'pages/calit2/docs/' + pageid + '.html')
+        path = os.path.join(os.path.dirname(__file__), '../pages/calit2/docs/' + pageid + '.html')
 
         self.response.out.write(template.render(path, template_values))
 
@@ -124,7 +124,7 @@ class LabsPage(tarsusaRequestHandler):
         pageid = self.request.path[len('/docs/'):]
         if pageid == '':
             pageid = 'index'
-        path = os.path.join(os.path.dirname(__file__), 'pages/labs/index.html')
+        path = os.path.join(os.path.dirname(__file__), '../pages/labs/index.html')
 
         self.response.out.write(template.render(path, template_values))
     
