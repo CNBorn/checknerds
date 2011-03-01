@@ -408,8 +408,8 @@ class render(tarsusaRequestHandler):
 
         elif func == "dailyroutine":
             dailyroutine_items = tarsusaCore.get_items_duetoday(user_id)
-            template_values['dailyroutine_items'] = dailyroutine_items
-            template_kind = "dailyroutine_list"
+            self.write(json.dumps(format_items(dailyroutine_items)))
+            return 
 
         elif func == "friends":
             UserFriendsItem_List = tarsusaCore.get_UserFriendStats(user_id)

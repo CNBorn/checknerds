@@ -12,7 +12,7 @@ function doneItem(strLink){
             success: function(data){
                 var item_id = strLink.split("/",3)[2]; 
                 $("li[itemid=" +item_id+ "]").fadeOut('slow');
-            }        
+            } 
     });
 } 
 
@@ -78,13 +78,11 @@ function render_items(msg,type)
         render += "<li itemid='" + item.id + "'";
         item_collection[item.id] = item;
         render += " class='" + css + "'>";
-        if(type == 'undone'){
+        if(!item.done){
             render += "<input type='checkbox' onchange='doneItem(" + '"' + "/doneItem/" + item.id + '"' + ")'>";
-        }
-        if(type == 'done'){
-            item_style = "doneitem";
-        } else {
             item_style = "item";
+        } else {
+            item_style = "doneitem";
         }
         render += "<span class='" + item_style + "'>" + item.name + "</span>";
 
@@ -151,9 +149,18 @@ $('#tab_undone').click(function() {
 
 $('#tab_dailyroutine').click(function() {
     tabs_MakeActive(this);
-    $('#itemlist').load('/ajax/render/?func=dailyroutine&template=calit2', initHover);
+    //$('#itemlist').load('/ajax/render/?func=dailyroutine&template=calit2', initHover);
     showLoadingPanel();
-    hideLoadingPanel();
+    $.ajax({
+       type: "GET",
+       url: "/ajax/render/?func=dailyroutine&template=calit2",
+       dataType: "json",
+       success: function(msg){
+         render_items(msg, "undone");
+         hideLoadingPanel();
+         initHover();
+         }
+     });
     return false;
 });
 
@@ -257,7 +264,7 @@ function addItem() {
            var id = data['r'];
            var item_name = $("#inputName").val();
            var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + id + "');}" + '">x</a>';
-           $('<li itemid="'+ id + '" class="even"><input type="checkbox" onchange="doneItem('  + "'/doneItem/" + id + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"></span><span class="option"><a href="javascript:void(0);" onclick="doneItem("' + "'/duetoday/" + id + "'" + ');">t</a>' + delete_link + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
+           $('<li itemid="'+ id + '" class="even"><input type="checkbox" onchange="doneItem('  + "'/doneItem/" + id + "'" + ')"><span class="item">' + $("#inputName").val() + '</span> <span class="date"></span><span class="option"><a href="javascript:void(0);" onclick="doneItem(' + "'/duetoday/" + id + "'" + ')">t</a>' + delete_link + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
            $("#inputName").val("");
            $("#add_comment").val("");
            $("#add_tags").val("");

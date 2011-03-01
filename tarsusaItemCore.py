@@ -39,7 +39,8 @@ class DueToday(tarsusaRequestHandler):
     def get(self):
         item_id = self.request.path[10:]
         tarsusaItem.get_item(item_id).set_duetoday()
-        self.redirect(self.referer)
+        self.response.headers.add_header('Content-Type', "application/json")
+        self.write(json.dumps({"r":"ok"}))
 
 class DoneItem(tarsusaRequestHandler):
     @userloggedin_or_403
