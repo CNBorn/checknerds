@@ -23,6 +23,17 @@ function doneItem(strLink){
     });
 } 
 
+function delete_item(strLink){
+    $.ajax({type: "GET", 
+            url: strLink,
+            dataType: "json",
+            success: function(data){
+                var item_id = strLink.split("/",3)[2]; 
+                $("li[itemid=" +item_id+ "]").fadeOut('fast');
+            } 
+    });
+} 
+
 $(function(){
 //Common function for centering a div.
 //http://stackoverflow.com/questions/210717/what-is-the-best-way-to-center-a-div-on-the-screen-using-jquery/

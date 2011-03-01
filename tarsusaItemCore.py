@@ -78,14 +78,14 @@ class UnDoneItem(tarsusaRequestHandler):
         self.redirect(self.referer)
 
 class RemoveItem(tarsusaRequestHandler):
+    @userloggedin_or_403
     def get(self):
         item_id = self.request.path[12:]
-        if self.chk_login():
-            current_user = self.get_user_db()
-            item = tarsusaItem.get_item(item_id)
-            remove_status = item.delete_item(current_user.key().id())
-            self.redirect(self.referer)
-        self.redirect('/')
+        current_user = self.get_user_db()
+        item = tarsusaItem.get_item(item_id)
+        remove_status = item.delete_item(current_user.key().id())
+        self.response.headers.add_header('Content-Type', "application/json")
+        self.write(json.dumps({"r":remove_status}))
 
 class AddItemProcess(tarsusaRequestHandler):
     @userloggedin_or_403
