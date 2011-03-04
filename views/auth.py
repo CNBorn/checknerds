@@ -16,7 +16,8 @@ class SignOutPage(tarsusaRequestHandler):
         self.redirect(self.get_logout_url(True))
 
 def main():
-    application = webapp.WSGIApplication([                                       ('/Login.+',LoginPage),
+    application = webapp.WSGIApplication([
+                ('/Login.+',LoginPage),
                 ('/Logout.+',SignOutPage),
                 ],debug=True)
 
