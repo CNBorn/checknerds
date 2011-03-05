@@ -136,7 +136,7 @@ class render(tarsusaRequestHandler):
         try:
             maxitems = int(self.request.get("maxitems"))
         except:
-            maxitems = 100
+            maxitems = 15
         
         template_name = "calit2"
 
@@ -158,7 +158,11 @@ class render(tarsusaRequestHandler):
 
         elif func == "undone":
             self.response.headers.add_header('Content-Type', "application/json")
-            undone_items = tarsusaCore.get_undone_items(user_id, maxitems)
+            before_item_id = self.request.get("before_item_id",None)
+            if before_item_id:
+                undone_items = tarsusaCore.get_more_undone_items(user_id, maxitems, before_item_id)
+            else:
+                undone_items = tarsusaCore.get_undone_items(user_id, maxitems)
             self.write(json.dumps(format_items(undone_items)))
             return 
 

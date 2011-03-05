@@ -122,6 +122,14 @@ indexes:
 - kind: tarsusaItem
   properties:
   - name: done
+  - name: routine
+  - name: user
+  - name: id
+    direction: desc
+
+- kind: tarsusaItem
+  properties:
+  - name: done
   - name: user
   - name: date
     direction: desc

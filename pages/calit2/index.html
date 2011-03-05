@@ -59,6 +59,42 @@ $('#toggle').click(function(){
     $(this).toggleClass("down");
 });
 
+function retrive_more_items() {
+    last_item_id = $("#itemlist li:last").attr("itemid");
+    retriving_more_items = true;
+    //console.log(last_item_id);
+    if(!last_item_id){
+        return false;
+    }
+    showLoadingPanel();
+    $.ajax({
+       type: "GET",
+       url: "/ajax/render/?func=undone&before_item_id=" + last_item_id,
+       dataType: "json",
+       success: function(msg){
+         if(msg.length != 0){
+            render_items(msg, "more_undone");
+         } else {
+            no_more_items = true; 
+         }
+         hideLoadingPanel();
+         initHover();
+         retriving_more_items = false;
+         }
+     });
+}
+
+
+function is_undone_activated() {
+    return $("#tab_undone").hasClass("activatenavitab");
+}
+
+$(window).scroll(function() {
+    if ($(window).scrollTop() == $(document).height() - $(window).height() && !retriving_more_items && !no_more_items){
+        retrive_more_items();
+    }
+});
+
 
 function tabs_RemoveActive() {
     var tab_list = ['#tab_undone', '#tab_dailyroutine', '#tab_done', '#tab_friends', '#tab_log'];
@@ -82,10 +118,12 @@ function tabs_MakeActive(obj_div)
 
 function render_items(msg,type)
 {
-    $('#itemlist').html('');
     render = '';
+    if(type != "more_undone"){
+        $('#itemlist').html('');
+        render += "<ul>";
+    }
     index = 0;
-    render += "<ul>";
     item_collection = {}; 
 
 
@@ -126,8 +164,12 @@ function render_items(msg,type)
         render += "</li>";
         index++;
     }
-    render += "</ul>";
-    $('#itemlist').html(render);
+    if(type == "more_undone"){
+        $('#itemlist ul').html($('#itemlist ul').html() + render);
+    } else {
+        render += "</ul>";
+        $('#itemlist').html(render);
+    }
 }
 
 function render_donelog(msg){
@@ -234,6 +276,8 @@ $('#tab_log').click(function() {
 $(document).ready(function(){
    //Functions to run during loading..
    showLoadingPanel();
+   retriving_more_items = false;
+   no_more_items = false;
    $("#additem_more").toggle("fast");
    $('#toggle').html("&darr;");
 
