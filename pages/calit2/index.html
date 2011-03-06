@@ -62,7 +62,6 @@ $('#toggle').click(function(){
 function retrive_more_items() {
     last_item_id = $("#itemlist li:last").attr("itemid");
     retriving_more_items = true;
-    //console.log(last_item_id);
     if(!last_item_id){
         return false;
     }
@@ -86,11 +85,11 @@ function retrive_more_items() {
 
 
 function is_undone_activated() {
-    return $("#tab_undone").hasClass("activatenavitab");
+    return $("#tab_undone").hasClass("activenavitab");
 }
 
 $(window).scroll(function() {
-    if ($(window).scrollTop() == $(document).height() - $(window).height() && !retriving_more_items && !no_more_items){
+        if ($(window).scrollTop() == $(document).height() - $(window).height() && !retriving_more_items && !no_more_items && is_undone_activated()){
         retrive_more_items();
     }
 });
@@ -124,8 +123,6 @@ function render_items(msg,type)
         render += "<ul>";
     }
     index = 0;
-    item_collection = {}; 
-
 
     for(j in msg){
         item = msg[j];
@@ -206,9 +203,11 @@ $('#tab_undone').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=undone&maxitems=25&template=calit2",
+       url: "/ajax/render/?func=undone&maxitems=18&template=calit2",
        dataType: "json",
        success: function(msg){
+         retriving_more_items = false;
+         no_more_items = false;
          render_items(msg, "undone");
          hideLoadingPanel();
          initHover();
@@ -219,7 +218,6 @@ $('#tab_undone').click(function() {
 
 $('#tab_dailyroutine').click(function() {
     tabs_MakeActive(this);
-    //$('#itemlist').load('/ajax/render/?func=dailyroutine&template=calit2', initHover);
     showLoadingPanel();
     $.ajax({
        type: "GET",
@@ -275,6 +273,7 @@ $('#tab_log').click(function() {
 
 $(document).ready(function(){
    //Functions to run during loading..
+   item_collection = {}; 
    showLoadingPanel();
    retriving_more_items = false;
    no_more_items = false;
@@ -423,7 +422,7 @@ var config2 = {
      out: sidebarshow,
 };
 
-$("#itemlist li").hoverIntent( config2 );
+$("#itemlist ul li").hoverIntent( config2 );
 
 
 }
