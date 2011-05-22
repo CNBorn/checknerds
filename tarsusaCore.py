@@ -213,12 +213,8 @@ def get_items_duetoday(userid):
     return sorted(results, key=lambda item:item['done'])
 
 
-def check_have_thisitem_in_itemcollection(item, itemcollection):
-    Duplicated_tarsusaItem_Inlist = False
-    for check_for_duplicated_tarsusaItem in itemcollection:
-        if check_for_duplicated_tarsusaItem['id'] == item['id'] and check_for_duplicated_tarsusaItem['donedate'] == item['donedate']:
-            Duplicated_tarsusaItem_Inlist = True
-    return Duplicated_tarsusaItem_Inlist
+def is_item_in_collection(item, collection):
+    return any([x['id'] == item['id'] and x['donedate'] == item['donedate'] for x in collection]) 
 
 def format_done_logs(done_items):
     result = {}

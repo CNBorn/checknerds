@@ -138,7 +138,7 @@ class tarsusaUser(db.Model):
     def get_donelog(self, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
         #lookingfor = 'next' to get the records > startdate
         #             'previous' to get the records <= startdate
-        from tarsusaCore import check_have_thisitem_in_itemcollection 
+        from tarsusaCore import is_item_in_collection 
         MaxDisplayedDonelogDays = maxdisplaydonelogdays
         ThisUser = self
         sort_backwards = False
@@ -176,7 +176,7 @@ class tarsusaUser(db.Model):
             
             normalitems = ThisUser.get_doneitems_in(DoneDateOfThisItem)
             for each_item in normalitems:
-                if not check_have_thisitem_in_itemcollection(each_item, Item_List):
+                if not is_item_in_collection(each_item, Item_List):
                     Item_List.append(each_item) 
 
             Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
