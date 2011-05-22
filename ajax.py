@@ -200,7 +200,7 @@ class sidebar(tarsusaRequestHandler):
         if operation_name == 'user':
             #Cache is a MUST!
             template_values['UserInTemplate'] = current_user
-            cached_useritem_stats = tarsusaCore.get_count_UserItemStats(current_user.key().id()) #Cached inside.
+            cached_useritem_stats = current_user.get_itemstats()
             template_values['tarsusaItemCollection_Statstics'] = cached_useritem_stats
 
         elif operation_name == 'item':

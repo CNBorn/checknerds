@@ -333,39 +333,6 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
     else:
         return None #This User don't have any friends.
 
-def get_count_UserItemStats(userid):    
-
-    CurrentUser = tarsusaUser.get_user(int(userid))
-
-    cachedUserItemStats = memcache.get_item("itemstats", CurrentUser.key().id())
-    if cachedUserItemStats:
-        return cachedUserItemStats
-
-    tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", users.get_current_user())                
-    tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", users.get_current_user())               
-
-    count_done_items = 0
-    count_todo_items = 0
-    percentage_done = 0.00
-
-    count_done_items = tarsusaItemCollection_UserDoneItems.count() 
-    count_todo_items = tarsusaItemCollection_UserTodoItems.count()
-    count_total_items = count_done_items + count_todo_items
-
-    if count_total_items != 0:
-        percentage_done = count_done_items * 100.00 / count_total_items
-
-    result = {
-        'UserTotalItems': count_total_items,
-        'UserToDoItems': count_todo_items,
-        'UserDoneItems': count_done_items,
-        'UserDonePercentage': percentage_done,
-    }
-    
-    memcache.set_item("itemstats", result, CurrentUser.key().id())
-
-    return result 
-
 def DoneItem(ItemId, UserId, Misc=''):
     item = tarsusaItem.get_item(ItemId)
     user = tarsusaUser.get_user(UserId)

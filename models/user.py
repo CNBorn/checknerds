@@ -184,6 +184,34 @@ class tarsusaUser(db.Model):
         Item_List.sort(key=lambda item:item['donedate'], reverse=sort_backwards)
         return Item_List
 
+
+    @cache("itemstats:{self.key().id()}")
+    def get_itemstats(self):
+
+        tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", self.user)
+        tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", self.user)
+
+        count_done_items = 0
+        count_todo_items = 0
+        percentage_done = 0.00
+
+        count_done_items = tarsusaItemCollection_UserDoneItems.count() 
+        count_todo_items = tarsusaItemCollection_UserTodoItems.count()
+        count_total_items = count_done_items + count_todo_items
+
+        if count_total_items != 0:
+            percentage_done = count_done_items * 100.00 / count_total_items
+
+        result = {
+            'UserTotalItems': count_total_items,
+            'UserToDoItems': count_todo_items,
+            'UserDoneItems': count_done_items,
+            'UserDonePercentage': "%.2f%%" % percentage_done,
+        }
+        
+        return result 
+
+
 @cache("user:{user_id}")
 def get_user(user_id):
     try:

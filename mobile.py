@@ -38,18 +38,14 @@ class mMainPage(tarsusaRequestHandler):
 		if self.chk_login():
 			CurrentUser = self.get_user_db()
 	
-			cachedUserItemStats = tarsusaCore.get_count_UserItemStats(CurrentUser.key().id())
-			#tarsusaCore.get_count_UserItemStats returns a dictionarty with the following properties(all int):
-			#'UserTotalItems', 'UserToDoItems', 'UserDoneItems', 'UserDonePercentage'
-
-			#self.response.out.write(cachedUserItemStats)
+			cachedUser_itemstats = CurrentUser.get_itemstats()
 
 			template_values = {
 				'MobilePageTag': 'Stats',
 				'UserLoggedIn': 'Logged In',
 				'UserNickName': cgi.escape(CurrentUser.dispname),
 				'UserID': CurrentUser.key().id(),
-				'tarsusaItemCollection_Statstics': cachedUserItemStats,
+				'tarsusaItemCollection_Statstics': cachedUser_itemstats,
 				'htmltag_today': datetime.datetime.date(datetime.datetime.now()), 
 			}
 		
