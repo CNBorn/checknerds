@@ -51,6 +51,12 @@ class tarsusaUser(db.Model):
     def count():
         return shardingcounter.get_count("tarsusaUser")
 
+    @cache("doneitemlist:{self.key().id()}")
+    def get_done_items(self, maxitems=100):
+        from tarsusaCore import get_tarsusaItemCollection
+        done_items = get_tarsusaItemCollection(self.key().id(), done=True, maxitems=maxitems)
+        return done_items
+
     def get_dailyroutine_items(self):
         return db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", self.user)
 

@@ -172,14 +172,6 @@ def get_more_undone_items(user_id, maxitems, before_item_id):
     undone_items = _get_more_undone_items(user_id, maxitems, before_item_id)
     return undone_items
 
-def get_done_items(user_id, maxitems=100):
-    cached_userdoneitems = memcache.get_item("doneitemlist", user_id)
-    if cached_userdoneitems:
-        return cached_userdoneitems
-    done_items = get_tarsusaItemCollection(user_id, done=True, maxitems=maxitems)
-    memcache.set_item("doneitemlist", done_items, user_id)
-    return done_items
-
 def get_dailyroutine(userid):
 
     this_user = tarsusaUser.get_user(userid)

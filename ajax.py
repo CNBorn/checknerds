@@ -152,7 +152,7 @@ class render(tarsusaRequestHandler):
         user = get_user(user_id)
         if func == "done":
             self.response.headers.add_header('Content-Type', "application/json")
-            done_items = tarsusaCore.get_done_items(user_id, maxitems)
+            done_items = user.get_done_items(maxitems)
             self.write(json.dumps(format_items(done_items)))
             return 
 
