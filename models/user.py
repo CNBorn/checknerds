@@ -184,16 +184,9 @@ class tarsusaUser(db.Model):
         Item_List.sort(key=lambda item:item['donedate'], reverse=sort_backwards)
         return Item_List
 
-
+@cache("user:{user_id}")
 def get_user(user_id):
-    cached_user = memcache.get("user:%s" % user_id)
-    if cached_user:
-        return cached_user
     try:
-        user = tarsusaUser.get_by_id(int(user_id))
+        return tarsusaUser.get_by_id(int(user_id))
     except:
         return None
-    memcache.set("user:%s" % user_id, user)
-    return user
-
-
