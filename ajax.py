@@ -162,7 +162,7 @@ class render(tarsusaRequestHandler):
             if before_item_id:
                 undone_items = tarsusaCore.get_more_undone_items(user_id, maxitems, before_item_id)
             else:
-                undone_items = tarsusaCore.get_undone_items(user_id, maxitems)
+                undone_items = tarsusaUser.get_user(user_id).get_undone_items(maxitems)
             self.write(json.dumps(format_items(undone_items)))
             return 
 

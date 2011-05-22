@@ -151,11 +151,6 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 
     return Item_List
 
-@cache("itemlist:{user_id}", 3600)
-def get_undone_items(user_id, maxitems=100):
-    undone_items = get_tarsusaItemCollection(user_id, done=False, maxitems=maxitems)
-    return undone_items
-
 def _get_more_undone_items(user_id, maxitems, after_item_id):
     ThisUser = tarsusaUser.get_user(int(user_id))
     Item_List = []

@@ -4,6 +4,7 @@
 
 import re
 from google.appengine.api import memcache
+import logging
 
 def gen_key_fac(in_key):
     def gen_key(*args, **kwargs):
@@ -15,7 +16,11 @@ def gen_key_fac(in_key):
                 value = kwargs[para]
                 key = key.replace("{%s}" % para, str(value))
             elif pos <= len(args):
-                value = args[pos]
+                if "self." in para:
+                    self_para = para.replace("self", "args[pos]")
+                    value = eval(self_para)
+                else:
+                    value = args[pos]
                 key = key.replace("{%s}" % para, str(value))
             else:
                 raise

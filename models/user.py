@@ -9,6 +9,7 @@ from google.appengine.ext import db
 import memcache
 import shardingcounter
 from models.tag import Tag
+from utils import cache
 
 class tarsusaUser(db.Model):
     user = db.UserProperty()
@@ -107,6 +108,12 @@ class tarsusaUser(db.Model):
                     each_result['name'] = cgi.escape(friend.user.nickname())
                 results.append(each_result)
         return results
+
+    @cache("itemlist:{self.key().id()}")
+    def get_undone_items(self, maxitems=100):
+        from tarsusaCore import get_tarsusaItemCollection
+        undone_items = get_tarsusaItemCollection(self.key().id(), done=False, maxitems=maxitems)
+        return undone_items
 
     def get_doneitems_in(self, date):
         yesterday_ofdate = datetime.datetime.combine(date - ONE_DAY, datetime.time(0))
