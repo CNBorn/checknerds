@@ -30,16 +30,14 @@ from django.utils import simplejson as json
 from utils import login
 
 class edititem(tarsusaRequestHandler):
+    @login
     def get(self):
 
         urllen = len('/ajax/allpage_edititem/')
         RequestItemId = urllib.unquote(self.request.path[urllen:])
         user = users.get_current_user() 
     
-        # New CheckLogin code built in tarsusaRequestHandler 
-        if self.chk_login():
-            CurrentUser = self.get_user_db()
-        
+        CurrentUser = self.get_user_db()
         tItem = tarsusaItem.get_by_id(int(RequestItemId))
     
         if tItem.user == users.get_current_user():
@@ -120,10 +118,7 @@ class render(tarsusaRequestHandler):
     def get(self):
         func = self.request.get("func")
         
-        try:
-            maxitems = int(self.request.get("maxitems"))
-        except:
-            maxitems = 15
+        maxitems = int(self.request.get("maxitems", "15"))
         
         template_name = "calit2"
 
@@ -174,55 +169,13 @@ class render(tarsusaRequestHandler):
         self.write(template.render(path, template_values))
 
 
-class sidebar(tarsusaRequestHandler):
-    @login
-    def get(self):
-        ''' Ajax Functions suites for multiple usage for Calit2 template in sidebar.'''
-        current_user = self.get_user_db()
-        template_values = {}
-
-        operation_name = self.request.get("obj")
-        template_name = self.request.get("template")
-
-        if operation_name == 'user':
-            #Cache is a MUST!
-            template_values['UserInTemplate'] = current_user
-            cached_useritem_stats = current_user.get_itemstats()
-            template_values['tarsusaItemCollection_Statstics'] = cached_useritem_stats
-
-        elif operation_name == 'item':
-            itemid = self.request.get("id")
-            item_in_template = tarsusaItem.get_item(itemid)
-            if item_in_template and item_in_template.user == current_user.user:
-                pass
-
-            elif item_in_template:
-                #user's friend's item
-                operation_name = 'friends' #switched to another template
-                user_friend_in_template = item_in_template.usermodel
-                template_values['ItemInTemplate'] = item_in_template
-                template_values['UserFriendInTemplate'] = user_friend_in_template
-
-        template_values['UserNickName'] = cgi.escape(current_user.dispname)
-        template_values['UserID'] = current_user.key().id()
-        template_values['htmltag_today'] = datetime.date.today() 
-        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_sidebar_%s.html' % (template_name, operation_name))
-        try:
-            self.write(template.render(path, template_values))
-        except:
-            ''' Get a unknown func by malicious user.'''
-            self.write("")
-
-
-
 def main():
     application = webapp.WSGIApplication([
-                                        (r'/ajax/allpage_edititem.+', edititem),
-                                        (r'/ajax/render/.*', render),
-                                        (r'/ajax/sidebar/.*', sidebar),
-                                        ('/ajax/admin_runpatch/.+', admin_runpatch),
-                                      ('/ajax/.+',ajax_error)],
-                                       debug=True)
+        (r'/ajax/allpage_edititem.+', edititem),
+        (r'/ajax/render/.*', render),
+        ('/ajax/admin_runpatch/.+', admin_runpatch),
+        ('/ajax/.+',ajax_error)],
+    debug=True)
 
 
     run_wsgi_app(application)
