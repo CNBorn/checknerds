@@ -167,7 +167,7 @@ class render(tarsusaRequestHandler):
             return 
 
         elif func == "dailyroutine":
-            dailyroutine_items = tarsusaCore.get_items_duetoday(user_id)
+            dailyroutine_items = tarsusaUser.get_user(user_id).get_items_duetoday()
             self.write(json.dumps(format_items(dailyroutine_items)))
             return 
 

@@ -172,21 +172,6 @@ def get_more_undone_items(user_id, maxitems, before_item_id):
     undone_items = _get_more_undone_items(user_id, maxitems, before_item_id)
     return undone_items
 
-def get_items_duetoday(userid):
-    
-    this_user = tarsusaUser.get_user(userid)
-
-    today = datetime.date.today()
-    end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
-
-    items_due_today = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2", \
-            this_user.user, end_of_today)
-
-    results = [item.jsonized() for item in items_due_today] + this_user.get_dailyroutine()
-    results = sorted(results, key=lambda item:item['date'], reverse=True)
-    return sorted(results, key=lambda item:item['done'])
-
-
 def is_item_in_collection(item, collection):
     return any([x['id'] == item['id'] and x['donedate'] == item['donedate'] for x in collection]) 
 

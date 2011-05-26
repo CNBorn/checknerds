@@ -69,6 +69,18 @@ class tarsusaUser(db.Model):
             item_list.append(this_item)
         return item_list
 
+    
+    def get_items_duetoday(self):
+        today = datetime.date.today()
+        end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
+        items_due_today = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2", \
+                self.user, end_of_today)
+
+        results = [item.jsonized() for item in items_due_today] + self.get_dailyroutine()
+        results = sorted(results, key=lambda item:item['date'], reverse=True)
+        return sorted(results, key=lambda item:item['done'])
+
+
     def has_tag(self, tag_name):
         tag = db.Query(Tag).filter("name =", tag_name).get()
         for check_whether_used_tag in self.usedtags:
