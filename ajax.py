@@ -23,8 +23,7 @@ from modules import *
 from base import *
 import logging
 
-import tarsusaCore
-from tarsusaCore import format_done_logs, format_items
+from tarsusaCore import format_done_logs, format_items, get_UserFriendStats, get_more_undone_items
 import memcache
 from models.user import get_user
 from django.utils import simplejson as json
@@ -148,7 +147,7 @@ class render(tarsusaRequestHandler):
             self.response.headers.add_header('Content-Type', "application/json")
             before_item_id = self.request.get("before_item_id",None)
             if before_item_id:
-                undone_items = tarsusaCore.get_more_undone_items(user_id, maxitems, before_item_id)
+                undone_items = get_more_undone_items(user_id, maxitems, before_item_id)
             else:
                 undone_items = tarsusaUser.get_user(user_id).get_undone_items(maxitems)
             self.write(json.dumps(format_items(undone_items)))
@@ -160,7 +159,7 @@ class render(tarsusaRequestHandler):
             return 
 
         elif func == "friends":
-            UserFriendsItem_List = tarsusaCore.get_UserFriendStats(user_id)
+            UserFriendsItem_List = get_UserFriendStats(user_id)
             template_values['UserFriendsActivities'] = UserFriendsItem_List
             template_kind = "friends_list"
         

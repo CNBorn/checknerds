@@ -21,7 +21,6 @@ from google.appengine.api import users
 from google.appengine.ext import db
 
 import cgi
-from models import tarsusaUser, Tag, AppModel 
 import logging
 
 import shardingcounter
@@ -81,6 +80,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         return False
 
     def create_user(self, user):
+        from models import tarsusaUser
         CurrentUser = tarsusaUser(user=user, urlname=cgi.escape(user.nickname()))
         CurrentUser.put()
         CurrentUser.userid = CurrentUser.key().id()
@@ -115,12 +115,14 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         
         #logging.info(apiservicekey)        
         
+        from models import AppModel 
         verified = verify_AppModel(int(apiappid), apiservicekey)
         
         apiuserid = self.request.get('apiuserid') 
         apikey = self.request.get('apikey')
         userid = self.request.get('userid')
         
+        from models import tarsusaUser
         APIUser = tarsusaUser.get_by_id(int(apiuserid))
         
         #Exception.
@@ -152,6 +154,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         apiservicekey = self.request.get('servicekey')
     
         AppApiUsage = memcache.get_item("appapiusage", int(apiappid))
+        from models import AppModel 
         ThisApp = AppModel.get_by_id(int(apiappid))
         if ThisApp == None:
             self.write("404 Application does not exist.")
@@ -188,47 +191,6 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 def split_tags(s):
     tags = list(set([t.strip() for t in re.split('[,;\\/\\\\]*', s) if t != ''])) #uniq
     return tags
-
-def update_tag_count(old_tags = None, new_tags = None):
-    if old_tags == None and new_tags == None:
-        tags = []
-        posts = Post.all()
-        for post in posts:
-            tags += post.tags
-        tags_set = set(tags)
-        for tag in tags_set:
-            t = Tag.all().filter('name = ', tag).get()
-            if t:
-                t.count = tags.count(tag)
-            else:
-                t = Tag(name = tag, count = tags.count(tag))
-
-            t.put()
-
-    else:
-        added = [t for t in new_tags if not t in old_tags]
-        deleted = [t for t in old_tags if not t in new_tags]
-
-        for tag in added:
-            t = Tag.all().filter('name = ', tag).get()
-            if t:
-                t.count = t.count + 1
-            else:
-                t = Tag(name = tag, count = 1)
-
-            t.put()
-
-        for tag in deleted:
-            t = Tag.all().filter('name = ', tag).get()
-            if t:
-                t.count = t.count - 1
-                if t.count == 0:
-                    t.delete()
-                else:
-                    t.put()
-            else:
-                t = Tag(name = tag, count = 1)
-                t.put()
 
 ## Import this function from tarsusa R6
 
