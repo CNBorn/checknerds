@@ -28,19 +28,7 @@ from tarsusaCore import format_done_logs, format_items
 import memcache
 from models.user import get_user
 from django.utils import simplejson as json
-
-def userloggedin_or_403(function):
-    '''
-    Decorator:
-        to check with UserLoggingIn
-    '''
-    def user_loggedin_warpper(tRequestHandler, *args, **kw):
-        if tRequestHandler.chk_login():
-            #CurrentUser = tRequestHadler.get_user_db()
-            return function(tRequestHandler, *args, **kw)
-        else:
-        	return tRequestHandler.response_status(403,'You are not logged in.',False)
-    return user_loggedin_warpper
+from utils import login
 
 class edititem(tarsusaRequestHandler):
     def get(self):
@@ -129,7 +117,7 @@ class admin_runpatch(tarsusaRequestHandler):
         #self.redirect('/')
 
 class render(tarsusaRequestHandler):
-    @userloggedin_or_403
+    @login
     def get(self):
         func = self.request.get("func")
         
@@ -188,7 +176,7 @@ class render(tarsusaRequestHandler):
 
 
 class sidebar(tarsusaRequestHandler):
-    @userloggedin_or_403
+    @login
     def get(self):
         ''' Ajax Functions suites for multiple usage for Calit2 template in sidebar.'''
         current_user = self.get_user_db()

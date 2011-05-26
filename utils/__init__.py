@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # CheckNerds - www.checknerds.com
 # - utils/__init__.py
-
+import sys
+sys.path.append("../")
 import re
 from google.appengine.api import memcache
+from base import tarsusaRequestHandler
 import logging
 
 def gen_key_fac(in_key):
@@ -41,5 +43,13 @@ def cache(key="default_mc_key", time=60*60*30):
             return result
         return _processor
     return _cache
+
+def login(function):
+    def user_loggedin_warpper(tRequestHandler, *args, **kw):
+        if tRequestHandler.chk_login():
+            return function(tRequestHandler, *args, **kw)
+        else:
+        	return tRequestHandler.response_status(403,'You are not logged in.',False)
+    return user_loggedin_warpper
 
 

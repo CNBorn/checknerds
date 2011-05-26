@@ -31,11 +31,11 @@ from modules import *
 from base import *
 import logging
 
-from ajax import userloggedin_or_403
+from utils import login
 from django.utils import simplejson as json
 
 class DueToday(tarsusaRequestHandler):
-    @userloggedin_or_403
+    @login
     def get(self):
         item_id = self.request.path[10:]
         tarsusaItem.get_item(item_id).set_duetoday()
@@ -43,7 +43,7 @@ class DueToday(tarsusaRequestHandler):
         self.write(json.dumps({"r":"ok"}))
 
 class DoneItem(tarsusaRequestHandler):
-    @userloggedin_or_403
+    @login
     def get(self):
         ItemId = self.request.path[10:]
         DoneYesterdaysDailyRoutine = False
@@ -78,7 +78,7 @@ class UnDoneItem(tarsusaRequestHandler):
         self.redirect(self.referer)
 
 class RemoveItem(tarsusaRequestHandler):
-    @userloggedin_or_403
+    @login
     def get(self):
         item_id = self.request.path[12:]
         current_user = self.get_user_db()
@@ -88,7 +88,7 @@ class RemoveItem(tarsusaRequestHandler):
         self.write(json.dumps({"r":remove_status}))
 
 class AddItemProcess(tarsusaRequestHandler):
-    @userloggedin_or_403
+    @login
     def post(self):
         CurrentUser = self.get_user_db()
         item2beadd_name = cgi.escape(self.request.get('name'))
