@@ -57,8 +57,17 @@ class tarsusaUser(db.Model):
         done_items = get_tarsusaItemCollection(self.key().id(), done=True, maxitems=maxitems)
         return done_items
 
-    def get_dailyroutine_items(self):
+    def _get_dailyroutine_items(self):
         return db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'daily' ORDER BY date DESC", self.user)
+
+    @cache("dailyroutine_items:{self.key().id()}")
+    def get_dailyroutine(self):
+        item_list = []
+        for routine_item in self._get_dailyroutine_items():
+            this_item = routine_item.jsonized()
+            this_item['done'] = routine_item.has_done_today()
+            item_list.append(this_item)
+        return item_list
 
     def has_tag(self, tag_name):
         tag = db.Query(Tag).filter("name =", tag_name).get()

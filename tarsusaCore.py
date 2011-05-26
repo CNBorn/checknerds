@@ -172,24 +172,6 @@ def get_more_undone_items(user_id, maxitems, before_item_id):
     undone_items = _get_more_undone_items(user_id, maxitems, before_item_id)
     return undone_items
 
-def get_dailyroutine(userid):
-
-    this_user = tarsusaUser.get_user(userid)
- 
-    cached_user_dailyroutine = memcache.get_item("dailyroutine_items", int(userid))
-    if cached_user_dailyroutine is not None:
-        return cached_user_dailyroutine
-
-    item_list = []
-    for routine_item in this_user.get_dailyroutine_items():
-        this_item = routine_item.jsonized()
-        this_item['done'] = routine_item.has_done_today()
-        item_list.append(this_item)
-
-    memcache.set_item("dailyroutine_items", item_list, int(userid))
-    return item_list
-
-
 def get_items_duetoday(userid):
     
     this_user = tarsusaUser.get_user(userid)
@@ -200,7 +182,7 @@ def get_items_duetoday(userid):
     items_due_today = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2", \
             this_user.user, end_of_today)
 
-    results = [item.jsonized() for item in items_due_today] + get_dailyroutine(userid)
+    results = [item.jsonized() for item in items_due_today] + this_user.get_dailyroutine()
     results = sorted(results, key=lambda item:item['date'], reverse=True)
     return sorted(results, key=lambda item:item['done'])
 

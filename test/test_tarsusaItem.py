@@ -41,7 +41,7 @@ class tarsusaItemTest(unittest.TestCase):
         self.assertEqual(end_of_tomorrow, self.item1.expectdate)
 
     def test_items_duetoday(self):
-        from tarsusaCore import get_items_duetoday, get_dailyroutine
+        from tarsusaCore import get_items_duetoday
         self.item1.set_duetoday()
         items_duetoday = get_items_duetoday(self.user.key().id())
         ids_items_duetoday = [x['id'] for x in items_duetoday]
