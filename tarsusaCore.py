@@ -151,27 +151,6 @@ def get_tarsusaItemCollection(userid, done, routine='none', startdate='', enddat
 
     return Item_List
 
-def _get_more_undone_items(user_id, maxitems, after_item_id):
-    ThisUser = tarsusaUser.get_user(int(user_id))
-    Item_List = []
-    query = db.Query(tarsusaItem)
-    query = query.filter('user =', ThisUser.user)
-    query = query.filter('done =', False)
-    query = query.filter('routine =', 'none')
-
-    before_date = tarsusaItem.get_item(after_item_id).date
-    query = query.filter('date <', before_date)
-    query.order('-date')
-    tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
-    for each_tarsusaItem in tarsusaItemCollection_queryResults:
-        this_item = each_tarsusaItem.jsonized()
-        Item_List.append(this_item)
-    return Item_List
-
-def get_more_undone_items(user_id, maxitems, before_item_id):
-    undone_items = _get_more_undone_items(user_id, maxitems, before_item_id)
-    return undone_items
-
 def is_item_in_collection(item, collection):
     return any([x['id'] == item['id'] and x['donedate'] == item['donedate'] for x in collection]) 
 

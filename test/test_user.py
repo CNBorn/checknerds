@@ -41,4 +41,6 @@ class tarsusaUserTest(unittest.TestCase):
         doneitem_list = self.user.get_done_items()
         self.assertEqual(doneitem_list[0]['name'], 'item1')
 
-
+    def test_get_more_undone_items(self):
+        undone_item = self.user.get_more_undone_items(maxitems=100, before_item_id=self.item2.key().id())
+        self.assertEqual(undone_item[0]['id'], self.item1.jsonized()['id'])

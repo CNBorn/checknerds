@@ -69,7 +69,27 @@ class tarsusaUser(db.Model):
             item_list.append(this_item)
         return item_list
 
-    
+    def _get_more_undone_items(self, maxitems, after_item_id):
+        from models import tarsusaItem
+        Item_List = []
+        query = db.Query(tarsusaItem)
+        query = query.filter('user =', self.user)
+        query = query.filter('done =', False)
+        query = query.filter('routine =', 'none')
+
+        before_date = tarsusaItem.get_item(after_item_id).date
+        query = query.filter('date <', before_date)
+        query.order('-date')
+        tarsusaItemCollection_queryResults = query.fetch(limit=maxitems)
+        for each_tarsusaItem in tarsusaItemCollection_queryResults:
+            this_item = each_tarsusaItem.jsonized()
+            Item_List.append(this_item)
+        return Item_List
+
+    def get_more_undone_items(self, maxitems, before_item_id):
+        undone_items = self._get_more_undone_items(maxitems, before_item_id)
+        return undone_items
+
     def get_items_duetoday(self):
         today = datetime.date.today()
         end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
