@@ -41,7 +41,7 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual(1, len(dailyroutine_items))
         self.assertEqual("routine_item", dailyroutine_items[0]['name'])
         self.assertFalse(dailyroutine_items[0]['done'])
-        tarsusaCore.DoneItem(ItemId=self.routine_item.key().id(), UserId=self.user.key().id(), Misc="")
+        self.routine_item.done_item(user=self.user, misc="")
         dailyroutine_items = self.user.get_dailyroutine()
         self.assertTrue(dailyroutine_items[0]['done'])
 
@@ -54,12 +54,12 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual(UserItemStats, {'UserTotalItems': 2, 'UserToDoItems': 2, 'UserDoneItems': 0, 'UserDonePercentage': 0})
 
     def test_tarsusaCore_doneItem(self):
-        DoneItem = tarsusaCore.DoneItem(ItemId=self.item1.key().id(), UserId=self.user.key().id(), Misc='')
-        self.assertEqual(DoneItem, True)
+        self.item1.done_item(self.user, misc='')
+        self.assertEqual(self.item1.done, True)
 
     def test_tarsusaCore_done_routine_item(self):
         routine_item = self.routine_item
-        tarsusaCore.DoneItem(ItemId=self.routine_item.key().id(), UserId=self.user.key().id(), Misc="")
+        self.routine_item.done_item(self.user, misc="")
         self.assertEqual(False, routine_item.done)
         count_routine_log_item = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem").count()
         self.assertEqual(1, count_routine_log_item)
@@ -69,7 +69,7 @@ class tarsusaCoreTest(unittest.TestCase):
 
     def test_tarsusaCore_done_yesterday_routine_item(self):
         routine_item = self.routine_item
-        tarsusaCore.DoneItem(ItemId=self.routine_item.key().id(), UserId=self.user.key().id(), Misc="y")
+        self.routine_item.done_item(self.user, misc="y")
         self.assertEqual(False, routine_item.done)
         count_routine_log_item = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem").count()
         self.assertEqual(1, count_routine_log_item)
@@ -85,7 +85,7 @@ class tarsusaCoreTest(unittest.TestCase):
 
     def test_tarsusaCore_undone_item(self):
         undone_item = self.item1
-        tarsusaCore.DoneItem(ItemId=undone_item.key().id(), UserId=self.user.key().id(), Misc='')
+        undone_item.done_item(self.user, misc='')
         tarsusaCore.UndoneItem(ItemId=undone_item.key().id(), UserId=self.user.key().id(), Misc='')
         self.assertEqual(False, undone_item.done)
 
@@ -104,8 +104,8 @@ class tarsusaCoreTest(unittest.TestCase):
         item.delete_item(self.user.key().id())
 
     def test_tarsusaCore_getuserdonelog(self):
-        tarsusaCore.DoneItem(ItemId=self.routine_item.key().id(), UserId=self.user.key().id(), Misc="")
-        tarsusaCore.DoneItem(ItemId=self.item1.key().id(), UserId=self.user.key().id(), Misc='')
+        self.routine_item.done_item(self.user, misc="")
+        self.item1.done_item(self.user, misc='')
 
         userdonelog = self.user.get_donelog()
         self.assertEqual(self.routine_item.name, userdonelog[0]["name"])

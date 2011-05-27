@@ -267,21 +267,7 @@ def get_UserFriendStats(userid, startdate='', lookingfor='next', maxdisplayitems
     else:
         return None #This User don't have any friends.
 
-def DoneItem(ItemId, UserId, Misc=''):
-    item = tarsusaItem.get_item(ItemId)
-    user = tarsusaUser.get_user(UserId)
-    return item.done_item(user, Misc)
-
-  
 def UndoneItem(ItemId, UserId, Misc):
-    #UndoneItem function specially designed for API calls.  
-    #Duplicated Code from tarsusaItemCore, refactor needed in the future.
-    
-    ## This function won't check permission for login, for external API usage.
-    #Instead, you need to provide a userid, and the function will check wheather this user have the permission to do so.
-    #Which indicates that you definately need a permission check mechanism when you calling this function from outside.
-    # Permission check is very important.
-
     UndoneYesterdaysDailyRoutine = False
     if Misc == 'y':
         UndoneYesterdaysDailyRoutine = True

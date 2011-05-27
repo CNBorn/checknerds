@@ -52,12 +52,10 @@ class DoneItem(tarsusaRequestHandler):
             DoneYesterdaysDailyRoutine = True
 
         CurrentUser = self.get_user_db()
-        Misc = ''
-        if DoneYesterdaysDailyRoutine:
-            Misc = 'y'
-        tarsusaCore.DoneItem(int(ItemId), CurrentUser.key().id(), Misc)
-    
-        #self.redirect(self.referer)
+        Misc = 'y' if DoneYesterdaysDailyRoutine else ''
+        
+        item = tarsusaItem.get_item(ItemId) 
+        item.done_item(CurrentUser, Misc)
         self.response.headers.add_header('Content-Type', "application/json")
         self.write(json.dumps({"r":"ok"}))
 
