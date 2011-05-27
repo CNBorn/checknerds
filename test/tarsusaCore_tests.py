@@ -86,7 +86,7 @@ class tarsusaCoreTest(unittest.TestCase):
     def test_tarsusaCore_undone_item(self):
         undone_item = self.item1
         undone_item.done_item(self.user, misc='')
-        tarsusaCore.UndoneItem(ItemId=undone_item.key().id(), UserId=self.user.key().id(), Misc='')
+        undone_item.undone_item(self.user, misc='')
         self.assertEqual(False, undone_item.done)
 
     def test_tarsusaCore_AddItem(self):

@@ -65,7 +65,7 @@ class tarsusaUser(db.Model):
         item_list = []
         for routine_item in self._get_dailyroutine_items():
             this_item = routine_item.jsonized()
-            this_item['done'] = routine_item.has_done_today()
+            this_item['done'] = routine_item.has_done_today
             item_list.append(this_item)
         return item_list
 

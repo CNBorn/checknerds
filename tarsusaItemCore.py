@@ -68,10 +68,9 @@ class UnDoneItem(tarsusaRequestHandler):
                 ItemId = self.request.path[12:-2]           
                 UndoneYesterdaysDailyRoutine = True
             CurrentUser = self.get_user_db()
-            Misc = ''
-            if UndoneYesterdaysDailyRoutine:
-                Misc = 'y'
-            tarsusaCore.UndoneItem(int(ItemId), CurrentUser.key().id(), Misc)
+            item = tarsusaItem.get_item(ItemId) 
+            Misc = 'y' if UndoneYesterdaysDailyRoutine else ''
+            item.undone_item(CurrentUser, Misc)
 
         self.redirect(self.referer)
 

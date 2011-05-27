@@ -52,7 +52,24 @@ class tarsusaItemTest(unittest.TestCase):
         self.assertEqual(True, self.item1.is_duetomorrow)
 
     def test_item_done_today(self):
-        self.assertEqual(False, self.routine_item.has_done_today())
+        self.assertEqual(False, self.routine_item.has_done_today)
         self.routine_item.done_item(self.routine_item.usermodel)
-        self.assertEqual(True, self.routine_item.has_done_today())
+        self.assertEqual(True, self.routine_item.has_done_today)
+
+    def test_normal_item_undone(self):
+        self.item1.done_item(self.user, "")
+        self.item1.undone_item(self.user, "")
+        self.assertEqual(self.item1.done, False)
+
+    def test_daily_item_undone(self):
+        self.routine_item.done_item(self.user, "")
+        self.assertTrue(self.routine_item.has_done_today)
+        self.routine_item.undone_item(self.user, "")
+        self.assertFalse(self.routine_item.has_done_today)
+    
+    def test_last_daily_item_undone(self):
+        self.routine_item.done_item(self.user, "y")
+        self.assertTrue(self.routine_item.has_done_yesterday)
+        self.routine_item.undone_item(self.user, "y")
+        self.assertFalse(self.routine_item.has_done_yesterday)
 
