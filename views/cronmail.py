@@ -26,7 +26,7 @@ from google.appengine.api import images
 import memcache
 import tarsusaCore
 
-from modules import *
+from models import *
 from base import *
 import logging
 from google.appengine.api import mail

@@ -19,7 +19,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 
-from modules import *
+from models import *
 from base import *
 import logging
 

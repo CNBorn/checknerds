@@ -24,7 +24,7 @@ import urllib
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
 
-from modules import *
+from models import *
 from base import *
 
 import memcache

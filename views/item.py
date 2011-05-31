@@ -14,7 +14,7 @@ from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 import tarsusaCore
 
-from modules import tarsusaItem, tarsusaUser
+from models import tarsusaItem, tarsusaUser
 from base import tarsusaRequestHandler
 
 import datetime

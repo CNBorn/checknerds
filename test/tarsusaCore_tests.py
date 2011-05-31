@@ -11,18 +11,17 @@ import urllib
 from google.appengine.ext.webapp import template
 from google.appengine.api import images
 
-from modules import *
+from models import *
 import base
 import tarsusaCore
 from tarsusaCore import AddItem
-import modules
 import memcache
 
 import logging
 class tarsusaCoreTest(unittest.TestCase):
 
     def setUp(self):
-        self.user = modules.tarsusaUser(urlname='Bar')
+        self.user = tarsusaUser(urlname='Bar')
         self.user.put()
         self.item1 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', ''))
         self.item2 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', ''))
@@ -34,7 +33,7 @@ class tarsusaCoreTest(unittest.TestCase):
         self.routine_item.delete()
         self.user.delete()
         memcache.flush_all()
-        query = [x.delete() for x in modules.tarsusaRoutineLogItem.all()]
+        query = [x.delete() for x in tarsusaRoutineLogItem.all()]
 
     def test_get_dailyroutine(self):
         dailyroutine_items = self.user.get_dailyroutine()

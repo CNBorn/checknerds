@@ -5,9 +5,8 @@ sys.path.append("../")
 import datetime
 from datetime import timedelta
 
-from models import tarsusaItem, tarsusaUser
+from models import tarsusaItem, tarsusaUser, tarsusaRoutineLogItem
 from tarsusaCore import AddItem
-import modules
 import memcache
 
 class tarsusaUserTest(unittest.TestCase):
@@ -25,7 +24,7 @@ class tarsusaUserTest(unittest.TestCase):
         self.routine_item.delete()
         self.user.delete()
         memcache.flush_all()
-        query = [x.delete() for x in modules.tarsusaRoutineLogItem.all()]
+        query = [x.delete() for x in tarsusaRoutineLogItem.all()]
 
 
     def test_item_set_duetoday(self):

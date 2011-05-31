@@ -20,7 +20,7 @@ from google.appengine.ext.webapp import template
 
 import datetime
 
-from modules import *
+from models import *
 from base import *
 
 import memcache

@@ -1,7 +1,7 @@
 import unittest
 
 from tarsusaCore import *
-from modules import tarsusaItem, tarsusaUser
+from models import tarsusaItem, tarsusaUser
 
 class TagTest(unittest.TestCase):
 

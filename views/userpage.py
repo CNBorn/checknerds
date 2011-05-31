@@ -29,7 +29,7 @@ import patcher
 
 import PyRSS2Gen
 
-from modules import *
+from models import *
 from base import *
 import logging
 

@@ -1,16 +1,15 @@
 import unittest
 
-from modules import tarsusaUser, tarsusaItem 
-import modules
+from models import tarsusaUser, tarsusaItem 
 import memcache
 
 class tarsusaMemcachedTest(unittest.TestCase):
     def setUp(self):
-        self.user = modules.tarsusaUser(urlname='Bar')
+        self.user = tarsusaUser(urlname='Bar')
         self.user.put()
-        self.item1 = modules.tarsusaItem(name="Item1", done=False, routine="none", usermodel=self.user)
+        self.item1 = tarsusaItem(name="Item1", done=False, routine="none", usermodel=self.user)
         self.item1.put()
-        self.item2 = modules.tarsusaItem(name="Item2", done=False, routine="none", usermodel=self.user)
+        self.item2 = tarsusaItem(name="Item2", done=False, routine="none", usermodel=self.user)
         self.item2.put()
 
     def tearDown(self):
