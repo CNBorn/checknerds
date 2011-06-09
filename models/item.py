@@ -9,7 +9,7 @@ from models.user import tarsusaUser
 import datetime
 from datetime import timedelta
 import memcache
-import shardingcounter
+from libs import shardingcounter
 from models.consts import ONE_DAY, ONE_SECOND
 from utils import cache
 

@@ -25,7 +25,6 @@ import re
 
 import tarsusaCore
 import memcache
-import shardingcounter
 
 from models import *
 from base import *

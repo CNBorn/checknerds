@@ -23,7 +23,7 @@ from google.appengine.ext import db
 import cgi
 import logging
 
-import shardingcounter
+from libs import shardingcounter
 import memcache
 
 class tarsusaRequestHandler(webapp.RequestHandler):

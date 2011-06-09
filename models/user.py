@@ -7,7 +7,7 @@ from models.consts import ONE_DAY
 
 from google.appengine.ext import db
 import memcache
-import shardingcounter
+from libs import shardingcounter
 from models.tag import Tag
 from utils import cache
 

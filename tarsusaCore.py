@@ -24,7 +24,7 @@ import random
 
 import memcache
 
-import shardingcounter
+from libs import shardingcounter
 
 from views import service
 from utils import cache
