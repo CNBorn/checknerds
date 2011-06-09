@@ -62,12 +62,6 @@ handlers:
 - url: /duetoday/.*
   script: tarsusaItemCore.py
 
-- url: /AddFriend/.*
-  script: views/friends.py
-
-- url: /RemoveFriend/.*
-  script: views/friends.py
-
 - url: /i/.*
   script: mobile.py
 
@@ -82,9 +76,6 @@ handlers:
 
 - url: /tag
   script: tag.py
-
-- url: /FindFriend
-  script: views/friends.py
 
 - url: /donelog.*
   script: userpage.py
