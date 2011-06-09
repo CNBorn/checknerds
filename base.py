@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# ************************************************************** 
 # CheckNerds - www.checknerds.com
-# version 1.1, codename California
 # - base.py
-# Author: CNBorn, 2008-2011
 # http://cnborn.net, http://twitter.com/CNBorn
-# ************************************************************** 
+
 import os
 import sys
+
 # Remove the standard version of Django
 #for k in [k for k in sys.modules if k.startswith('django')]:
 #    del sys.modules[k]
@@ -182,47 +180,6 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         self.response.set_status(status_code)
         self.write(status_info)
         return return_value
-
-
-## These 2 below functions are derived from Plog.
-##
-## Now Tag is a new type of model 
-
-def split_tags(s):
-    tags = list(set([t.strip() for t in re.split('[,;\\/\\\\]*', s) if t != ''])) #uniq
-    return tags
-
-## Import this function from tarsusa R6
-
-def printExpireTimeGap(timeOne,timeTwo):
-    ReturnString = ''
-    
-    #My Original Design, Returning a list with ReturnString in [0] and the following is Days Hours Minutes Seconds...
-    #ReturnList = []
-    if str(timeTwo - timeOne).find(" days,") <> -1:
-        #Projects has more than two days.
-        WorkString = str(timeTwo - timeOne).split(" days,",1)
-        TimeString = WorkString[1].split(":")
-
-    elif str(timeTwo - timeOne).find(" day,") <> -1:
-        #Projects has more than one day.
-        WorkString = str(timeTwo - timeOne).split("day,",1)
-        TimeString = WorkString[1].split(":")
-
-    else:
-        #Projects has less than one day.
-        TimeString = str(timeTwo - timeOne).split(":")
-        if str(timeTwo - timeOne)[0] == "-":
-            WorkString = ['-0']
-        else:
-            WorkString = ['0']
-
-    if WorkString[0][0] == "-":
-        ReturnString = "Past" + WorkString[0][1:] + "Days" + TimeString[0] + "Hours" + TimeString[1] + "Mins"
-    else:       
-        ReturnString = "To GO " + WorkString[0] + "Days" + TimeString[0] + "Hours" + TimeString[1] + "Mins"
-    return ReturnString
-
 
 ## Used for API setting.
 
