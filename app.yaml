@@ -108,7 +108,7 @@ handlers:
   script: mobile.py
 
 - url: /ajax/.+
-  script: ajax.py
+  script: views/ajax.py
 
 - url: /patch/.+
   script: patcher.py

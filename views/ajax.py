@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# ************************************************************* 
 # CheckNerds - www.checknerds.com
-# version 1.2, codename Arizona
 # - ajax.py
-# Author: CNBorn, 2008-2011
 # http://cnborn.net, http://twitter.com/CNBorn
-# ************************************************************* 
+
+import sys
+sys.path.append("../")
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
