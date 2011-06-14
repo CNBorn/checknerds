@@ -64,10 +64,37 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #content {float:right; line-height:1.5em; margin:0; padding:0; text-align:left; width:750px;}
 #contentalt {float:left; line-height:1.5em; margin-right:20px; padding:0; text-align:left; width:750px;}
 #content h3,#contentalt h3 {margin:10px 0 8px;}
-#content ul li {font-size:1.6em;list-style: none;margin: 0px 0 0px -80px;line-height:2.0em;}
+#content ul li {
+    font-size:1.6em;list-style: none;margin: 0px 0 0px -80px;line-height:2.0em;
+    padding: 0px 0px 0px 12px;
+    position: relative;
+}
+#content ul li span.delete, #content ul li span.duetoday {
+    display: none;
+    top: 0em;
+    margin: 0em;
+    float:right;
+}
+
+#content ul li span.item, #content ul li span.doneitem {
+    position: relative;
+    display: inline;
+}
+
+#content ul li span.delete{ left: 20em;}
+#content ul li span.duetoday{ left: 25em;}
+
 #content ul li.even {background-color: #fff;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #d0d0d0;}
 #content ul li.odd {background-color: #fafafb;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e0e0e0;}
 #content ul li:hover {background: #FFF url(/img/calit2/tr_bck.gif) repeat}
+
+#content ul li:hover span.delete{
+    display: block;
+}
+#content ul li:hover span.duetoday{
+    display: block;
+}
+
 #content p {padding-left: 15px;}
 
 /* Add Item (inside Content) */
@@ -122,9 +149,12 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 .photo {background:#fff; border:1px solid #bababa; margin:6px 18px 2px 5px; padding:2px;}
 .hide {display:none;}
 .date {color:lightgray;font-size:0.6em;padding-right:5px;float:right;}
-#content .option {color:#f0f0f0;font-size:0.3em;float:right}
-#content .option a {text-decoration:none;color:#f0f0f0;}
-#content .option a:hover {color:#0f0f0f; border: #0f0f0f 1px solid;}
+#content .delete {color:#f0f0f0;font-size:1em;float:right}
+#content .delete a {text-decoration:none;color:#f0f0f0;}
+#content .delete a:hover {color:#0f0f0f; border: #0f0f0f 1px solid;}
+#content .duetoday {color:#f0f0f0;font-size:1em;float:right}
+#content .duetoday a {text-decoration:none;color:#f0f0f0;}
+#content .duetoday a:hover {color:#0f0f0f; border: #0f0f0f 1px solid;}
 span.slogan {display:block; float: left; color:grey; width:195px; font-size:1.3em; font-weight:700; letter-spacing:-1px; line-height:1.2em; margin:10px 20px 0px 0px;}
 
 
