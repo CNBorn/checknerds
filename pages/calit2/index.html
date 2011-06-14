@@ -338,17 +338,46 @@ function addItem() {
        success: function(data){
            var id = data['r'];
            var item_name = $("#inputName").val();
+           var item_comment = $("#add_comment").val();
+           var item_expectdate = $("#inputDate").val();
+           var item_routine = $("#add_routine").val();
+           var currentDate = new Date();
+           var day = currentDate.getDate();
+           var month = currentDate.getMonth() + 1;
+           var year = currentDate.getFullYear();
+           var date = year +"-"+ month +"-"+ day;
+           item = {
+               "comment": item_comment,
+               "is_duetoday": false,
+               "donedate": null,
+               "tags": null,
+               "done": false,
+               "date": date,
+               "id": id,
+               "category": false,
+               "name": item_name,
+               "expectdate": item_expectdate,
+               "routine": item_routine,
+               "is_duetomorrow": false
+           }
+
            var duetoday_link = '<a href="javascript:void(0);" onclick="doneItem(' + "'/duetoday/" + id + "'" + ')">今日完成</a>';
            var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + id + "');}" + '">删除</a>';
            if (is_today_panel()) {
                doneItem("/duetoday/" + id);
                duetoday_link = '';
+               item['is_duetoday'] = true;
+               item['is_duetomorrow'] = false;
            }
+           item_collection[item.id] = item;
+
            $('<li itemid="'+ id + '" class="even"><input type="checkbox" onchange="doneItem('  + "'/doneItem/" + id + "'" + ')"><span class="item">' + $("#inputName").val() + '</span><span class="option">'+ delete_link +"</span><span class='option'>" +duetoday_link  + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
            $("#inputName").val("");
            $("#add_comment").val("");
            $("#add_tags").val("");
            $("#inputDate").val("");
+
+           initHover();
          }
      });
 }
