@@ -93,7 +93,7 @@ class tarsusaUser(db.Model):
     def get_items_duetoday(self):
         today = datetime.date.today()
         end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
-        items_due_today = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2", \
+        items_due_today = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2 and routine = 'none'", \
                 self.user, end_of_today)
 
         results = [item.jsonized() for item in items_due_today] + self.get_dailyroutine()
