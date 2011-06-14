@@ -5,6 +5,10 @@
 {% endblock include_js %}
 {% block extrajs %}
 <script type="text/javascript">
+var is_today_panel = function() {
+    return $("#tab_dailyroutine").hasClass("activenavitab");
+}
+
 function doneItem(strLink){
     $.ajax({type: "GET", 
             url: strLink,
@@ -88,9 +92,6 @@ function is_undone_activated() {
     return $("#tab_undone").hasClass("activenavitab");
 }
 
-var is_today_panel = function() {
-    return $("#tab_dailyroutine").hasClass("activenavitab");
-}
 
 $(window).scroll(function() {
         if ($(window).scrollTop() == $(document).height() - $(window).height() && !retriving_more_items && !no_more_items && is_undone_activated()){
