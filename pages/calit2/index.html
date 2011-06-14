@@ -9,6 +9,19 @@ var is_today_panel = function() {
     return $("#tab_dailyroutine").hasClass("activenavitab");
 }
 
+var set_due_today = function(item_id) {
+    $.ajax({type: "GET", 
+            url: "/duetoday/" + item_id,
+            dataType: "json",
+            success: function(data){
+                if(!is_today_panel()){
+                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                }
+            } 
+    });
+
+}
+
 function doneItem(strLink){
     $.ajax({type: "GET", 
             url: strLink,
@@ -16,7 +29,7 @@ function doneItem(strLink){
             success: function(data){
                 var item_id = strLink.split("/",3)[2]; 
                 var action_type = strLink.split("/",3)[1]; 
-                if(action_type == 'duetoday' && !is_today_panel()){
+                if(action_type == 'duetoday'){
                     $("li[itemid=" +item_id+ "]").fadeOut('slow');
                 }
                 else{
@@ -365,7 +378,7 @@ function addItem() {
            var duetoday_link = '<a href="javascript:void(0);" onclick="doneItem(' + "'/duetoday/" + id + "'" + ')">今日完成</a>';
            var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + id + "');}" + '">删除</a>';
            if (is_today_panel()) {
-               doneItem("/duetoday/" + id);
+               set_due_today(id);
                duetoday_link = '';
                item['is_duetoday'] = true;
                item['is_duetomorrow'] = false;
