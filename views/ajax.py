@@ -79,7 +79,7 @@ class sidebar(tarsusaRequestHandler):
         template_values['UserNickName'] = cgi.escape(current_user.dispname)
         template_values['UserID'] = current_user.key().id()
         template_values['htmltag_today'] = datetime.date.today() 
-        path = os.path.join(os.path.dirname(__file__), 'pages/%s/ajax_sidebar_%s.html' % (template_name, operation_name))
+        path = os.path.join(os.path.dirname(__file__), '../pages/%s/ajax_sidebar_%s.html' % (template_name, operation_name))
         self.write(template.render(path, template_values))
 
 

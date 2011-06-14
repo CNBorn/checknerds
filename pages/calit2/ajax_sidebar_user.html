@@ -4,7 +4,7 @@
         <br />
         <br />
             <li>id:&nbsp;{{UserInTemplate.dispname|escape}}</li>
-            <li>{{UserInTemplate.datejoinin}}加入</li>
+            <li>{{UserInTemplate.datejoinin|date:"Y-m-d"}}加入</li>
             {% if UserInTemplate.website %}
                 <li>网址:&nbsp;<a href="{{UserInTemplate.website|escape}}" target="_blank">{{UserInTemplate.website|escape}}</a></li>
             {% endif %}
