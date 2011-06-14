@@ -12,7 +12,7 @@ function doneItem(strLink){
             success: function(data){
                 var item_id = strLink.split("/",3)[2]; 
                 var action_type = strLink.split("/",3)[1]; 
-                if(action_type == 'duetoday'){
+                if(action_type == 'duetoday' && !is_today_panel()){
                     $("li[itemid=" +item_id+ "]").fadeOut('slow');
                 }
                 else{
@@ -86,6 +86,10 @@ function retrive_more_items() {
 
 function is_undone_activated() {
     return $("#tab_undone").hasClass("activenavitab");
+}
+
+var is_today_panel = function() {
+    return $("#tab_dailyroutine").hasClass("activenavitab");
 }
 
 $(window).scroll(function() {
@@ -336,6 +340,10 @@ function addItem() {
            var item_name = $("#inputName").val();
            var duetoday_link = '<a href="javascript:void(0);" onclick="doneItem(' + "'/duetoday/" + id + "'" + ')">今日完成</a>';
            var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + id + "');}" + '">删除</a>';
+           if (is_today_panel()) {
+               doneItem("/duetoday/" + id);
+               duetoday_link = '';
+           }
            $('<li itemid="'+ id + '" class="even"><input type="checkbox" onchange="doneItem('  + "'/doneItem/" + id + "'" + ')"><span class="item">' + $("#inputName").val() + '</span><span class="option">'+ delete_link +"</span><span class='option'>" +duetoday_link  + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
            $("#inputName").val("");
            $("#add_comment").val("");
