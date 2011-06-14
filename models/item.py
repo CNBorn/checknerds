@@ -25,7 +25,10 @@ class tarsusaItem(db.Expando):
     done = db.BooleanProperty()
     routine = db.StringProperty(required=True, choices=set(["none", "daily", "weekly", "monthly", "seasonly", "yearly"]))
     public = db.StringProperty(choices=set(["private", "public", "publicOnlyforFriends"]))
-   
+
+    def flush(self):
+        memcache.delete("item:%s" % self.key().id())
+
     @staticmethod
     def get_item(item_id):
         cached_item = memcache.get("item:%s" % item_id)
@@ -74,13 +77,15 @@ class tarsusaItem(db.Expando):
         today = datetime.date.today()
         end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)
         self.expectdate = end_of_today
-        self.save()
+        self.put()
+        self.flush()
 
     def set_duetomorrow(self):
         tomorrow = datetime.date.today() + timedelta(days=1)
         end_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 23,59,59)
         self.expectdate = end_of_tomorrow
-        self.save()
+        self.put()
+        self.flush()
     
     @property
     def is_duetoday(self):
