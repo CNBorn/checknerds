@@ -2,8 +2,21 @@
 {% block title %} CheckNerds(beta) {% endblock title %}
 {% block include_js %}
 <script type="text/javascript" src="/js/jquery.hoverIntent.minified.js"></script>
+<script src="http://github.com/janl/mustache.js/raw/master/mustache.js"></script>
 {% endblock include_js %}
 {% block extrajs %}
+
+<script id="stream-loading-template" type="text/template"> 
+    <div class="stream-message stream-loading"><img src="http://img3.douban.com/anduin/pics/loading.gif?v=2" /></div>
+</script> 
+
+<script id="itemlist-template" type="text/template"> 
+    <li itemid='{% templatetag openvariable %}id{% templatetag closevariable %}' class='{% templatetag openvariable %}css{% templatetag closevariable %}'>
+    <span class='doneitem'>{% templatetag openvariable %}name{% templatetag closevariable %}</span>
+    <span class='date'>{% templatetag openvariable %}donedate{% templatetag closevariable %}</span>
+    </li>
+</script> 
+
 <script type="text/javascript">
 var is_today_panel = function() {
     return $("#tab_dailyroutine").hasClass("activenavitab");
@@ -198,14 +211,15 @@ function render_donelog(msg){
             item = msg[i][j];
             item_collection[item.id] = item;
             if(index % 2){
-                css = 'even' } else {
-                css = 'odd'
+                item.css = 'even' } else {
+                item.css = 'odd'
                 }
-            render += "<li itemid='" + item.id + "'";
-            render += " class='" + css + "'>";
-            render += "<span class='doneitem'>" + item.name + "</span>";
-            render += "<span class='date'>" + item.donedate + "</span>";
-            render += "</li>";
+            console.log(item);
+            var template = $("script#itemlist-template").html();
+            console.log(template);
+            item_template = Mustache.to_html(template, item);
+            console.log(item_template);
+            render += item_template;
             index++;
         }
     }
