@@ -6,10 +6,6 @@
 {% endblock include_js %}
 {% block extrajs %}
 
-<script id="stream-loading-template" type="text/template"> 
-    <div class="stream-message stream-loading"><img src="http://img3.douban.com/anduin/pics/loading.gif?v=2" /></div>
-</script> 
-
 <script id="itemlist-template" type="text/template"> 
     <li itemid='{% templatetag openvariable %}id{% templatetag closevariable %}' class='{% templatetag openvariable %}css{% templatetag closevariable %}'>
     <span class='doneitem'>{% templatetag openvariable %}name{% templatetag closevariable %}</span>
@@ -214,11 +210,8 @@ function render_donelog(msg){
                 item.css = 'even' } else {
                 item.css = 'odd'
                 }
-            console.log(item);
             var template = $("script#itemlist-template").html();
-            console.log(template);
             item_template = Mustache.to_html(template, item);
-            console.log(item_template);
             render += item_template;
             index++;
         }
