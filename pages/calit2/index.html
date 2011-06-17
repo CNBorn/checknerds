@@ -34,6 +34,22 @@
     </li>
 </script> 
 
+
+<script id="additem-template" type="text/template"> 
+            <li itemid={% templatetag openvariable %}id}} class="even"><input type="checkbox" onchange="doneItem('/doneItem/{% templatetag openvariable %}id}}')">
+            <span class="item">{% templatetag openvariable %}name}}</span>
+            <span class="delete">
+                <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('/removeItem/{% templatetag openvariable %}id}}');}">删除</a>
+            </span>
+           {% templatetag openvariable %}#isnottodaypanel}}
+           <span class='duetoday'>
+           <a href="javascript:void(0);" onclick="set_due_today({% templatetag openvariable %}id{% templatetag closevariable %})">今日完成</a>
+           </span>
+           {% templatetag openvariable %}/isnottodaypanel}}
+        </li>
+</script> 
+
+
 <script type="text/javascript">
 var is_today_panel = function() {
     return $("#tab_dailyroutine").hasClass("activenavitab");
@@ -393,20 +409,21 @@ function addItem() {
                "name": item_name,
                "expectdate": item_expectdate,
                "routine": item_routine,
-               "is_duetomorrow": false
+               "is_duetomorrow": false,
+               isnottodaypanel: function() {
+                   return !is_today_panel();
+               }
            }
 
-           var duetoday_link = '<a href="javascript:void(0);" onclick="doneItem(' + "'/duetoday/" + id + "'" + ')">今日完成</a>';
-           var delete_link = '<a href="javascript:void(0);" onclick="if (confirm(' + "'确认删除？" + item_name + "')){delete_item('" + "/removeItem/" + id + "');}" + '">删除</a>';
            if (is_today_panel()) {
                set_due_today(id);
-               duetoday_link = '';
                item['is_duetoday'] = true;
                item['is_duetomorrow'] = false;
            }
            item_collection[item.id] = item;
 
-           $('<li itemid="'+ id + '" class="even"><input type="checkbox" onchange="doneItem('  + "'/doneItem/" + id + "'" + ')"><span class="item">' + $("#inputName").val() + '</span><span class="delete">'+ delete_link +"</span><span class='duetoday'>" +duetoday_link  + ' </span></li>').hide().prependTo('#itemlist ul').fadeIn("fast");
+           var template = $("script#additem-template").html();
+           $(Mustache.to_html(template, item)).hide().prependTo('#itemlist ul').fadeIn("fast");
            $("#inputName").val("");
            $("#add_comment").val("");
            $("#add_tags").val("");
