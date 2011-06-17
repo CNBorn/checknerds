@@ -36,32 +36,25 @@ class render(tarsusaRequestHandler):
         user_id = user.key().id()
 
         if func == "done":
-            self.response.headers.add_header('Content-Type', "application/json")
             done_items = user.get_done_items(maxitems)
-            self.write(json.dumps(format_items(done_items)))
-            return 
+            self.response_json(format_items(done_items))
 
         elif func == "undone":
-            self.response.headers.add_header('Content-Type', "application/json")
             before_item_id = self.request.get("before_item_id",None)
             if before_item_id:
                 undone_items = user.get_more_undone_items(maxitems, before_item_id)
             else:
                 undone_items = user.get_undone_items(maxitems)
-            self.write(json.dumps(format_items(undone_items)))
-            return 
+            self.response_json(format_items(undone_items))
 
         elif func == "dailyroutine":
             dailyroutine_items = tarsusaUser.get_user(user_id).get_items_duetoday()
-            self.write(json.dumps(format_items(dailyroutine_items)))
-            return 
+            self.response_json(format_items(dailyroutine_items))
 
         elif func == "logs":
             done_items = user.get_donelog()
             formatted_done_items = format_done_logs(done_items)
-            self.response.headers.add_header('Content-Type', "application/json")
-            self.write(json.dumps(formatted_done_items))
-            return 
+            self.response_json(formatted_done_items)
  
 class sidebar(tarsusaRequestHandler):
     @login

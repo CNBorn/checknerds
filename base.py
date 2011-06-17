@@ -50,6 +50,11 @@ class tarsusaRequestHandler(webapp.RequestHandler):
     def write(self, s):
         self.response.out.write(s)
 
+    def response_json(self, object):
+        from django.utils import simplejson as json
+        self.response.headers.add_header('Content-Type', "application/json")
+        self.write(json.dumps(object))
+
     def get_login_url(self, from_referer=False):
         if from_referer:
             dst = self.referer
