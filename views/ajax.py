@@ -11,13 +11,73 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 import cgi, datetime, os
-from models import tarsusaUser
+from models import tarsusaUser, tarsusaItem
 from base import tarsusaRequestHandler
 from google.appengine.ext.webapp import template
 
-from tarsusaCore import format_done_logs, format_items
-from django.utils import simplejson as json
+from tarsusaCore import format_done_logs, format_items, AddItem
 from utils import login
+
+class DueToday(tarsusaRequestHandler):
+    @login
+    def get(self):
+        item_id = self.request.path[10:]
+        tarsusaItem.get_item(item_id).set_duetoday()
+        self.response_json({"r":"ok"})
+
+class DoneItem(tarsusaRequestHandler):
+    @login
+    def get(self):
+        ItemId = self.request.path[10:]
+        DoneYesterdaysDailyRoutine = False
+        if ItemId[-2:] == '/y':
+            ItemId = self.request.path[10:-2]           
+            DoneYesterdaysDailyRoutine = True
+
+        CurrentUser = self.get_user_db()
+        Misc = 'y' if DoneYesterdaysDailyRoutine else ''
+        
+        item = tarsusaItem.get_item(ItemId) 
+        item.done_item(CurrentUser, Misc)
+        self.response_json({"r":"ok"})
+
+class RemoveItem(tarsusaRequestHandler):
+    @login
+    def get(self):
+        item_id = self.request.path[12:]
+        current_user = self.get_user_db()
+        item = tarsusaItem.get_item(item_id)
+        remove_status = item.delete_item(current_user.key().id())
+        self.response_json({"r":remove_status})
+
+class UnDoneItem(tarsusaRequestHandler):
+    @login
+    def get(self):
+        ItemId = self.request.path[12:]
+        UndoneYesterdaysDailyRoutine = False
+        if ItemId[-2:] == '/y':
+            ItemId = self.request.path[12:-2]           
+            UndoneYesterdaysDailyRoutine = True
+        CurrentUser = self.get_user_db()
+        item = tarsusaItem.get_item(ItemId) 
+        Misc = 'y' if UndoneYesterdaysDailyRoutine else ''
+        item.undone_item(CurrentUser, Misc)
+        self.response_json({"r":"ok"})
+
+class AddItemProcess(tarsusaRequestHandler):
+    @login
+    def post(self):
+        CurrentUser = self.get_user_db()
+        item2beadd_name = cgi.escape(self.request.get('name'))
+        item2beadd_comment = cgi.escape(self.request.get('comment'))
+        item_id = AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine','none'), self.request.get('public', 'private'), self.request.get('inputDate'), self.request.get('tags'))
+
+        if self.referer[-6:] == "/m/add":
+            self.redirect("/m/todo")
+
+        self.response.headers.add_header('Content-Type', "application/json")
+        self.response_json({"r":item_id})
+
 
 class ajax_error(tarsusaRequestHandler):
     def post(self):
@@ -80,10 +140,14 @@ def main():
     application = webapp.WSGIApplication([
         (r'/ajax/render/.*', render),
         (r'/ajax/sidebar/.*', sidebar),
-        ('/ajax/.+',ajax_error)],
-    debug=True)
-
-
+        ('/ajax/.+',ajax_error),
+        ('/doneItem/\\d+',DoneItem),
+        ('/undoneItem/\\d+',UnDoneItem),
+        ('/duetoday/\\d+',DueToday),
+        ('/removeItem/\\d+', RemoveItem),
+        ('/additem',AddItemProcess),
+        ],
+        debug=True)
     run_wsgi_app(application)
 
 if __name__ == "__main__":

@@ -51,16 +51,13 @@ handlers:
   script: views/auth.py
 
 - url: /additem
-  script: tarsusaItemCore.py
-
-- url: /edititem/.*
-  script: tarsusaItemCore.py
+  script: views/ajax.py
 
 - url: /removeItem/.*
-  script: tarsusaItemCore.py
+  script: views/ajax.py
 
 - url: /duetoday/.*
-  script: tarsusaItemCore.py
+  script: views/ajax.py
 
 - url: /i/.*
   script: mobile.py
@@ -69,10 +66,10 @@ handlers:
   script: views/item.py
 
 - url: /doneItem/.*
-  script: tarsusaItemCore.py
+  script: views/ajax.py
 
 - url: /undoneItem/.*
-  script: tarsusaItemCore.py
+  script: views/ajax.py
 
 - url: /tag
   script: tag.py
