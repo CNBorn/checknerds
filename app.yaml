@@ -86,9 +86,6 @@ handlers:
 - url: /tag/
   script: tag.py
 
-- url: /image.*
-  script: views/image.py
-
 - url: /flushcache
   script: views/miscellaneous.py
 

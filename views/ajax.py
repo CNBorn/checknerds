@@ -132,6 +132,14 @@ class sidebar(tarsusaRequestHandler):
         template_values['UserNickName'] = cgi.escape(current_user.dispname)
         template_values['UserID'] = current_user.key().id()
         template_values['htmltag_today'] = datetime.date.today() 
+
+        import urllib, hashlib
+        default = self.host + '/img/default_avatar.jpg'
+        size = 64
+        gravatar_url = "http://www.gravatar.com/avatar.php?"
+        gravatar_url += urllib.urlencode({'gravatar_id':hashlib.md5(current_user.user.email()).hexdigest(), 'default':default, 'size':str(size)})
+        template_values['user_avatar'] = gravatar_url
+
         path = os.path.join(os.path.dirname(__file__), '../pages/%s/ajax_sidebar_%s.html' % (template_name, operation_name))
         self.write(template.render(path, template_values))
 

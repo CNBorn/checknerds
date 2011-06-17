@@ -54,6 +54,13 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         from django.utils import simplejson as json
         self.response.headers.add_header('Content-Type', "application/json")
         self.write(json.dumps(object))
+    
+    @property
+    def host(self):
+        if os.environ.get('HTTP_HOST'):
+          return os.environ['HTTP_HOST']
+        else:
+          return os.environ['SERVER_NAME'] 
 
     def get_login_url(self, from_referer=False):
         if from_referer:
