@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # CheckNerds - www.checknerds.com
 from google.appengine.api import memcache
+from google.appengine.api.memcache import get, set, delete, flush_all
 
 refresh_roles = {
         'additem' : ('itemstats', 'itemlist', 'tag'),
@@ -28,19 +29,8 @@ refresh_roles = {
 def event(key, CurrentUserid):
     if key not in refresh_roles.keys(): return False
     for obj in refresh_roles[key]:
-        memkeydel_status = memcache.delete("%s:%s" % (obj, CurrentUserid)) 
+        memkeydel_status = delete("%s:%s" % (obj, CurrentUserid)) 
     return True
-
-def get(key):
-    item = memcache.get(key)
-    if item == None:
-        return None
-    return item
-
-def set(key, value, time=0):
-    if memcache.set(key, value, time):
-        return True
-    return False
 
 def get_item(key, user_id):
     mc_key = ("%s:%s" % (key, str(user_id)))
@@ -55,13 +45,7 @@ def set_item(key, value, user_id, time=0):
         return True
     return False
 
-def delete(key):
-    return memcache.delete(key)
-
 def delete_item(key, user_id):
     mc_key = ("%s:%s" % (key, str(user_id)))
     memcache.delete(mc_key)
     return True
-
-def flush_all():
-    return memcache.flush_all()
