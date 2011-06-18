@@ -30,15 +30,12 @@ class tarsusaItem(db.Expando):
         memcache.delete("item:%s" % self.key().id())
 
     @staticmethod
+    @cache("item:{item_id}")
     def get_item(item_id):
-        cached_item = memcache.get("item:%s" % item_id)
-        if cached_item:
-            return cached_item
         try:
             item = tarsusaItem.get_by_id(int(item_id))
         except:
             return None
-        memcache.set("item:%s" % item_id, item)
         return item
     
     @staticmethod
@@ -249,13 +246,10 @@ class tarsusaRoutineLogItem(db.Model):
     donedate = db.DateTimeProperty(auto_now_add=True)
 
     @staticmethod
+    @cache("routineitem:{item_id}")
     def get_item(item_id):
-        cached_item = memcache.get("routineitem:%s" % item_id)
-        if cached_item:
-            return cached_item
         try:
             item = tarsusaRoutineLogItem.get_by_id(int(item_id))
         except:
             return None
-        memcache.set("routineitem:%s" % item_id, item)
         return item
