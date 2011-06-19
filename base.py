@@ -112,18 +112,12 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         return result
 
     def verify_api(self):
-                
-        #Verifiction of external API calls.
-        #Verify the AppModel first.
-        
         apiappid = self.request.get('apiappid') 
         apiservicekey = self.request.get('servicekey')
         
         if apiappid == "" or apiservicekey == "":
-            self.write("403 Not enough parameters.")
+            self.response_status(403, "403 Not enough parameters.")
             return False 
-        
-        #logging.info(apiservicekey)        
         
         from models import AppModel 
         verified = verify_AppModel(int(apiappid), apiservicekey)
@@ -135,18 +129,14 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         from models import tarsusaUser
         APIUser = tarsusaUser.get_by_id(int(apiuserid))
         
-        #Exception.
         if APIUser == None:
-            self.write("403 No Such User")
-            #self.error(403)
+            self.response_status(403, "403 No Such User")
             return False
         if verified == False:
-            self.write("403 Application Verifiction Failed.")
-            #self.error(403)
+            self.response_status(403, "403 Application Verifiction Failed.")
             return False
-        #--- verified AppApi Part.
         if verify_UserApi(int(apiuserid), apikey) == False:
-            self.write("403 UserID Authentication Failed.")
+            self.response_status(403, "403 UserID Authentication Failed.")
             return False
         
         try:
@@ -159,26 +149,23 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
     def verify_api_limit(self):
         
-        #Check with API Usage.
         apiappid = self.request.get('apiappid') 
         apiservicekey = self.request.get('servicekey')
     
         AppApiUsage = memcache.get_item("appapiusage", int(apiappid))
         from models import AppModel 
         ThisApp = AppModel.get_by_id(int(apiappid))
-        if ThisApp == None:
-            self.write("404 Application does not exist.")
+        if not ThisApp:
+            self.response_status(404, "404 Application does not exist.")
             return False
-        
         if AppApiUsage >= ThisApp.api_limit:
-            #Api Limitation exceed.
-            self.write('403 API Limitation exceed. ')
+            self.response_status(403, '403 API Limitation exceed. ')
             return False    
-        elif AppApiUsage == None: #memcache.get_item returns None if there is not such var.
+        elif AppApiUsage == None:
             AppApiUsage = 0
         
         AppApiUsage += 1 
-        memcache.set_item("appapiusage", AppApiUsage, int(apiappid))
+        memcache.set("appapiusage:%s" % apiappid, AppApiUsage)
         
         return True
 
