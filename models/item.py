@@ -120,6 +120,10 @@ class tarsusaItem(db.Expando):
                 return True
         return False
 
+    @property
+    def duration(self):
+        if not self.done: return 0
+        return (self.donedate - self.date).days
     
     def jsonized(self):
         return {
@@ -135,6 +139,7 @@ class tarsusaItem(db.Expando):
             'is_duetoday': self.is_duetoday,
             'is_duetomorrow': self.is_duetomorrow,
             'is_dueyesterday': self.is_dueyesterday,
+            'duration': self.duration,
            }
 
 

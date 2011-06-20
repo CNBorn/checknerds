@@ -38,7 +38,8 @@
     <h2>{% templatetag openvariable %}name{% templatetag closevariable %}</h2>
     <p><ul>
     {% templatetag openvariable %}#done{% templatetag closevariable %}
-    已经完成于{% templatetag openvariable %}donedate{% templatetag closevariable %}
+    已经完成于{% templatetag openvariable %}donedate{% templatetag closevariable %}<br />
+    耗时{% templatetag openvariable %}duration{% templatetag closevariable %}天<br />
     {% templatetag openvariable %}/done{% templatetag closevariable %}
     {% templatetag openvariable %}#undone{% templatetag closevariable %}
     <li>尚未完成</li>
@@ -322,13 +323,6 @@ $('#tab_done').click(function() {
     return false;
 });
 
-$('#tab_friends').click(function() {
-    tabs_MakeActive(this);
-    $('#itemlist').load('/ajax/render/?func=friends&template=calit2',initHover);
-    showLoadingPanel();
-    hideLoadingPanel();
-    return false;
-});
 $('#tab_log').click(function() {
     tabs_MakeActive(this);
     showLoadingPanel();
@@ -473,7 +467,7 @@ function initHover(){
             return !item.done;
         } 
         render_item.expired = function(){
-            return item.expired;
+            return item.expired || item.is_dueyesterday;
         }
         
         if(item.routine == 'daily'){
@@ -496,6 +490,7 @@ function initHover(){
         }
         render_item.comment = item.comment || '';
         render_item.date = item.date;
+        render_item.duration = item.duration;
 
         render_item.has_expectdate = function() {
             return !item.expectdate === '';
