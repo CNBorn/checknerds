@@ -199,8 +199,10 @@ function render_items(msg,type)
         render_item.itemundone = function(){
             return !this.done;
         }
-        if(!item.done){
+        if(!item.done && !item.is_dueyesterday){
             render_item.item_style = "item";
+        } else if (item.is_dueyesterday) {
+            render_item.item_style = "overdueitem";
         } else {
             render_item.item_style = "doneitem";
         }
@@ -224,11 +226,7 @@ function render_items(msg,type)
         render += "</ul>";
         $('#itemlist').html(render);
     }
-}
-
-function render_donelog(msg){
-    $('#itemlist').html('');
-    render = '';
+} function render_donelog(msg){ $('#itemlist').html(''); render = '';
     index = 0;
     render += "<ul>";
     item_collection = {};
@@ -410,6 +408,7 @@ function addItem() {
                "expectdate": item_expectdate,
                "routine": item_routine,
                "is_duetomorrow": false,
+               "is_dueyesterday": false,
                isnottodaypanel: function() {
                    return !is_today_panel();
                }

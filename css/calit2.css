@@ -58,6 +58,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 /* Additem Div content */
 #additem {float:right; line-height:1.5em; margin:0 0 5px 0; padding:0; text-align:left; width:750px;}
 .item {color:#88bb55; font-weight:700; text-decoration:none;padding-left:5px;}
+.overdueitem {color:#ffaa55; font-weight:700; text-decoration:none;padding-left:5px;}
 .doneitem {padding-left:15px;color:lightgrey; font-weight:350; text-decoration:line-through;}
 
 /* Main content */

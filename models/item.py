@@ -97,6 +97,12 @@ class tarsusaItem(db.Expando):
         return self.expectdate == end_of_tomorrow
 
     @property
+    def is_dueyesterday(self):
+        yesterday = datetime.date.today() - timedelta(days=1)
+        end_of_yesterday = datetime.datetime(yesterday.year, yesterday.month, yesterday.day, 23,59,59)
+        return self.expectdate == end_of_yesterday
+
+    @property
     def has_done_today(self):
         assert self.routine == "daily"
         routine_logkey = db.GqlQuery("SELECT __key__ FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT 1", self.usermodel.user, self.key().id())
@@ -114,8 +120,7 @@ class tarsusaItem(db.Expando):
                 return True
         return False
 
-
-
+    
     def jsonized(self):
         return {
             'id' : str(self.key().id()), 
@@ -128,7 +133,8 @@ class tarsusaItem(db.Expando):
             'category' : self.done, 
             'done': self.done,
             'is_duetoday': self.is_duetoday,
-            'is_duetomorrow': self.is_duetomorrow
+            'is_duetomorrow': self.is_duetomorrow,
+            'is_dueyesterday': self.is_dueyesterday,
            }
 
 
