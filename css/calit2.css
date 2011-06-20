@@ -150,11 +150,11 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 .photo {background:#fff; border:1px solid #bababa; margin:6px 18px 2px 5px; padding:2px;}
 .hide {display:none;}
 .date {color:lightgray;font-size:0.6em;padding-right:5px;float:right;}
-#content .delete {color:#f0f0f0;font-size:1em;float:right}
-#content .delete a {text-decoration:none;color:#f0f0f0;}
+#content .delete {padding:3px;color:#c0c0c0;font-size:0.85em;float:right}
+#content .delete a {text-decoration:none;color:#c0c0c0;}
 #content .delete a:hover {color:#0f0f0f; border: #0f0f0f 1px solid;}
-#content .duetoday {color:#f0f0f0;font-size:1em;float:right}
-#content .duetoday a {text-decoration:none;color:#f0f0f0;}
+#content .duetoday {padding:3px;color:#c0c0c0;font-size:0.85em;float:right}
+#content .duetoday a {text-decoration:none;color:#c0c0c0;}
 #content .duetoday a:hover {color:#0f0f0f; border: #0f0f0f 1px solid;}
 span.slogan {display:block; float: left; color:grey; width:195px; font-size:1.3em; font-weight:700; letter-spacing:-1px; line-height:1.2em; margin:10px 20px 0px 0px;}
 
