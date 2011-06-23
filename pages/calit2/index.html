@@ -223,7 +223,7 @@ function render_items(msg,type)
         }
         if(!item.done && !item.is_dueyesterday){
             render_item.item_style = "item";
-        } else if (item.is_dueyesterday) {
+        } else if (item.is_dueyesterday && !item.done) {
             render_item.item_style = "overdueitem";
         } else {
             render_item.item_style = "doneitem";
