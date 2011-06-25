@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from google.appengine.dist import use_library
+use_library('django', '1.2')
+
 import sys
 sys.path.append("../")
 import datetime
@@ -10,6 +13,7 @@ import memcache
 from libs import shardingcounter
 from models.tag import Tag
 from utils import cache
+from django.utils import simplejson as json
 
 class tarsusaUser(db.Model):
     user = db.UserProperty()
@@ -28,6 +32,26 @@ class tarsusaUser(db.Model):
     
     notify_dailybriefing_time = db.TimeProperty()
     notify_addedasfriend = db.BooleanProperty()
+
+    raw_options = db.TextProperty()
+
+    def set_option(self, key, value):
+        try:
+            options = json.decode(self.raw_options)
+        except:
+            options = {}
+
+        options.setdefault(key, value)
+        self.raw_options = json.dumps(options)
+        self.put()
+
+    def get_option(self, key):
+        try:
+            options = json.loads(self.raw_options)
+        except:
+            options = {}
+        
+        return options.get(key, "")
     
     def __unicode__(self):
         if self.dispname:
