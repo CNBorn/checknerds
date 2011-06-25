@@ -134,7 +134,7 @@ class sidebar(tarsusaRequestHandler):
         template_values['htmltag_today'] = datetime.date.today() 
 
         import urllib, hashlib
-        default = self.host + '/img/default_avatar.jpg'
+        default = "http://" + self.host + '/img/default_avatar.jpg'
         size = 64
         gravatar_url = "http://www.gravatar.com/avatar.php?"
         gravatar_url += urllib.urlencode({'gravatar_id':hashlib.md5(current_user.user.email()).hexdigest(), 'default':default, 'size':str(size)})
