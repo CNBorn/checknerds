@@ -4,16 +4,15 @@
 # - base.py
 # http://cnborn.net, http://twitter.com/CNBorn
 
+from google.appengine.dist import use_library
+use_library('django', '1.2')
+
 import os
 import sys
 
-# Remove the standard version of Django
+#Remove the standard version of Django
 #for k in [k for k in sys.modules if k.startswith('django')]:
 #    del sys.modules[k]
-
-from google.appengine.dist import use_library
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-use_library('django', '1.2')
 
 from google.appengine.ext import webapp
 from google.appengine.api import users
