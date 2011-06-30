@@ -282,6 +282,17 @@ class tarsusaUser(db.Model):
         
         return result 
 
+    def generate_apikey(self):
+        from random import sample
+        import hashlib, time
+        
+        s = 'abcdefghijklmnopqrstuvwxyz1234567890'
+        fusion_p = ''.join(sample(s, 8))
+
+        fusion_key = "%s - %s - %s - %s - %s" % (fusion_p, self.key().id(), \
+                self.mail, "Arizona", time.ctime())
+        self.apikey = hashlib.sha256(fusion_key).hexdigest()[:8]
+        self.put()
 
 @cache("user:{user_id}")
 def get_user(user_id):

@@ -30,7 +30,7 @@ import patcher
 import PyRSS2Gen
 
 from models import *
-from base import *
+from base import tarsusaRequestHandler
 import logging
 
 class UserSettingPage(tarsusaRequestHandler):
@@ -60,38 +60,13 @@ class UserSettingPage(tarsusaRequestHandler):
                     #urlname =forms.CharField(label='URL显示地址',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':CurrentUser.urlname}))
                     dispname = forms.CharField(label='显示名称',widget=forms.TextInput(attrs={'size':'30','maxlength':'30','value':EditedUser.dispname,'class':'sl'}))
                     website = forms.CharField(label='您的网址(请加http://)',widget=forms.TextInput(attrs={'size':'36','maxlength':'36','value':EditedUser.website,'class':'sl'}))   
-                    ##Please reference more from the URL
-
-                    #notify_dailybriefing = forms.BooleanField(label='每日邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_dailybriefing}))
-                    #notify_dailybriefing_time = forms.CharField(label='每日邮件提醒时间', widget=forms.TextInput(attrs={'value':EditedUser.notify_dailybriefing_time,'class':'sl'}))
-                    #notify_addedasfriend = forms.BooleanField(label='用户添加好友邮件提醒',widget=forms.CheckboxInput(attrs={'checked':EditedUser.notify_addedasfriend}))
-
                     apikey = forms.CharField(label="ApiKey(请勿泄露)", widget=forms.TextInput(attrs={'readonly':'', 'class':'sl', 'value':EditedUser.apikey}))
 
                     class Meta:
                         model = tarsusaUser
-                        #exclude =['user','userid','usedtags','urlname','friends','datejoinin']
                         exclude =['user','userid','usedtags','urlname','friends','datejoinin', 'notify_dailybriefing', 'notify_dailybriefing_time', 'notify_addedasfriend']
                 
-                outputStringUserSettingForms = ItemForm().as_p() #also got as_table(), as_ul()
-
-                ## The Avatar part is inspired by 
-                ## http://blog.liangent.cn/2008/07/google-app-engine_28.html
-
-                outputStringUserAvatarSetting = ""
-                
-                if EditedUser.avatar:
-                    outputStringUserAvatarImage = "<img src=/image?avatar=" + str(EditedUser.key().id()) + " width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
-                else:
-                    outputStringUserAvatarImage = "<img src=/img/default_avatar.jpg width=64 height=64><br />" + cgi.escape(EditedUser.dispname) + '&nbsp;<br />'
-
-                
-                outputStringUserAvatarSetting += '''
-                             <form method="post" enctype="multipart/form-data"> 
-                             选择图像文件(<1M): <input type="file" name="avatar"/ size=15>
-                             <input type="submit" value="更新头像"/></form> '''.decode('utf-8')
-
-
+                outputStringUserSettingForms = ItemForm().as_p()
 
                 template_values = {
                         'PrefixCSSdir': "/",
@@ -107,8 +82,6 @@ class UserSettingPage(tarsusaRequestHandler):
                         'UserJoinInDate': datetime.datetime.date(EditedUser.datejoinin),
 
                         'UserSettingForms': outputStringUserSettingForms,
-                        'UserAvatarImage': outputStringUserAvatarImage,
-                        'UserAvatarSetting': outputStringUserAvatarSetting,
                 }
             
                 path = os.path.join(os.path.dirname(__file__), 'pages/usersettingpage.html')
@@ -135,55 +108,16 @@ class UserSettingPage(tarsusaRequestHandler):
         website = self.request.get('website')
         
         if avatar:
-                
-                # New CheckLogin code built in tarsusaRequestHandler 
-                if self.chk_login():
-                    CurrentUser = self.get_user_db()
-
-                #Create the Avatar Image Thumbnails.
-                avatar_image = images.Image(avatar)
-                avatar_image.resize(width=64,height=64)
-                avatar_image.im_feeling_lucky()
-                avatar_image_thumbnail = avatar_image.execute_transforms(output_encoding=images.JPEG)
-
-                CurrentUser.avatar=db.Blob(avatar_image_thumbnail)
-                CurrentUser.put()  
-                
-                if not memcache.set('img_useravatar' + str(CurrentUser.key().id()), db.Blob(avatar_image_thumbnail), 7200):
-                    logging.error("Memcache set failed: When uploading avatar_image")
-
-                self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
-
-
+           pass     
+            
         elif self.request.get('apikey_gene') == 'apikey':
-
                 #Regenerate the APIKEY.
                 if self.chk_login():
                     CurrentUser = self.get_user_db()
-
-                    #From Plog.
-                    #Generate a random string for using as api password, api user is user's full email
-                    
-                    from random import sample
-                    import hashlib
-                    s = 'abcdefghijklmnopqrstuvwxyz1234567890'
-                    fusion_p = ''.join(sample(s, 8))
-                    
-                    fusion_uky = str(CurrentUser.key().id())
-                    fusion_uma = str(CurrentUser.mail)
-                    fusion_cn = "CheckNerds Approching to version California"
-                    
-                    fusion_uni = fusion_p + fusion_uky + fusion_uma + fusion_cn                 
-                    
-                    CurrentUser.apikey = hashlib.sha1(fusion_uni).hexdigest()[:8]
-                    CurrentUser.put()
-    
+                CurrentUser.generate_apikey()   
                 self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
 
-
         else:
-                
-                # New CheckLogin code built in tarsusaRequestHandler 
                 if self.chk_login():
                     CurrentUser = self.get_user_db()
                 
@@ -196,47 +130,8 @@ class UserSettingPage(tarsusaRequestHandler):
                     CurrentUser.website = "http://" + website
                 CurrentUser.put()
 
-
                 self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
 
-
-
-
-                if self.request.get('fetch') == 'yes':  
-                    try:
-                        fc = urlfetch.fetch(url_mime)  
-                        if fc.status_code == 200:  
-                            avatar = fc.content  
-                            if 'Content-Type' in fc.headers:  
-                                url_mime = fc.headers['Content-Type']  
-                            
-                                # New CheckLogin code built in tarsusaRequestHandler 
-                                if self.chk_login():
-                                    CurrentUser = self.get_user_db()
-                    
-                                
-                                self.write('noneok')
-                            else:
-                                #sendmsg(self, 'no content-type sent from remote server')
-                                self.write('ac')
-                        else:  
-                            #sendmsg(self, 'cannot fetch avatar: http status ' + str(fc.status_code))  
-                            self.write('avcx')
-                    except:  
-                        #sendmsg(self, 'cannot fetch avatar')  
-                        self.write('avcx')
-
-                else:  
-                    try:
-                        avatar = Avatar(url_mime=url_mime)  
-                        avatar.put() 
-                        if not memcache.set('img_useravatar' + str(CurrentUser.key().id()), db.Blob(avatar_image), 7200):
-                            logging.error("Memcache set failed: When uploading(2) avatar_image")
-
-                    except:
-                        pass
-                        self.redirect("/user/" + str(CurrentUser.key().id()) + "/setting")
-                    #sendmsg(self, 'added')  
 
 class UserMainPage(tarsusaRequestHandler):
     def get(self):
