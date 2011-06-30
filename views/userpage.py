@@ -27,8 +27,6 @@ import memcache
 import tarsusaCore
 import patcher
 
-import PyRSS2Gen
-
 from models import *
 from base import tarsusaRequestHandler
 import logging
