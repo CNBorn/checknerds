@@ -11,7 +11,7 @@ from google.appengine.ext.webapp import template
 import cgi
 import wsgiref.handlers
 import memcache
-from models import tarsusaUser, tarsusaItem
+from models import tarsusaUser, tarsusaItem, tarsusaRoutineLogItem
 
 class MainPage(tarsusaRequestHandler):
 
@@ -40,7 +40,7 @@ class MainPage(tarsusaRequestHandler):
                     'UserNickName': "访客",
                     'AnonymousVisitor': "Yes",
                     'htmltag_TotalUser': tarsusaUser.count(),
-                    'htmltag_TotaltarsusaItem': tarsusaItem.count(),
+                    'htmltag_TotaltarsusaItem': tarsusaItem.count() + tarsusaRoutineLogItem.count(),
                 }
 
                 path = '../pages/calit2/welcome.html'

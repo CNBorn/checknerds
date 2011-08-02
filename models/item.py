@@ -264,3 +264,8 @@ class tarsusaRoutineLogItem(db.Model):
         except:
             return None
         return item
+
+    @classmethod
+    @cache("routineitem:count")
+    def count():
+        return db.Query(tarsusaRoutineLogItem).count()
