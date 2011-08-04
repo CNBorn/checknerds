@@ -10,7 +10,7 @@ sys.path.append("../")
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-import cgi, datetime, os
+import cgi, datetime, os, time
 from models import tarsusaUser, tarsusaItem
 from base import tarsusaRequestHandler
 from google.appengine.ext.webapp import template
@@ -148,11 +148,20 @@ class GetItem(tarsusaRequestHandler):
         item_id = self.request.path[8:]
         item = tarsusaItem.get_item(item_id)
         self.response_json({
-            "id": item.id,
+            "id": item.key().id(),
             "name": item.name,
             "comment": item.comment, 
-            "expectdate": item.expectdate,
             "routine": item.routine,
+            "date": time.strftime("%Y-%m-%d",item.date.timetuple()),
+            "done": item.done,
+            "is_duetoday": item.is_duetoday,
+            "is_duetomorrow": item.is_duetomorrow,
+            "is_dueyesterday": item.is_dueyesterday,
+
+            "expectdate": time.strftime("%Y-%m-%d",item.expectdate.timetuple()) if item.expectdate else '',
+            "donedate": time.strftime("%Y-%m-%d",item.donedate.timetuple()) if item.done else '',
+            "duration": item.duration,
+
         })
 
 

@@ -91,6 +91,53 @@ var set_due_today = function(item_id) {
 
 }
 
+var showItemOnSidebar = function(id) {
+    item = item_collection[id];
+    render_item = {};
+    render_item.name = item.name;
+    render_item.donedate = item.donedate || '';
+    render_item.done = function(){
+        return item.done;
+    } 
+    render_item.undone = function(){
+        return !item.done;
+    } 
+    render_item.expired = function(){
+        return item.expired || item.is_dueyesterday;
+    }
+    
+    if(item.routine == 'daily'){
+        render_item.routine_name = '每日任务';
+    } else if(item.routine == 'weekly'){
+        render_item.routine_name = '每周任务';
+    } else if(item.routine == 'monthly'){
+        render_item.routine_name = '每月任务';
+    } else if(item.routine == 'seasonly'){
+        render_item.routine_name = '每季度任务';
+    } else if(item.routine == 'yearly'){
+        render_item.routine_name = '每年任务';
+    }
+
+    render_item.public_name = '完全公开';
+    if(item.public == 'private'){
+        render_item.public_name = '不公开';
+    } else if(item.public == 'publicOnlyforFriends'){
+        render_item.public_name = '仅对朋友公开';
+    }
+    render_item.comment = item.comment || '';
+    render_item.date = item.date;
+    render_item.duration = item.duration;
+
+    render_item.has_expectdate = function() {
+        return !item.expectdate === '';
+    } 
+    render_item.expectdate = item.expectdate || '';
+    var template = $("script#sidebar-item-template").html();
+    $('#sidebar').html(Mustache.to_html(template, render_item));
+}
+
+
+
 var getItemfromData = function(data) {
     var id = data['id'];
     var item_name = data['name'];
@@ -99,18 +146,19 @@ var getItemfromData = function(data) {
     var item_routine = data['routine'];
     return {
         "comment": item_comment,
-        "is_duetoday": false,
-        "donedate": null,
+        "is_duetoday": data['is_duetoday'],
+        "donedate": data['donedate'],
         "tags": null,
-        "done": false,
-        "date": date,
+        "done": data['done'],
+        "date": data['date'],
         "id": id,
-        "category": false,
+        "category": data['done'],
+        "duration": data['duration'],
         "name": item_name,
         "expectdate": item_expectdate,
         "routine": item_routine,
-        "is_duetomorrow": false,
-        "is_dueyesterday": false,
+        "is_duetomorrow": data['is_duetomorrow'],
+        "is_dueyesterday": data['is_duetomorrow'],
         isnottodaypanel: function() {
             return !is_today_panel();
         }
@@ -136,13 +184,18 @@ function doneItem(strLink){
                 var item_id = strLink.split("/",3)[2]; 
                 var action_type = strLink.split("/",3)[1]; 
                 if(action_type == 'duetoday'){
+                    /* #TODO */
                     $("li[itemid=" +item_id+ "]").fadeOut('slow');
                 }
                 else{
                     $("li[itemid=" +item_id+ "] input").fadeOut('slow');
                     $("li[itemid=" +item_id+ "] span.item").removeClass().addClass("doneitem");
+                    if(!is_today_panel()){
+                        $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                    }
                 }
                 refreshItemData(item_id);
+                showItemOnSidebar(item_id);
             } 
     });
 } 
@@ -487,6 +540,7 @@ function addItem() {
      });
 }
 
+
 function initHover(){
     //MouseOver Effect
     //Using jQuery hoverIntent plugin.
@@ -495,48 +549,7 @@ function initHover(){
     function sidebarloaduser(){$("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');}
     function sidebarloaditem(){
         var id = $(this).attr('itemid');
-        item = item_collection[id];
-        render_item = {};
-        render_item.name = item.name;
-        render_item.donedate = item.donedate || '';
-        render_item.done = function(){
-            return item.done;
-        } 
-        render_item.undone = function(){
-            return !item.done;
-        } 
-        render_item.expired = function(){
-            return item.expired || item.is_dueyesterday;
-        }
-        
-        if(item.routine == 'daily'){
-            render_item.routine_name = '每日任务';
-        } else if(item.routine == 'weekly'){
-            render_item.routine_name = '每周任务';
-        } else if(item.routine == 'monthly'){
-            render_item.routine_name = '每月任务';
-        } else if(item.routine == 'seasonly'){
-            render_item.routine_name = '每季度任务';
-        } else if(item.routine == 'yearly'){
-            render_item.routine_name = '每年任务';
-        }
-
-        render_item.public_name = '完全公开';
-        if(item.public == 'private'){
-            render_item.public_name = '不公开';
-        } else if(item.public == 'publicOnlyforFriends'){
-            render_item.public_name = '仅对朋友公开';
-        }
-        render_item.comment = item.comment || '';
-        render_item.date = item.date;
-        render_item.duration = item.duration;
-
-        render_item.has_expectdate = function() {
-            return !item.expectdate === '';
-        } 
-        render_item.expectdate = item.expectdate || '';
-        var template = $("script#sidebar-item-template").html();
-        $('#sidebar').html(Mustache.to_html(template, render_item));
+        showItemOnSidebar(id);
     }
 
 var config = {    
