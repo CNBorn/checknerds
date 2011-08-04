@@ -40,7 +40,7 @@ class MainPage(tarsusaRequestHandler):
                     'UserNickName': "访客",
                     'AnonymousVisitor': "Yes",
                     'htmltag_TotalUser': tarsusaUser.count(),
-                    'htmltag_TotaltarsusaItem': tarsusaItem.count() + tarsusaRoutineLogItem.count(),
+                    'htmltag_TotaltarsusaItem': int(tarsusaItem.count()) + int(tarsusaRoutineLogItem.count()),
                 }
 
                 path = '../pages/calit2/welcome.html'

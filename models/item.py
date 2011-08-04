@@ -10,7 +10,7 @@ import datetime
 from datetime import timedelta
 import memcache
 from libs import shardingcounter
-from models.consts import ONE_DAY, ONE_SECOND
+from models.consts import ONE_DAY, ONE_SECOND, ONE_HOUR
 from utils import cache
 
 class tarsusaItem(db.Expando):
@@ -266,6 +266,6 @@ class tarsusaRoutineLogItem(db.Model):
         return item
 
     @classmethod
-    @cache("routineitem:count")
-    def count():
+    @cache("routineitem:count", ONE_HOUR)
+    def count(self):
         return db.Query(tarsusaRoutineLogItem).count()
