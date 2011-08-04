@@ -85,9 +85,47 @@ var set_due_today = function(item_id) {
                 if(!is_today_panel()){
                     $("li[itemid=" +item_id+ "]").fadeOut('slow');
                 }
+                refreshItemData(item_id);
             } 
     });
 
+}
+
+var getItemfromData = function(data) {
+    var id = data['id'];
+    var item_name = data['name'];
+    var item_comment = data['comment'];
+    var item_expectdate = data['expectdate'];
+    var item_routine = data['routine'];
+    return {
+        "comment": item_comment,
+        "is_duetoday": false,
+        "donedate": null,
+        "tags": null,
+        "done": false,
+        "date": date,
+        "id": id,
+        "category": false,
+        "name": item_name,
+        "expectdate": item_expectdate,
+        "routine": item_routine,
+        "is_duetomorrow": false,
+        "is_dueyesterday": false,
+        isnottodaypanel: function() {
+            return !is_today_panel();
+        }
+    }
+}
+
+
+var refreshItemData = function(item_id) {
+    $.ajax({type: "GET", 
+            url: "/j/item/" + item_id,
+            dataType: "json",
+            success: function(data){
+                item_collection[item_id] = getItemfromData(data);
+            } 
+    });
 }
 
 function doneItem(strLink){
@@ -104,6 +142,7 @@ function doneItem(strLink){
                     $("li[itemid=" +item_id+ "] input").fadeOut('slow');
                     $("li[itemid=" +item_id+ "] span.item").removeClass().addClass("doneitem");
                 }
+                refreshItemData(item_id);
             } 
     });
 } 

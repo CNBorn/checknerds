@@ -75,7 +75,6 @@ class AddItemProcess(tarsusaRequestHandler):
         if self.referer[-6:] == "/m/add":
             self.redirect("/m/todo")
 
-        self.response.headers.add_header('Content-Type', "application/json")
         self.response_json({"r":item_id})
 
 
@@ -143,6 +142,19 @@ class sidebar(tarsusaRequestHandler):
         path = os.path.join(os.path.dirname(__file__), '../pages/%s/ajax_sidebar_%s.html' % (template_name, operation_name))
         self.write(template.render(path, template_values))
 
+class GetItem(tarsusaRequestHandler):
+    @login
+    def get(self):
+        item_id = self.request.path[8:]
+        item = tarsusaItem.get_item(item_id)
+        self.response_json({
+            "id": item.id,
+            "name": item.name,
+            "comment": item.comment, 
+            "expectdate": item.expectdate,
+            "routine": item.routine,
+        })
+
 
 def main():
     application = webapp.WSGIApplication([
@@ -154,6 +166,7 @@ def main():
         ('/duetoday/\\d+',DueToday),
         ('/removeItem/\\d+', RemoveItem),
         ('/additem',AddItemProcess),
+        ('/j/item/\\d+',GetItem),
         ],
         debug=True)
     run_wsgi_app(application)

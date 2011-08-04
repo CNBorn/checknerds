@@ -59,6 +59,9 @@ handlers:
 - url: /duetoday/.*
   script: views/ajax.py
 
+- url: /j/.*
+  script: views/ajax.py
+
 - url: /item/.*
   script: views/item.py
 
