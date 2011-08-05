@@ -157,11 +157,9 @@ class GetItem(tarsusaRequestHandler):
             "is_duetoday": item.is_duetoday,
             "is_duetomorrow": item.is_duetomorrow,
             "is_dueyesterday": item.is_dueyesterday,
-
             "expectdate": time.strftime("%Y-%m-%d",item.expectdate.timetuple()) if item.expectdate else '',
             "donedate": time.strftime("%Y-%m-%d",item.donedate.timetuple()) if item.done else '',
             "duration": item.duration,
-
         })
 
 

@@ -169,14 +169,15 @@ def format_done_logs(done_items):
     return result
 
 def format_items(items):
-    result = [] 
-    for each_item in items:
-        if each_item['donedate']:
-            each_item['donedate'] = each_item['donedate'].strftime('%Y-%m-%d')
-        each_item['date'] = each_item['date'].strftime('%Y-%m-%d')
-        if each_item['expectdate']:
-            each_item['expectdate'] = each_item['expectdate'].strftime('%Y-%m-%d')
-        result.append(each_item)
+    #FIXME Need to merge into item.jsonized!
+    result = items 
+    #for each_item in items:
+    #    if each_item['donedate']:
+    #        each_item['donedate'] = each_item['donedate'].strftime('%Y-%m-%d')
+    #    each_item['date'] = each_item['date'].strftime('%Y-%m-%d')
+    #    if each_item['expectdate']:
+    #        each_item['expectdate'] = each_item['expectdate'].strftime('%Y-%m-%d')
+    #    result.append(each_item)
     return result
 
 def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='private', rawInputDate='', rawTags=None):

@@ -5,7 +5,7 @@ use_library('django', '1.2')
 
 import sys
 sys.path.append("../")
-import datetime
+import time, datetime
 from models.consts import ONE_DAY
 
 from google.appengine.ext import db
@@ -242,7 +242,7 @@ class tarsusaUser(db.Model):
 
             from models import tarsusaItem
             this_item = tarsusaItem.get_item(each_RoutineLogItem.routineid).jsonized()
-            this_item['donedate']= each_RoutineLogItem.donedate
+            this_item['donedate']= time.strftime("%Y-%m-%d", each_RoutineLogItem.donedate.timetuple())
             Item_List.append(this_item)
             
             normalitems = ThisUser.get_doneitems_in(DoneDateOfThisItem)
@@ -252,7 +252,7 @@ class tarsusaUser(db.Model):
 
             Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
 
-        Item_List.sort(key=lambda item:item['donedate'], reverse=sort_backwards)
+        Item_List.sort(key=lambda item:time.strptime(item['donedate'], "%Y-%m-%d"), reverse=sort_backwards)
         return Item_List
 
 
