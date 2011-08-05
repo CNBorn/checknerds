@@ -32,19 +32,6 @@ def event(key, CurrentUserid):
         memkeydel_status = delete("%s:%s" % (obj, CurrentUserid)) 
     return True
 
-def get_item(key, user_id):
-    mc_key = ("%s:%s" % (key, str(user_id)))
-    item = memcache.get(mc_key, None)
-    return item
-
-def set_item(key, value, user_id, time=0):
-    if str(user_id) == 'global':
-        time += 300
-    mc_key = ("%s:%s" % (key, str(user_id)))
-    if memcache.set(mc_key, value, time):
-        return True
-    return False
-
 def delete_item(key, user_id):
     mc_key = ("%s:%s" % (key, str(user_id)))
     memcache.delete(mc_key)

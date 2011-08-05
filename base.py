@@ -143,7 +143,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
                     memkey = "appapiuseage" + str(apiappid)
                     AppApiUsage = 0
                 AppApiUsage += 1
-                memcache.set_item("appapiusage", AppApiUsage, int(apiappid))
+                memcache.set("appapiusage:%s" % int(apiappid),  AppApiUsage)
                 #------------------------
                 #Below line could be turned off.
                 logging.info("AppID:" + str(apiappid) + ":" + cgi.escape(ThisApp.name) + " accessed via API")
@@ -164,7 +164,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
             return False
 
         #Check with API Usage.
-        UserApiUsage = memcache.get_item("userapiusage", int(userid))
+        UserApiUsage = memcache.get("userapiusage:%s" % int(userid))
         if UserApiUsage >= global_vars['apilimit']:
             #Api Limitation exceed.
             #self.write('<h1>API Limitation exceed.</h1>')
@@ -176,7 +176,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
                 if UserApiUsage == None:
                     UserApiUsage = 0
                 UserApiUsage += 1
-                memcache.set_item("userapiusage", UserApiUsage, int(userid))
+                memcache.set("userapiusage:%s" % int(userid), UserApiUsage)
                 return True
             else:
                 #Authentication Failed.
@@ -224,7 +224,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         apiappid = self.request.get('apiappid') 
         apiservicekey = self.request.get('servicekey')
     
-        AppApiUsage = memcache.get_item("appapiusage", int(apiappid))
+        AppApiUsage = memcache.get("appapiusage:%s" % int(apiappid))
         from models import AppModel 
         ThisApp = AppModel.get_by_id(int(apiappid))
         if not ThisApp:

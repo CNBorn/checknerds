@@ -30,7 +30,7 @@ class MainPage(tarsusaRequestHandler):
         
         else:           
             #WelcomePage for Non-registered Users.
-            IsCachedWelcomePage = memcache.get_item('strCachedWelcomePage', 'global')
+            IsCachedWelcomePage = memcache.get('cachedWelcomePage:global')
             
             if IsCachedWelcomePage:
                 strCachedWelcomePage = IsCachedWelcomePage
@@ -45,7 +45,7 @@ class MainPage(tarsusaRequestHandler):
 
                 path = '../pages/calit2/welcome.html'
                 strCachedWelcomePage = template.render(path, template_values)
-                memcache.set_item("strCachedWelcomePage", strCachedWelcomePage, 'global')
+                memcache.set("cachedWelcomePage:global", strCachedWelcomePage)
 
         self.response.out.write(strCachedWelcomePage)
 
