@@ -2,8 +2,8 @@ import unittest
 import sys
 sys.path.append("../")
 
-import datetime
-from datetime import timedelta
+import time, datetime
+from datetime import timedelta, date
 
 from models import tarsusaItem, tarsusaUser, tarsusaRoutineLogItem
 from tarsusaCore import AddItem
@@ -72,3 +72,6 @@ class tarsusaItemTest(unittest.TestCase):
         self.routine_item.undone_item(self.user, "y")
         self.assertFalse(self.routine_item.has_done_yesterday)
 
+    def test_item_jsonized(self):
+        self.item1.done_item(self.user, "")
+        self.assertEqual(self.item1.jsonized()['donedate'], time.strftime("%Y-%m-%d", date.today().timetuple()))
