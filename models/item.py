@@ -64,7 +64,7 @@ class tarsusaItem(db.Expando):
 
         shardingcounter.increment("tarsusaItem", "minus")
 
-        memcache.delete_item("itemstats", user_id)
+        memcache.delete("itemstats:%s" % user_id)
         memcache.delete("item:%s" % item_id)
 
         return True

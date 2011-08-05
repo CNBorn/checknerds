@@ -31,8 +31,3 @@ def event(key, CurrentUserid):
     for obj in refresh_roles[key]:
         memkeydel_status = delete("%s:%s" % (obj, CurrentUserid)) 
     return True
-
-def delete_item(key, user_id):
-    mc_key = ("%s:%s" % (key, str(user_id)))
-    memcache.delete(mc_key)
-    return True
