@@ -22,11 +22,11 @@
     <span class='delete'>
         <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('/removeItem/{% templatetag openvariable %}id}}');}">删除</a>
     </span>
-    {% templatetag openvariable %}#itemundoneandnotdaily{% templatetag closevariable %}
+    {% templatetag openvariable %}#notshowduetoday{% templatetag closevariable %}
     <span class='duetoday'>
         <a href="javascript:void(0);" onclick="set_due_today({% templatetag openvariable %}id{% templatetag closevariable %})">今日完成</a>
     </span>
-    {% templatetag openvariable %}/itemundoneandnotdaily{% templatetag closevariable %}
+    {% templatetag openvariable %}/notshowduetoday{% templatetag closevariable %}
     <span class='date'>{% templatetag openvariable %}display_date}}</span>
     {% templatetag openvariable %}#itemdone}}
     <span class='date'>{% templatetag openvariable %}donedate}}</span>
@@ -320,8 +320,8 @@ function render_items(msg,type)
         } else {
             render_item.item_style = "doneitem";
         }
-        render_item.itemundoneandnotdaily = function(){
-            return (!this.done && this.routine != 'daily' && !is_today_panel());
+        render_item.notshowduetoday = function(){
+            return (!this.done && this.routine != 'daily' && !is_today_panel() && !this.is_duetoday);
         } 
         render_item.display_date = '';
         if(item.isduetoday != null){ render_item.display_date = '今天'; }
