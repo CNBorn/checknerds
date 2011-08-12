@@ -20,7 +20,7 @@
     {% templatetag openvariable %}/itemundone}}
     <span class='{% templatetag openvariable %}item_style}}'>{% templatetag openvariable %}name}}</span>
     <span class='delete'>
-        <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('/removeItem/{% templatetag openvariable %}id}}');}">删除</a>
+        <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('{% templatetag openvariable %}id}}');}">删除</a>
     </span>
     {% templatetag openvariable %}#notshowduetoday{% templatetag closevariable %}
     <span class='duetoday'>
@@ -61,7 +61,7 @@
             <li itemid={% templatetag openvariable %}id}} class="even"><input type="checkbox" onchange="doneItem('{% templatetag openvariable %}id}}')">
             <span class="item">{% templatetag openvariable %}name}}</span>
             <span class="delete">
-                <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('/removeItem/{% templatetag openvariable %}id}}');}">删除</a>
+                <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('{% templatetag openvariable %}id}}');}">删除</a>
             </span>
            {% templatetag openvariable %}#isnottodaypanel}}
            <span class='duetoday'>
@@ -178,7 +178,7 @@ var refreshItemData = function(item_id) {
 
 function doneItem(item_id){
     $.ajax({type: "GET", 
-            url: strLink,
+            url: "/j/done/" + item_id,
             dataType: "json",
             success: function(data){
                 $("li[itemid=" +item_id+ "] input").fadeOut('slow');
@@ -192,9 +192,9 @@ function doneItem(item_id){
     });
 } 
 
-function delete_item(strLink){
+function delete_item(item_id){
     $.ajax({type: "GET", 
-            url: strLink,
+            url: "/j/delete/" + item_id,
             dataType: "json",
             success: function(data){
                 var item_id = strLink.split("/",3)[2]; 
