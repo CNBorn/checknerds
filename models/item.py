@@ -129,7 +129,7 @@ class tarsusaItem(db.Expando):
         return {
             'id' : str(self.key().id()), 
             'name' : self.name, 
-            'date' : self.date, 
+            'date' : self.date.strftime('%Y-%m-%d'),
             'donedate': self.donedate.strftime('%Y-%m-%d') if self.donedate else '',
             'expectdate': self.expectdate.strftime('%Y-%m-%d') if self.expectdate else '',
             'comment' : self.comment, 

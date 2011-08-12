@@ -147,21 +147,7 @@ class GetItem(tarsusaRequestHandler):
     def get(self):
         item_id = self.request.path[8:]
         item = tarsusaItem.get_item(item_id)
-        self.response_json({
-            "id": item.key().id(),
-            "name": item.name,
-            "comment": item.comment, 
-            "routine": item.routine,
-            "date": time.strftime("%Y-%m-%d",item.date.timetuple()),
-            "done": item.done,
-            "is_duetoday": item.is_duetoday,
-            "is_duetomorrow": item.is_duetomorrow,
-            "is_dueyesterday": item.is_dueyesterday,
-            "expectdate": time.strftime("%Y-%m-%d",item.expectdate.timetuple()) if item.expectdate else '',
-            "donedate": time.strftime("%Y-%m-%d",item.donedate.timetuple()) if item.done else '',
-            "duration": item.duration,
-        })
-
+        self.response_json(item.jsonized())
 
 def main():
     application = webapp.WSGIApplication([
