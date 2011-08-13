@@ -15,7 +15,7 @@ from models import tarsusaUser, tarsusaItem
 from base import tarsusaRequestHandler
 from google.appengine.ext.webapp import template
 
-from tarsusaCore import format_done_logs, format_items, AddItem
+from tarsusaCore import format_done_logs, AddItem
 from utils import login
 
 class DueToday(tarsusaRequestHandler):
@@ -96,7 +96,7 @@ class render(tarsusaRequestHandler):
 
         if func == "done":
             done_items = user.get_done_items(maxitems)
-            self.response_json(format_items(done_items))
+            self.response_json(done_items)
 
         elif func == "undone":
             before_item_id = self.request.get("before_item_id",None)
@@ -104,11 +104,11 @@ class render(tarsusaRequestHandler):
                 undone_items = user.get_more_undone_items(maxitems, before_item_id)
             else:
                 undone_items = user.get_undone_items(maxitems)
-            self.response_json(format_items(undone_items))
+            self.response_json(undone_items)
 
         elif func == "dailyroutine":
             dailyroutine_items = tarsusaUser.get_user(user_id).get_items_duetoday()
-            self.response_json(format_items(dailyroutine_items))
+            self.response_json(dailyroutine_items)
 
         elif func == "logs":
             done_items = user.get_donelog()
