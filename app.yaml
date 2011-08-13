@@ -59,9 +59,6 @@ handlers:
 - url: /j/.*
   script: views/ajax.py
 
-- url: /item/.*
-  script: views/item.py
-
 - url: /tag
   script: tag.py
 
