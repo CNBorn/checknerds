@@ -23,6 +23,7 @@ import logging
 
 from libs import shardingcounter
 import memcache
+from utils import cache
 
 class tarsusaRequestHandler(webapp.RequestHandler):
     def __init__(self):
@@ -100,15 +101,10 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         shardingcounter.increment("tarsusaUser")
         return CurrentUser
 
+    @cache("userdb:{users.get_current_user().user_id()}")
     def get_user_db(self):
-        userdb_id = users.get_current_user().user_id()
-        cached_user = memcache.get("userdb:%s" % userdb_id)
-        if cached_user:
-            return cached_user
-        
         q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
         result = q.get()
-        memcache.set("userdb:%s" % userdb_id, result)
         return result
 
 
