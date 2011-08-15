@@ -5,7 +5,6 @@ import sys
 sys.path.append("../")
 import re
 from google.appengine.api import memcache
-from base import tarsusaRequestHandler
 import logging
 
 def gen_key_fac(in_key):

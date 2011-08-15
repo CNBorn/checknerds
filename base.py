@@ -23,9 +23,9 @@ import logging
 
 from libs import shardingcounter
 import memcache
-from utils import cache
 
 class tarsusaRequestHandler(webapp.RequestHandler):
+    from utils import cache
     def __init__(self):
         pass
 
