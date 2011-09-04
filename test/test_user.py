@@ -3,7 +3,8 @@ import sys
 sys.path.append("../")
 
 import datetime
-from datetime import timedelta
+from datetime import timedelta, date
+import time
 
 from models import tarsusaItem, tarsusaUser, tarsusaRoutineLogItem
 from tarsusaCore import AddItem
@@ -39,6 +40,12 @@ class tarsusaUserTest(unittest.TestCase):
         self.item1.done_item(self.user)
         doneitem_list = self.user.get_done_items()
         self.assertEqual(doneitem_list[0]['name'], 'item1')
+
+    def test_get_done_item_list_is_json_format(self):
+        self.item1.done_item(self.user)
+        doneitem_list = self.user.get_done_items()
+        self.assertEqual(doneitem_list[0]['donedate'], time.strftime("%Y-%m-%d", date.today().timetuple()))
+
 
     def test_get_more_undone_items(self):
         undone_item = self.user.get_more_undone_items(maxitems=100, before_item_id=self.item2.key().id())
