@@ -11,45 +11,42 @@ from google.appengine.ext.webapp import template
 import cgi
 import wsgiref.handlers
 import memcache
+from utils import cache
 from models import tarsusaUser, tarsusaItem, tarsusaRoutineLogItem
 
 class MainPage(tarsusaRequestHandler):
 
+    @cache("homepage_logged:{self.get_user_db().key().id()}")
+    def get_logged_page(self):
+        CurrentUser = self.get_user_db()
+        template_values = {
+                'PrefixCSSdir': "/",
+                'UserLoggedIn': 'Logged In',
+                'UserNickName': cgi.escape(CurrentUser.dispname),
+                'UserID': CurrentUser.key().id(),
+        }
+        path = '../pages/calit2/index.html'
+        return template.render(path, template_values)
+   
+    @cache("homepage_welcome:0",3600)
+    def get_welcome_page(self):
+        template_values = {
+            'PrefixCSSdir': "/",
+            'UserNickName': "访客",
+            'AnonymousVisitor': "Yes",
+            'htmltag_TotalUser': tarsusaUser.count(),
+            'htmltag_TotaltarsusaItem': int(tarsusaItem.count()) + int(tarsusaRoutineLogItem.count()),
+        }
+
+        path = '../pages/calit2/welcome.html'
+        return template.render(path, template_values)
+
     def get(self):
-
         if self.chk_login():
-            CurrentUser = self.get_user_db()
-            template_values = {
-                    'PrefixCSSdir': "/",
-                    'UserLoggedIn': 'Logged In',
-                    'UserNickName': cgi.escape(CurrentUser.dispname),
-                    'UserID': CurrentUser.key().id(),
-            }
-            path = '../pages/calit2/index.html'
-            strCachedWelcomePage = template.render(path, template_values)
-        
+            strCachedWelcomePage = self.get_logged_page()
         else:           
-            #WelcomePage for Non-registered Users.
-            IsCachedWelcomePage = memcache.get('cachedWelcomePage:global')
-            
-            if IsCachedWelcomePage:
-                strCachedWelcomePage = IsCachedWelcomePage
-            else:
-                template_values = {
-                    'PrefixCSSdir': "/",
-                    'UserNickName': "访客",
-                    'AnonymousVisitor': "Yes",
-                    'htmltag_TotalUser': tarsusaUser.count(),
-                    'htmltag_TotaltarsusaItem': int(tarsusaItem.count()) + int(tarsusaRoutineLogItem.count()),
-                }
-
-                path = '../pages/calit2/welcome.html'
-                strCachedWelcomePage = template.render(path, template_values)
-                memcache.set("cachedWelcomePage:global", strCachedWelcomePage)
-
+            strCachedWelcomePage = self.get_welcome_page()
         self.response.out.write(strCachedWelcomePage)
-
-
 
 def main():
     application = webapp.WSGIApplication([
