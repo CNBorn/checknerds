@@ -96,7 +96,7 @@ class DocsPage(tarsusaRequestHandler):
         
         pageid = self.request.path[len('/docs/'):]
         if pageid == '':
-            pageid = 'index'
+            pageid = 'docs_index'
         path = os.path.join(os.path.dirname(__file__), '../pages/calit2/docs/' + pageid + '.html')
 
         self.response.out.write(template.render(path, template_values))
