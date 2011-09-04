@@ -258,18 +258,12 @@ class tarsusaUser(db.Model):
 
     @cache("itemstats:{self.key().id()}")
     def get_itemstats(self):
+        from models import tarsusaItem
+        count_done_items = db.Query(tarsusaItem,keys_only=True).filter('done =', True).count(99999999)
+        count_todo_items = db.Query(tarsusaItem,keys_only=True).filter('done =', False).count(99999999)
 
-        tarsusaItemCollection_UserDoneItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = True ORDER BY date DESC", self.user)
-        tarsusaItemCollection_UserTodoItems = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and routine = 'none' and done = False ORDER BY date DESC", self.user)
-
-        count_done_items = 0
-        count_todo_items = 0
         percentage_done = 0.00
-
-        count_done_items = tarsusaItemCollection_UserDoneItems.count() 
-        count_todo_items = tarsusaItemCollection_UserTodoItems.count()
         count_total_items = count_done_items + count_todo_items
-
         if count_total_items != 0:
             percentage_done = count_done_items * 100.00 / count_total_items
 

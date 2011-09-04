@@ -21,30 +21,31 @@ from utils import login
 class DueToday(tarsusaRequestHandler):
     @login
     def get(self):
-        item_id = self.request.path[10:]
+        item_id = self.request.path.split('/')[-1]
         tarsusaItem.get_item(item_id).set_duetoday()
         self.response_json({"r":"ok"})
 
 class DoneItem(tarsusaRequestHandler):
     @login
     def get(self):
-        ItemId = self.request.path[10:]
+        item_id = self.request.path.split('/')[-1]
+        
         DoneYesterdaysDailyRoutine = False
-        if ItemId[-2:] == '/y':
-            ItemId = self.request.path[10:-2]           
+        if item_id == 'y':
+            item_id = self.request.path.split('/')[-2]
             DoneYesterdaysDailyRoutine = True
 
         CurrentUser = self.get_user_db()
         Misc = 'y' if DoneYesterdaysDailyRoutine else ''
         
-        item = tarsusaItem.get_item(ItemId) 
+        item = tarsusaItem.get_item(item_id) 
         item.done_item(CurrentUser, Misc)
         self.response_json({"r":"ok"})
 
 class RemoveItem(tarsusaRequestHandler):
     @login
     def get(self):
-        item_id = self.request.path[12:]
+        item_id = self.request.path.split('/')[-1]
         current_user = self.get_user_db()
         item = tarsusaItem.get_item(item_id)
         remove_status = item.delete_item(current_user.key().id())
