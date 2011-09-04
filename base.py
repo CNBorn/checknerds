@@ -220,25 +220,31 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
         return True
 
+    def _api_get_usage(self, appid):
+        return memcache.get("appapiusage:%s" % int(appid), 0) or 0
+
+    def _api_set_usage(self, appid, usage):
+        memcache.set("appapiusage:%s" % appid, usage)
+
+
     def verify_api_limit(self):
         
-        apiappid = self.request.get('apiappid') 
+        appid = int(self.request.get('apiappid'))
         apiservicekey = self.request.get('servicekey')
     
-        AppApiUsage = memcache.get("appapiusage:%s" % int(apiappid))
         from models import AppModel 
-        ThisApp = AppModel.get_by_id(int(apiappid))
+        ThisApp = AppModel.get_by_id(appid)
         if not ThisApp:
             self.response_status(404, "404 Application does not exist.")
             return False
+
+        AppApiUsage = self._api_get_usage(appid)
         if AppApiUsage >= ThisApp.api_limit:
             self.response_status(403, '403 API Limitation exceed. ')
             return False    
-        elif AppApiUsage == None:
-            AppApiUsage = 0
         
         AppApiUsage += 1 
-        memcache.set("appapiusage:%s" % apiappid, AppApiUsage)
+        self._api_set_usage(appid, AppApiUsage)
         
         return True
 
