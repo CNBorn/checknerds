@@ -84,16 +84,14 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         else:
             return users.create_logout_url(self.request.uri)
     
-    def chk_login(self, redirect_url='/'):
+    def chk_login(self):
         self.login_user = users.get_current_user()
         self.is_login = (self.login_user != None)
 
         if self.is_login:
-            CurrentUser = self.get_user_db()
-            if not CurrentUser:
-                CurrentUser = self.create_user(users.get_current_user())
+            if not self.get_user_db():
+                self.create_user(users.get_current_user())
             return True
-        return False
 
     def create_user(self, user):
         from models import tarsusaUser
@@ -108,10 +106,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
     @cache("userdb:{users.get_current_user().user_id()}")
     def get_user_db(self):
-        q = db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user())
-        result = q.get()
-        return result
-
+        return db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user()).get()
 
     def verify_AppModel(self, apiappid, apiservicekey):
         import hashlib
