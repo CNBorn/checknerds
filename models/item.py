@@ -268,4 +268,4 @@ class tarsusaRoutineLogItem(db.Model):
     @classmethod
     @cache("routineitem:count", ONE_HOUR)
     def count(self):
-        return db.Query(tarsusaRoutineLogItem).count()
+        return db.Query(tarsusaRoutineLogItem,keys_only=True).count(99999999)
