@@ -268,10 +268,8 @@ class tarsusaUser(db.Model):
             percentage_done = count_done_items * 100.00 / count_total_items
 
         result = {
-            'UserTotalItems': count_total_items,
-            'UserToDoItems': count_todo_items,
-            'UserDoneItems': count_done_items,
-            'UserDonePercentage': "%.2f%%" % percentage_done,
+            'todo': count_todo_items,
+            'done': count_done_items,
         }
         
         return result 
@@ -287,6 +285,15 @@ class tarsusaUser(db.Model):
                 self.mail, "Arizona", time.ctime())
         self.apikey = hashlib.sha256(fusion_key).hexdigest()[:8]
         self.put()
+
+    @property
+    def gravatar_url(self):
+        import urllib, hashlib
+        default = "http://checknerds.appspot.com/img/default_avatar.jpg"
+        size = 64
+        gravatar_url = "http://www.gravatar.com/avatar.php?"
+        gravatar_url += urllib.urlencode({'gravatar_id':hashlib.md5(self.user.email()).hexdigest(), 'default':default, 'size':str(size)})
+        return gravatar_url
 
 @cache("user:{user_id}")
 def get_user(user_id):

@@ -57,6 +57,16 @@
     </ul></p>
 </script>
 
+<script id="sidebar-stats-template" type="text/template"> 
+    <h2>{% templatetag openvariable %}date{% templatetag closevariable %}</h2>
+    <ul>
+        <li><img src='{% templatetag openvariable %}pic_url{% templatetag closevariable %}' align=center width=64 height=64></li>
+            <li>总事项： {% templatetag openvariable %}total{% templatetag closevariable %}</li>
+            <li>已完成： {% templatetag openvariable %}done{% templatetag closevariable %}</li>
+            <li>未完成： {% templatetag openvariable %}todo{% templatetag closevariable %}</li>
+	</ul>
+</script>
+
 <script id="additem-template" type="text/template"> 
             <li itemid={% templatetag openvariable %}id}} class="even"><input type="checkbox" onchange="doneItem('{% templatetag openvariable %}id}}')">
             <span class="item">{% templatetag openvariable %}name}}</span>
@@ -136,6 +146,24 @@ var showItemOnSidebar = function(id) {
     $('#sidebar').html(Mustache.to_html(template, render_item));
 }
 
+
+var showStats = function(data) {
+    $.ajax({type: "GET", 
+            url: "/j/stats/",
+            dataType: "json",
+            success: function(data){
+                var stats = {}; 
+                stats.date = data['date'];
+                stats.name = data['name'];
+                stats.pic_url = data['pic_url'];
+                stats.done = data['stats']['done'];
+                stats.todo = data['stats']['todo'];
+                stats.total = stats.done + stats.todo; 
+                var template = $("script#sidebar-stats-template").html();
+                $('#sidebar').html(Mustache.to_html(template, stats));
+            } 
+    });
+}
 
 
 var getItemfromData = function(data) {
@@ -458,7 +486,7 @@ $(document).ready(function(){
 
 
    $('#tab_undone').click();
-   $("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');
+   showStats();
    hideLoadingPanel();
    return false;
 });
@@ -538,7 +566,7 @@ function initHover(){
     //Using jQuery hoverIntent plugin.
     //To offer the hover/pause function.
     function sidebarshow(){$("#sidebar").show();}
-    function sidebarloaduser(){$("#sidebar").load('/ajax/sidebar/?obj=user&template=calit2');}
+    function sidebarloaduser(){showStats();}
     function sidebarloaditem(){
         var id = $(this).attr('itemid');
         showItemOnSidebar(id);
@@ -584,11 +612,8 @@ $("#itemlist ul li").hoverIntent( config2 );
         <a id="tab_undone" class="navitab activenavitab" href="javascript:void(0);">未完成</a><span class="hide"> | </span>
 		<a id="tab_dailyroutine" class="navitab" href="javascript:void(0);">今天</a><span class="hide"> | </span>
 		<a id="tab_done" class="navitab" href="javascript:void(0);">已做</a>
-        <!--a id="tab_friends" class="navitab" href="javascript:void(0);">友邻</a--!>
 		<a id="tab_log" class="navitab" href="javascript:void(0);">记录</a>
 	</div>
-
-
 
     <div id="content">
         <div id="additem">

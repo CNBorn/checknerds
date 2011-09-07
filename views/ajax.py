@@ -116,32 +116,16 @@ class render(tarsusaRequestHandler):
             formatted_done_items = format_done_logs(done_items)
             self.response_json(formatted_done_items)
  
-class sidebar(tarsusaRequestHandler):
+class Stats(tarsusaRequestHandler):
     @login
     def get(self):
         current_user = self.get_user_db()
-        template_values = {}
-
-        operation_name = self.request.get("obj")
-        template_name = self.request.get("template")
-
-        if operation_name == 'user':
-            template_values['UserInTemplate'] = current_user
-            template_values['tarsusaItemCollection_Statstics'] = current_user.get_itemstats()
-
-        template_values['UserNickName'] = cgi.escape(current_user.dispname)
-        template_values['UserID'] = current_user.key().id()
-        template_values['htmltag_today'] = datetime.date.today() 
-
-        import urllib, hashlib
-        default = "http://" + self.host + '/img/default_avatar.jpg'
-        size = 64
-        gravatar_url = "http://www.gravatar.com/avatar.php?"
-        gravatar_url += urllib.urlencode({'gravatar_id':hashlib.md5(current_user.user.email()).hexdigest(), 'default':default, 'size':str(size)})
-        template_values['user_avatar'] = gravatar_url
-
-        path = os.path.join(os.path.dirname(__file__), '../pages/%s/ajax_sidebar_%s.html' % (template_name, operation_name))
-        self.write(template.render(path, template_values))
+        results = {'date': time.strftime("%Y-%m-%d"),
+                   'name': current_user.dispname,
+                   'stats': current_user.get_itemstats(),
+                   'pic_url': current_user.gravatar_url,
+                  }
+        self.response_json(results)
 
 class GetItem(tarsusaRequestHandler):
     @login
@@ -153,7 +137,6 @@ class GetItem(tarsusaRequestHandler):
 def main():
     application = webapp.WSGIApplication([
         (r'/ajax/render/.*', render),
-        (r'/ajax/sidebar/.*', sidebar),
         ('/ajax/.+',ajax_error),
         ('/j/done/\\d+',DoneItem),
         ('/j/undone/\\d+',UnDoneItem),
@@ -161,6 +144,7 @@ def main():
         ('/j/delete/\\d+', RemoveItem),
         ('/additem',AddItemProcess),
         ('/j/item/\\d+',GetItem),
+        ('/j/stats/', Stats),
         ],
         debug=True)
     run_wsgi_app(application)
