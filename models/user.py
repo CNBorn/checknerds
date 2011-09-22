@@ -77,8 +77,8 @@ class tarsusaUser(db.Model):
 
     @cache("doneitemlist:{self.key().id()}")
     def get_done_items(self, maxitems=100):
-        from tarsusaCore import get_tarsusaItemCollection
-        done_items = get_tarsusaItemCollection(self.key().id(), done=True, maxitems=maxitems)
+        from models.item import tarsusaItem
+        done_items = tarsusaItem.get_collection(self.key().id(), done=True, maxitems=maxitems)
         return done_items
 
     def _get_dailyroutine_items(self):
@@ -182,8 +182,8 @@ class tarsusaUser(db.Model):
 
     @cache("itemlist:{self.key().id()}")
     def get_undone_items(self, maxitems=100):
-        from tarsusaCore import get_tarsusaItemCollection
-        undone_items = get_tarsusaItemCollection(self.key().id(), done=False, maxitems=maxitems)
+        from models.item import tarsusaItem
+        undone_items = tarsusaItem.get_collection(self.key().id(), done=False, maxitems=maxitems)
         return undone_items
 
     def get_doneitems_in(self, date):

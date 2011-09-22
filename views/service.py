@@ -143,32 +143,12 @@ class api_getuseritem(tarsusaRequestHandler):
             if count > 100:
                 count = 100
         
-        #logging.info(maxitems)
-        
-        #'''
         beforedate = self.request.get('beforedate')
-        #   enddate='',
-
         afterdate = self.request.get('afterdate')
-        #   startdate='',
-
-        #   startdonedate=''
-        #   enddonedate=''
-        #'''
-
         if apiuserid == userid:
-            #Get APIUser's Items
-
-            #I think there are still problem concerning different paras.
-            #for example, if you don't want sort by routine, then you should ignore it.
-            #but for a get_tarsusaItemCollection with all para in it, you are not ignoring it.
-            
-            #It can only get todo or done items.
-            tarsusaItemCollection_UserDoneItems = tarsusaCore.get_tarsusaItemCollection(userid, done=done, routine=routine, startdate=afterdate, enddate=beforedate, maxitems=count, public=public)
-            logging.info(tarsusaItemCollection_UserDoneItems)
+            tarsusaItemCollection_UserDoneItems = tarsusaItem.get_collection(userid, done=done, routine=routine, startdate=afterdate, enddate=beforedate, maxitems=count, public=public)
             self.write(tarsusaItemCollection_UserDoneItems) 
         else:
-            #trying to Get Other Users Items
             return self.response_status(403, '<h1>Currently You can\'t get other user\'s items.</h1>', False)
         
 class api_doneitem(tarsusaRequestHandler):

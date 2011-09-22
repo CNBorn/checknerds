@@ -45,7 +45,7 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertTrue(dailyroutine_items[0]['done'])
 
     def test_tarsusaCore_gettarsusaItemCollection(self):
-        todo_items = tarsusaCore.get_tarsusaItemCollection(userid=self.user.key().id(), done=False)
+        todo_items = tarsusaItem.get_collection(userid=self.user.key().id(), done=False)
         self.assertEqual(len(todo_items), 2)
     
     def disabled_test_tarsusaCore_countUserItemStats(self):

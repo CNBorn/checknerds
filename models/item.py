@@ -42,6 +42,33 @@ class tarsusaItem(db.Expando):
     def count():
         return shardingcounter.get_count("tarsusaItem")
 
+    @classmethod
+    def get_collection(cls, userid, done, routine='none', maxitems=9, public='none'):
+        tUser = tarsusaUser.get_user(int(userid))
+        if not tUser and not done: return []
+
+        results = []
+        query = db.Query(cls)
+        query = query.filter('done =', done)
+        query = query.filter('user =', tUser.user)
+        query = query.filter('routine =', routine)
+
+        if public != 'none':
+            if public == 'nonprivate':
+                query.filter('public !=', 'private')
+            else public == 'public':
+                query.filter('public =', public)
+
+        sortorder = 'donedate' if done else 'date'
+        query.order('-%s' % sortorder)
+        
+        tItems = query.fetch(limit=maxitems)
+        for item in tItems: 
+            this_item = item.jsonized()
+            this_item['tags'] = " ".join(this_item.get_tags_name())
+            results.append(this_item)
+        return results
+
     def delete_item(self, user_id):
         if self.usermodel.key().id() != user_id:
             return False
@@ -153,6 +180,9 @@ class tarsusaItem(db.Expando):
                 self.usermodel.usedtags.append(tag.key())     
         self.usermodel.put()
         self.put()
+
+    def get_tags_name(self):
+        return [t.name for t in self.tags]
 
     def done_item(self, user, misc=''):
         item_id = self.key().id()
