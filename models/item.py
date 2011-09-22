@@ -142,6 +142,17 @@ class tarsusaItem(db.Expando):
             'duration': self.duration,
            }
 
+    def add_tags_by_name(self, tag_names):
+        for tname in tag_names:
+            tag = Tag.get_tag(tname)
+            if not tag: 
+                tag = Tag.new_tag(tname)
+            self.tags.append(tag.key())
+                
+            if not self.usermodel.has_tag(tag.name):
+                self.usermodel.usedtags.append(tag.key())     
+        self.usermodel.put()
+        self.put()
 
     def done_item(self, user, misc=''):
         item_id = self.key().id()

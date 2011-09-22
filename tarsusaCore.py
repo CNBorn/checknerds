@@ -208,21 +208,7 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
         item_tags = None 
 
     if item_tags:
-
-        for each_tag_name in item_tags:
-
-            tag = db.Query(Tag).filter("name =", each_tag_name).get()
-            if not tag: 
-                tag = Tag(name=each_tag_name)
-                tag.put()
-
-            item.tags.append(tag.key())
-                
-            if not user.has_tag(tag.name):
-                user.usedtags.append(tag.key())     
-    
-    item.put()
-    user.put()
+        item.add_tags_by_name(item_tags)
 
     user_id = user.key().id()
     item_id = item.key().id()
