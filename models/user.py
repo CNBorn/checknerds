@@ -114,6 +114,15 @@ class tarsusaUser(db.Model):
         undone_items = self._get_more_undone_items(maxitems, before_item_id)
         return undone_items
 
+    def get_inbox_items(self, maxitems=100):
+        from models.item import tarsusaItem
+        undone_items = tarsusaItem.get_collection(self.key().id(), done=False, maxitems=maxitems)
+        return filter(lambda i:not (i['is_duetoday'] or i['is_duetomorrow']), undone_items) 
+
+    def get_more_inbox_items(self, maxitems, before_item_id):
+        undone_items = self._get_more_undone_items(maxitems, before_item_id)
+        return filter(lambda i:not (i['is_duetoday'] or i['is_duetomorrow']), undone_items) 
+
     def get_items_duetoday(self):
         today = datetime.date.today()
         end_of_today = datetime.datetime(today.year, today.month, today.day, 23,59,59)

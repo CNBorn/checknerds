@@ -41,6 +41,22 @@ class tarsusaUserTest(unittest.TestCase):
         doneitem_list = self.user.get_done_items()
         self.assertEqual(doneitem_list[0]['name'], 'item1')
 
+    def test_get_inbox_list_dont_have_today_item(self):
+        self.item1.set_duetoday()
+        inbox_list = self.user.get_inbox_items()
+        self.assertFalse("item1" in [item['name'] for item in inbox_list])
+        self.assertTrue("item2" in [item['name'] for item in inbox_list])
+
+    def test_get_inbox_list(self):
+        inbox_list = self.user.get_inbox_items()
+        self.assertTrue("item1" in [item['name'] for item in inbox_list])
+        self.assertTrue("item2" in [item['name'] for item in inbox_list])
+
+    def test_get_more_inbox_item(self):
+        more_inbox_list = self.user.get_more_inbox_items(1,self.item2.key().id())
+        self.assertTrue("item1" in [item['name'] for item in more_inbox_list])
+        self.assertFalse("item2" in [item['name'] for item in more_inbox_list])
+
     def test_get_done_item_list_is_json_format(self):
         self.item1.done_item(self.user)
         doneitem_list = self.user.get_done_items()
