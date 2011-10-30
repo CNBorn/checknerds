@@ -102,9 +102,9 @@ class render(tarsusaRequestHandler):
         elif func == "undone":
             before_item_id = self.request.get("before_item_id",None)
             if before_item_id:
-                undone_items = user.get_more_undone_items(maxitems, before_item_id)
+                undone_items = user.get_more_inbox_items(maxitems, before_item_id)
             else:
-                undone_items = user.get_undone_items(maxitems)
+                undone_items = user.get_inbox_items(maxitems)
             self.response_json(undone_items)
 
         elif func == "dailyroutine":

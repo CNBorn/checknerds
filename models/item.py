@@ -187,7 +187,7 @@ class tarsusaItem(db.Expando):
         self.put()
 
     def get_tags_name(self):
-        return [t.name for t in self.tags]
+        return [Tag.get(t).name for t in self.tags]
 
     def done_item(self, user, misc=''):
         item_id = self.key().id()
