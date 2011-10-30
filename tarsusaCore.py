@@ -91,6 +91,7 @@ def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='privat
         item.add_tags_by_name(item_tags)
 
     user_id = user.key().id()
+    item.put()
     item_id = item.key().id()
     shardingcounter.increment("tarsusaItem")
     memcache.delete("itemstats:%s" % user_id)

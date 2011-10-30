@@ -5,6 +5,7 @@ sys.path.append("../")
 
 from google.appengine.ext import db
 from models.user import tarsusaUser
+from models.tag import Tag
 
 import datetime
 from datetime import timedelta
@@ -56,7 +57,7 @@ class tarsusaItem(db.Expando):
         if public != 'none':
             if public == 'nonprivate':
                 query.filter('public !=', 'private')
-            else public == 'public':
+            elif public == 'public':
                 query.filter('public =', public)
 
         sortorder = 'donedate' if done else 'date'
@@ -65,7 +66,7 @@ class tarsusaItem(db.Expando):
         tItems = query.fetch(limit=maxitems)
         for item in tItems: 
             this_item = item.jsonized()
-            this_item['tags'] = " ".join(this_item.get_tags_name())
+            this_item['tags'] = " ".join(item.get_tags_name())
             results.append(this_item)
         return results
 
