@@ -29,9 +29,6 @@ from libs import shardingcounter
 from views import service
 from utils import cache
 
-def is_item_in_collection(item, collection):
-    return any([x['id'] == item['id'] and x['donedate'] == item['donedate'] for x in collection]) 
-
 def format_done_logs(done_items):
     result = {}
     previous_done_date = None

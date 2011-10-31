@@ -200,10 +200,7 @@ class tarsusaUser(db.Model):
         nextday_ofdate = datetime.datetime.combine(date + ONE_DAY, datetime.time(0))
         ItemCollection_ThisDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND donedate > :2 AND donedate <:3 AND done = True AND routine = 'none' ORDER BY donedate DESC", self.user, yesterday_ofdate, nextday_ofdate)
         result = []
-        for each_doneItem_withinOneday in ItemCollection_ThisDayCreated:
-            result.append(each_doneItem_withinOneday.jsonized())
-        
-        return result
+        return ItemCollection_ThisDayCreated
 
     def get_public_items(self, public='public', count=30):
         result = []
@@ -218,7 +215,6 @@ class tarsusaUser(db.Model):
     def get_donelog(self, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
         #lookingfor = 'next' to get the records > startdate
         #             'previous' to get the records <= startdate
-        from tarsusaCore import is_item_in_collection 
         MaxDisplayedDonelogDays = maxdisplaydonelogdays
         ThisUser = self
         sort_backwards = False
@@ -256,8 +252,8 @@ class tarsusaUser(db.Model):
             
             normalitems = ThisUser.get_doneitems_in(DoneDateOfThisItem)
             for each_item in normalitems:
-                if not is_item_in_collection(each_item, Item_List):
-                    Item_List.append(each_item) 
+                if not each_item.in_collection(Item_List):
+                    Item_List.append(each_item.jsonized()) 
 
             Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
 

@@ -174,6 +174,9 @@ class tarsusaItem(db.Expando):
             'duration': self.duration,
            }
 
+    def in_collection(self, collection):
+        return any([x['id'] == self.jsonized()['id'] and x['donedate'] == self.jsonized()['donedate'] for x in collection]) 
+
     def add_tags_by_name(self, tag_names):
         for tname in tag_names:
             tag = Tag.get_tag(tname)

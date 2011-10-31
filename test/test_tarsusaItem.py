@@ -26,6 +26,9 @@ class tarsusaItemTest(unittest.TestCase):
         memcache.flush_all()
         query = [x.delete() for x in tarsusaRoutineLogItem.all()]
 
+    def test_item_in_collection(self):
+        collection = [self.item1.jsonized(), self.item2.jsonized()]
+        self.assertTrue(self.item1.in_collection(collection))
 
     def test_item_set_duetoday(self):
         today = datetime.date.today()
