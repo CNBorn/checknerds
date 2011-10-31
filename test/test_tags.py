@@ -1,7 +1,6 @@
 import unittest
 
-from tarsusaCore import *
-from models import tarsusaItem, tarsusaUser
+from models import tarsusaItem, tarsusaUser, Tag
 
 class TagTest(unittest.TestCase):
 
@@ -13,8 +12,8 @@ class TagTest(unittest.TestCase):
 
         self.user = tarsusaUser(urlname='Bar')
         self.user.put()
-        self.item1 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', '', rawTags="inbox"))
-        self.item2 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', '', rawTags="work"))
+        self.item1 = tarsusaItem.get_item(tarsusaItem.AddItem(self.user.key().id(), "item1", '', 'none', 'private', '', rawTags="inbox"))
+        self.item2 = tarsusaItem.get_item(tarsusaItem.AddItem(self.user.key().id(), "item2", '', 'none', 'private', '', rawTags="work"))
 
     def tearDown(self):
         self.item1.delete()

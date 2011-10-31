@@ -24,7 +24,6 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import images
 
 import memcache
-import tarsusaCore
 import patcher
 
 from models import *

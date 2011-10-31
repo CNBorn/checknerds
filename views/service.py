@@ -22,7 +22,6 @@ from base import *
 import time, datetime
 import os
 
-import tarsusaCore
 import memcache
 
 import logging

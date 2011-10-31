@@ -6,7 +6,6 @@ import time, datetime
 from datetime import timedelta, date
 
 from models import tarsusaItem, tarsusaUser, tarsusaRoutineLogItem
-from tarsusaCore import AddItem
 import memcache
 
 class tarsusaItemTest(unittest.TestCase):
@@ -14,9 +13,9 @@ class tarsusaItemTest(unittest.TestCase):
     def setUp(self):
         self.user = tarsusaUser(urlname='Bar')
         self.user.put()
-        self.item1 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item1", '', 'none', 'private', ''))
-        self.item2 = tarsusaItem.get_item(AddItem(self.user.key().id(), "item2", '', 'none', 'private', ''))
-        self.routine_item = tarsusaItem.get_item(AddItem(self.user.key().id(), "routine_item", '', 'daily', 'private', ''))
+        self.item1 = tarsusaItem.get_item(tarsusaItem.AddItem(self.user.key().id(), "item1", '', 'none', 'private', ''))
+        self.item2 = tarsusaItem.get_item(tarsusaItem.AddItem(self.user.key().id(), "item2", '', 'none', 'private', ''))
+        self.routine_item = tarsusaItem.get_item(tarsusaItem.AddItem(self.user.key().id(), "routine_item", '', 'daily', 'private', ''))
 
     def tearDown(self):
         self.item1.delete()

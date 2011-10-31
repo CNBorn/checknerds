@@ -25,7 +25,6 @@ from base import *
 
 import memcache
 import logging
-import tarsusaCore
 
 class GuestbookPage(tarsusaRequestHandler):
     def get(self):
