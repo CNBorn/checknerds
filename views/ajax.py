@@ -15,7 +15,7 @@ from models import tarsusaUser, tarsusaItem
 from base import tarsusaRequestHandler
 from google.appengine.ext.webapp import template
 
-from tarsusaCore import format_done_logs, AddItem
+from tarsusaCore import AddItem
 from utils import login
 
 class DueToday(tarsusaRequestHandler):
@@ -113,7 +113,7 @@ class render(tarsusaRequestHandler):
 
         elif func == "logs":
             done_items = user.get_donelog()
-            formatted_done_items = format_done_logs(done_items)
+            formatted_done_items = tarsusaItem.format_done_logs(done_items)
             self.response_json(formatted_done_items)
  
 class Stats(tarsusaRequestHandler):

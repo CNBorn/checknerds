@@ -29,22 +29,6 @@ from libs import shardingcounter
 from views import service
 from utils import cache
 
-def format_done_logs(done_items):
-    result = {}
-    previous_done_date = None
-    for each_item in done_items:
-        col_date = each_item['donedate'].strftime('%Y-%m-%d')
-        if not previous_done_date or \
-           each_item['donedate'] != previous_done_date:
-                result.setdefault(col_date,[])
-        each_item['donedate'] = col_date
-        each_item['date'] = each_item['date'].strftime('%Y-%m-%d')
-        if each_item['expectdate']:
-            each_item['expectdate'] = each_item['expectdate'].strftime('%Y-%m-%d')
-        result[col_date].append(each_item)
-        previous_done_date = each_item['donedate']
-    return result
-
 def AddItem(UserId, rawName, rawComment='', rawRoutine='none', rawPublic='private', rawInputDate='', rawTags=None):
     
     user = tarsusaUser.get_user(int(UserId))

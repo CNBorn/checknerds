@@ -299,6 +299,24 @@ class tarsusaItem(db.Expando):
         memcache.event('undoneroutineitem_daily_yesterday', user_id)
         memcache.event('refresh_dailyroutine', user_id)
 
+    @staticmethod
+    def format_done_logs(done_items):
+        result = {}
+        previous_done_date = None
+        for each_item in done_items:
+            col_date = each_item['donedate'].strftime('%Y-%m-%d')
+            if not previous_done_date or \
+               each_item['donedate'] != previous_done_date:
+                    result.setdefault(col_date,[])
+            each_item['donedate'] = col_date
+            each_item['date'] = each_item['date'].strftime('%Y-%m-%d')
+            if each_item['expectdate']:
+                each_item['expectdate'] = each_item['expectdate'].strftime('%Y-%m-%d')
+            result[col_date].append(each_item)
+            previous_done_date = each_item['donedate']
+        return result
+
+
 class tarsusaRoutineLogItem(db.Model):
     user = db.UserProperty()
     routineid = db.IntegerProperty()
