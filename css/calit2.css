@@ -70,7 +70,7 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
     padding: 0px 0px 0px 12px;
     position: relative;
 }
-#content ul li span.delete, #content ul li span.duetoday {
+#content ul li span.delete, #content ul li span.duetoday, #content ul li span.duetomorrow {
     display: none;
     top: 0em;
     margin: 0em;
@@ -83,7 +83,8 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 }
 
 #content ul li span.delete{ left: 20em;}
-#content ul li span.duetoday{ left: 25em;}
+#content ul li span.duetomorrow{ left: 25em;}
+#content ul li span.duetoday{ left: 30em;}
 
 #content ul li.even {background-color: #fff;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #d0d0d0;}
 #content ul li.odd {background-color: #fafafb;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e0e0e0;}
@@ -95,7 +96,9 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #content ul li:hover span.duetoday{
     display: block;
 }
-
+#content ul li:hover span.duetomorrow{
+    display: block;
+}
 #content p {padding-left: 15px;}
 
 /* Add Item (inside Content) */
@@ -156,6 +159,9 @@ h3 {border-bottom:1px solid #dadada; color:#88bb55; font-size:1.2em; font-weight
 #content .duetoday {padding:3px;color:#c0c0c0;font-size:0.85em;float:right}
 #content .duetoday a {text-decoration:none;color:#c0c0c0;}
 #content .duetoday a:hover {color:#0f0f0f; border: #0f0f0f 1px solid;}
+#content .duetomorrow {padding:3px;color:#c0c0c0;font-size:0.85em;float:right}
+#content .duetomorrow a {text-decoration:none;color:#c0c0c0;}
+#content .duetomorrow a:hover {color:#0f0f0f; border: #0f0f0f 1px solid;}
 span.slogan {display:block; float: left; color:grey; width:195px; font-size:1.3em; font-weight:700; letter-spacing:-1px; line-height:1.2em; margin:10px 20px 0px 0px;}
 
 

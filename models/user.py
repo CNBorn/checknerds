@@ -133,6 +133,14 @@ class tarsusaUser(db.Model):
         results = sorted(results, key=lambda item:item['date'], reverse=True)
         return sorted(results, key=lambda item:item['done'])
 
+    def get_items_duetomorrow(self):
+        tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+        end_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 23,59,59)
+        items_due_tomorrow = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 and expectdate =:2 and routine = 'none'", \
+                self.user, end_of_tomorrow)
+        results = [item.jsonized() for item in items_due_tomorrow] + self.get_dailyroutine()
+        results = sorted(results, key=lambda item:item['date'], reverse=True)
+        return sorted(results, key=lambda item:item['done'])
 
     def has_tag(self, tag_name):
         tag = db.Query(Tag).filter("name =", tag_name).get()

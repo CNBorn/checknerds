@@ -22,6 +22,11 @@
     <span class='delete'>
         <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('{% templatetag openvariable %}id}}');}">删除</a>
     </span>
+    {% templatetag openvariable %}#notshowduetomorrow{% templatetag closevariable %}
+    <span class='duetomorrow'>
+        <a href="javascript:void(0);" onclick="set_due_tomorrow({% templatetag openvariable %}id{% templatetag closevariable %})">明天</a>
+    </span>
+    {% templatetag openvariable %}/notshowduetomorrow{% templatetag closevariable %}
     {% templatetag openvariable %}#notshowduetoday{% templatetag closevariable %}
     <span class='duetoday'>
         <a href="javascript:void(0);" onclick="set_due_today({% templatetag openvariable %}id{% templatetag closevariable %})">今日完成</a>
@@ -86,6 +91,9 @@
 var is_today_panel = function() {
     return $("#tab_dailyroutine").hasClass("activenavitab");
 }
+var is_tomorrow_panel = function() {
+    return $("#tab_tomorrow").hasClass("activenavitab");
+}
 
 var set_due_today = function(item_id) {
     $.ajax({type: "GET", 
@@ -100,6 +108,20 @@ var set_due_today = function(item_id) {
     });
 
 }
+var set_due_tomorrow = function(item_id) {
+    $.ajax({type: "GET", 
+            url: "/duetomorrow/" + item_id,
+            dataType: "json",
+            success: function(data){
+                if(!is_tomorrow_panel()){
+                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                }
+                refreshItemData(item_id);
+            } 
+    });
+
+}
+
 
 var showItemOnSidebar = function(id) {
     item = item_collection[id];
@@ -186,7 +208,7 @@ var getItemfromData = function(data) {
         "expectdate": item_expectdate,
         "routine": item_routine,
         "is_duetomorrow": data['is_duetomorrow'],
-        "is_dueyesterday": data['is_duetomorrow'],
+        "is_dueyesterday": data['is_dueyesterday'],
         isnottodaypanel: function() {
             return !is_today_panel();
         }
@@ -294,7 +316,7 @@ $(window).scroll(function() {
 
 
 function tabs_RemoveActive() {
-    var tab_list = ['#tab_inbox', '#tab_dailyroutine', '#tab_done', '#tab_friends', '#tab_log'];
+    var tab_list = ['#tab_inbox', '#tab_dailyroutine', '#tab_tomorrow', '#tab_done', '#tab_friends', '#tab_log'];
     for (i=0;i<=tab_list.length - 1;i++){
         if ($(tab_list[i]).hasClass("activenavitab")){
             $(tab_list[i]).removeClass('activenavitab');
@@ -342,6 +364,9 @@ function render_items(msg,type)
         }
         render_item.notshowduetoday = function(){
             return (!this.done && this.routine != 'daily' && !is_today_panel() && !this.is_duetoday);
+        } 
+        render_item.notshowduetomorrow = function(){
+            return (!this.done && this.routine != 'daily' && !is_tomorrow_panel() && !this.is_duetomorrow);
         } 
         render_item.display_date = '';
         if(item.isduetoday != null){ render_item.display_date = '今天'; }
@@ -419,6 +444,25 @@ $('#tab_dailyroutine').click(function() {
     return false;
 });
 
+$('#tab_tomorrow').click(function() {
+    tabs_MakeActive(this);
+    showLoadingPanel();
+    $.ajax({
+       type: "GET",
+       url: "/ajax/render/?func=tomorrow&maxitems=18&template=calit2",
+       dataType: "json",
+       success: function(msg){
+         retriving_more_items = false;
+         no_more_items = false;
+         render_items(msg, "tomorrow");
+         hideLoadingPanel();
+         initHover();
+         }
+     });
+    return false;
+});
+
+
 $('#tab_done').click(function() {
     tabs_MakeActive(this);
     showLoadingPanel();
@@ -485,7 +529,7 @@ $(document).ready(function(){
    });
 
 
-   $('#tab_inbox').click();
+   $('#tab_dailyroutine').click();
    showStats();
    hideLoadingPanel();
    return false;
@@ -611,6 +655,7 @@ $("#itemlist ul li").hoverIntent( config2 );
         <span class="slogan">{{UserNickName}}</span>
         <a id="tab_inbox" class="navitab activenavitab" href="javascript:void(0);">收件箱</a><span class="hide"> | </span>
 		<a id="tab_dailyroutine" class="navitab" href="javascript:void(0);">今天</a><span class="hide"> | </span>
+		<a id="tab_tomorrow" class="navitab" href="javascript:void(0);">明天</a><span class="hide"> | </span>
 		<a id="tab_done" class="navitab" href="javascript:void(0);">已完成</a>
 		<a id="tab_log" class="navitab" href="javascript:void(0);">记录</a>
 	</div>
