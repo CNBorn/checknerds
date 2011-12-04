@@ -26,7 +26,7 @@ class MainPage(tarsusaRequestHandler):
                 'UserNickName': cgi.escape(CurrentUser.dispname),
                 'UserID': CurrentUser.key().id(),
         }
-        path = '../pages/calit2/index.html'
+        path = '../pages/calit2/index_deploy.html'
         return template.render(path, template_values)
    
     @cache("homepage_welcome:0",3600)

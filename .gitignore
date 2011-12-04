@@ -5,3 +5,4 @@ z.py
 _multiprocessing.py
 .*.swp
 .*.swo
+node_modules/

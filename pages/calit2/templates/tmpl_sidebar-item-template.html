@@ -1,0 +1,34 @@
+<script id="sidebar-item-template" type="text/template"> 
+    <h2>{% templatetag openvariable %}name{% templatetag closevariable %}</h2>
+    <p><ul>
+    {% templatetag openvariable %}#done{% templatetag closevariable %}
+    已经完成于{% templatetag openvariable %}donedate{% templatetag closevariable %}<br />
+    耗时{% templatetag openvariable %}duration{% templatetag closevariable %}天<br />
+    {% templatetag openvariable %}/done{% templatetag closevariable %}
+    {% templatetag openvariable %}#undone{% templatetag closevariable %}
+    <li>尚未完成</li>
+    {% templatetag openvariable %}/undone{% templatetag closevariable %}
+    {% templatetag openvariable %}#expired{% templatetag closevariable %}
+    <span style='color:red'>已过期</span>
+    {% templatetag openvariable %}/expired{% templatetag closevariable %}
+    <li>{% templatetag openvariable %}routine_name{% templatetag closevariable %}</li>
+    <li>{% templatetag openvariable %}public_name{% templatetag closevariable %}</li>
+    说明:{% templatetag openvariable %}comment{% templatetag closevariable %}<br />
+    创建:{% templatetag openvariable %}date{% templatetag closevariable %}<br />
+    {% templatetag openvariable %}#has_expectdate{% templatetag closevariable %}
+    期限:{% templatetag openvariable %}expectdate{% templatetag closevariable %}<br />
+    {% templatetag openvariable %}/has_expectdate{% templatetag closevariable %}
+    </ul></p>
+</script>
+
+<script id="sidebar-stats-template" type="text/template"> 
+    <h2>{% templatetag openvariable %}date{% templatetag closevariable %}</h2>
+    <ul>
+        <li><img src='{% templatetag openvariable %}pic_url{% templatetag closevariable %}' align=center width=64 height=64></li>
+            <li>总事项： {% templatetag openvariable %}total{% templatetag closevariable %}</li>
+            <li>已完成： {% templatetag openvariable %}done{% templatetag closevariable %}</li>
+            <li>未完成： {% templatetag openvariable %}todo{% templatetag closevariable %}</li>
+	</ul>
+</script>
+
+

@@ -1,0 +1,27 @@
+<script id="item-template" type="text/template"> 
+    <li itemid='{% templatetag openvariable %}id}}' class='{% templatetag openvariable %}css}}'>
+    {% templatetag openvariable %}#itemundone}}
+    <input type='checkbox' onchange='doneItem("{% templatetag openvariable %}id}}")'>
+    {% templatetag openvariable %}/itemundone}}
+    <span class='{% templatetag openvariable %}item_style}}'>{% templatetag openvariable %}name}}</span>
+    <span class='delete'>
+        <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('{% templatetag openvariable %}id}}');}">删除</a>
+    </span>
+    {% templatetag openvariable %}#notshowduetomorrow{% templatetag closevariable %}
+    <span class='duetomorrow'>
+        <a href="javascript:void(0);" onclick="set_due_tomorrow({% templatetag openvariable %}id{% templatetag closevariable %})">明天</a>
+    </span>
+    {% templatetag openvariable %}/notshowduetomorrow{% templatetag closevariable %}
+    {% templatetag openvariable %}#notshowduetoday{% templatetag closevariable %}
+    <span class='duetoday'>
+        <a href="javascript:void(0);" onclick="set_due_today({% templatetag openvariable %}id{% templatetag closevariable %})">今日完成</a>
+    </span>
+    {% templatetag openvariable %}/notshowduetoday{% templatetag closevariable %}
+    <span class='date'>{% templatetag openvariable %}display_date}}</span>
+    {% templatetag openvariable %}#itemdone}}
+    <span class='date'>{% templatetag openvariable %}donedate}}</span>
+    {% templatetag openvariable %}/itemdone}}
+    </li>
+</script> 
+
+

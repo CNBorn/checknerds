@@ -1,0 +1,15 @@
+<script id="additem-template" type="text/template"> 
+            <li itemid={% templatetag openvariable %}id}} class="even"><input type="checkbox" onchange="doneItem('{% templatetag openvariable %}id}}')">
+            <span class="item">{% templatetag openvariable %}name}}</span>
+            <span class="delete">
+                <a href="javascript:void(0);" onclick="if (confirm('确认删除？{% templatetag openvariable %}name}}')){delete_item('{% templatetag openvariable %}id}}');}">删除</a>
+            </span>
+           {% templatetag openvariable %}#isnottodaypanel}}
+           <span class='duetoday'>
+           <a href="javascript:void(0);" onclick="set_due_today({% templatetag openvariable %}id{% templatetag closevariable %})">今日完成</a>
+           </span>
+           {% templatetag openvariable %}/isnottodaypanel}}
+        </li>
+</script> 
+
+
