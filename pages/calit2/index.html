@@ -2,6 +2,7 @@
 {% block title %} CheckNerds(beta) {% endblock title %}
 {% block include_js %}
 <script type="text/javascript" src="/js/jquery.hoverIntent.minified.js"></script>
+<script type="text/javascript" src="/js/calit2.js"></script>
 <script src="/js/mustache.js"></script>
 {% endblock include_js %}
 {% block extrajs %}
@@ -88,13 +89,6 @@
 
 
 <script type="text/javascript">
-var is_today_panel = function() {
-    return $("#tab_dailyroutine").hasClass("activenavitab");
-}
-var is_tomorrow_panel = function() {
-    return $("#tab_tomorrow").hasClass("activenavitab");
-}
-
 var set_due_today = function(item_id) {
     $.ajax({type: "GET", 
             url: "/duetoday/" + item_id,
