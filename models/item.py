@@ -317,39 +317,42 @@ class tarsusaItem(db.Expando):
         return result
 
     @classmethod
-    def AddItem(cls, UserId, rawName, rawComment='', rawRoutine='none', rawPublic='private', rawInputDate='', rawTags=None):
+    def AddItem(cls, user_id, rawName, rawComment='', rawRoutine='none', rawPublic='private', rawInputDate='', rawTags=None):
         import cgi
         import time
         
-        user = tarsusaUser.get_user(int(UserId))
-        item_comment = cgi.escape(rawComment)[:500]
-        item_name = cgi.escape(rawName)               
+        user = tarsusaUser.get_user(int(user_id))
+        if not user:
+            return
+
+        item_name = cgi.escape(rawName)
+        if not item_name:
+            return
+        
         item_routine = cgi.escape(rawRoutine)
         if item_routine not in ["none", "daily", "weekly", "monthly", "seasonly", "yearly"]:
-            item_routine = "none"
+            return
+        
         item_public = cgi.escape(rawPublic)
         if item_public not in ['private', 'public', 'publicOnlyforFriends']:
-            item_public = 'private'
+            return
 
-        item = tarsusaItem(user=user.user, name=item_name, comment=item_comment, routine=item_routine)
-        item.public = item_public
-        item.usermodel = user              
-        item.done = False
+        item_comment = cgi.escape(rawComment)[:500]
 
-        item_expectdate = None
-        if rawInputDate != '':
-            raw_expectdate = datetime.date(*time.strptime(rawInputDate,"%Y-%m-%d")[:3])
-            if raw_expectdate != datetime.datetime.date(datetime.datetime.today()):
-                currenttime = datetime.datetime.time(datetime.datetime.now())
-                item_raw_expectdate = datetime.datetime(raw_expectdate.year, raw_expectdate.month, \
-                                 raw_expectdate.day, currenttime.hour, currenttime.minute, \
-                                 currenttime.second, currenttime.microsecond)
-        item.expectdate = item_expectdate
+        item = tarsusaItem(user=user.user, name=item_name, comment=item_comment, \
+                routine=item_routine, public=item_public, usermodel=user, \
+                done=False)
+
+        if rawInputDate == datetime.datetime.today().strftime("%Y-%m-%d"):
+            item.expectdate = datetime.datetime.now()
+        else:
+            item.expectdate = None
 
         if item_routine == 'daily':
             memcache.event('addroutineitem_daily', user.key().id())
         else:
             memcache.event('additem', user.key().id())
+
         if item_public != 'private':
             memcache.event('addpublicitem', user.key().id())
 
@@ -368,8 +371,6 @@ class tarsusaItem(db.Expando):
         memcache.delete("itemstats:%s" % user_id)
         memcache.set("item:%s" % item_id, item)
         return item_id
-
-
 
 class tarsusaRoutineLogItem(db.Model):
     user = db.UserProperty()

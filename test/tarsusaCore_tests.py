@@ -87,7 +87,7 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual(False, undone_item.done)
 
     def test_tarsusaItem_AddItem(self):
-        add_item_id = tarsusaItem.AddItem(UserId=self.user.key().id(), rawName="Test Item Name", rawComment = "Test Item Comment", rawRoutine='none', rawPublic="private", rawInputDate="2009-07-19", rawTags=None)
+        add_item_id = tarsusaItem.AddItem(user_id=self.user.key().id(), rawName="Test Item Name", rawComment = "Test Item Comment", rawRoutine='none', rawPublic="private", rawInputDate="2009-07-19", rawTags=None)
         add_item = tarsusaItem.get_item(add_item_id)
         self.assertEqual("Test Item Name", add_item.name)
         self.assertEqual(False, add_item.done)
@@ -95,10 +95,8 @@ class tarsusaCoreTest(unittest.TestCase):
         self.assertEqual("private", add_item.public)
         add_item.delete_item(self.user.key().id())
 
-        add_item_success = tarsusaItem.AddItem(UserId=self.user.key().id(), rawName="xxx", rawComment="xxx", rawRoutine="should_not_broken", rawPublic="should_not_broken")
-        self.assertNotEqual(False, add_item_success)
-        item = tarsusaItem.get_item(add_item_success)
-        item.delete_item(self.user.key().id())
+        add_item_failed = tarsusaItem.AddItem(user_id=self.user.key().id(), rawName="xxx", rawComment="xxx", rawRoutine="should_broken", rawPublic="should_broken")
+        self.assertEqual(None, add_item_failed)
 
     def test_tarsusaCore_getuserdonelog(self):
         self.routine_item.done_item(self.user, misc="")
