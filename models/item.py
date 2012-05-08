@@ -319,7 +319,6 @@ class tarsusaItem(db.Expando):
     @classmethod
     def AddItem(cls, user_id, rawName, rawComment='', rawRoutine='none', rawPublic='private', rawInputDate='', rawTags=None):
         import cgi
-        import time
         
         user = tarsusaUser.get_user(int(user_id))
         if not user:
@@ -329,11 +328,9 @@ class tarsusaItem(db.Expando):
         if not item_name:
             return
         
-        item_routine = cgi.escape(rawRoutine)
         if item_routine not in ["none", "daily", "weekly", "monthly", "seasonly", "yearly"]:
             return
         
-        item_public = cgi.escape(rawPublic)
         if item_public not in ['private', 'public', 'publicOnlyforFriends']:
             return
 
