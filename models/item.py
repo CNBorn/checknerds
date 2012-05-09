@@ -327,17 +327,17 @@ class tarsusaItem(db.Expando):
         item_name = cgi.escape(rawName)
         if not item_name:
             return
-        
-        if item_routine not in ["none", "daily", "weekly", "monthly", "seasonly", "yearly"]:
+       
+        if rawRoutine not in ["none", "daily", "weekly", "monthly", "seasonly", "yearly"]:
             return
         
-        if item_public not in ['private', 'public', 'publicOnlyforFriends']:
+        if rawPublic not in ['private', 'public', 'publicOnlyforFriends']:
             return
 
         item_comment = cgi.escape(rawComment)[:500]
 
         item = tarsusaItem(user=user.user, name=item_name, comment=item_comment, \
-                routine=item_routine, public=item_public, usermodel=user, \
+                routine=rawRoutine, public=rawPublic, usermodel=user, \
                 done=False)
 
         if rawInputDate == datetime.datetime.today().strftime("%Y-%m-%d"):
@@ -345,12 +345,12 @@ class tarsusaItem(db.Expando):
         else:
             item.expectdate = None
 
-        if item_routine == 'daily':
+        if rawRoutine == 'daily':
             memcache.event('addroutineitem_daily', user.key().id())
         else:
             memcache.event('additem', user.key().id())
 
-        if item_public != 'private':
+        if rawPublic != 'private':
             memcache.event('addpublicitem', user.key().id())
 
         try:
