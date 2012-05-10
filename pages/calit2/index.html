@@ -39,6 +39,9 @@ var set_due_tomorrow = function(item_id) {
 
 
 var showItemOnSidebar = function(id) {
+    if (id == 0) {
+        return
+    }
     item = item_collection[id];
     render_item = {};
     render_item.name = item.name;
@@ -470,8 +473,7 @@ function addItem() {
        url: "/additem",
        dataType: "json",
        data: {name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val()},
-       success: function(data){
-           var id = data['r'];
+       beforeSend: function(data){
            var item_name = $("#inputName").val();
            var item_comment = $("#add_comment").val();
            var item_expectdate = $("#inputDate").val();
@@ -487,8 +489,8 @@ function addItem() {
                "donedate": null,
                "tags": null,
                "done": false,
+               "id": 0,
                "date": date,
-               "id": id,
                "category": false,
                "name": item_name,
                "expectdate": item_expectdate,
@@ -501,11 +503,9 @@ function addItem() {
            }
 
            if (is_today_panel()) {
-               set_due_today(id);
                item['is_duetoday'] = true;
                item['is_duetomorrow'] = false;
            }
-           item_collection[item.id] = item;
 
            var template = $("script#additem-template").html();
            $(Mustache.to_html(template, item)).hide().prependTo('#itemlist ul').fadeIn("fast");
@@ -515,6 +515,26 @@ function addItem() {
            $("#inputDate").val("");
 
            initHover();
+
+       }, 
+       success: function(data){
+           var id = parseInt(data['r']);
+           $.ajax({type: "GET", 
+                    url: "/j/item/" + id,
+                    dataType: "json",
+                    success: function(data){
+                    item_collection[id] = getItemfromData(data);
+                    item = item_collection[id];
+                    var dummy_item = $("li[itemid=0] span.item:contains('" + item.name + "'):first");
+
+                    var template = $("script#additem-template").html();
+                    var item_html_with_id = $(Mustache.to_html(template, item));
+                    dummy_item.parent().replaceWith(item_html_with_id);
+                    initHover();
+
+                    } 
+            });
+
          }
      });
 }
