@@ -87,9 +87,6 @@ class api_getuserfriends(tarsusaRequestHandler):
         else:
             return self.response_status(403,'No Such User',False)
 
-#APIs to be added:
-#   AddItem, DoneItem, UndoneItem, GetDailyRoutineItem, GteUserPublicItem, GetUserTodoItem, GetUserDoneItem, GetUserItem
-
 class api_getuseritem(tarsusaRequestHandler):
     
     #CheckNerds API: Get User Items.

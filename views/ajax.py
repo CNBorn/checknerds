@@ -75,13 +75,7 @@ class AddItemProcess(tarsusaRequestHandler):
     @login
     def post(self):
         CurrentUser = self.get_user_db()
-        item2beadd_name = cgi.escape(self.request.get('name'))
-        item2beadd_comment = cgi.escape(self.request.get('comment'))
-        item_id = tarsusaItem.AddItem(CurrentUser.key().id(), item2beadd_name, item2beadd_comment, self.request.get('routine','none'), self.request.get('public', 'private'), self.request.get('inputDate'), self.request.get('tags'))
-
-        if self.referer[-6:] == "/m/add":
-            self.redirect("/m/todo")
-
+        item_id = tarsusaItem.AddItem(CurrentUser.key().id(), self.request.get('name'), self.request.get('comment'), self.request.get('routine','none'), self.request.get('public', 'private'), self.request.get('inputDate'), self.request.get('tags'))
         self.response_json({"r":item_id})
 
 
