@@ -222,54 +222,12 @@ class api_undoneitem(tarsusaRequestHandler):
             #Trying to manipulate Other Users Items, very badass.
             return self.response_status(403, '<h1>You can\'t manipulate other user\'s items.</h1>', False)
 
-#To be added: api_checkAppModel
-
-class api_additem(tarsusaRequestHandler):
-    
-    #CheckNerds API: AddItem.
-    #Parameters: apiappid, apiservicekey, apiuserid, apikey
-    #            item_name, item_comment, item_routine, item_public, item_date, item_tags 
-    #Return:    Success: 200 status
-
-    def get(self):  
-        self.write('<h1>please use POST</h1>')
-
-    @api_auth_and_limit
-    def post(self):
-        
-        apiuserid = self.request.get('apiuserid') 
-        apikey = self.request.get('apikey')
-        
-        #Actual function.
-        apiappid = self.request.get('apiappid') 
-        apiservicekey = self.request.get('servicekey')
-        apiuserid = self.request.get('apiuserid') 
-        apikey = self.request.get('apikey')
-    
-        APIUser = tarsusaUser.get_by_id(int(apiuserid))
-
-        #To Add APIUser's a new Item
-        item_name = self.request.get('name')
-        item_comment = self.request.get('comment')
-        item_routine = self.request.get('routine')
-        item_public = self.request.get('public')
-        item_date = self.request.get('date')
-        item_tags = self.request.get('tags')
-
-        newlyadd = tarsusaCore.AddItem(apiuserid, item_name, item_comment, item_routine, item_public, item_date, item_tags)
-        
-        #Should be 200 status in future, currently just 0(success), 1(failed)
-        self.response.set_status(200)
-        return newlyadd
-        #return self.response_status(200, '<h1>You can\'t manipulate other user\'s items.</h1>', False)
-
 def main():
     application = webapp.WSGIApplication([
                                        ('/service/user.+', api_getuser),
                                        ('/service/item.+', api_getuseritem),
                                        ('/service/done.+', api_doneitem),
                                        ('/service/undone.+', api_undoneitem),
-                                       ('/service/additem.+', api_additem),
                                        ('/service/friends.+', api_getuserfriends)],
                                        debug=True)
 
