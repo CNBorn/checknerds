@@ -607,6 +607,14 @@ function addItem() {
                     success: function(data){
                     item_collection[id] = getItemfromData(data);
                     item = item_collection[id];
+
+                    if (is_today_panel()) {
+                        set_due_today(id);
+                        item['is_duetoday'] = true;
+                        item['is_duetomorrow'] = false;
+                    }
+                    item_collection[id] = item;
+                             
                     var dummy_item = $("li[itemid=0] span.item:contains('" + item.name + "'):first");
 
                     var template = $("script#additem-template").html();
