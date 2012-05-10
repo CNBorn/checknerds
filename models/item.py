@@ -4,6 +4,7 @@ import sys
 sys.path.append("../")
 
 from google.appengine.ext import db
+from google.appengine.api import taskqueue
 from models.user import tarsusaUser
 from models.tag import Tag
 
@@ -353,19 +354,10 @@ class tarsusaItem(db.Expando):
 
         item.put()
         item_id = item.key().id()
-
         user_id = user.key().id()
-        if rawRoutine == 'daily':
-            memcache.event('addroutineitem_daily', user_id)
-        else:
-            memcache.event('additem', user_id)
-
-        if rawPublic != 'private':
-            memcache.event('addpublicitem', user_id)
-
-        shardingcounter.increment("tarsusaItem")
-        memcache.delete("itemstats:%s" % user_id)
         memcache.set("item:%s" % item_id, item)
+
+        taskqueue.add(url='/workers/stats_after_add', params={'user_id': user_id, 'routine':rawRoutine, 'public':rawPublic})
         return item_id
 
 class tarsusaRoutineLogItem(db.Model):

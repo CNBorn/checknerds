@@ -86,6 +86,9 @@ handlers:
 - url: /backend/.+
   script: backend.py
 
+- url: /workers/.+
+  script: workers/stats_after_add.py
+
 - url: /service/.+
   script: service.py
 
