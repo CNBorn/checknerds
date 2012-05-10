@@ -340,30 +340,29 @@ class tarsusaItem(db.Expando):
                 routine=rawRoutine, public=rawPublic, usermodel=user, \
                 done=False)
 
-        if rawInputDate == datetime.datetime.today().strftime("%Y-%m-%d"):
+        if rawInputDate and rawInputDate == datetime.datetime.today().strftime("%Y-%m-%d"):
             item.expectdate = datetime.datetime.now()
         else:
             item.expectdate = None
 
-        if rawRoutine == 'daily':
-            memcache.event('addroutineitem_daily', user.key().id())
-        else:
-            memcache.event('additem', user.key().id())
-
-        if rawPublic != 'private':
-            memcache.event('addpublicitem', user.key().id())
-
-        try:
+        item_tags = None 
+        if rawTags:
             item_tags = cgi.escape(rawTags).split(",")
-        except:
-            item_tags = None 
+            if item_tags:
+                item.add_tags_by_name(item_tags)
 
-        if item_tags:
-            item.add_tags_by_name(item_tags)
-
-        user_id = user.key().id()
         item.put()
         item_id = item.key().id()
+
+        user_id = user.key().id()
+        if rawRoutine == 'daily':
+            memcache.event('addroutineitem_daily', user_id)
+        else:
+            memcache.event('additem', user_id)
+
+        if rawPublic != 'private':
+            memcache.event('addpublicitem', user_id)
+
         shardingcounter.increment("tarsusaItem")
         memcache.delete("itemstats:%s" % user_id)
         memcache.set("item:%s" % item_id, item)
