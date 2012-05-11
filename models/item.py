@@ -138,10 +138,18 @@ class tarsusaItem(db.Expando):
     @property
     def has_done_today(self):
         assert self.routine == "daily"
+        today = datetime.date.today()
+
+        is_done_today = memcache.get("item:%s:has_done_in:%s" % (item_id, today), None)
+        if is_done_today is not None:
+            return is_done_today
+
         routine_logkey = db.GqlQuery("SELECT __key__ FROM tarsusaRoutineLogItem WHERE user = :1 and routine = 'daily' and routineid = :2 ORDER BY donedate DESC LIMIT 1", self.usermodel.user, self.key().id())
         for this_routine_log in routine_logkey:
             if datetime.datetime.date(tarsusaRoutineLogItem.get_item(this_routine_log.id()).donedate) == datetime.date.today():
+                memcache.set("item:%s:has_done_in:%s" % (item_id, today), True)
                 return True
+        memcache.set("item:%s:has_done_in:%s" % (item_id, today), False)
         return False
 
     @property
@@ -223,13 +231,15 @@ class tarsusaItem(db.Expando):
         assert self.routine == "daily"
         user_id = user.key().id()
         item_id = int(self.key().id())
-        new_routinelog_item = tarsusaRoutineLogItem(routine=self.routine, user=user.user, routineid=item_id)
-        yesterday = datetime.datetime.combine(datetime.date.today() - ONE_DAY, datetime.time(0))
-        is_already_done = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE routineid = :1 and donedate > :2 and donedate < :3", item_id, yesterday + ONE_DAY ,datetime.datetime.now())
-        memcache.event('doneroutineitem_daily_today', user_id)
 
-        if is_already_done.count() < 1:
+        if not self.has_done_today:
+            new_routinelog_item = tarsusaRoutineLogItem(routine=self.routine, user=user.user, routineid=item_id)
             new_routinelog_item.put()
+
+            today = datetime.date.today()
+            memcache.set("item:%s:has_done_in:%s" % (item_id, today), True)
+
+            memcache.event('doneroutineitem_daily_today', user_id)
             memcache.event('refresh_dailyroutine', user_id)
 
     def _done_last_daily(self, user):
