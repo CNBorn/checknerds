@@ -35,17 +35,15 @@ class DoneItem(tarsusaRequestHandler):
     @login
     def get(self):
         item_id = self.request.path.split('/')[-1]
-        
-        DoneYesterdaysDailyRoutine = False
+       
+        misc = ''
         if item_id == 'y':
             item_id = self.request.path.split('/')[-2]
-            DoneYesterdaysDailyRoutine = True
-
-        Misc = 'y' if DoneYesterdaysDailyRoutine else ''
+            misc = 'y'
         
         user = self.get_user_db()
         user_id = user.key().id()
-        taskqueue.add(url='/workers/done_item', params={'item_id': item_id, 'user_id':user_id, 'misc':Misc})
+        taskqueue.add(url='/workers/done_item', params={'item_id': item_id, 'user_id':user_id, 'misc':misc})
 
         self.response_json({"r":"ok"})
 
