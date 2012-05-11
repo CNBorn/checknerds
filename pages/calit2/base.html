@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<meta name="description" content="manage your todo List online" />
+	<meta name="description" content="manage your todo-lists online" />
 	<meta name="keywords" content="GTD,todo,CheckNerds" />
 	<meta name="author" content="CNBorn" />
     <link rel="stylesheet" type="text/css" href="/css/calit2.css" media="screen,projection" />
@@ -11,7 +11,6 @@
 <body>
 	<div id="header">
         <p id="toplinks">
-        (beta) | 
 		{% if UserLoggedIn %}
             <a href="/Logout/">登出</a> | 
             <a href="/">设置</a> | 
@@ -26,7 +25,7 @@
         {% block content-holder %}
         {% endblock content-holder %} 
         <div id="footer">
-            <p>&copy; 2008-2012, <a href="http://cnborn.net">CNBorn</a>. Powered by Google App Engine</p>
+            <p>&copy; 2008-2012, <a href="http://cnborn.net">CNBorn</a>. Powered by Google App Engine. <a href="https://github.com/CNBorn/checknerds" target="_blank">code@github</a></p>
         </div>
     </div>
 </body>
