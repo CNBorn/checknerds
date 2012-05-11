@@ -4,12 +4,10 @@
 # - base.py
 # http://cnborn.net, http://twitter.com/CNBorn
 import os
-import sys
 
 from google.appengine.dist import use_library
 use_library('django', '1.2')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-from settings import *
 from django.conf import settings 
 
 views_path = os.path.join(os.path.dirname(__file__), 'pages/calit2')
@@ -110,6 +108,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
     def verify_AppModel(self, apiappid, apiservicekey):
         import hashlib
+        from models import AppModel 
         
         if apiappid == None or apiservicekey == None:
             return False
@@ -136,7 +135,6 @@ class tarsusaRequestHandler(webapp.RequestHandler):
                 #------------------------
                 #Manipulating API calls count.
                 if AppApiUsage == None:
-                    memkey = "appapiuseage" + str(apiappid)
                     AppApiUsage = 0
                 AppApiUsage += 1
                 memcache.set("appapiusage:%s" % int(apiappid),  AppApiUsage)
@@ -152,6 +150,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
     def verify_UserApi(self, userid, userapikey):
         import hashlib
+        from models.user import tarsusaUser
         #To Verify UserApi, the Authentication process.
         
         #To check whether this user is existed.
@@ -187,12 +186,10 @@ class tarsusaRequestHandler(webapp.RequestHandler):
             self.response_status(403, "403 Not enough parameters.")
             return False 
         
-        from models import AppModel 
         verified = self.verify_AppModel(int(apiappid), apiservicekey)
         
         apiuserid = self.request.get('apiuserid') 
         apikey = self.request.get('apikey')
-        userid = self.request.get('userid')
         
         from models import tarsusaUser
         APIUser = tarsusaUser.get_by_id(int(apiuserid))
@@ -203,7 +200,7 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         if verified == False:
             self.response_status(403, "403 Application Verifiction Failed.")
             return False
-        if verify_UserApi(int(apiuserid), apikey) == False:
+        if self.verify_UserApi(int(apiuserid), apikey) == False:
             self.response_status(403, "403 UserID Authentication Failed.")
             return False
         
@@ -225,7 +222,6 @@ class tarsusaRequestHandler(webapp.RequestHandler):
     def verify_api_limit(self):
         
         appid = int(self.request.get('apiappid'))
-        apiservicekey = self.request.get('servicekey')
     
         from models import AppModel 
         ThisApp = AppModel.get_by_id(appid)
