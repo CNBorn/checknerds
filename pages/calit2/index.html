@@ -148,12 +148,14 @@ function doneItem(item_id){
     $.ajax({type: "GET", 
             url: "/j/done/" + item_id,
             dataType: "json",
-            success: function(data){
+            beforeSend: function(data){
                 $("li[itemid=" +item_id+ "] input").fadeOut('slow');
                 $("li[itemid=" +item_id+ "] span.item").removeClass().addClass("doneitem");
                 if(!is_today_panel()){
                     $("li[itemid=" +item_id+ "]").fadeOut('slow');
                 }
+            },
+            success: function(data){
                 refreshItemData(item_id);
                 showItemOnSidebar(item_id);
             } 
