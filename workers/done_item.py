@@ -21,7 +21,7 @@ class DoneItemWorker(webapp.RequestHandler):
             item = tarsusaItem.get_item(item_id) 
             item.done_item(user, misc)
 
-        db.run_in_transaction(_done_item)
+        _done_item()
 
 
 def main():
