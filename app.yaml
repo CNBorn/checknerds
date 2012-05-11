@@ -77,12 +77,6 @@ handlers:
 - url: /tag/
   script: tag.py
 
-- url: /flushcache
-  script: views/miscellaneous.py
-
-- url: /cron_flushcache
-  script: views/miscellaneous.py
-
 - url: /backend/.+
   script: backend.py
 
@@ -104,9 +98,6 @@ handlers:
 - url: /favicon.ico
   static_files: img/favicon.ico
   upload: /
-
-- url: /cronmail
-  script: cronmail.py
 
 - url: /robots.txt
   static_files: files/robots.txt
