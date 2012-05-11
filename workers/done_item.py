@@ -7,13 +7,11 @@ from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-import memcache
-from libs import shardingcounter
-
 class DoneItemWorker(webapp.RequestHandler):
     def post(self):
         def _done_item():
             from models.user import get_user
+            from models.item import tarsusaItem
             user_id = self.request.get('user_id')
             item_id = self.request.get('item_id')
             misc = self.request.get('misc')
