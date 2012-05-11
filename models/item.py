@@ -72,11 +72,17 @@ class tarsusaItem(db.Expando):
         return results
 
     def delete_item(self, user_id):
-        if self.usermodel.key().id() != user_id:
+        user = self.usermodel
+        if user.key().id() != user_id:
             return False
         
         item_id = int(self.key().id())
         user_id = int(user_id)
+
+        if self.done:
+            user.decr_done_items()
+        else:
+            user.decr_todo_items()
 
         if self.public != 'none':
             memcache.event('deletepublicitem', user_id)
@@ -140,6 +146,7 @@ class tarsusaItem(db.Expando):
         assert self.routine == "daily"
         today = datetime.date.today()
 
+        item_id = self.key().id()
         is_done_today = memcache.get("item:%s:has_done_in:%s" % (item_id, today), None)
         if is_done_today is not None:
             return is_done_today
@@ -217,6 +224,10 @@ class tarsusaItem(db.Expando):
             self._done_last_daily(user)
 
         memcache.set("item:%s" % item_id, self)
+        from models.user import get_user
+        user = get_user(user_id)
+        user.incr_done_items()
+        user.decr_todo_items()
         return True
 
     def _done_(self,user):
@@ -271,6 +282,10 @@ class tarsusaItem(db.Expando):
             self._undone_last_daily(user)
 
         memcache.set("item:%s" % item_id, self)
+        from models.user import get_user
+        user = get_user(user_id)
+        user.incr_todo_items()
+        user.decr_done_items()
         return True
 
     def _undone_(self,user):

@@ -268,12 +268,57 @@ class tarsusaUser(db.Model):
         Item_List.sort(key=lambda item:time.strptime(item['donedate'], "%Y-%m-%d"), reverse=sort_backwards)
         return Item_List
 
+    @property
+    def _count_done_items(self):
+        from models.item import tarsusaItem
+        count = memcache.get("user:%s:count_done_items" % self.key().id(), None)
+        if count is not None:
+            return count
+
+        count = db.Query(tarsusaItem,keys_only=True).filter('done =', True).count(99999999)
+        memcache.set("user:%s:count_done_items" % self.key().id(), count)
+        return count
+
+    def incr_done_items(self):
+        from google.appengine.api import memcache
+        count = self._count_done_items
+        if count is not None:
+            memcache.incr("user:%s:count_done_items" % self.key().id())
+
+    def decr_done_items(self):
+        from google.appengine.api import memcache
+        count = self._count_done_items
+        if count is not None:
+            memcache.decr("user:%s:count_done_items" % self.key().id())
+
+    @property
+    def _count_todo_items(self):
+        from models import tarsusaItem
+        count = memcache.get("user:%s:count_todo_items" % self.key().id(), None)
+        if count is not None:
+            return count
+
+        count = db.Query(tarsusaItem,keys_only=True).filter('done =', False).count(99999999)
+        memcache.set("user:%s:count_todo_items" % self.key().id(), count)
+        return count
+
+    def incr_todo_items(self):
+        from google.appengine.api import memcache
+        count = self._count_todo_items
+        if count is not None:
+            memcache.incr("user:%s:count_todo_items" % self.key().id())
+
+    def decr_todo_items(self):
+        from google.appengine.api import memcache
+        count = self._count_todo_items
+        if count is not None:
+            memcache.decr("user:%s:count_todo_items" % self.key().id())
 
     @cache("itemstats:{self.key().id()}")
     def get_itemstats(self):
         from models import tarsusaItem
-        count_done_items = db.Query(tarsusaItem,keys_only=True).filter('done =', True).count(99999999)
-        count_todo_items = db.Query(tarsusaItem,keys_only=True).filter('done =', False).count(99999999)
+        count_done_items = self._count_done_items
+        count_todo_items = self._count_todo_items
 
         percentage_done = 0.00
         count_total_items = count_done_items + count_todo_items
