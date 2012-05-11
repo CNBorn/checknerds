@@ -10,14 +10,13 @@ from google.appengine.ext.webapp import template
 
 import cgi
 import wsgiref.handlers
-import memcache
 from utils import cache
 from models import tarsusaUser, tarsusaItem, tarsusaRoutineLogItem
 from models.consts import MC_ONE_WEEK
 
 class MainPage(tarsusaRequestHandler):
 
-    @cache("homepage_logged:{self.get_user_db().key().id()}", MC_ONE_WEEK)
+    #@cache("homepage_logged:{self.get_user_db().key().id()}", MC_ONE_WEEK)
     def get_logged_page(self):
         CurrentUser = self.get_user_db()
         template_values = {

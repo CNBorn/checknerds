@@ -9,11 +9,11 @@ sys.path.append("../")
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import taskqueue
 
-import cgi, datetime, os, time
+import time
 from models import tarsusaUser, tarsusaItem
 from base import tarsusaRequestHandler
-from google.appengine.ext.webapp import template
 
 from utils import login
 

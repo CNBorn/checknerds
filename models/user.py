@@ -14,6 +14,7 @@ from libs import shardingcounter
 from models.tag import Tag
 from utils import cache
 from django.utils import simplejson as json
+import cgi
 
 class tarsusaUser(db.Model):
     user = db.UserProperty()
@@ -207,7 +208,6 @@ class tarsusaUser(db.Model):
         yesterday_ofdate = datetime.datetime.combine(date - ONE_DAY, datetime.time(0))
         nextday_ofdate = datetime.datetime.combine(date + ONE_DAY, datetime.time(0))
         ItemCollection_ThisDayCreated = db.GqlQuery("SELECT * FROM tarsusaItem WHERE user = :1 AND donedate > :2 AND donedate <:3 AND done = True AND routine = 'none' ORDER BY donedate DESC", self.user, yesterday_ofdate, nextday_ofdate)
-        result = []
         return ItemCollection_ThisDayCreated
 
     def get_public_items(self, public='public', count=30):
@@ -316,7 +316,6 @@ class tarsusaUser(db.Model):
 
     @cache("itemstats:{self.key().id()}")
     def get_itemstats(self):
-        from models import tarsusaItem
         count_done_items = self._count_done_items
         count_todo_items = self._count_todo_items
 
