@@ -41,11 +41,12 @@ class DoneItem(tarsusaRequestHandler):
             item_id = self.request.path.split('/')[-2]
             DoneYesterdaysDailyRoutine = True
 
-        CurrentUser = self.get_user_db()
         Misc = 'y' if DoneYesterdaysDailyRoutine else ''
         
-        item = tarsusaItem.get_item(item_id) 
-        item.done_item(CurrentUser, Misc)
+        user = self.get_user_db()
+        user_id = user.key().id()
+        taskqueue.add(url='/workers/done_item', params={'item_id': item_id, 'user_id':user_id, 'misc':Misc})
+
         self.response_json({"r":"ok"})
 
 class RemoveItem(tarsusaRequestHandler):

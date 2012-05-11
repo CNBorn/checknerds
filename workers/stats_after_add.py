@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# CheckNerds - www.checknerds.com
-# - ajax.py
-# http://cnborn.net, http://twitter.com/CNBorn
-
 import sys
 sys.path.append("../")
 
