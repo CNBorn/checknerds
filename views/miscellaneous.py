@@ -83,19 +83,11 @@ class LabsPage(tarsusaRequestHandler):
 
         self.response.out.write(template.render(path, template_values))
 
-
-class cron_flushcache(tarsusaRequestHandler):
-    def get(self):
-        from google.appengine.api import memcache 
-        memcache.flush_all()
-        logging.info("memcache flushed by cron.")
-        return True
-
 def main():
     application = webapp.WSGIApplication([('/about',AboutPage),
                                        ('/docs.+', DocsPage),
                                        ('/labs.+', LabsPage),
-                                       ('/cron_flushcache', cron_flushcache)],
+                                       ],
                                        debug=True)
     wsgiref.handlers.CGIHandler().run(application)
 
