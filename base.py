@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-
-# CheckNerds - www.checknerds.com
-# - base.py
-# http://cnborn.net, http://twitter.com/CNBorn
 import os
 
 from google.appengine.dist import use_library
@@ -25,7 +21,6 @@ import cgi
 import logging
 
 from libs import shardingcounter
-import memcache
 
 class tarsusaRequestHandler(webapp.RequestHandler):
     from utils import cache
@@ -48,9 +43,6 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         except:
             self.referer = None
 
-    def param(self, name, **kw):
-        return self.request.get(name, **kw)
-
     def write(self, s):
         self.response.out.write(s)
 
@@ -68,17 +60,13 @@ class tarsusaRequestHandler(webapp.RequestHandler):
 
     def get_login_url(self, from_referer=False):
         if from_referer:
-            dst = self.referer
-            if not dst : dst = '/m'
-            return users.create_login_url(dst)
+            return users.create_login_url(self.referer)
         else:
             return users.create_login_url(self.request.uri)
 
     def get_logout_url(self, from_referer=False):
         if from_referer:
-            dst = self.referer
-            if not dst : dst = '/m'
-            return users.create_logout_url(dst)
+            return users.create_logout_url(self.referer)
         else:
             return users.create_logout_url(self.request.uri)
     
@@ -106,139 +94,6 @@ class tarsusaRequestHandler(webapp.RequestHandler):
     def get_user_db(self):
         return db.GqlQuery("SELECT * FROM tarsusaUser WHERE user = :1", users.get_current_user()).get()
 
-    def verify_AppModel(self, apiappid, apiservicekey):
-        import hashlib
-        from models import AppModel 
-        
-        if apiappid == None or apiservicekey == None:
-            return False
-        
-        #To Verify AppModel, Applications that uses CheckNerds API.
-        ThisApp = AppModel.get_by_id(apiappid)
-        if ThisApp == None:
-            return False
-        
-        #At beginning, will not turn this on.
-        #if ThisApp.enable == False:
-        #   return False
-
-        #Check with API Usage.
-        AppApiUsage = memcache.get("appapiusage" + str(apiappid))   
-        if AppApiUsage >= ThisApp.api_limit:
-            #Api Limitation exceed.
-            self.write('<h1>API Limitation exceed.</h1>')       
-            logging.info("AppID:" + str(apiappid) + ":" + cgi.escape(ThisApp.name) + " has exceed its API limitation.")
-            return False
-        else:
-            if hashlib.sha256(ThisApp.servicekey).hexdigest() == apiservicekey:
-                #Accept this App
-                #------------------------
-                #Manipulating API calls count.
-                if AppApiUsage == None:
-                    AppApiUsage = 0
-                AppApiUsage += 1
-                memcache.set("appapiusage:%s" % int(apiappid),  AppApiUsage)
-                #------------------------
-                #Below line could be turned off.
-                logging.info("AppID:" + str(apiappid) + ":" + cgi.escape(ThisApp.name) + " accessed via API")
-                #------------------------
-                return True
-            else:
-                #Authentication Failed.
-                #Should return a status number in the future.
-                return False
-
-    def verify_UserApi(self, userid, userapikey):
-        import hashlib
-        from models.user import tarsusaUser
-        #To Verify UserApi, the Authentication process.
-        
-        #To check whether this user is existed.
-        ThisUser = tarsusaUser.get_user(userid)
-        if ThisUser == None:
-            return False
-
-        #Check with API Usage.
-        UserApiUsage = memcache.get("userapiusage:%s" % int(userid))
-        if UserApiUsage >= global_vars['apilimit']:
-            #Api Limitation exceed.
-            #self.write('<h1>API Limitation exceed.</h1>')
-            return False
-        else:
-            if hashlib.sha256(ThisUser.apikey).hexdigest() == userapikey:
-                #Should use log to monitor API usage.
-                #Also there should be limitation for the apicalls/per hour.
-                if UserApiUsage == None:
-                    UserApiUsage = 0
-                UserApiUsage += 1
-                memcache.set("userapiusage:%s" % int(userid), UserApiUsage)
-                return True
-            else:
-                #Authentication Failed.
-                return False
-
-    
-    def verify_api(self):
-        apiappid = self.request.get('apiappid') 
-        apiservicekey = self.request.get('servicekey')
-        
-        if apiappid == "" or apiservicekey == "":
-            self.response_status(403, "403 Not enough parameters.")
-            return False 
-        
-        verified = self.verify_AppModel(int(apiappid), apiservicekey)
-        
-        apiuserid = self.request.get('apiuserid') 
-        apikey = self.request.get('apikey')
-        
-        from models import tarsusaUser
-        APIUser = tarsusaUser.get_by_id(int(apiuserid))
-        
-        if APIUser == None:
-            self.response_status(403, "403 No Such User")
-            return False
-        if verified == False:
-            self.response_status(403, "403 Application Verifiction Failed.")
-            return False
-        if self.verify_UserApi(int(apiuserid), apikey) == False:
-            self.response_status(403, "403 UserID Authentication Failed.")
-            return False
-        
-        try:
-            if APIUser.apikey == None:
-                return False
-        except:
-            return False
-
-        return True
-
-    def _api_get_usage(self, appid):
-        return memcache.get("appapiusage:%s" % int(appid), 0) or 0
-
-    def _api_set_usage(self, appid, usage):
-        memcache.set("appapiusage:%s" % appid, usage)
-
-
-    def verify_api_limit(self):
-        
-        appid = int(self.request.get('apiappid'))
-    
-        from models import AppModel 
-        ThisApp = AppModel.get_by_id(appid)
-        if not ThisApp:
-            self.response_status(404, "404 Application does not exist.")
-            return False
-
-        AppApiUsage = self._api_get_usage(appid)
-        if AppApiUsage >= ThisApp.api_limit:
-            self.response_status(403, '403 API Limitation exceed. ')
-            return False    
-        
-        AppApiUsage += 1 
-        self._api_set_usage(appid, AppApiUsage)
-        
-        return True
-
     def response_status(self, status_code, status_info=None, return_value=False):
         '''
         Set the response status & its info, and return the specify result state
@@ -249,9 +104,3 @@ class tarsusaRequestHandler(webapp.RequestHandler):
         self.response.set_status(status_code)
         self.write(status_info)
         return return_value
-
-## Used for API setting.
-
-global_vars = {}
-global_vars['apilimit'] = 400
-
