@@ -2,7 +2,7 @@
 
 ## Requirements:
  * Google App Engine - Python Runtime
- * GAEUnit (included)
+ * GAEUnit
  * Mustache.js (included)
  * QUnit.js (included)
  * NodeInterval
