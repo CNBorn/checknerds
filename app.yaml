@@ -77,9 +77,6 @@ handlers:
 - url: /tag/
   script: tag.py
 
-- url: /backend/.+
-  script: backend.py
-
 - url: /workers/done_item
   script: workers/done_item.py
 
