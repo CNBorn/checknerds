@@ -83,9 +83,6 @@ handlers:
 - url: /workers/.+
   script: workers/stats_after_add.py
 
-- url: /service/.+
-  script: service.py
-
 - url: /ajax/.+
   script: views/ajax.py
 
