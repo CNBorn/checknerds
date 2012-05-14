@@ -59,12 +59,6 @@ handlers:
 - url: /tag
   script: tag.py
 
-- url: /donelog.*
-  script: userpage.py
-
-- url: /user/.*
-  script: userpage.py
-
 - url: /tag/.*
   script: tag.py
 
