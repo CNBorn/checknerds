@@ -16,7 +16,7 @@ var set_due_today = function(item_id) {
             dataType: "json",
             success: function(data){
                 if(!is_today_panel()){
-                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                    $("li[itemid=" +item_id+ "]").fadeOut('fast');
                 }
                 refreshItemData(item_id);
             } 
@@ -29,7 +29,7 @@ var set_due_tomorrow = function(item_id) {
             dataType: "json",
             success: function(data){
                 if(!is_tomorrow_panel()){
-                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                    $("li[itemid=" +item_id+ "]").fadeOut('fast');
                 }
                 refreshItemData(item_id);
             } 
@@ -149,10 +149,10 @@ function doneItem(item_id){
             url: "/j/done/" + item_id,
             dataType: "json",
             beforeSend: function(data){
-                $("li[itemid=" +item_id+ "] input").fadeOut('slow');
+                $("li[itemid=" +item_id+ "] input").fadeOut('fast');
                 $("li[itemid=" +item_id+ "] span.item").removeClass().addClass("doneitem");
                 if(!is_today_panel()){
-                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                    $("li[itemid=" +item_id+ "]").fadeOut('fast');
                 }
             },
             success: function(data){
