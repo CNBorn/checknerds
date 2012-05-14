@@ -32,12 +32,6 @@ handlers:
 - url: /about
   script: views/miscellaneous.py
 
-- url: /blog
-  script: views/miscellaneous.py
-
-- url: /guestbook
-  script: views/miscellaneous.py
-
 - url: /docs.+
   script: views/miscellaneous.py
 
