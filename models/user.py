@@ -220,54 +220,6 @@ class tarsusaUser(db.Model):
             result.append(each_item.jsonized())
         return result
 
-    def get_donelog(self, startdate='', lookingfor='next', maxdisplaydonelogdays=7):
-        #lookingfor = 'next' to get the records > startdate
-        #             'previous' to get the records <= startdate
-        MaxDisplayedDonelogDays = maxdisplaydonelogdays
-        ThisUser = self
-        sort_backwards = False
-        if not lookingfor == 'next':
-            sort_backwards = True
-        
-        DisplayedDonelogDays = 1 
-
-        Item_List = []
-        userid = ThisUser.key().id()
-        if startdate != '':
-            if lookingfor == 'next':
-                tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 AND donedate > :2 ORDER BY donedate DESC", ThisUser.user, startdate)
-            else:
-                tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 AND donedate <= :2 ORDER BY donedate DESC", ThisUser.user, startdate)
-
-        else:
-            tarsusaRoutineLogItemCollection = db.GqlQuery("SELECT * FROM tarsusaRoutineLogItem WHERE user = :1 ORDER BY donedate DESC", ThisUser.user)
-                
-        Donedate_of_previousRoutineLogItem = None  ## To display the routine item log by Daily.
-
-        for each_RoutineLogItem in tarsusaRoutineLogItemCollection:
-            
-            DoneDateOfThisItem = datetime.datetime.date(each_RoutineLogItem.donedate)
-            if DisplayedDonelogDays > MaxDisplayedDonelogDays:
-                break
-            
-            if DoneDateOfThisItem != Donedate_of_previousRoutineLogItem:
-                DisplayedDonelogDays += 1
-
-            from models import tarsusaItem
-            this_item = tarsusaItem.get_item(each_RoutineLogItem.routineid).jsonized()
-            this_item['donedate']= time.strftime("%Y-%m-%d", each_RoutineLogItem.donedate.timetuple())
-            Item_List.append(this_item)
-            
-            normalitems = ThisUser.get_doneitems_in(DoneDateOfThisItem)
-            for each_item in normalitems:
-                if not each_item.in_collection(Item_List):
-                    Item_List.append(each_item.jsonized()) 
-
-            Donedate_of_previousRoutineLogItem = DoneDateOfThisItem 
-
-        Item_List.sort(key=lambda item:time.strptime(item['donedate'], "%Y-%m-%d"), reverse=sort_backwards)
-        return Item_List
-
     @property
     def _count_done_items(self):
         from models.item import tarsusaItem

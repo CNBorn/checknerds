@@ -114,11 +114,6 @@ class render(tarsusaRequestHandler):
             tomorrow_items = tarsusaUser.get_user(user_id).get_items_duetomorrow()
             self.response_json(tomorrow_items)
 
-        elif func == "logs":
-            done_items = user.get_donelog()
-            formatted_done_items = tarsusaItem.format_done_logs(done_items)
-            self.response_json(formatted_done_items)
- 
 class Stats(tarsusaRequestHandler):
     @login
     def get(self):

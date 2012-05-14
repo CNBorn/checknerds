@@ -236,7 +236,7 @@ $(window).scroll(function() {
 
 
 function tabs_RemoveActive() {
-    var tab_list = ['#tab_inbox', '#tab_dailyroutine', '#tab_tomorrow', '#tab_done', '#tab_friends', '#tab_log'];
+    var tab_list = ['#tab_inbox', '#tab_dailyroutine', '#tab_tomorrow', '#tab_done'];
     for (i=0;i<=tab_list.length - 1;i++){
         if ($(tab_list[i]).hasClass("activenavitab")){
             $(tab_list[i]).removeClass('activenavitab');
@@ -392,22 +392,6 @@ $('#tab_done').click(function() {
        dataType: "json",
        success: function(msg){
          render_items(msg, "done");
-         hideLoadingPanel();
-         initHover();
-         }
-     });
-    return false;
-});
-
-$('#tab_log').click(function() {
-    tabs_MakeActive(this);
-    showLoadingPanel();
-    $.ajax({
-       type: "GET",
-       url: "/ajax/render/?func=logs&template=calit2",
-       dataType: "json",
-       success: function(msg){
-         render_donelog(msg);
          hideLoadingPanel();
          initHover();
          }
@@ -602,7 +586,6 @@ $("#itemlist ul li").hoverIntent( config2 );
 		<a id="tab_dailyroutine" class="navitab" href="javascript:void(0);">今天</a><span class="hide"> | </span>
 		<a id="tab_tomorrow" class="navitab" href="javascript:void(0);">明天</a><span class="hide"> | </span>
 		<a id="tab_done" class="navitab" href="javascript:void(0);">已完成</a>
-		<a id="tab_log" class="navitab" href="javascript:void(0);">记录</a>
 	</div>
 
     <div id="content">

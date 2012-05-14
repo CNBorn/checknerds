@@ -98,14 +98,6 @@ class tarsusaCoreTest(unittest.TestCase):
         add_item_failed = tarsusaItem.AddItem(user_id=self.user.key().id(), rawName="xxx", rawComment="xxx", rawRoutine="should_broken", rawPublic="should_broken")
         self.assertEqual(None, add_item_failed)
 
-    def test_tarsusaCore_getuserdonelog(self):
-        self.routine_item.done_item(self.user, misc="")
-        self.item1.done_item(self.user, misc='')
-
-        userdonelog = self.user.get_donelog()
-        self.assertEqual(self.routine_item.name, userdonelog[0]["name"])
-        self.assertEqual(self.item1.name, userdonelog[1]["name"])
-
     def test_tarsusaCore_getlatest_user(self):
         people_list = tarsusaUser.get_latestusers()
         self.assertEqual(1, people_list.count())
