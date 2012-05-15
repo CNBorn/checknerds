@@ -44,15 +44,6 @@ handlers:
 - url: /Logout.+
   script: views/auth.py
 
-- url: /additem
-  script: views/ajax.py
-
-- url: /duetoday/.*
-  script: views/ajax.py
-
-- url: /duetomorrow/.*
-  script: views/ajax.py
-
 - url: /j/.*
   script: views/ajax.py
 
@@ -70,12 +61,6 @@ handlers:
 
 - url: /workers/.+
   script: workers/stats_after_add.py
-
-- url: /ajax/.+
-  script: views/ajax.py
-
-- url: /patch/.+
-  script: patcher.py
 
 - url: /favicon.ico
   static_files: img/favicon.ico

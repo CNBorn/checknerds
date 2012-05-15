@@ -207,7 +207,7 @@ function retrive_more_items() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=inbox&before_item_id=" + last_item_id,
+       url: "/j/fetch/?func=inbox&before_item_id=" + last_item_id,
        dataType: "json",
        success: function(msg){
          if(msg.length != 0){
@@ -335,7 +335,7 @@ $('#tab_inbox').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=inbox&maxitems=18&template=calit2",
+       url: "/j/fetch/?func=inbox&maxitems=18&template=calit2",
        dataType: "json",
        success: function(msg){
          retriving_more_items = false;
@@ -353,7 +353,7 @@ $('#tab_dailyroutine').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=dailyroutine&template=calit2",
+       url: "/j/fetch/?func=dailyroutine&template=calit2",
        dataType: "json",
        success: function(msg){
          render_items(msg, "daily");
@@ -369,7 +369,7 @@ $('#tab_tomorrow').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=tomorrow&maxitems=18&template=calit2",
+       url: "/j/fetch/?func=tomorrow&maxitems=18&template=calit2",
        dataType: "json",
        success: function(msg){
          retriving_more_items = false;
@@ -388,7 +388,7 @@ $('#tab_done').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=done&maxitems=50&template=calit2",
+       url: "/j/fetch/?func=done&maxitems=50&template=calit2",
        dataType: "json",
        success: function(msg){
          render_items(msg, "done");

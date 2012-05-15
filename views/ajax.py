@@ -77,14 +77,7 @@ class AddItem(tarsusaRequestHandler):
         item_id = tarsusaItem.AddItem(CurrentUser.key().id(), self.request.get('name'), self.request.get('comment'), self.request.get('routine','none'), self.request.get('public', 'private'), self.request.get('inputDate'), self.request.get('tags'))
         self.response_json({"r":item_id})
 
-
-class ajax_error(tarsusaRequestHandler):
-    def post(self):
-        self.write("载入出错，请刷新重试")
-    def get(self):
-        self.write("载入出错，请刷新重试")
-
-class render(tarsusaRequestHandler):
+class FetchItem(tarsusaRequestHandler):
     @login
     def get(self):
         func = self.request.get("func")
@@ -134,8 +127,7 @@ class GetItem(tarsusaRequestHandler):
 
 def main():
     application = webapp.WSGIApplication([
-        (r'/ajax/render/.*', render),
-        ('/ajax/.+',ajax_error),
+        (r'/j/fetch/.*', FetchItem),
         ('/j/done/\\d+',DoneItem),
         ('/j/undone/\\d+',UnDoneItem),
         ('/j/due_today/\\d+',DueToday),
