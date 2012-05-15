@@ -6,6 +6,8 @@ sys.path.append("../")
 from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
+from models.user import get_user
+from models.item import tarsusaItem
 
 class DoneItemWorker(webapp.RequestHandler):
     def post(self):
@@ -13,16 +15,10 @@ class DoneItemWorker(webapp.RequestHandler):
         item_id = self.request.get('item_id')
         misc = self.request.get('misc')
 
-        def _done_item():
-            from models.user import get_user
-            from models.item import tarsusaItem
-
-            user = get_user(user_id)
-            item = tarsusaItem.get_item(item_id) 
+        user = get_user(user_id)
+        item = tarsusaItem.get_item(item_id) 
+        if item:
             item.done_item(user, misc)
-
-        _done_item()
-
 
 def main():
     application = webapp.WSGIApplication([
