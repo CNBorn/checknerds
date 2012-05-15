@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} CheckNerds(beta) {% endblock title %}
+{% block title %} CheckNerds {% endblock title %}
 {% block include_js %}
 <script type="text/javascript" src="/js/jquery.hoverIntent.minified.js"></script>
 <script type="text/javascript" src="/js/calit2.js"></script>
@@ -591,7 +591,7 @@ $("#itemlist ul li").hoverIntent( config2 );
     <div id="content">
         <div id="additem">
             <input type="text" id="inputName" name="name" style="width:90%;
-           padding: 5px 3px 5px 10px; float: left; height: 18px; color: rgb(105, 105, 105); font-size: 1.2em;">
+           padding: 5px 3px 5px 10px; float: left; height: 18px; color: rgb(105, 105, 105); font-size: 1.2em;" placeholder="Add your task here">
            <div id="toggle">&darr;</div>
         </div>
 
@@ -614,8 +614,6 @@ $("#itemlist ul li").hoverIntent( config2 );
             </div>
 
         <div id="itemlist"></div>
-
-		<p class="box">This is a <strong>Beta</strong> version of CheckNerds</p>
 	</div>
 
 	<div id="sidebar"></div>

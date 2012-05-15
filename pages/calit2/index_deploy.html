@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} CheckNerds(beta) {% endblock title %}
+{% block title %} CheckNerds {% endblock title %}
 {% block include_js %}
 <script type="text/javascript" src="/js/jquery.hoverIntent.minified.js"></script>
 <script type="text/javascript" src="/js/calit2.js"></script>
@@ -94,11 +94,11 @@
 <script type="text/javascript">
 var set_due_today = function(item_id) {
     $.ajax({type: "GET", 
-            url: "/duetoday/" + item_id,
+            url: "/j/due_today/" + item_id,
             dataType: "json",
             success: function(data){
                 if(!is_today_panel()){
-                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                    $("li[itemid=" +item_id+ "]").fadeOut('fast');
                 }
                 refreshItemData(item_id);
             } 
@@ -107,11 +107,11 @@ var set_due_today = function(item_id) {
 }
 var set_due_tomorrow = function(item_id) {
     $.ajax({type: "GET", 
-            url: "/duetomorrow/" + item_id,
+            url: "/j/due_tomorrow/" + item_id,
             dataType: "json",
             success: function(data){
                 if(!is_tomorrow_panel()){
-                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                    $("li[itemid=" +item_id+ "]").fadeOut('fast');
                 }
                 refreshItemData(item_id);
             } 
@@ -230,12 +230,14 @@ function doneItem(item_id){
     $.ajax({type: "GET", 
             url: "/j/done/" + item_id,
             dataType: "json",
-            success: function(data){
-                $("li[itemid=" +item_id+ "] input").fadeOut('slow');
+            beforeSend: function(data){
+                $("li[itemid=" +item_id+ "] input").fadeOut('fast');
                 $("li[itemid=" +item_id+ "] span.item").removeClass().addClass("doneitem");
                 if(!is_today_panel()){
-                    $("li[itemid=" +item_id+ "]").fadeOut('slow');
+                    $("li[itemid=" +item_id+ "]").fadeOut('fast');
                 }
+            },
+            success: function(data){
                 refreshItemData(item_id);
                 showItemOnSidebar(item_id);
             } 
@@ -287,7 +289,7 @@ function retrive_more_items() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=inbox&before_item_id=" + last_item_id,
+       url: "/j/fetch/?func=inbox&before_item_id=" + last_item_id,
        dataType: "json",
        success: function(msg){
          if(msg.length != 0){
@@ -316,7 +318,7 @@ $(window).scroll(function() {
 
 
 function tabs_RemoveActive() {
-    var tab_list = ['#tab_inbox', '#tab_dailyroutine', '#tab_tomorrow', '#tab_done', '#tab_friends', '#tab_log'];
+    var tab_list = ['#tab_inbox', '#tab_dailyroutine', '#tab_tomorrow', '#tab_done'];
     for (i=0;i<=tab_list.length - 1;i++){
         if ($(tab_list[i]).hasClass("activenavitab")){
             $(tab_list[i]).removeClass('activenavitab');
@@ -415,7 +417,7 @@ $('#tab_inbox').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=inbox&maxitems=18&template=calit2",
+       url: "/j/fetch/?func=inbox&maxitems=18&template=calit2",
        dataType: "json",
        success: function(msg){
          retriving_more_items = false;
@@ -433,7 +435,7 @@ $('#tab_dailyroutine').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=dailyroutine&template=calit2",
+       url: "/j/fetch/?func=dailyroutine&template=calit2",
        dataType: "json",
        success: function(msg){
          render_items(msg, "daily");
@@ -449,7 +451,7 @@ $('#tab_tomorrow').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=tomorrow&maxitems=18&template=calit2",
+       url: "/j/fetch/?func=tomorrow&maxitems=18&template=calit2",
        dataType: "json",
        success: function(msg){
          retriving_more_items = false;
@@ -468,26 +470,10 @@ $('#tab_done').click(function() {
     showLoadingPanel();
     $.ajax({
        type: "GET",
-       url: "/ajax/render/?func=done&maxitems=50&template=calit2",
+       url: "/j/fetch/?func=done&maxitems=50&template=calit2",
        dataType: "json",
        success: function(msg){
          render_items(msg, "done");
-         hideLoadingPanel();
-         initHover();
-         }
-     });
-    return false;
-});
-
-$('#tab_log').click(function() {
-    tabs_MakeActive(this);
-    showLoadingPanel();
-    $.ajax({
-       type: "GET",
-       url: "/ajax/render/?func=logs&template=calit2",
-       dataType: "json",
-       success: function(msg){
-         render_donelog(msg);
          hideLoadingPanel();
          initHover();
          }
@@ -552,7 +538,7 @@ $("#inputName").keypress(function (e) {
 function addItem() {
     $.ajax({
        type: "POST",
-       url: "/additem",
+       url: "/j/add_item",
        dataType: "json",
        data: {name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val()},
        beforeSend: function(data){
@@ -682,13 +668,12 @@ $("#itemlist ul li").hoverIntent( config2 );
 		<a id="tab_dailyroutine" class="navitab" href="javascript:void(0);">今天</a><span class="hide"> | </span>
 		<a id="tab_tomorrow" class="navitab" href="javascript:void(0);">明天</a><span class="hide"> | </span>
 		<a id="tab_done" class="navitab" href="javascript:void(0);">已完成</a>
-		<a id="tab_log" class="navitab" href="javascript:void(0);">记录</a>
 	</div>
 
     <div id="content">
         <div id="additem">
             <input type="text" id="inputName" name="name" style="width:90%;
-           padding: 5px 3px 5px 10px; float: left; height: 18px; color: rgb(105, 105, 105); font-size: 1.2em;">
+           padding: 5px 3px 5px 10px; float: left; height: 18px; color: rgb(105, 105, 105); font-size: 1.2em;" placeholder="Add your task here">
            <div id="toggle">&darr;</div>
         </div>
 
@@ -711,8 +696,6 @@ $("#itemlist ul li").hoverIntent( config2 );
             </div>
 
         <div id="itemlist"></div>
-
-		<p class="box">This is a <strong>Beta</strong> version of CheckNerds</p>
 	</div>
 
 	<div id="sidebar"></div>
