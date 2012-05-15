@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import cgi
-import logging
-
 import wsgiref.handlers
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -32,7 +30,6 @@ class AboutPage(tarsusaRequestHandler):
 class DocsPage(tarsusaRequestHandler):
     def get(self):
 
-        # New CheckLogin code built in tarsusaRequestHandler 
         if self.chk_login():
             CurrentUser = self.get_user_db()        
             template_values = {
@@ -56,37 +53,9 @@ class DocsPage(tarsusaRequestHandler):
 
         self.response.out.write(template.render(path, template_values))
 
-class LabsPage(tarsusaRequestHandler):
-    def get(self):
-
-        # New CheckLogin code built in tarsusaRequestHandler 
-        if self.chk_login():
-            CurrentUser = self.get_user_db()        
-            template_values = {
-                    'PrefixCSSdir': "/",
-                    'UserLoggedIn': 'Logged In',
-                    'UserNickName': cgi.escape(CurrentUser.dispname),
-                    'UserID': CurrentUser.key().id(),
-            }
-        
-        else:           
-            template_values = {
-                'PrefixCSSdir': "/",
-                'UserNickName': "访客",
-                'AnonymousVisitor': "Yes",
-            }
-        
-        pageid = self.request.path[len('/docs/'):]
-        if pageid == '':
-            pageid = 'index'
-        path = os.path.join(os.path.dirname(__file__), '../pages/labs/index.html')
-
-        self.response.out.write(template.render(path, template_values))
-
 def main():
     application = webapp.WSGIApplication([('/about',AboutPage),
                                        ('/docs.+', DocsPage),
-                                       ('/labs.+', LabsPage),
                                        ],
                                        debug=True)
     wsgiref.handlers.CGIHandler().run(application)
