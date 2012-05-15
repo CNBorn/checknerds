@@ -12,7 +12,7 @@
 <script type="text/javascript">
 var set_due_today = function(item_id) {
     $.ajax({type: "GET", 
-            url: "/duetoday/" + item_id,
+            url: "/j/due_today/" + item_id,
             dataType: "json",
             success: function(data){
                 if(!is_today_panel()){
@@ -25,7 +25,7 @@ var set_due_today = function(item_id) {
 }
 var set_due_tomorrow = function(item_id) {
     $.ajax({type: "GET", 
-            url: "/duetomorrow/" + item_id,
+            url: "/j/due_tomorrow/" + item_id,
             dataType: "json",
             success: function(data){
                 if(!is_tomorrow_panel()){
@@ -456,7 +456,7 @@ $("#inputName").keypress(function (e) {
 function addItem() {
     $.ajax({
        type: "POST",
-       url: "/additem",
+       url: "/j/add_item",
        dataType: "json",
        data: {name: $("#inputName").val(), public: $("#add_public").val(), routine: $("#add_routine").val(), comment: $("#add_comment").val(), tags: $("#add_tags").val(), inputDate: $("#inputDate").val()},
        beforeSend: function(data){

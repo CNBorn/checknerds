@@ -70,7 +70,7 @@ class UnDoneItem(tarsusaRequestHandler):
         item.undone_item(CurrentUser, Misc)
         self.response_json({"r":"ok"})
 
-class AddItemProcess(tarsusaRequestHandler):
+class AddItem(tarsusaRequestHandler):
     @login
     def post(self):
         CurrentUser = self.get_user_db()
@@ -138,10 +138,10 @@ def main():
         ('/ajax/.+',ajax_error),
         ('/j/done/\\d+',DoneItem),
         ('/j/undone/\\d+',UnDoneItem),
-        ('/duetoday/\\d+',DueToday),
-        ('/duetomorrow/\\d+',DueTomorrow),
+        ('/j/due_today/\\d+',DueToday),
+        ('/j/due_tomorrow/\\d+',DueTomorrow),
         ('/j/delete/\\d+', RemoveItem),
-        ('/additem',AddItemProcess),
+        ('/j/add_item',AddItem),
         ('/j/item/\\d+',GetItem),
         ('/j/stats/', Stats),
         ],
