@@ -35,9 +35,6 @@ handlers:
 - url: /docs.+
   script: views/miscellaneous.py
 
-- url: /labs.+
-  script: views/miscellaneous.py
-
 - url: /Login.+
   script: views/auth.py
 
@@ -46,15 +43,6 @@ handlers:
 
 - url: /j/.*
   script: views/ajax.py
-
-- url: /tag
-  script: tag.py
-
-- url: /tag/.*
-  script: tag.py
-
-- url: /tag/
-  script: tag.py
 
 - url: /workers/done_item
   script: workers/done_item.py
